@@ -831,6 +831,10 @@ export const ecogenFluence: Proposal = {
       kind: "note",
       id: "risks",
       tone: "flag",
+      /* A note draws no eyebrow, so the kicker only ever reaches the side
+         index — which is what keeps this entry from running the full width of
+         the rail. */
+      kicker: "Assumptions",
       title: "Assumptions this document rests on",
       body: "Cost and sequencing values in the pipeline today were derived from EcoGen's own reference files so the system could be built and tested end to end. They are structurally correct and arithmetically verified, but they are not validated numbers and should not be quoted from. The same applies to the layer contract and the shared parameter contract: both are provisional until confirmed. Every one of these is covered by a question above.",
     },
