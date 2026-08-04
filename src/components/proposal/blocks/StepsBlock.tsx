@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/ui/Reveal";
 import type { StepsBlockData } from "@/data/proposals";
+import { cn } from "@/lib/utils";
 import { BlockShell } from "./BlockShell";
 
 /** The process steps in plain language, chained by a vertical rail. */
@@ -29,10 +30,17 @@ export function StepsBlock({ block }: { block: StepsBlockData }) {
               </span>
 
               <div className="pt-3">
-                <h3 className="font-display text-xl font-semibold tracking-tight text-fg">
-                  {step.title}
-                </h3>
-                <p className="mt-3 max-w-xl text-sm leading-relaxed text-fg-muted">
+                {step.title ? (
+                  <h3 className="font-display text-xl font-semibold tracking-tight text-fg">
+                    {step.title}
+                  </h3>
+                ) : null}
+                <p
+                  className={cn(
+                    "max-w-xl text-sm leading-relaxed text-fg-muted",
+                    step.title && "mt-3",
+                  )}
+                >
                   {step.body}
                 </p>
               </div>

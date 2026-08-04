@@ -1,5 +1,5 @@
 import { contactHref } from "@/data/site";
-import type { Proposal } from "./types";
+import type { Proposal } from "../types";
 
 /**
  * EcoGen / Fluence — Automation Pipeline for Revit.

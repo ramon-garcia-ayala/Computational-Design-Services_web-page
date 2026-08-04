@@ -68,14 +68,25 @@ export function TimelineBlock({ block }: { block: TimelineBlockData }) {
                   settled ? "border-accent" : "border-dashed border-line",
                 )}
               >
-                {phase.items.map((item) => (
-                  <li
-                    key={item}
-                    className="py-2 text-sm leading-relaxed text-fg-muted"
-                  >
-                    {item}
-                  </li>
-                ))}
+                {phase.items.map((item) =>
+                  typeof item === "string" ? (
+                    <li
+                      key={item}
+                      className="py-2 text-sm leading-relaxed text-fg-muted"
+                    >
+                      {item}
+                    </li>
+                  ) : (
+                    <li key={item.title} className="py-3">
+                      <p className="text-sm font-semibold text-fg">
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-fg-muted">
+                        {item.body}
+                      </p>
+                    </li>
+                  ),
+                )}
               </ul>
             </li>
           );

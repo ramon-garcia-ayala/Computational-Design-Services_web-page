@@ -92,7 +92,8 @@ export type ProseBlockData = BlockBase & {
 
 export type StepsBlockData = BlockBase & {
   kind: "steps";
-  steps: { number: string; title: string; body: string }[];
+  /** `title` is optional so the same block serves plain ordered lists. */
+  steps: { number: string; title?: string; body: string }[];
 };
 
 export type FlowBlockData = BlockBase & {
@@ -131,6 +132,42 @@ export type StatsBlockData = BlockBase & {
   stats: { value: string; label: string; note?: string }[];
 };
 
+/**
+ * Commercial terms. Two shapes, and a proposal may use either or both: side by
+ * side `options` when the client picks between engagement models, and a single
+ * `total` with its milestone breakdown when the scope is fixed.
+ */
+export type PricingBlockData = BlockBase & {
+  kind: "pricing";
+  options?: {
+    /** Short label above the title: "Option B — Recommended". */
+    tag: string;
+    title: string;
+    subtitle?: string;
+    price: string;
+    priceNote?: string;
+    /** Draws the card in accent. Use on at most one option. */
+    highlight?: boolean;
+    features: string[];
+  }[];
+  total?: {
+    amount: string;
+    currency: string;
+    note?: string;
+    breakdown?: { label: string; amount: string }[];
+  };
+  note?: string;
+};
+
+/**
+ * Files that travel with the proposal. `file` is a path under /public, usually
+ * `/proposals/<slug>/<name>`, so each proposal's attachments sit together.
+ */
+export type DocsBlockData = BlockBase & {
+  kind: "docs";
+  docs: { label: string; file: string; note?: string }[];
+};
+
 export type TimelineBlockData = BlockBase & {
   kind: "timeline";
   phases: {
@@ -138,7 +175,8 @@ export type TimelineBlockData = BlockBase & {
     dates: string;
     title: string;
     state: "done" | "active" | "next";
-    items: string[];
+    /** A bare line, or a named deliverable with its description. */
+    items: (string | { title: string; body: string })[];
   }[];
 };
 
@@ -158,6 +196,8 @@ export type ProposalBlock =
   | QaBlockData
   | TableBlockData
   | StatsBlockData
+  | PricingBlockData
+  | DocsBlockData
   | TimelineBlockData
   | NoteBlockData;
 
@@ -172,6 +212,7 @@ export type Proposal = {
   project: string;
   phase: string;
   dateLabel: string;
+  /** What happens next: a review date, a validity date, a decision point. */
   reviewLabel: string;
   /** Shows the CONFIDENTIAL tag in the header. */
   confidential?: boolean;
