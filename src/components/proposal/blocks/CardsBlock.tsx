@@ -3,6 +3,7 @@ import type { CardsBlockData } from "@/data/proposals";
 import { cn } from "@/lib/utils";
 import { Icon } from "../icons";
 import { BlockShell } from "./BlockShell";
+import { cardGrid } from "./cardGrid";
 
 export function CardsBlock({ block }: { block: CardsBlockData }) {
   return (
@@ -15,8 +16,8 @@ export function CardsBlock({ block }: { block: CardsBlockData }) {
       <Reveal
         stagger="[data-reveal]"
         className={cn(
-          "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2",
-          block.columns === 3 && "lg:grid-cols-3",
+          "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
+          cardGrid(block.cards.length, block.columns ?? 2),
         )}
       >
         {block.cards.map((card) => (

@@ -3,6 +3,7 @@ import type { PricingBlockData } from "@/data/proposals";
 import { cn } from "@/lib/utils";
 import { Icon } from "../icons";
 import { BlockShell } from "./BlockShell";
+import { cardGrid } from "./cardGrid";
 
 /**
  * Commercial terms. Options render as comparison cards; a fixed scope renders
@@ -23,7 +24,7 @@ export function PricingBlock({ block }: { block: PricingBlockData }) {
           stagger="[data-reveal]"
           className={cn(
             "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
-            block.options.length >= 3 ? "lg:grid-cols-3" : "sm:grid-cols-2",
+            cardGrid(block.options.length, 3),
           )}
         >
           {block.options.map((option) => (

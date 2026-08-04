@@ -1,7 +1,9 @@
 import { Reveal } from "@/components/ui/Reveal";
 import type { DocsBlockData } from "@/data/proposals";
+import { cn } from "@/lib/utils";
 import { Icon } from "../icons";
 import { BlockShell } from "./BlockShell";
+import { cardGrid } from "./cardGrid";
 
 /** Files attached to the proposal. Opens in a new tab; the browser decides
     whether to preview or download. */
@@ -16,7 +18,10 @@ export function DocsBlock({ block }: { block: DocsBlockData }) {
       <Reveal
         stagger="[data-reveal]"
         as="ul"
-        className="mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2"
+        className={cn(
+          "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
+          cardGrid(block.docs.length),
+        )}
       >
         {block.docs.map((doc) => (
           <li key={doc.file} className="reveal-init bg-carbon" data-reveal>

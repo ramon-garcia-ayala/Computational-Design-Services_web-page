@@ -112,6 +112,14 @@ node would render dashed and communicate nothing — use `steps` for those
 pipelines instead. The same logic puts a primary-versus-alternative tool list in
 `split`, whose two tones already mean committed versus available on request.
 
+**The card grids have no borders.** `cards`, `docs`, `timeline`, `pricing` and
+the `prose` checklist draw their dividers with `gap-px` over a `bg-line`
+container: the lines you see are the background showing through the gaps. So a
+half-empty last row is not blank, it renders as a solid bar of border colour.
+The column count must divide the item count exactly, which is what
+`blocks/cardGrid.ts` works out — use it rather than hardcoding `sm:grid-cols-2`,
+and remember that adding one card to an even set changes the layout.
+
 **Access control** runs in `src/proxy.ts`, before the page is served. Never move
 this check to the client: these pages are SSG, so their HTML already carries the
 whole document and a client-side check would protect nothing. Passwords are

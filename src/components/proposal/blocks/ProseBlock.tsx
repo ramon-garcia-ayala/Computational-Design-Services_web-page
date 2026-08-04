@@ -1,8 +1,10 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { CTALink } from "@/components/ui/CTALink";
 import type { ProseBlockData } from "@/data/proposals";
+import { cn } from "@/lib/utils";
 import { Icon } from "../icons";
 import { BlockShell } from "./BlockShell";
+import { cardGrid } from "./cardGrid";
 
 export function ProseBlock({ block }: { block: ProseBlockData }) {
   return (
@@ -30,7 +32,10 @@ export function ProseBlock({ block }: { block: ProseBlockData }) {
         <Reveal
           stagger="[data-reveal]"
           as="ul"
-          className="mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2"
+          className={cn(
+            "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
+            cardGrid(block.checklist.length),
+          )}
         >
           {block.checklist.map((item) => (
             <li
