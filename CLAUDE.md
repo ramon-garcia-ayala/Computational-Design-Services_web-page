@@ -105,6 +105,13 @@ mapped to components by `ProposalRenderer`. To add a new kind, extend the union
 in `types.ts`, write the component under `blocks/`, and wire it into the switch;
 that switch is the only place a kind maps to a component.
 
+**Every listed block needs a short `kicker`.** The side index labels each entry
+with `kicker ?? title`, so a block without one falls back to its full heading
+and that single entry runs the width of the rail while the rest are a word or
+two. `note` is the easy one to forget, since it draws no eyebrow and its kicker
+therefore reaches nothing but the index. Use `unlisted` for a block that should
+not appear in the rail at all.
+
 **Picking a block matters.** `flow` defines a *process*: stages, the
 configuration each one reads, and what passes between them. It deliberately
 carries no build status. Status belongs in `split`, whose solid and dashed
@@ -112,7 +119,11 @@ columns already mean done versus planned, and keeping the two apart is what lets
 the diagram describe the pipeline without arguing about how much of it exists.
 `split` earns its two tones again on a primary-versus-alternative tool list:
 committed versus available on request. For a short linear sequence with no
-configuration or artifacts to show, `steps` is lighter than `flow`.
+configuration or artifacts to show, `steps` is lighter than `flow`, and it
+carries two layouts of its own: `flow` chains the numbered markers left to right
+from `lg` up, which is how a pipeline should read and costs a fraction of the
+height; `list`, the default, keeps them in a numbered column, which is right for
+actions the reader has to take rather than a chain.
 
 **The card grids have no borders.** `cards`, `docs`, `timeline`, `pricing` and
 the `prose` checklist draw their dividers with `gap-px` over a `bg-line`
