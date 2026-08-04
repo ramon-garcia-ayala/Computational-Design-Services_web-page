@@ -65,6 +65,9 @@ proposals don't inherit the site navigation:
 | `/labs` | `src/app/(site)/labs/page.tsx` (placeholder) |
 | `/<proposal-slug>` | `src/app/(proposal)/[proposal]/page.tsx` (`generateStaticParams`) |
 | `/unlock` | `src/app/(proposal)/unlock/page.tsx` |
+| `/api/proposal-unlock` | `src/app/api/proposal-unlock/route.ts` (checks the password) |
+
+Everything is static except that route handler and `src/proxy.ts`.
 
 The root layout holds only what must never be duplicated: `<html>`, the fonts and
 the single Lenis instance. `(site)/layout.tsx` adds the header and footer;
@@ -80,22 +83,44 @@ navigation all come from it. `featured: true` also surfaces it on the home page.
 ## Client proposals
 
 Each proposal is a standalone page at the site root (`/05.08.2026_ecogen`,
-format `DD.MM.YYYY_client`), password protected and excluded from search engines.
+format `DD.MM.YYYY_client`) and excluded from search engines.
 
-**To add one**: create a file in `src/data/proposals/` and register it in
-`index.ts`. A proposal is a list of typed blocks (`prose`, `steps`, `flow`,
-`split`, `cards`, `qa`, `table`, `stats`, `timeline`, `note`) mapped to
-components by `ProposalRenderer`. To add a new block kind, extend the union in
-`types.ts`, write the component under `blocks/`, and wire it into the switch —
+**Layout.** One folder per proposal, named after its slug, so the URL and the
+folder match one to one. Attachments live under `public/proposals/<slug>/`.
+
+```
+src/data/proposals/
+  index.ts                     registry — adding an entry generates the route
+  types.ts                     the block union
+  access.ts                    passwords
+  05.08.2026_ecogen/index.ts
+public/proposals/
+  29.06.2026_ecogen/header.gif
+```
+
+**To add one**: create the folder with an `index.ts` and register it in
+`index.ts`. A proposal is a list of typed blocks — `prose`, `steps`, `flow`,
+`split`, `cards`, `qa`, `table`, `stats`, `pricing`, `docs`, `timeline`, `note` —
+mapped to components by `ProposalRenderer`. To add a new kind, extend the union
+in `types.ts`, write the component under `blocks/`, and wire it into the switch;
 that switch is the only place a kind maps to a component.
+
+**Picking a block matters.** `flow` encodes *build status*: solid for built,
+dashed for proposed. Use it only where the status actually varies, as in the
+Phase 1 Discovery report. In a commercial proposal nothing is built yet, so every
+node would render dashed and communicate nothing — use `steps` for those
+pipelines instead. The same logic puts a primary-versus-alternative tool list in
+`split`, whose two tones already mean committed versus available on request.
 
 **Access control** runs in `src/proxy.ts`, before the page is served. Never move
 this check to the client: these pages are SSG, so their HTML already carries the
 whole document and a client-side check would protect nothing. Passwords are
 stored as salt + SHA-256 in `src/data/proposals/access.ts`, generated with
 `scripts/proposal-password.mjs`. Never write a password in clear text next to its
-hash. A slug with no entry is open to anyone with the link. Production needs
-`PROPOSAL_SECRET`; without it, protected proposals stay closed (fails safe).
+hash. A slug with no entry is open to anyone with the link — the two June 2026
+proposals are deliberately open, and they carry pricing, so treat their URLs as
+public. Production needs `PROPOSAL_SECRET`; without it, protected proposals stay
+closed (fails safe).
 
 **The flow diagram** (`FlowDiagram.tsx`) is drawn by hand in the site's own
 visual language — don't reach for Mermaid. It derives config chips and artifact
@@ -174,6 +199,27 @@ Every mailto goes to both partners at once, built by `contactHref()` in
 `src/data/site.ts`. **Never render the address as visible text** — CTAs use
 `site.contactLabel` ("Get in touch"). This keeps the addresses out of the page
 for spam harvesters.
+
+## Deployment
+
+Vercel project `computational-design-services`, deploying `main` from
+`ramon-garcia-ayala/Computational-Design-Services_web-page`. The state before
+this site replaced it is kept on the `archive/pre-rewrite` branch.
+
+**`vercel.json` must stay.** The project's framework preset is `null` on Vercel,
+so that one-line file is the only thing telling it to build as Next.js. Deleting
+it does not fail the build — the deployment reports READY and then every route
+404s, which is a slow thing to diagnose. The tell is in the deployment metadata:
+a real Next.js build records `lambdaRuntimeStats` and `bundler`, and a broken one
+records neither.
+
+`PROPOSAL_SECRET` is set in the project's environment variables. Environment
+variables do not apply to deployments that already exist, so after changing one,
+redeploy.
+
+**Local builds can fail with `EPERM` on `.next/types`** while VS Code is open —
+its TypeScript server holds the directory, and `tsconfig.json` includes it. Close
+the editor, or verify with a build from a clean clone instead.
 
 ## GIF recording (visual verification)
 

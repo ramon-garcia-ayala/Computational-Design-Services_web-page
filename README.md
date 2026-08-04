@@ -57,10 +57,19 @@ Each proposal is its own shareable page at the site root, e.g.
 `/05.08.2026_ecogen` (`DD.MM.YYYY_client`). They use the site's design system but
 not its navigation, and they are password protected.
 
-**To write one**, add a file to `src/data/proposals/` and register it in
-`index.ts`. A proposal is a list of typed blocks — prose, steps, flow diagram,
-split, cards, questions, table, stats, timeline, note — rendered by
-`ProposalRenderer`. All copy stays in the data layer.
+Each one is a folder named after its slug, so the URL and the folder match one to
+one, with attachments under `public/proposals/<slug>/`:
+
+```
+src/data/proposals/05.08.2026_ecogen/index.ts   →  /05.08.2026_ecogen
+public/proposals/29.06.2026_ecogen/header.gif   →  its attachments
+```
+
+**To write one**, create the folder with an `index.ts` and register it in
+`src/data/proposals/index.ts`. A proposal is a list of typed blocks — prose,
+steps, flow diagram, split, cards, questions, table, stats, pricing, docs,
+timeline, note — rendered by `ProposalRenderer`. All copy stays in the data
+layer.
 
 **To set its password:**
 
@@ -80,6 +89,17 @@ carries the whole document.
 **Production needs `PROPOSAL_SECRET`** (see `.env.example`), the key the access
 cookie is signed with. Without it, protected proposals stay closed to everyone —
 it fails safe.
+
+Currently live: the August 2026 Ecogen Discovery report is protected; the two
+June 2026 commercial proposals are open, and they show pricing, so their URLs are
+effectively public.
+
+## Deployment
+
+Vercel project `computational-design-services`, deploying `main`. **Keep
+`vercel.json`** — the project's framework preset is `null`, so that one line is
+what tells Vercel to build as Next.js. Without it the build still reports READY
+and then every route 404s.
 
 ## Contact
 
