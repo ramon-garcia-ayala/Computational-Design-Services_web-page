@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Sora, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { site } from "@/data/site";
 
 /* Fuentes expuestas como variables CSS y consumidas desde el @theme de globals.css */
@@ -33,6 +31,9 @@ export const metadata: Metadata = {
   description: site.subcopy,
 };
 
+/* El chrome (header, footer, <main>) lo pone cada route group: (site) usa la
+   navegación del sitio, (proposal) una barra propia. Aquí solo queda lo que no
+   puede duplicarse: <html>, las fuentes y la única instancia de Lenis. */
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -48,9 +49,7 @@ export default function RootLayout({
           >
             Skip to content
           </a>
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
+          {children}
         </SmoothScroll>
       </body>
     </html>

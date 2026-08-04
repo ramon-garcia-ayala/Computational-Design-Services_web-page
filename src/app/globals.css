@@ -144,3 +144,41 @@ html.lenis body {
     transform: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Impresión
+   Las propuestas de cliente se acaban guardando en PDF, así que tienen que
+   imprimirse legibles. Lo importante es forzar `reveal-init` a visible: lo que
+   no haya llegado a animarse saldría en blanco.
+--------------------------------------------------------------------------- */
+@media print {
+  html,
+  body {
+    background: #fff;
+    color: #111;
+  }
+
+  .reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Cabecera fija e índice lateral: ruido en papel. */
+  [data-proposal-chrome] {
+    display: none !important;
+  }
+
+  .grid-bg {
+    display: none !important;
+  }
+
+  article,
+  li,
+  tr {
+    break-inside: avoid;
+  }
+
+  section {
+    break-inside: auto;
+  }
+}
