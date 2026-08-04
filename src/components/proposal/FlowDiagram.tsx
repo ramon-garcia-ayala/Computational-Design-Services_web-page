@@ -1,46 +1,26 @@
-"use client";
-
-import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
-import { useReducedMotion } from "@/lib/useReducedMotion";
-import type { FlowBlockData, FlowNode, NodeStatus } from "@/data/proposals";
+import { Reveal } from "@/components/ui/Reveal";
+import type { FlowBlockData, FlowNode } from "@/data/proposals";
 import { cn } from "@/lib/utils";
 
-/** Height in pixels of the vertical connector between stages. Also its dasharray. */
-const CONNECTOR = 56;
-
-const statusChip: Partial<Record<NodeStatus, string>> = {
-  built: "Built & tested",
-  pending: "Not built yet",
-  deferred: "Future phase",
-};
-
-const legend: { status: NodeStatus; label: string }[] = [
-  { status: "built", label: "Built & tested" },
-  { status: "pending", label: "Not built yet" },
-  { status: "deferred", label: "Future phase" },
-  { status: "config", label: "Configuration / data contract" },
-  { status: "artifact", label: "Artifact passed between stages" },
-];
-
 /**
- * The pipeline flow diagram, drawn by hand in the site's own visual language
- * instead of pulling in Mermaid.
+ * The pipeline diagram, drawn by hand in the site's own visual language rather
+ * than pulling in Mermaid.
  *
- * The spine is the process nodes in the order the data lists them; the edges
- * give us the config files feeding each stage and the artifacts it produces.
- * Solid = built, dashed = proposed.
+ * The spine is the stages in the order the data lists them. Everything else is
+ * derived from the edges: the configuration a stage reads hangs to its side,
+ * and the artifact travelling to the next stage is labelled *on* the connector
+ * rather than dropped between two cards, so the line is never interrupted.
+ *
+ * Entrances go through `Reveal`, like every other appearance on the site. An
+ * earlier version hand-rolled its own ScrollTriggers and silently failed to run,
+ * leaving the diagram blank — there is no reason for this component to own
+ * animation at all, which is also why it needs no client boundary.
  */
 export function FlowDiagram({ block }: { block: FlowBlockData }) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion();
-
   const byId = new Map(block.nodes.map((node) => [node.id, node]));
-  const spine = block.nodes.filter(
-    (node) => node.status !== "config" && node.status !== "artifact",
-  );
+  const spine = block.nodes.filter((node) => node.status === "stage");
 
-  const inputsOf = (id: string, status: NodeStatus) =>
+  const inputsOf = (id: string, status: FlowNode["status"]) =>
     block.edges
       .filter((edge) => edge.to === id)
       .map((edge) => byId.get(edge.from))
@@ -52,130 +32,118 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
       .map((edge) => byId.get(edge.to))
       .filter((node): node is FlowNode => node?.status === "artifact");
 
-  useGSAP(
-    () => {
-      /* One trigger per stage: the diagram is taller than the viewport, so a
-         single staggered animation would burn itself off-screen. */
-      const stages = gsap.utils.toArray<HTMLElement>("[data-flow-stage]");
-
-      stages.forEach((stage) => {
-        const fades = stage.querySelectorAll("[data-fade]");
-        const strokes = stage.querySelectorAll("[data-stroke]");
-        const branches = stage.querySelectorAll("[data-branch]");
-
-        if (reducedMotion) {
-          /* The hook returns false during hydration, so the final state is
-             restored explicitly instead of bailing out with a return. */
-          gsap.set(fades, { opacity: 1, y: 0, clearProps: "transform" });
-          gsap.set(strokes, { strokeDashoffset: 0 });
-          gsap.set(branches, { scaleX: 1 });
-          return;
-        }
-
-        gsap.set(strokes, { strokeDashoffset: CONNECTOR });
-        gsap.set(branches, { scaleX: 0, transformOrigin: "left center" });
-
-        const scrollTrigger = { trigger: stage, start: "top 85%", once: true };
-
-        gsap.to(fades, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          stagger: 0.08,
-          scrollTrigger,
-        });
-
-        gsap.to(branches, {
-          scaleX: 1,
-          duration: 0.4,
-          ease: "power2.out",
-          delay: 0.15,
-          scrollTrigger,
-        });
-
-        gsap.to(strokes, {
-          strokeDashoffset: 0,
-          duration: 0.5,
-          ease: "power1.inOut",
-          delay: 0.2,
-          scrollTrigger,
-        });
-      });
-    },
-    { scope: rootRef, dependencies: [reducedMotion] },
-  );
-
   return (
-    <div ref={rootRef} className="mt-14">
+    <div className="mt-12">
       <ol>
         {spine.map((node, index) => {
           const configs = inputsOf(node.id, "config");
-          const feeds = index === 0 ? inputsOf(node.id, "artifact") : [];
           const outputs = outputsOf(node.id);
-          const last = index === spine.length - 1;
+          /* What feeds the first stage has no connector above it, so it gets
+             its own line. */
+          const feeds = index === 0 ? inputsOf(node.id, "artifact") : [];
 
           return (
-            <li key={node.id} data-flow-stage>
+            <Reveal key={node.id} as="li" stagger="[data-reveal]">
               {feeds.map((feed) => (
-                <ArtifactLabel key={feed.id} node={feed} leading />
+                <p
+                  key={feed.id}
+                  className="reveal-init pb-3 font-mono text-[10px] uppercase tracking-widest text-fg-muted"
+                  data-reveal
+                >
+                  {feed.title}
+                </p>
               ))}
 
-              {/* The three columns are always reserved, whether or not this
-                  stage carries config files: otherwise cards without a chip
-                  would stretch and the spine would stop reading as a column. */}
-              <div className="grid items-center gap-4 lg:grid-cols-[minmax(0,1fr)_2.5rem_18rem]">
-                <NodeCard node={node} />
+              {/* The side column is a fixed track, held open whether or not
+                  this stage reads configuration, so every card is the same
+                  width and the spine stays a straight column. */}
+              <div className="grid items-center gap-3 lg:grid-cols-[minmax(0,1fr)_2rem_14rem]">
+                <article
+                  className="reveal-init rounded-lg border border-line bg-graphite p-5"
+                  data-reveal
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    {node.stage ? (
+                      <span className="font-mono text-xs text-accent">
+                        {node.stage}
+                      </span>
+                    ) : null}
+                    <h3 className="font-display text-base font-semibold tracking-tight text-fg">
+                      {node.title}
+                    </h3>
+                    {node.meta ? (
+                      <span className="font-mono text-[10px] text-fg-muted">
+                        {node.meta}
+                      </span>
+                    ) : null}
+                  </div>
+
+                  {node.detail ? (
+                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fg-muted">
+                      {node.detail}
+                    </p>
+                  ) : null}
+                </article>
 
                 <span
-                  data-branch
                   aria-hidden="true"
                   className={cn(
-                    "hidden h-px w-10 border-t border-dashed border-line lg:block",
+                    "hidden h-px w-8 border-t border-dashed border-line lg:block",
                     configs.length === 0 && "lg:invisible",
                   )}
                 />
 
-                <ul className="flex flex-col gap-2">
+                <ul className="flex flex-col gap-1.5">
                   {configs.map((config) => (
-                    <ConfigChip key={config.id} node={config} />
+                    <li
+                      key={config.id}
+                      className="reveal-init rounded-md border border-line bg-graphite-hi px-3 py-2"
+                      data-reveal
+                    >
+                      <p className="font-mono text-[10px] text-fg">
+                        ⌗ {config.title}
+                      </p>
+                      {config.meta ? (
+                        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-widest text-fg-muted">
+                          {config.meta}
+                        </p>
+                      ) : null}
+                    </li>
                   ))}
                 </ul>
               </div>
 
-              {last ? null : <Connector />}
-
-              {outputs.map((output) => (
-                <ArtifactLabel key={output.id} node={output} />
-              ))}
-            </li>
+              {outputs.length > 0 ? (
+                /* The rail stretches to whatever height the labels beside it
+                   need, so the line always reaches the next card instead of
+                   stopping short of it. */
+                <div className="flex items-stretch gap-4">
+                  <span
+                    aria-hidden="true"
+                    className="ml-6 w-px shrink-0 bg-line"
+                  />
+                  <ul className="flex min-h-10 flex-1 flex-wrap items-center gap-x-5 gap-y-1 py-2">
+                    {outputs.map((output) => (
+                      <li
+                        key={output.id}
+                        className="reveal-init font-mono text-[10px] uppercase tracking-widest text-fg-muted"
+                        data-reveal
+                      >
+                        {output.title}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </Reveal>
           );
         })}
       </ol>
 
-      <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-3 border-t border-line pt-6">
-        {legend.map((item) => (
-          <li
-            key={item.status}
-            className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-fg-muted"
-          >
-            <span
-              aria-hidden="true"
-              className={cn(
-                "h-3 w-3 shrink-0 rounded-sm border",
-                item.status === "built" && "border-accent bg-accent/20",
-                item.status === "pending" && "border-dashed border-line",
-                item.status === "deferred" &&
-                  "border-dashed border-line opacity-60",
-                item.status === "config" &&
-                  "rounded-full border-line bg-graphite-hi",
-                item.status === "artifact" && "border-transparent bg-line",
-              )}
-            />
-            {item.label}
-          </li>
-        ))}
-      </ul>
+      <p className="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-t border-line pt-5 font-mono text-[10px] uppercase tracking-widest text-fg-muted">
+        <span>⌗ Configuration the stage reads</span>
+        <span>— What passes to the next stage</span>
+      </p>
 
       {block.note ? (
         <p className="mt-8 max-w-2xl text-sm leading-relaxed text-fg-muted">
@@ -183,135 +151,5 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
         </p>
       ) : null}
     </div>
-  );
-}
-
-function Connector() {
-  return (
-    <svg
-      width="2"
-      height={CONNECTOR}
-      viewBox={`0 0 2 ${CONNECTOR}`}
-      className="ml-6 block overflow-visible"
-      aria-hidden="true"
-    >
-      <line
-        data-stroke
-        x1="1"
-        y1="0"
-        x2="1"
-        y2={CONNECTOR}
-        strokeWidth="1"
-        strokeDasharray={CONNECTOR}
-        className="stroke-line"
-      />
-    </svg>
-  );
-}
-
-function NodeCard({ node }: { node: FlowNode }) {
-  const chip = statusChip[node.status];
-
-  return (
-    <article
-      data-fade
-      className={cn(
-        "reveal-init rounded-lg border p-5 sm:p-6",
-        node.status === "built"
-          ? "border-accent/60 bg-graphite"
-          : "border-dashed border-line bg-transparent",
-        node.status === "deferred" && "opacity-70",
-      )}
-    >
-      <div className="flex flex-wrap items-center gap-3">
-        {node.stage ? (
-          <span
-            className={cn(
-              "font-mono text-xs",
-              node.status === "built" ? "text-accent" : "text-fg-muted",
-            )}
-          >
-            {node.stage}
-          </span>
-        ) : null}
-
-        {chip ? (
-          <span
-            className={cn(
-              "rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest",
-              node.status === "built"
-                ? "border border-accent text-accent"
-                : "border border-dashed border-line text-fg-muted",
-            )}
-          >
-            {chip}
-          </span>
-        ) : null}
-
-        {node.owner ? (
-          <span className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">
-            Owner · {node.owner}
-          </span>
-        ) : null}
-      </div>
-
-      <h3
-        className={cn(
-          "mt-4 font-display text-lg font-semibold tracking-tight",
-          node.status === "built" ? "text-fg" : "text-fg-muted",
-        )}
-      >
-        {node.title}
-      </h3>
-
-      {node.meta ? (
-        <p className="mt-1 font-mono text-xs text-fg-muted">{node.meta}</p>
-      ) : null}
-
-      {node.detail ? (
-        <p className="mt-3 max-w-xl text-sm leading-relaxed text-fg-muted">
-          {node.detail}
-        </p>
-      ) : null}
-    </article>
-  );
-}
-
-function ConfigChip({ node }: { node: FlowNode }) {
-  return (
-    <li
-      data-fade
-      className="reveal-init rounded-lg border border-line bg-graphite-hi px-4 py-3"
-    >
-      <p className="font-mono text-[10px] text-fg">⌗ {node.title}</p>
-      {node.meta ? (
-        <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-fg-muted">
-          {node.meta}
-        </p>
-      ) : null}
-    </li>
-  );
-}
-
-function ArtifactLabel({
-  node,
-  leading,
-}: {
-  node: FlowNode;
-  leading?: boolean;
-}) {
-  return (
-    <p
-      data-fade
-      className={cn(
-        "reveal-init flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-fg-muted",
-        leading ? "pb-4" : "pt-4 pl-12",
-      )}
-    >
-      {leading ? null : (
-        <span aria-hidden="true" className="h-px w-4 shrink-0 bg-line" />
-      )}
-      {node.title}
-    </p>
   );
 }

@@ -189,8 +189,8 @@ export const ecogenFluence: Proposal = {
       id: "pipeline",
       kicker: "Technical process",
       title: "The pipeline, stage by stage",
-      lead: "The same five stages in engineering terms, with the configuration files that govern each one and the current build status of every component. Solid means built and tested against real data; dashed means defined but not yet built.",
-      note: "The extraction stage is the only code that touches the Revit API. Everything downstream of it runs as plain Python against a documented data structure, which is why costing and both writers could be built and tested before the geometry side exists.",
+      lead: "The same process in engineering terms: six modules, the configuration each one reads, and what it hands to the next.",
+      note: "Stage 04 is the only code that touches the Revit API. Everything after it runs as plain Python against a documented data structure, so costing and both writers can be developed and verified without opening Revit — which also means a change to the pricing rules never risks the model. Saving the coordinated model and exporting a Navisworks cache is an optional step off stage 03, in scope only if 4D sequencing is confirmed.",
       nodes: [
         {
           id: "input",
@@ -202,14 +202,14 @@ export const ecogenFluence: Proposal = {
           stage: "01",
           title: "Layer validation",
           meta: "dxf_preflight/",
-          status: "built",
+          status: "stage",
           detail:
             "Reads the drawing's layer table and reports missing or unexpected layers before anything else runs, so a malformed drawing fails immediately with a readable message instead of halfway through.",
         },
         {
           id: "layers-config",
           title: "expected_layers.json",
-          meta: "Layer contract · not yet confirmed",
+          meta: "Layer contract",
           status: "config",
         },
         {
@@ -222,8 +222,7 @@ export const ecogenFluence: Proposal = {
           stage: "02",
           title: "Drawing parsing",
           meta: "input_parsing/",
-          status: "pending",
-          owner: "Geometry",
+          status: "stage",
           detail:
             "Classifies drawing entities into component categories and emits one record per element with its insertion point, rotation, outline and source layer.",
         },
@@ -237,15 +236,14 @@ export const ecogenFluence: Proposal = {
           stage: "03",
           title: "Family placement",
           meta: "placement_engine/",
-          status: "pending",
-          owner: "Geometry",
+          status: "stage",
           detail:
-            "Resolves each category to a Revit family, places the instance, applies spacing and clearance rules, derives dependent components and writes the shared parameters that carry the measurements.",
+            "Resolves each category to a Revit family, applies spacing and clearance rules, derives dependent components, and writes the shared parameters that carry the measurements.",
         },
         {
           id: "families",
           title: "Family library · *.rfa",
-          meta: "One standalone family per component type",
+          meta: "One file per component type",
           status: "config",
         },
         {
@@ -258,9 +256,9 @@ export const ecogenFluence: Proposal = {
           stage: "04",
           title: "Model data extraction",
           meta: "document_reader",
-          status: "built",
+          status: "stage",
           detail:
-            "Walks the open model and reads the shared parameters off every placed instance. This is the only file in the system that talks to the Revit API.",
+            "Walks the open model and reads the shared parameters off every placed instance. The only module that talks to the Revit API.",
         },
         {
           id: "spec",
@@ -278,14 +276,14 @@ export const ecogenFluence: Proposal = {
           stage: "05",
           title: "Costing engine",
           meta: "decomposition → aggregation → pricing → sequencing",
-          status: "built",
+          status: "stage",
           detail:
             "Breaks each instance into its priced lines, merges the ones that belong on a single row, applies unit costs and wastage, and resolves construction phase and predecessors.",
         },
         {
           id: "costbook",
           title: "cost_book.json",
-          meta: "Unit costs, wastage, crew rates, markups · provisional",
+          meta: "Unit costs, wastage, rates, markups",
           status: "config",
         },
         {
@@ -298,7 +296,7 @@ export const ecogenFluence: Proposal = {
           stage: "06",
           title: "Deliverable writers",
           meta: "estimate/ + schedule/",
-          status: "built",
+          status: "stage",
           detail:
             "Writes both workbooks from the same records, and refuses to save if the two independent roll-ups of the estimate total disagree.",
         },
@@ -311,16 +309,6 @@ export const ecogenFluence: Proposal = {
           id: "schedule-out",
           title: "Construction schedule · xlsx",
           status: "artifact",
-        },
-        {
-          id: "revitout",
-          stage: "07",
-          title: "Model export",
-          meta: "revit_output/",
-          status: "deferred",
-          owner: "Geometry",
-          detail:
-            "Saves the coordinated model and exports the Navisworks cache for 4D sequencing. Only needed if Navisworks is confirmed as part of the deliverable.",
         },
       ],
       edges: [
@@ -341,7 +329,6 @@ export const ecogenFluence: Proposal = {
         { from: "records", to: "excel" },
         { from: "excel", to: "estimate-out" },
         { from: "excel", to: "schedule-out" },
-        { from: "document", to: "revitout", kind: "optional" },
       ],
     },
 

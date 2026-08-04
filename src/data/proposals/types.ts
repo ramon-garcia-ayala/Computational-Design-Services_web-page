@@ -15,28 +15,27 @@ import type { IconName } from "@/components/proposal/icons";
    dashed = proposed.
 -------------------------------------------------------------------------- */
 
+/**
+ * What a node *is*, not how far along it is. Build status belongs in the
+ * "where this stands today" block; a diagram whose job is to define the process
+ * should not be arguing about what exists yet.
+ */
 export type NodeStatus =
-  /** Built and tested against real data. */
-  | "built"
-  /** Defined but not built yet. */
-  | "pending"
-  /** Outside the immediate scope, a later phase. */
-  | "deferred"
-  /** Configuration file: the data contract of a stage. */
+  /** A step in the chain. */
+  | "stage"
+  /** Configuration file: the data contract a stage reads. */
   | "config"
-  /** Artifact travelling between stages (a file, a structure). */
+  /** What travels from one stage to the next: a file, a structure. */
   | "artifact";
 
 export type FlowNode = {
   id: string;
-  /** Stage number on the main spine. config/artifact nodes do not carry one. */
+  /** Stage number on the spine. config and artifact nodes do not carry one. */
   stage?: string;
   title: string;
-  /** Second line: the technical name of the module or the file. */
+  /** Set alongside the title: the module or file this stage lives in. */
   meta?: string;
   status: NodeStatus;
-  /** Who is responsible for building it, if it does not exist yet. */
-  owner?: string;
   detail?: string;
 };
 
