@@ -13,7 +13,7 @@ export function ProposalFooter({ proposal }: { proposal: Proposal }) {
           href={mailtoHref}
           className="text-fg transition-colors hover:text-accent"
         >
-          {site.contactEmail}
+          {site.contactLabel}
         </a>
       </div>
     </footer>

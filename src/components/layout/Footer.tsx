@@ -17,7 +17,7 @@ export function Footer() {
             href={mailtoHref}
             className="mt-5 inline-block border-b border-accent pb-0.5 text-sm text-accent transition-opacity hover:opacity-70"
           >
-            {site.contactEmail}
+            {site.contactLabel}
           </a>
         </div>
 

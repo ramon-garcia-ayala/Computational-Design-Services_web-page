@@ -69,7 +69,7 @@ export default async function UnlockPage({ searchParams }: PageProps) {
               href={mailtoHref}
               className="text-fg transition-colors hover:text-accent"
             >
-              {site.contactEmail}
+              {site.contactLabel}
             </a>
           </p>
         </div>

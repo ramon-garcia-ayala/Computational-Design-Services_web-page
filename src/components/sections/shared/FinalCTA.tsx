@@ -27,7 +27,7 @@ export function FinalCTA({
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <CTALink href={mailtoHref} variant="solid" size="lg" external>
-              {site.contactEmail}
+              {site.contactLabel}
             </CTALink>
             <span className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">
               {site.location}

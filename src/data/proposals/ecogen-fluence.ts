@@ -1,3 +1,4 @@
+import { contactHref } from "@/data/site";
 import type { Proposal } from "./types";
 
 /**
@@ -855,7 +856,7 @@ export const ecogenFluence: Proposal = {
       ],
       cta: {
         label: "Reply with your questions",
-        href: "mailto:hello@r2ch.tech?subject=EcoGen%20%C2%B7%20Phase%201%20review",
+        href: contactHref("EcoGen · Phase 1 review"),
         external: true,
       },
     },
