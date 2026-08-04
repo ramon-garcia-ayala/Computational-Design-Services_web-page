@@ -3,7 +3,8 @@ import type { Proposal } from "../types";
 
 /**
  * EcoGen / Fluence — Automation Pipeline for Revit.
- * Phase 1 (Discovery), delivered 5 August 2026, reviewed on the 7th.
+ * Phase 1 (Discovery), issued and reviewed 5 August 2026, final delivery on
+ * the 7th.
  *
  * All the copy of the document lives here. Provisional internal figures (unit
  * rates, crew rates, markups) are deliberately left out: what the client is
@@ -15,7 +16,7 @@ export const ecogenFluence: Proposal = {
   project: "Automation Pipeline for Revit",
   phase: "Phase 1 — Discovery",
   dateLabel: "August 5, 2026",
-  reviewLabel: "Review session · August 7, 2026",
+  reviewLabel: "Final delivery · August 7, 2026",
   confidential: true,
   summary:
     "Discovery findings, the technical process, and the open questions for the automated pipeline from 2D site layout to cost estimate and construction schedule.",
@@ -561,7 +562,8 @@ export const ecogenFluence: Proposal = {
             "Research on the real drawings, families and reference workbooks",
             "Definition of the technical process and its data contracts",
             "This documentation site",
-            "Review session on August 7",
+            "Review session on August 5",
+            "Final delivery on August 7",
           ],
         },
         {
@@ -667,7 +669,7 @@ export const ecogenFluence: Proposal = {
       kicker: "Open questions",
       title: "Questions to resolve with EcoGen",
       lead: "These are the decisions only EcoGen can make. Each one is tied to a specific part of the pipeline, and each answer either unblocks work or replaces a provisional value with a real one. Four of them block the start of Phase 2.",
-      note: "This list is the agenda for the August 7 review session. Until the blocking items are answered, geometry work cannot start against a stable target; until the costing and schedule items are answered, the numbers the pipeline produces remain structurally correct but based on provisional inputs.",
+      note: "This list is the agenda for the August 5 review session. Until the blocking items are answered, geometry work cannot start against a stable target; until the costing and schedule items are answered, the numbers the pipeline produces remain structurally correct but based on provisional inputs.",
       groups: [
         {
           id: "dxf",
@@ -847,11 +849,12 @@ export const ecogenFluence: Proposal = {
       kind: "prose",
       id: "next",
       kicker: "Next step",
-      title: "The August 7 review",
-      lead: "One session, working through the questions above in priority order.",
+      title: "Review on August 5, final delivery on August 7",
+      lead: "One session, working through the questions above in priority order, and two days to fold the answers back in.",
       body: [
         "The four blocking items open Phase 2; the costing and schedule items convert the pipeline's provisional inputs into real ones. Answers to the rest can follow in writing afterwards without holding anything up.",
         "If it is useful, we can run the current pipeline live during the session — from a sample drawing's layer validation through to both generated workbooks — so the discussion is about real output rather than description.",
+        "Whatever is settled on the 5th is incorporated into the final Phase 1 package delivered on August 7. Anything still open by then is carried into Phase 2 as a named assumption rather than left implicit.",
       ],
       cta: {
         label: "Reply with your questions",
