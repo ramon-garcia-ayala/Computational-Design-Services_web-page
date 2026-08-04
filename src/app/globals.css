@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens (Tailwind v4)
+   Todo el sistema de diseño vive aquí. No hay tailwind.config.ts.
+   Cada token se consume como utilidad: bg-carbon, text-accent, font-display...
+--------------------------------------------------------------------------- */
+@theme {
+  /* Paleta: 1 oscuro primario + 1 acento */
+  --color-carbon: #0a0c0b; /* fondo primario */
+  --color-graphite: #14171a; /* superficies */
+  --color-graphite-hi: #1c2024; /* superficie elevada */
+  --color-line: #262b2e; /* bordes */
+  --color-line-soft: #1a1e21; /* bordes sutiles */
+  --color-accent: #c8f94e; /* lima eléctrica */
+  --color-accent-dim: #a3cc3e; /* hover / estados apagados */
+  --color-fg: #f2f4f0; /* texto principal */
+  --color-fg-muted: #8a918c; /* texto secundario */
+
+  /* Tipografía: geométrica para títulos, neutra para cuerpo, mono para cifras */
+  --font-display: var(--font-sora);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+
+  /* Breakpoints exactos del proyecto: 640 / 1024 / 1440.
+     `--breakpoint-*: initial` borra los defaults de Tailwind (md, xl, 2xl)
+     para que solo existan sm / lg / xl. */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 640px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1440px;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+html {
+  background-color: var(--color-carbon);
+  /* El smooth scroll lo gestiona Lenis; sin él, el nativo cubre los anchors. */
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-carbon);
+  color: var(--color-fg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-carbon);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-carbon);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-fg-muted);
+}
+
+/* Lenis: mientras hay smooth scroll activo el body no debe hacer scroll nativo */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   Utilidades del proyecto
+--------------------------------------------------------------------------- */
+
+/* Contenedor estándar de página */
+.shell {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 1440px;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 640px) {
+  .shell {
+    padding-inline: 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .shell {
+    padding-inline: 3rem;
+  }
+}
+
+/* Retícula de fondo, sustituye a cualquier imagen decorativa */
+@utility grid-bg {
+  background-image:
+    linear-gradient(to right, var(--color-line-soft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line-soft) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Estado inicial de los elementos animados por GSAP.
+   Evita el flash de contenido ya visible antes de que corra el tween. */
+@utility reveal-init {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+/* ---------------------------------------------------------------------------
+   prefers-reduced-motion
+   El JS también lo respeta (ver src/lib/useReducedMotion.ts); esto cubre CSS.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-init {
+    opacity: 1;
+    transform: none;
+  }
+}
