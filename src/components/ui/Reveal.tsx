@@ -55,6 +55,18 @@ export function Reveal({
         return;
       }
 
+      /* Opening a URL that already carries a hash — every in-document link in a
+         proposal does — means the browser has scrolled deep into the page
+         before this effect runs. Whatever sits at or above the landing point
+         will never receive the scroll event its trigger waits for, and would
+         stay invisible: the reader lands on a blank screen. Settle those on the
+         spot and let everything further down animate as usual. */
+      const landedOnAnchor = window.location.hash.length > 1;
+      if (landedOnAnchor && root.getBoundingClientRect().top < window.innerHeight * 0.85) {
+        gsap.set(targets, { opacity: 1, y: 0, clearProps: "transform" });
+        return;
+      }
+
       gsap.to(targets, {
         opacity: 1,
         y: 0,

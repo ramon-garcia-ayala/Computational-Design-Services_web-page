@@ -162,6 +162,14 @@ site, and a block component has no business owning scroll animation.
   without Lenis knowing, so ScrollTrigger still thinks it is at the top and
   nothing reveals — the page looks blank. `SmoothScroll` handles this with the
   `anchors` option plus an initial jump for URLs that arrive with a hash.
+- **A URL that arrives with a hash is a second, separate trap.** By the time the
+  reveals are created the browser has already scrolled past the landing section,
+  which therefore never receives the scroll event its trigger waits for and
+  stays invisible. `Reveal` settles anything at or above the landing point
+  immediately when the page loaded on an anchor, and animates the rest as usual.
+  Proposals link to their own sections, so real readers hit this, not just
+  people pasting deep links — test any new animated block by loading its anchor
+  directly, not only by scrolling to it.
 - **Breakpoints in JS**: use `gsap.matchMedia()` (see `HorizontalScroll.tsx`), not
   resize listeners.
 

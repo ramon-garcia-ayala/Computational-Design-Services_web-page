@@ -63,7 +63,7 @@ export function QaBlock({ block }: { block: QaBlockData }) {
         </span>
       </Reveal>
 
-      <div className="mt-10 flex flex-col gap-10">
+      <div className="mt-12 flex flex-col gap-12">
         {groups.map((group) => (
           <Reveal key={group.id} stagger="[data-reveal]">
             <h3
@@ -73,35 +73,35 @@ export function QaBlock({ block }: { block: QaBlockData }) {
               {group.category} · {group.questions.length}
             </h3>
 
-            <ul className="mt-3">
+            <ul className="mt-5">
               {group.questions.map((question) => (
                 <li
                   key={question.id}
-                  className="reveal-init border-t border-line py-3.5"
+                  className="reveal-init grid gap-3 border-t border-line py-5 lg:grid-cols-[5rem_1fr] lg:gap-8"
                   data-reveal
                 >
-                  {/* Reference, priority and question share one line so the
-                      list scans as a list, not as a stack of cards. */}
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <div className="flex items-center gap-3 lg:flex-col lg:items-start lg:gap-2">
                     <span className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">
                       {question.id}
                     </span>
                     <span
                       className={cn(
-                        "shrink-0 rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest",
+                        "rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest",
                         priorityStyle[question.priority],
                       )}
                     >
                       {question.priority}
                     </span>
-                    <p className="min-w-0 flex-1 font-display text-base leading-snug font-semibold tracking-tight text-fg">
-                      {question.question}
-                    </p>
                   </div>
 
-                  <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-fg-muted">
-                    {question.why}
-                  </p>
+                  <div>
+                    <p className="font-display text-lg leading-snug font-semibold tracking-tight text-fg">
+                      {question.question}
+                    </p>
+                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fg-muted">
+                      {question.why}
+                    </p>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -110,8 +110,8 @@ export function QaBlock({ block }: { block: QaBlockData }) {
       </div>
 
       {block.note ? (
-        <Reveal className="mt-10">
-          <p className="max-w-2xl border-t border-line pt-6 text-sm leading-relaxed text-fg-muted">
+        <Reveal className="mt-12">
+          <p className="max-w-2xl border-t border-line pt-7 text-sm leading-relaxed text-fg-muted">
             {block.note}
           </p>
         </Reveal>

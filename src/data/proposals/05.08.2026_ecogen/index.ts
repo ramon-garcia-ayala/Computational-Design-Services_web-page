@@ -26,7 +26,7 @@ export const ecogenFluence: Proposal = {
     title:
       "From site layout to cost and schedule — one continuous pipeline",
     accent: "one continuous pipeline",
-    lead: "A technical exploration into automating the path from a 2D site drawing to a coordinated 3D model, and from that model directly into cost and schedule deliverables. Prepared for review with EcoGen and Fluence.",
+    lead: "A technical exploration into automating the path from a 2D site drawing to a coordinated 3D model, and from that model directly into cost and schedule deliverables — all of it driven from a tab inside Revit 2027. Prepared for review with EcoGen and Fluence.",
   },
 
   blocks: [
@@ -424,9 +424,14 @@ export const ecogenFluence: Proposal = {
       id: "deliverables",
       kicker: "Deliverables",
       title: "What the pipeline produces",
-      lead: "The output formats were reverse-engineered from EcoGen's own reference files, so the results drop into the existing process rather than replacing it.",
-      columns: 2,
+      lead: "It all ships as one extension for Revit 2027 — the team works from a tab on the ribbon and never leaves Revit. The output formats were reverse-engineered from EcoGen's own reference files, so the results drop into the existing process rather than replacing it.",
+      columns: 3,
       cards: [
+        {
+          icon: "cpu",
+          title: "A Revit 2027 extension",
+          body: "The deliverable itself: a tab on the Revit ribbon with one button to generate the model and one to export the workbooks. No second application to open, no manual export step, nothing to wire up per project. It installs once per machine and the team stays where it already works.",
+        },
         {
           icon: "spreadsheet",
           title: "Cost estimate breakdown",
@@ -446,6 +451,11 @@ export const ecogenFluence: Proposal = {
           icon: "route",
           title: "4D Navisworks integration",
           body: "The coordinated model exported as a Navisworks cache and linked to the generated schedule in TimeLiner, so the construction sequence can be played back against the model. Because both come from the same component records, the simulation and the workbook cannot disagree.",
+        },
+        {
+          icon: "grid",
+          title: "Fill-in templates",
+          body: "The values that change between projects — unit costs, crew rates, durations, the working calendar — live in plain templates your team edits, not in code. Blank versions ship with the extension, so updating a rate or a holiday list never needs a developer.",
         },
       ],
     },
