@@ -451,13 +451,13 @@ export const ecogenFluence: Proposal = {
       id: "stack",
       kicker: "Stack",
       title: "Tools, licenses and software",
-      lead: "Everything the pipeline runs on, what it costs, and who provides it. The automation itself adds no new commercial licence: it is built on the Autodesk software EcoGen already runs, plus open-source components.",
+      lead: "Everything the pipeline runs on, what it costs, and who it belongs to. All of it is EcoGen's: the automation adds no new commercial licence, it is built on the Autodesk software EcoGen already runs plus open-source components, and the code written for this engagement is transferred to EcoGen rather than licensed back.",
       columns: [
         { key: "component", label: "Component", emphasis: true },
         { key: "version", label: "Version" },
         { key: "license", label: "License" },
         { key: "cost", label: "Cost to EcoGen" },
-        { key: "provider", label: "Provided by" },
+        { key: "provider", label: "Owned by" },
         { key: "purpose", label: "Used for" },
       ],
       rows: [
@@ -466,7 +466,7 @@ export const ecogenFluence: Proposal = {
           version: "2027",
           license: "Commercial subscription",
           cost: "Existing licence",
-          provider: "EcoGen",
+          provider: "EcoGen / Fluence",
           purpose: "Host application for the model and the automation add-in",
         },
         {
@@ -474,7 +474,7 @@ export const ecogenFluence: Proposal = {
           version: "Current release",
           license: "Open source (GPL-3.0)",
           cost: "Free",
-          provider: "R2ch-Tech",
+          provider: "EcoGen / Fluence",
           purpose: "Runs the automation from a Revit ribbon tab, no compiled add-in required",
         },
         {
@@ -482,7 +482,7 @@ export const ecogenFluence: Proposal = {
           version: "3.9 or later",
           license: "Open source (PSF)",
           cost: "Free",
-          provider: "R2ch-Tech",
+          provider: "EcoGen / Fluence",
           purpose: "Language of the pipeline, outside and inside Revit",
         },
         {
@@ -490,7 +490,7 @@ export const ecogenFluence: Proposal = {
           version: "3.1 or later",
           license: "Open source (MIT)",
           cost: "Free",
-          provider: "R2ch-Tech",
+          provider: "EcoGen / Fluence",
           purpose: "Writes both workbooks without needing Excel installed",
         },
         {
@@ -498,7 +498,7 @@ export const ecogenFluence: Proposal = {
           version: "1.1 or later",
           license: "Open source (MIT)",
           cost: "Free",
-          provider: "R2ch-Tech",
+          provider: "EcoGen / Fluence",
           purpose: "Reads the site drawing and its layer table",
         },
         {
@@ -506,7 +506,7 @@ export const ecogenFluence: Proposal = {
           version: "7.4 or later",
           license: "Open source (MIT)",
           cost: "Free",
-          provider: "R2ch-Tech",
+          provider: "EcoGen / Fluence",
           purpose: "Automated test suite — development only, not installed on EcoGen machines",
         },
         {
@@ -514,7 +514,7 @@ export const ecogenFluence: Proposal = {
           version: "Matching Revit 2027",
           license: "Commercial subscription",
           cost: "Only if 4D is confirmed",
-          provider: "EcoGen",
+          provider: "EcoGen / Fluence",
           purpose: "Optional 4D sequencing from the generated schedule",
         },
         {
@@ -522,7 +522,7 @@ export const ecogenFluence: Proposal = {
           version: "Current release",
           license: "Commercial / free converter",
           cost: "Only if drawings arrive as DWG",
-          provider: "EcoGen",
+          provider: "EcoGen / Fluence",
           purpose: "Conversion step if the production format is DWG rather than DXF",
         },
         {
@@ -530,19 +530,19 @@ export const ecogenFluence: Proposal = {
           version: "—",
           license: "Hosted service",
           cost: "Free",
-          provider: "R2ch-Tech",
+          provider: "EcoGen / Fluence",
           purpose: "Version control and controlled storage of project material",
         },
         {
-          component: "R2ch-Tech pipeline code",
+          component: "Automation pipeline code",
           version: "0.1.0",
-          license: "Proprietary",
-          cost: "Usage terms to be agreed",
-          provider: "R2ch-Tech",
+          license: "Proprietary — transferred to EcoGen",
+          cost: "Included in the engagement",
+          provider: "EcoGen / Fluence",
           purpose: "The automation itself: validation, extraction, costing and both writers",
         },
       ],
-      note: "Two technical constraints worth noting now rather than at handover. First, the target is Revit 2027 — a release recent enough that pyRevit support for it needs to be confirmed before Phase 2 hardens; pyRevit support for a given Revit release usually arrives after that release ships, and this is the risk item to track. Second, pyRevit runs its own bundled Python interpreter, separate from the system installation, so the spreadsheet library has to be installed into that interpreter as part of the deployment step.",
+      note: "On ownership: the subscriptions, the installed copies, the repository and everything produced for this engagement — pipeline code, Revit families, configuration files — belong to EcoGen. R2ch-Tech retains no licence over them and nothing is rented back. The open-source components stay under their own upstream licences, shown in the License column, which is what makes them free to use and to keep. Two technical constraints are worth noting now rather than at handover. First, the target is Revit 2027 — a release recent enough that pyRevit support for it needs to be confirmed before Phase 2 hardens; pyRevit support for a given Revit release usually arrives after that release ships, and this is the risk item to track. Second, pyRevit runs its own bundled Python interpreter, separate from the system installation, so the spreadsheet library has to be installed into that interpreter as part of the deployment step.",
     },
 
     /* ------------------------------------------------------------------ 10 */
