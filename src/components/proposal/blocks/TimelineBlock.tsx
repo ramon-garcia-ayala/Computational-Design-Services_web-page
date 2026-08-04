@@ -11,6 +11,12 @@ const stateLabel = {
 
 /** Engagement phases. Same convention: solid for closed, dashed for upcoming. */
 export function TimelineBlock({ block }: { block: TimelineBlockData }) {
+  /* The cards sit on a `gap-px` grid over `bg-line`, so a half-empty last row
+     would show as a solid bar of border colour. Three phases therefore go in
+     three columns rather than leaving a hole in a two-column grid — which also
+     reads left to right, the way a sequence of phases should. */
+  const columns = block.phases.length % 3 === 0 ? "lg:grid-cols-3" : "lg:grid-cols-2";
+
   return (
     <BlockShell
       id={block.id}
@@ -21,7 +27,10 @@ export function TimelineBlock({ block }: { block: TimelineBlockData }) {
       <Reveal
         stagger="[data-reveal]"
         as="ul"
-        className="mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line lg:grid-cols-2"
+        className={cn(
+          "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
+          columns,
+        )}
       >
         {block.phases.map((phase) => {
           const settled = phase.state !== "next";
