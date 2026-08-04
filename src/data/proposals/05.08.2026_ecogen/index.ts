@@ -462,7 +462,7 @@ export const ecogenFluence: Proposal = {
       rows: [
         {
           component: "Autodesk Revit",
-          version: "Target version to be confirmed",
+          version: "2027",
           license: "Commercial subscription",
           cost: "Existing licence",
           provider: "EcoGen",
@@ -510,7 +510,7 @@ export const ecogenFluence: Proposal = {
         },
         {
           component: "Autodesk Navisworks Manage",
-          version: "Matching the Revit version",
+          version: "Matching Revit 2027",
           license: "Commercial subscription",
           cost: "Only if 4D is confirmed",
           provider: "EcoGen",
@@ -541,7 +541,7 @@ export const ecogenFluence: Proposal = {
           purpose: "The automation itself: validation, extraction, costing and both writers",
         },
       ],
-      note: "Two technical constraints worth noting now rather than at handover. First, pyRevit support for a given Revit release usually arrives after that release ships, so the target Revit version needs confirming before Phase 2 hardens. Second, pyRevit runs its own bundled Python interpreter, separate from the system installation, so the spreadsheet library has to be installed into that interpreter as part of the deployment step.",
+      note: "Two technical constraints worth noting now rather than at handover. First, the target is Revit 2027 — a release recent enough that pyRevit support for it needs to be confirmed before Phase 2 hardens; pyRevit support for a given Revit release usually arrives after that release ships, and this is the risk item to track. Second, pyRevit runs its own bundled Python interpreter, separate from the system installation, so the spreadsheet library has to be installed into that interpreter as part of the deployment step.",
     },
 
     /* ------------------------------------------------------------------ 10 */
@@ -655,7 +655,7 @@ export const ecogenFluence: Proposal = {
         {
           icon: "cpu",
           title: "A test machine or environment",
-          body: "One workstation with the target Revit version where the extension can be installed and validated before rollout.",
+          body: "One workstation with Revit 2027 where the extension can be installed and validated before rollout.",
         },
       ],
     },
@@ -825,9 +825,8 @@ export const ecogenFluence: Proposal = {
             {
               id: "Q-18",
               priority: "Medium",
-              question:
-                "Which Revit version should the tool target, and is Navisworks part of the deliverable?",
-              why: "The Revit version determines which pyRevit release is usable and when the extension can be validated. The Navisworks answer decides whether the model export stage is built at all.",
+              question: "Is Navisworks part of the deliverable?",
+              why: "The Revit target is confirmed as Revit 2027. Navisworks is still open, and the answer decides whether the model export stage is built at all.",
             },
           ],
         },
