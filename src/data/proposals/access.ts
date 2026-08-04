@@ -9,13 +9,16 @@
  * y pegar el resultado aquí. Un slug SIN entrada en este objeto queda abierto:
  * cualquiera con el enlace lo ve.
  *
- * La verificación ocurre en `src/middleware.ts`, antes de servir la página —
+ * No anotar la contraseña en claro en un comentario: el hash existe justamente
+ * para que el repositorio no la contenga. Guardarla donde se guardan las
+ * contraseñas, y compartirla con el cliente por otro canal.
+ *
+ * La verificación ocurre en `src/proxy.ts`, antes de servir la página —
  * comprobarla en el cliente no protegería nada, el contenido ya habría viajado.
  */
 export type ProposalCredentials = { salt: string; hash: string };
 
 export const proposalAccess: Record<string, ProposalCredentials> = {
-  // Contraseña: ecogen-2026
   "05.08.2026_ecogen": {
     salt: "f5e3205310359188",
     hash: "7f84bae03c106910b9af84018aa401b2f200167ecc74bcff120ccc7808d1c45a",

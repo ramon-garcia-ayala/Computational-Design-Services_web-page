@@ -29,8 +29,11 @@ const hash = Array.from(new Uint8Array(digest))
   .join("");
 
 console.log("\nPega esto en src/data/proposals/access.ts:\n");
-console.log(`  // Contraseña: ${password}`);
 console.log(`  "${slug ?? "<slug>"}": {`);
 console.log(`    salt: "${salt}",`);
 console.log(`    hash: "${hash}",`);
 console.log("  },\n");
+console.log(
+  "La contraseña no se guarda en ningún sitio. Anótala donde guardes las tuyas\n" +
+    "antes de cerrar esta terminal, y compártela con el cliente por otro canal.\n",
+);
