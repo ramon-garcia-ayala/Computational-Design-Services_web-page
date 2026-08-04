@@ -73,9 +73,9 @@ export const ecogenFluence: Proposal = {
       lead: "Every conclusion in this document is derived from real project files, not from assumptions about how the process might work.",
       stats: [
         {
-          value: "4",
+          value: "3",
           label: "Real site drawings analysed",
-          note: "Two clean layout variants plus one export from the custom layout generator and its recovery file.",
+          note: "Two clean layout variants plus one export from the custom layout generator.",
         },
         {
           value: "315 vs 16",
