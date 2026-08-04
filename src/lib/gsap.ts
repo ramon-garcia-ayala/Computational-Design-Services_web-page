@@ -5,14 +5,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 /**
- * Punto único de registro de plugins de GSAP.
+ * Single registration point for GSAP plugins.
  *
- * Importar SIEMPRE `gsap` y `ScrollTrigger` desde aquí, nunca desde el paquete
- * directamente: registrar el plugin en varios sitios provoca instancias
- * duplicadas y ScrollTriggers que no se limpian.
+ * ALWAYS import `gsap` and `ScrollTrigger` from here, never from the package
+ * directly: registering the plugin in more than one place creates duplicate
+ * instances and leaves ScrollTriggers that are never cleaned up.
  *
- * `useGSAP` se reexporta por comodidad. Úsalo con `{ scope: ref }` para que la
- * limpieza sea automática en unmount y en el doble render de StrictMode.
+ * `useGSAP` is re-exported for convenience. Use it with `{ scope: ref }` so
+ * cleanup happens automatically on unmount and across StrictMode's double
+ * render.
  */
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);

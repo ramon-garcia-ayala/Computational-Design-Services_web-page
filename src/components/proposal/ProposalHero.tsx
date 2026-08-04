@@ -1,7 +1,7 @@
 import { Reveal } from "@/components/ui/Reveal";
 import type { Proposal } from "@/data/proposals";
 
-/** Divide el titular para pintar en acento el fragmento marcado en `accent`. */
+/** Splits the headline so the fragment marked in `accent` is painted accent. */
 function splitTitle(title: string, accent?: string) {
   if (!accent) return [title, null, null] as const;
   const at = title.indexOf(accent);

@@ -9,7 +9,7 @@ import {
   signToken,
 } from "@/lib/proposal-auth";
 
-/** Verifica la contraseña de una propuesta y emite la cookie de acceso. */
+/** Verifies a proposal password and issues the access cookie. */
 export async function POST(request: NextRequest) {
   let slug: unknown;
   let password: unknown;
@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "not_configured" }, { status: 503 });
   }
 
-  /* Mismo error para slug inexistente y contraseña incorrecta: no confirmamos
-     qué propuestas existen a quien va probando URLs. */
+  /* Same error for an unknown slug and a wrong password: we don't confirm
+     which proposals exist to anyone probing URLs. */
   if (
     !credentials ||
     !safeEqual(await hashPassword(password, credentials.salt), credentials.hash)

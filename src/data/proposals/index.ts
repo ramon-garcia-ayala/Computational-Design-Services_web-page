@@ -3,7 +3,7 @@ import type { Proposal } from "./types";
 
 export type * from "./types";
 
-/** Una entrada por propuesta. Añadir aquí genera su ruta estática. */
+/** One entry per proposal. Adding one here generates its static route. */
 export const proposals: Proposal[] = [ecogenFluence];
 
 export const proposalSlugs = proposals.map((proposal) => proposal.slug);

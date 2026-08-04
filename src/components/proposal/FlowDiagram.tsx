@@ -6,7 +6,7 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 import type { FlowBlockData, FlowNode, NodeStatus } from "@/data/proposals";
 import { cn } from "@/lib/utils";
 
-/** Alto en píxeles del conector vertical entre etapas. Es también su dasharray. */
+/** Height in pixels of the vertical connector between stages. Also its dasharray. */
 const CONNECTOR = 56;
 
 const statusChip: Partial<Record<NodeStatus, string>> = {
@@ -24,12 +24,12 @@ const legend: { status: NodeStatus; label: string }[] = [
 ];
 
 /**
- * El diagrama de flujo del pipeline, dibujado a mano en el lenguaje del sitio
- * en vez de importar Mermaid.
+ * The pipeline flow diagram, drawn by hand in the site's own visual language
+ * instead of pulling in Mermaid.
  *
- * La espina son los nodos de proceso en el orden en que vienen en los datos; de
- * las aristas se derivan los ficheros de configuración que alimentan cada etapa
- * y los artefactos que produce. Sólido = construido, discontinuo = propuesto.
+ * The spine is the process nodes in the order the data lists them; the edges
+ * give us the config files feeding each stage and the artifacts it produces.
+ * Solid = built, dashed = proposed.
  */
 export function FlowDiagram({ block }: { block: FlowBlockData }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -54,8 +54,8 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
 
   useGSAP(
     () => {
-      /* Un trigger por etapa: el diagrama es más alto que la ventana, así que
-         una sola animación escalonada se gastaría fuera de pantalla. */
+      /* One trigger per stage: the diagram is taller than the viewport, so a
+         single staggered animation would burn itself off-screen. */
       const stages = gsap.utils.toArray<HTMLElement>("[data-flow-stage]");
 
       stages.forEach((stage) => {
@@ -64,8 +64,8 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
         const branches = stage.querySelectorAll("[data-branch]");
 
         if (reducedMotion) {
-          /* El hook devuelve false durante la hidratación, así que el estado
-             final se restaura explícitamente en vez de salir con un return. */
+          /* The hook returns false during hydration, so the final state is
+             restored explicitly instead of bailing out with a return. */
           gsap.set(fades, { opacity: 1, y: 0, clearProps: "transform" });
           gsap.set(strokes, { strokeDashoffset: 0 });
           gsap.set(branches, { scaleX: 1 });
@@ -121,9 +121,9 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
                 <ArtifactLabel key={feed.id} node={feed} leading />
               ))}
 
-              {/* Las tres columnas se reservan siempre, lleve o no ficheros de
-                  configuración esta etapa: si no, las tarjetas sin chip se
-                  estirarían y la espina dejaría de leerse como una columna. */}
+              {/* The three columns are always reserved, whether or not this
+                  stage carries config files: otherwise cards without a chip
+                  would stretch and the spine would stop reading as a column. */}
               <div className="grid items-center gap-4 lg:grid-cols-[minmax(0,1fr)_2.5rem_18rem]">
                 <NodeCard node={node} />
 

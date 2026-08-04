@@ -2,7 +2,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import type { StepsBlockData } from "@/data/proposals";
 import { BlockShell } from "./BlockShell";
 
-/** Los pasos del proceso en lenguaje llano, encadenados por un riel vertical. */
+/** The process steps in plain language, chained by a vertical rail. */
 export function StepsBlock({ block }: { block: StepsBlockData }) {
   return (
     <BlockShell

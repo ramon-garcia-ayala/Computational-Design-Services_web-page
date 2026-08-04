@@ -1,7 +1,7 @@
 /**
- * Iconos de línea para los bloques de propuesta. Trazo de 1.5 sobre viewBox de
- * 24, `currentColor` siempre, sin relleno: heredan el color del contenedor y no
- * meten una paleta nueva en el sitio.
+ * Line icons for the proposal blocks. 1.5 stroke on a 24 viewBox,
+ * `currentColor` throughout, no fill: they inherit the container's color and
+ * never introduce a new palette into the site.
  */
 
 const paths = {

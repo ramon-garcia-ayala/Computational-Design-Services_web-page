@@ -18,9 +18,9 @@ const priorityStyle: Record<Priority, string> = {
 };
 
 /**
- * Las preguntas abiertas para el cliente. Están diseñadas para ser respondidas,
- * no leídas en diagonal: agrupadas por tema, con prioridad visible y una línea
- * que explica qué desbloquea cada respuesta.
+ * The open questions for the client. They are designed to be answered, not
+ * skimmed: grouped by topic, with the priority visible and a line explaining
+ * what each answer unblocks.
  */
 export function QaBlock({ block }: { block: QaBlockData }) {
   const questions = block.groups.flatMap((group) => group.questions);
@@ -33,7 +33,7 @@ export function QaBlock({ block }: { block: QaBlockData }) {
     }))
     .filter((entry) => entry.count > 0);
 
-  /* Primero los grupos que contienen algo bloqueante. */
+  /* Groups containing anything blocking come first. */
   const groups = [...block.groups].sort(
     (a, b) => groupWeight(a.questions) - groupWeight(b.questions),
   );

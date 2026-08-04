@@ -7,14 +7,14 @@ import * as THREE from "three";
 const ACCENT = "#c8f94e";
 
 /**
- * Malla en wireframe que rota lentamente. Deliberadamente barata: una sola
- * geometría, material básico, sin luces ni post-procesado.
+ * Slowly rotating wireframe mesh. Deliberately cheap: a single geometry, a
+ * basic material, no lights and no post-processing.
  */
 function Lattice() {
   const meshRef = useRef<THREE.Mesh>(null);
   const pointsRef = useRef<THREE.Points>(null);
 
-  // La geometría se crea una vez y se comparte entre malla y puntos.
+  // The geometry is created once and shared between the mesh and the points.
   const geometry = useMemo(() => new THREE.IcosahedronGeometry(1.6, 3), []);
 
   useFrame((_, delta) => {
@@ -46,18 +46,18 @@ function Lattice() {
 }
 
 /**
- * Capa decorativa del hero. Se carga solo desde `HeroCanvas`, que la importa de
- * forma dinámica para que three.js quede fuera del bundle inicial.
+ * The hero's decorative layer. Loaded only from `HeroCanvas`, which imports it
+ * dynamically so that three.js stays out of the initial bundle.
  */
 export default function HeroScene() {
   return (
     <Canvas
-      // Techo de resolución: en pantallas retina el coste se dispararía sin esto.
+      // Resolution ceiling: on retina screens the cost would blow up without it.
       dpr={[1, 1.5]}
       camera={{ position: [0, 0, 4.2], fov: 45 }}
       gl={{ antialias: true, alpha: true }}
       style={{ background: "transparent" }}
-      // La escena es estática salvo la rotación; no necesita más precisión.
+      // The scene is static apart from the rotation; no more precision needed.
       frameloop="always"
     >
       <Lattice />

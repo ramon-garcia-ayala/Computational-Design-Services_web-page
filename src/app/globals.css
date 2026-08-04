@@ -2,29 +2,29 @@
 
 /* ---------------------------------------------------------------------------
    Design tokens (Tailwind v4)
-   Todo el sistema de diseño vive aquí. No hay tailwind.config.ts.
-   Cada token se consume como utilidad: bg-carbon, text-accent, font-display...
+   The whole design system lives here. There is no tailwind.config.ts.
+   Every token is consumed as a utility: bg-carbon, text-accent, font-display...
 --------------------------------------------------------------------------- */
 @theme {
-  /* Paleta: 1 oscuro primario + 1 acento */
-  --color-carbon: #0a0c0b; /* fondo primario */
-  --color-graphite: #14171a; /* superficies */
-  --color-graphite-hi: #1c2024; /* superficie elevada */
-  --color-line: #262b2e; /* bordes */
-  --color-line-soft: #1a1e21; /* bordes sutiles */
-  --color-accent: #c8f94e; /* lima eléctrica */
-  --color-accent-dim: #a3cc3e; /* hover / estados apagados */
-  --color-fg: #f2f4f0; /* texto principal */
-  --color-fg-muted: #8a918c; /* texto secundario */
+  /* Palette: 1 primary dark + 1 accent */
+  --color-carbon: #0a0c0b; /* primary background */
+  --color-graphite: #14171a; /* surfaces */
+  --color-graphite-hi: #1c2024; /* elevated surface */
+  --color-line: #262b2e; /* borders */
+  --color-line-soft: #1a1e21; /* subtle borders */
+  --color-accent: #c8f94e; /* electric lime */
+  --color-accent-dim: #a3cc3e; /* hover / dimmed states */
+  --color-fg: #f2f4f0; /* primary text */
+  --color-fg-muted: #8a918c; /* secondary text */
 
-  /* Tipografía: geométrica para títulos, neutra para cuerpo, mono para cifras */
+  /* Type: geometric for headings, neutral for body, mono for figures */
   --font-display: var(--font-sora);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains);
 
-  /* Breakpoints exactos del proyecto: 640 / 1024 / 1440.
-     `--breakpoint-*: initial` borra los defaults de Tailwind (md, xl, 2xl)
-     para que solo existan sm / lg / xl. */
+  /* The project's exact breakpoints: 640 / 1024 / 1440.
+     `--breakpoint-*: initial` clears Tailwind's defaults (md, xl, 2xl) so that
+     only sm / lg / xl exist. */
   --breakpoint-*: initial;
   --breakpoint-sm: 640px;
   --breakpoint-lg: 1024px;
@@ -36,7 +36,7 @@
 --------------------------------------------------------------------------- */
 html {
   background-color: var(--color-carbon);
-  /* El smooth scroll lo gestiona Lenis; sin él, el nativo cubre los anchors. */
+  /* Lenis handles smooth scroll; without it, native covers the anchors. */
   scroll-behavior: smooth;
 }
 
@@ -74,7 +74,7 @@ body {
   background: var(--color-fg-muted);
 }
 
-/* Lenis: mientras hay smooth scroll activo el body no debe hacer scroll nativo */
+/* Lenis: while smooth scroll is active the body must not scroll natively */
 html.lenis,
 html.lenis body {
   height: auto;
@@ -87,10 +87,10 @@ html.lenis body {
 }
 
 /* ---------------------------------------------------------------------------
-   Utilidades del proyecto
+   Project utilities
 --------------------------------------------------------------------------- */
 
-/* Contenedor estándar de página */
+/* Standard page container */
 .shell {
   width: 100%;
   margin-inline: auto;
@@ -108,7 +108,7 @@ html.lenis body {
   }
 }
 
-/* Retícula de fondo, sustituye a cualquier imagen decorativa */
+/* Background grid, stands in for any decorative image */
 @utility grid-bg {
   background-image:
     linear-gradient(to right, var(--color-line-soft) 1px, transparent 1px),
@@ -116,8 +116,8 @@ html.lenis body {
   background-size: 64px 64px;
 }
 
-/* Estado inicial de los elementos animados por GSAP.
-   Evita el flash de contenido ya visible antes de que corra el tween. */
+/* Initial state of the elements GSAP animates.
+   Avoids the flash of already-visible content before the tween runs. */
 @utility reveal-init {
   opacity: 0;
   transform: translateY(24px);
@@ -125,7 +125,7 @@ html.lenis body {
 
 /* ---------------------------------------------------------------------------
    prefers-reduced-motion
-   El JS también lo respeta (ver src/lib/useReducedMotion.ts); esto cubre CSS.
+   The JS honours it too (see src/lib/useReducedMotion.ts); this covers CSS.
 --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -146,10 +146,10 @@ html.lenis body {
 }
 
 /* ---------------------------------------------------------------------------
-   Impresión
-   Las propuestas de cliente se acaban guardando en PDF, así que tienen que
-   imprimirse legibles. Lo importante es forzar `reveal-init` a visible: lo que
-   no haya llegado a animarse saldría en blanco.
+   Print
+   Client proposals end up saved as PDFs, so they have to print legibly. The
+   key part is forcing `reveal-init` visible: anything that never got to
+   animate would come out blank.
 --------------------------------------------------------------------------- */
 @media print {
   html,
@@ -163,7 +163,7 @@ html.lenis body {
     transform: none !important;
   }
 
-  /* Cabecera fija e índice lateral: ruido en papel. */
+  /* Sticky header and side index: noise on paper. */
   [data-proposal-chrome] {
     display: none !important;
   }

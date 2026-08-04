@@ -7,7 +7,7 @@ import { getNextProject, getProjectBySlug, projects } from "@/data/projects";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-/** Todas las rutas de detalle se generan en build desde data/projects.ts */
+/** Every detail route is generated at build time from data/projects.ts */
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }

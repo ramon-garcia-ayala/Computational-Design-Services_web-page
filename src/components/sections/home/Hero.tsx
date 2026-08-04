@@ -5,16 +5,16 @@ import { CTALink } from "@/components/ui/CTALink";
 import { mailtoHref, site } from "@/data/site";
 
 /**
- * Hero del home.
+ * Home hero.
  *
- * Es un Server Component a propósito: tagline, subcopy y el hueco del chat se
- * envían ya renderizados en el HTML, así que el LCP no depende de JavaScript.
- * Lo único cliente es `HeroCanvas`, que se monta después del primer paint.
+ * A Server Component on purpose: tagline, subcopy and the chat slot ship
+ * already rendered in the HTML, so the LCP does not depend on JavaScript. The
+ * only client piece is `HeroCanvas`, which mounts after the first paint.
  */
 export function Hero() {
   return (
     <section className="relative flex min-h-[100svh] items-center overflow-hidden pt-28 pb-16 sm:pt-32">
-      {/* Fondo: retícula CSS siempre presente + escena R3F opcional encima */}
+      {/* Background: CSS grid always present + optional R3F scene on top */}
       <div className="grid-bg absolute inset-0 opacity-50" aria-hidden="true" />
       <div
         className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,rgba(200,249,78,0.07),transparent_60%)]"
@@ -49,7 +49,7 @@ export function Hero() {
           <ScrollCue className="mt-14 hidden sm:flex" />
         </div>
 
-        {/* Columna derecha: hueco del chat con la escena decorativa detrás */}
+        {/* Right column: the chat slot with the decorative scene behind it */}
         <div className="relative">
           <HeroCanvas className="-inset-12 lg:-inset-20" />
           <ChatPlaceholder className="relative z-10" />

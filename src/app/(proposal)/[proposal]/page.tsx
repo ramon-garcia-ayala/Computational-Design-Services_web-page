@@ -10,7 +10,7 @@ import { site } from "@/data/site";
 
 type PageProps = { params: Promise<{ proposal: string }> };
 
-/** Solo se sirven los slugs del registro; cualquier otro da 404. */
+/** Only slugs in the registry are served; anything else 404s. */
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -25,8 +25,8 @@ export async function generateMetadata({
   if (!proposal) return {};
 
   return {
-    /* `absolute` evita el sufijo del layout raíz: es un documento de cliente,
-       no una página del sitio. Y nunca debe acabar en un buscador. */
+    /* `absolute` skips the root layout suffix: this is a client document, not
+       a site page. And it must never end up in a search engine. */
     title: { absolute: `${proposal.project} · ${proposal.client}` },
     description: proposal.summary,
     robots: { index: false, follow: false },

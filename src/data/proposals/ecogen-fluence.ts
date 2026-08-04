@@ -3,11 +3,11 @@ import type { Proposal } from "./types";
 
 /**
  * EcoGen / Fluence — Automation Pipeline for Revit.
- * Fase 1 (Discovery), entrega del 5 de agosto de 2026, revisión el día 7.
+ * Phase 1 (Discovery), delivered 5 August 2026, reviewed on the 7th.
  *
- * Todo el copy del documento vive aquí. Las cifras internas provisionales
- * (unitarios, crew rates, markups) se dejan fuera a propósito: lo que se pide
- * al cliente es que las valide, no que las herede de nuestras estimaciones.
+ * All the copy of the document lives here. Provisional internal figures (unit
+ * rates, crew rates, markups) are deliberately left out: what the client is
+ * asked for is to validate them, not to inherit them from our estimates.
  */
 export const ecogenFluence: Proposal = {
   slug: "05.08.2026_ecogen",

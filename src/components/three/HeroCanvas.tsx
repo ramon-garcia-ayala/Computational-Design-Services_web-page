@@ -6,20 +6,20 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * three.js, R3F y drei viajan en su propio chunk gracias a este import
- * dinámico con `ssr: false`. Nada de esto entra en la carga inicial.
+ * three.js, R3F and drei ship in their own chunk thanks to this dynamic import
+ * with `ssr: false`. None of it lands in the initial load.
  */
 const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
 
 /**
- * Envoltorio de la escena decorativa del hero.
+ * Wrapper around the hero's decorative scene.
  *
- * Dos salvaguardas para no tocar el LCP:
- *  1. La escena no se importa hasta que el navegador está ocioso
- *     (`requestIdleCallback`, con fallback a `setTimeout`).
- *  2. Con `prefers-reduced-motion` no se monta nada y queda solo el fondo CSS.
+ * Two safeguards to keep the LCP untouched:
+ *  1. The scene is not imported until the browser is idle
+ *     (`requestIdleCallback`, falling back to `setTimeout`).
+ *  2. `prefers-reduced-motion` mounts nothing, leaving only the CSS backdrop.
  *
- * Es puramente decorativa: `aria-hidden` y sin eventos de puntero.
+ * It is purely decorative: `aria-hidden` and no pointer events.
  */
 export function HeroCanvas({ className }: { className?: string }) {
   const reducedMotion = useReducedMotion();

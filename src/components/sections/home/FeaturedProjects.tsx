@@ -4,7 +4,7 @@ import { ProjectCard } from "@/components/ui/ProjectCard";
 import { CTALink } from "@/components/ui/CTALink";
 import { featuredProjects } from "@/data/projects";
 
-/** Grid de destacados del home, a 2 columnas desde `lg`. */
+/** Featured grid on the home page, 2 columns from `lg` up. */
 export function FeaturedProjects() {
   return (
     <section

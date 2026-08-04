@@ -1,12 +1,12 @@
 export type ApproachStep = {
   id: string;
-  /** Numeración visible. Se escribe a mano para poder saltar o reordenar pasos. */
+  /** Visible numbering. Written by hand so steps can be skipped or reordered. */
   number: string;
   title: string;
   body: string;
 };
 
-/** Metodología en pasos. Bloque "Our Approach" de /about. */
+/** Step-by-step methodology. "Our Approach" block on /about. */
 export const approachSteps: ApproachStep[] = [
   {
     id: "map",
@@ -34,7 +34,7 @@ export const approachSteps: ApproachStep[] = [
   },
 ];
 
-/** Manifiesto corto del home. */
+/** Short manifesto on the home page. */
 export const manifesto = {
   kicker: "What we do",
   lead: "AEC teams lose their best hours to work that software should be doing.",

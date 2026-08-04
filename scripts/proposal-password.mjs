@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 /**
- * Genera la entrada de `src/data/proposals/access.ts` para una contraseña.
+ * Generates the `src/data/proposals/access.ts` entry for a password.
  *
- *     node scripts/proposal-password.mjs "la-contraseña"
- *     node scripts/proposal-password.mjs "la-contraseña" 05.08.2026_ecogen
+ *     node scripts/proposal-password.mjs "the-password"
+ *     node scripts/proposal-password.mjs "the-password" 05.08.2026_ecogen
  *
- * Imprime salt + hash listos para pegar. La contraseña nunca se guarda.
+ * Prints salt + hash ready to paste. The password is never stored.
  */
 
 const [password, slug] = process.argv.slice(2);
 
 if (!password) {
-  console.error('Uso: node scripts/proposal-password.mjs "la-contraseña" [slug]');
+  console.error('Usage: node scripts/proposal-password.mjs "the-password" [slug]');
   process.exit(1);
 }
 
@@ -28,12 +28,13 @@ const hash = Array.from(new Uint8Array(digest))
   .map((byte) => byte.toString(16).padStart(2, "0"))
   .join("");
 
-console.log("\nPega esto en src/data/proposals/access.ts:\n");
+console.log("\nPaste this into src/data/proposals/access.ts:\n");
 console.log(`  "${slug ?? "<slug>"}": {`);
 console.log(`    salt: "${salt}",`);
 console.log(`    hash: "${hash}",`);
 console.log("  },\n");
 console.log(
-  "La contraseña no se guarda en ningún sitio. Anótala donde guardes las tuyas\n" +
-    "antes de cerrar esta terminal, y compártela con el cliente por otro canal.\n",
+  "The password is not stored anywhere. Save it wherever you keep your own\n" +
+    "before closing this terminal, and share it with the client over another\n" +
+    "channel.\n",
 );

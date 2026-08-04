@@ -8,10 +8,11 @@ import { cn } from "@/lib/utils";
 type RevealProps = {
   children: React.ReactNode;
   /**
-   * Selector de los hijos a escalonar (p. ej. `"[data-reveal]"`). Si se omite,
-   * se anima el propio contenedor como un bloque.
+   * Selector for the children to stagger (e.g. `"[data-reveal]"`). If omitted,
+   * the container itself is animated as a single block.
    *
-   * Al usarlo, los hijos deben llevar la clase `reveal-init`; el contenedor no.
+   * When used, the children must carry the `reveal-init` class; the container
+   * must not.
    */
   stagger?: string;
   delay?: number;
@@ -20,13 +21,13 @@ type RevealProps = {
 };
 
 /**
- * Entrada estándar de sección: fade + subida de 24px al entrar en viewport,
- * una sola vez. Es la única forma en que el sitio anima apariciones, para no
- * repetir configuración de ScrollTrigger en cada sección.
+ * Standard section entrance: fade + 24px rise when it enters the viewport, once
+ * only. This is the only way the site animates reveals, so ScrollTrigger setup
+ * is not repeated in every section.
  *
- * Los elementos parten con `reveal-init` (opacidad 0 en CSS), así que no hay
- * flash de contenido antes de que corra el tween. Con `prefers-reduced-motion`
- * esa clase se neutraliza desde globals.css y aquí no se crea ningún trigger.
+ * Elements start out with `reveal-init` (opacity 0 in CSS), so there is no
+ * flash of content before the tween runs. With `prefers-reduced-motion` that
+ * class is neutralised from globals.css and no trigger is created here.
  */
 export function Reveal({
   children,
@@ -49,7 +50,7 @@ export function Reveal({
       if (targets.length === 0) return;
 
       if (reducedMotion) {
-        // Sin animación: se deja el estado final y se limpia la clase inicial.
+        // No animation: settle on the final state and clear the initial class.
         gsap.set(targets, { opacity: 1, y: 0, clearProps: "transform" });
         return;
       }

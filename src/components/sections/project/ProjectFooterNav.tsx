@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
 import type { Project } from "@/data/projects";
 
-/** Salto al siguiente proyecto al final del detalle. */
+/** Jump to the next project at the end of the detail page. */
 export function ProjectFooterNav({ next }: { next: Project }) {
   return (
     <section className="border-t border-line">

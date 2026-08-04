@@ -3,10 +3,10 @@ import type { Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
 /**
- * Tarjeta de proyecto del grid (home y /projects).
+ * Project card used in the grid (home and /projects).
  *
- * Sin `cover` pinta un bloque con retícula en vez de una imagen, para que el
- * proyecto funcione sin ningún asset real.
+ * Without a `cover` it paints a grid-textured block instead of an image, so a
+ * project works without any real asset.
  */
 export function ProjectCard({
   project,
@@ -26,7 +26,7 @@ export function ProjectCard({
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-line bg-graphite">
         {project.cover ? (
-          // eslint-disable-next-line @next/next/no-img-element -- portadas de dimensiones variables
+          // eslint-disable-next-line @next/next/no-img-element -- covers with varying dimensions
           <img
             src={project.cover}
             alt=""

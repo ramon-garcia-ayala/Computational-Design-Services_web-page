@@ -10,7 +10,7 @@ import { StepsBlock } from "./blocks/StepsBlock";
 import { TableBlock } from "./blocks/TableBlock";
 import { TimelineBlock } from "./blocks/TimelineBlock";
 
-/** Único punto donde un tipo de bloque se traduce a un componente. */
+/** The single place where a block kind maps to a component. */
 export function ProposalRenderer({ blocks }: { blocks: ProposalBlock[] }) {
   return (
     <>

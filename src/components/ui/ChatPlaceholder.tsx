@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Hueco reservado para el chatbot conversacional (FASE 2).
+ * Slot reserved for the conversational chatbot (PHASE 2).
  *
- * Deliberadamente VACÍO: no implementa estado, entrada de texto ni lógica de
- * chat. Solo fija altura y posición dentro del hero para que al montar el
- * componente real no cambie el layout ni se mueva el LCP.
+ * Deliberately EMPTY: it implements no state, no text input and no chat logic.
+ * It only pins height and position inside the hero so that mounting the real
+ * component does not shift the layout or move the LCP.
  *
- * Al construir la Fase 2, sustituir el contenido interno por el widget y
- * mantener las dimensiones del contenedor.
+ * When building Phase 2, replace the inner content with the widget and keep
+ * the container's dimensions.
  */
 export function ChatPlaceholder({ className }: { className?: string }) {
   return (
@@ -33,7 +33,7 @@ export function ChatPlaceholder({ className }: { className?: string }) {
         </span>
       </div>
 
-      {/* Slot del widget conversacional. No añadir lógica aquí en Fase 1. */}
+      {/* Slot for the conversational widget. Add no logic here in Phase 1. */}
       <div className="flex h-full min-h-[140px] items-center justify-center p-6">
         <p className="max-w-[22ch] text-center text-sm text-fg-muted">
           Conversational assistant lands here.

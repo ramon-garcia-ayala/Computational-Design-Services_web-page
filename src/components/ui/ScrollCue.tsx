@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Indicador de scroll del hero. Es puramente decorativo (CSS, sin JS) para no
- * añadir trabajo antes del LCP.
+ * The hero's scroll indicator. Purely decorative (CSS, no JS) so it adds no
+ * work before the LCP.
  */
 export function ScrollCue({ className }: { className?: string }) {
   return (

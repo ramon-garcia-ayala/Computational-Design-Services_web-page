@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 export type IndexEntry = { id: string; label: string };
 
 /**
- * Rail de navegación del documento. Vive en el margen izquierdo (`.shell` deja
- * 3rem de padding a partir de 1024px), así que no invade el contenido en ningún
- * ancho. Por debajo de `lg` y al imprimir, no se muestra.
+ * Navigation rail for the document. It sits in the left margin (`.shell` leaves
+ * 3rem of padding from 1024px up), so it never encroaches on the content at any
+ * width. Below `lg`, and when printing, it is not shown.
  */
 export function ProposalIndex({ entries }: { entries: IndexEntry[] }) {
   const [activeId, setActiveId] = useState(entries[0]?.id ?? "");
@@ -20,9 +20,9 @@ export function ProposalIndex({ entries }: { entries: IndexEntry[] }) {
 
     if (sections.length === 0) return;
 
-    /* La sección activa es la última que ha cruzado el tercio superior de la
-       ventana. Con un solo observer y un margen inferior agresivo, la lectura
-       coincide con lo que el ojo tiene delante. */
+    /* The active section is the last one to have crossed the top third of the
+       viewport. With a single observer and an aggressive bottom margin, the
+       reading matches whatever the eye is actually on. */
     const observer = new IntersectionObserver(
       (entries_) => {
         const visible = entries_

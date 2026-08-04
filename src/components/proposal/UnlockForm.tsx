@@ -26,8 +26,8 @@ export function UnlockForm({ slug }: { slug: string }) {
       });
 
       if (response.ok) {
-        /* Recarga completa a propósito: la cookie tiene que llegar al
-           middleware, y una navegación cliente no vuelve a pasar por él. */
+        /* Full reload on purpose: the cookie has to reach the middleware, and
+           a client-side navigation never goes through it again. */
         window.location.assign(`/${slug}`);
         return;
       }

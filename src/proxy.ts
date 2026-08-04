@@ -3,19 +3,19 @@ import { proposalAccess } from "@/data/proposals/access";
 import { cookieName, getSecret, verifyToken } from "@/lib/proposal-auth";
 
 /**
- * Portero de las propuestas de cliente. (En Next 16 esto es `proxy`, el
- * sustituto de `middleware`.)
+ * Gatekeeper for client proposals. (In Next 16 this is `proxy`, the
+ * replacement for `middleware`.)
  *
- * Corre ANTES de servir la página, que es la única forma de que la contraseña
- * sirva de algo: la propuesta es SSG y su HTML ya contiene todo el contenido.
- * Cubre también las peticiones RSC de la misma ruta, porque comparten pathname.
+ * It runs BEFORE the page is served, which is the only way the password means
+ * anything: proposals are SSG and their HTML already contains all the content.
+ * It also covers RSC requests for the same route, since they share a pathname.
  */
 export async function proxy(request: NextRequest) {
   const slug = decodeURIComponent(request.nextUrl.pathname.slice(1));
   const credentials = proposalAccess[slug];
 
-  /* Cualquier otra ruta del sitio, y las propuestas sin contraseña
-     configurada, pasan de largo. */
+  /* Any other route on the site, and proposals with no password configured,
+     pass straight through. */
   if (!credentials) return NextResponse.next();
 
   const secret = getSecret();
@@ -33,9 +33,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  /* Deliberadamente amplio: los slugs de propuesta llevan puntos
-     (05.08.2026_ecogen), así que la exclusión habitual de rutas con extensión
-     los dejaría fuera del control de acceso. El filtro real es el lookup de
-     arriba, que descarta todo lo demás en una comparación. */
+  /* Deliberately broad: proposal slugs contain dots (05.08.2026_ecogen), so
+     the usual exclusion of paths with an extension would leave them outside
+     access control. The real filter is the lookup above, which discards
+     everything else in a single comparison. */
   matcher: ["/((?!_next/|api/).*)"],
 };

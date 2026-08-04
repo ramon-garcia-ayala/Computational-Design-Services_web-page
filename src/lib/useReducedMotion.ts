@@ -14,18 +14,18 @@ function getSnapshot() {
   return window.matchMedia(QUERY).matches;
 }
 
-/** En servidor asumimos "sin reducción" para que el HTML estático sea el normal. */
+/** On the server we assume "no reduction" so the static HTML is the normal one. */
 function getServerSnapshot() {
   return false;
 }
 
 /**
- * Única fuente de verdad para `prefers-reduced-motion` en el sitio.
+ * Single source of truth for `prefers-reduced-motion` across the site.
  *
- * Al devolver `true` el proyecto desactiva tres cosas:
- *  1. Lenis no se instancia y el scroll vuelve a ser nativo (SmoothScroll.tsx)
- *  2. Los tweens de GSAP se sustituyen por su estado final, sin scrub ni pin
- *  3. La escena de React Three Fiber del hero no se monta (HeroCanvas.tsx)
+ * When it returns `true` the project disables three things:
+ *  1. Lenis is not instantiated and scrolling falls back to native (SmoothScroll.tsx)
+ *  2. GSAP tweens are replaced by their end state, with no scrub and no pin
+ *  3. The hero's React Three Fiber scene is not mounted (HeroCanvas.tsx)
  */
 export function useReducedMotion(): boolean {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);

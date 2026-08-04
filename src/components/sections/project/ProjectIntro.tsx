@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
 import type { Project } from "@/data/projects";
 
-/** Cabecera de la página de detalle de un proyecto. */
+/** Header of a project's detail page. */
 export function ProjectIntro({ project }: { project: Project }) {
   return (
     <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">

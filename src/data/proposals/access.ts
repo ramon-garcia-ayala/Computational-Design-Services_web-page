@@ -1,20 +1,21 @@
 /**
- * Contraseñas de acceso a las propuestas.
+ * Access passwords for the proposals.
  *
- * Nunca en texto plano: se guarda un salt aleatorio y el SHA-256 de
- * `salt + contraseña`. Generar la entrada con:
+ * Never in plain text: a random salt and the SHA-256 of `salt + password` are
+ * stored instead. Generate the entry with:
  *
- *     node scripts/proposal-password.mjs "la-contraseña"
+ *     node scripts/proposal-password.mjs "the-password"
  *
- * y pegar el resultado aquí. Un slug SIN entrada en este objeto queda abierto:
- * cualquiera con el enlace lo ve.
+ * and paste the result here. A slug with NO entry in this object is left open:
+ * anyone with the link can see it.
  *
- * No anotar la contraseña en claro en un comentario: el hash existe justamente
- * para que el repositorio no la contenga. Guardarla donde se guardan las
- * contraseñas, y compartirla con el cliente por otro canal.
+ * Do not write the password down in the clear in a comment: the hash exists
+ * precisely so the repository does not contain it. Keep it wherever passwords
+ * are kept, and share it with the client through another channel.
  *
- * La verificación ocurre en `src/proxy.ts`, antes de servir la página —
- * comprobarla en el cliente no protegería nada, el contenido ya habría viajado.
+ * Verification happens in `src/proxy.ts`, before the page is served — checking
+ * it on the client would protect nothing, the content would already have
+ * travelled.
  */
 export type ProposalCredentials = { salt: string; hash: string };
 

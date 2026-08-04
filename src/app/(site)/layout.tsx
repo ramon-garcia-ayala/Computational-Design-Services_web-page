@@ -1,8 +1,8 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
-/* Chrome del sitio público. Las propuestas de cliente viven en (proposal) y
-   llevan su propia barra, así que no heredan esta navegación. */
+/* Chrome for the public site. Client proposals live in (proposal) and carry
+   their own bar, so they do not inherit this navigation. */
 export default function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

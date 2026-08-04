@@ -2,10 +2,10 @@ import type { Client } from "@/data/clients";
 import { cn } from "@/lib/utils";
 
 /**
- * Placeholder gris para los logos de cliente.
+ * Grey placeholder for the client logos.
  *
- * En cuanto exista el SVG real basta con rellenar `logo` en data/clients.ts:
- * este componente pasa a pintar la imagen y el bloque gris desaparece.
+ * As soon as the real SVG exists, just fill in `logo` in data/clients.ts: this
+ * component then paints the image and the grey block disappears.
  */
 export function LogoPlaceholder({
   client,
@@ -23,7 +23,7 @@ export function LogoPlaceholder({
       title={client.name}
     >
       {client.logo ? (
-        // eslint-disable-next-line @next/next/no-img-element -- logos externos sin dimensiones conocidas
+        // eslint-disable-next-line @next/next/no-img-element -- external logos with unknown dimensions
         <img
           src={client.logo}
           alt={client.name}

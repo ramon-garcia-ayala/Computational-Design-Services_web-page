@@ -3,8 +3,8 @@ import { StatItem } from "@/components/ui/StatItem";
 import { stats } from "@/data/stats";
 
 /**
- * Bloque de métricas del home. El número de columnas se deriva del array, así
- * que añadir o quitar métricas en data/stats.ts no obliga a tocar nada aquí.
+ * Metrics block on the home page. The column count is derived from the array,
+ * so adding or removing metrics in data/stats.ts requires no change here.
  */
 export function Stats() {
   return (

@@ -9,7 +9,7 @@ const stateLabel = {
   next: "Planned",
 } as const;
 
-/** Fases del encargo. Misma convención: sólido lo cerrado, discontinuo lo futuro. */
+/** Engagement phases. Same convention: solid for closed, dashed for upcoming. */
 export function TimelineBlock({ block }: { block: TimelineBlockData }) {
   return (
     <BlockShell

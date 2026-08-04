@@ -7,16 +7,15 @@ import type { ProjectPanel } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
 /**
- * Recorrido horizontal del caso de estudio.
+ * Horizontal walkthrough of the case study.
  *
- * De `lg` en adelante la sección se fija (pin) y la fila de paneles se desplaza
- * en X siguiendo el scroll vertical. Por debajo de 1024px, o con
- * `prefers-reduced-motion`, los paneles se apilan en vertical y no se crea
- * ningún ScrollTrigger: el contenido es el mismo, solo cambia la forma de
- * recorrerlo.
+ * From `lg` up the section is pinned and the row of panels moves along X,
+ * following the vertical scroll. Below 1024px, or with
+ * `prefers-reduced-motion`, the panels stack vertically and no ScrollTrigger is
+ * created: the content is the same, only the way you move through it changes.
  *
- * `gsap.matchMedia` es quien decide: al cruzar el breakpoint revierte lo creado
- * en la condición anterior, sin listeners de resize a mano.
+ * `gsap.matchMedia` is what decides: crossing the breakpoint reverts whatever
+ * the previous condition created, with no hand-rolled resize listeners.
  */
 export function HorizontalScroll({ panels }: { panels: ProjectPanel[] }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -25,10 +24,10 @@ export function HorizontalScroll({ panels }: { panels: ProjectPanel[] }) {
 
   useGSAP(
     () => {
-      // La condición incluye la preferencia del sistema a propósito: se evalúa
-      // en el momento del efecto, así que el pin nunca llega a crearse con
-      // reduced motion, ni siquiera en el render de hidratación (donde el hook
-      // todavía no puede conocer la preferencia real).
+      // The condition deliberately includes the system preference: it is
+      // evaluated at effect time, so the pin is never created under reduced
+      // motion, not even on the hydration render (where the hook cannot yet
+      // know the real preference).
       const mm = gsap.matchMedia();
 
       mm.add(
@@ -38,8 +37,8 @@ export function HorizontalScroll({ panels }: { panels: ProjectPanel[] }) {
           const section = sectionRef.current;
           if (!track || !section) return;
 
-          // Distancia real a recorrer; se recalcula en cada refresh por si
-          // cambian tipografías o el ancho de la ventana.
+          // The real distance to travel; recomputed on every refresh in case
+          // the fonts or the window width change.
           const getDistance = () => track.scrollWidth - window.innerWidth;
 
           gsap.to(track, {
@@ -69,7 +68,7 @@ export function HorizontalScroll({ panels }: { panels: ProjectPanel[] }) {
       aria-label="Case study"
       className={cn(
         "relative border-t border-line",
-        // Solo la variante animada necesita ocupar la ventana completa.
+        // Only the animated variant needs to fill the whole viewport.
         !reducedMotion && "lg:h-screen lg:overflow-hidden",
       )}
     >

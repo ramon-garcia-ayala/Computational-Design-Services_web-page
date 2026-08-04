@@ -23,14 +23,14 @@ type CTALinkProps = {
   children: React.ReactNode;
   variant?: Variant;
   size?: Size;
-  /** Los mailto y los enlaces externos evitan el router de Next. */
+  /** mailto and external links bypass the Next router. */
   external?: boolean;
   className?: string;
 };
 
 /**
- * Enlace de acción del sitio. Único punto donde vive el estilo de los CTAs,
- * para que header, overlay, secciones y footer no diverjan.
+ * The site's action link. The single place where CTA styling lives, so that
+ * header, overlay, sections and footer never drift apart.
  */
 export function CTALink({
   href,

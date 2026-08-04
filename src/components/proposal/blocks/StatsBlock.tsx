@@ -3,9 +3,9 @@ import type { StatsBlockData } from "@/data/proposals";
 import { BlockShell } from "./BlockShell";
 
 /**
- * Cifras del alcance de la investigación. A diferencia de `StatItem`, aquí los
- * valores no son números que se puedan contar hacia arriba ("315 → 16"), así
- * que se renderizan estáticos con la misma tipografía.
+ * Figures for the scope of the research. Unlike `StatItem`, the values here are
+ * not numbers that can be counted up to ("315 → 16"), so they are rendered
+ * statically with the same typography.
  */
 export function StatsBlock({ block }: { block: StatsBlockData }) {
   return (

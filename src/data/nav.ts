@@ -3,11 +3,11 @@ import { mailtoHref } from "./site";
 export type NavLink = {
   label: string;
   href: string;
-  /** Los externos y los mailto abren fuera del router de Next. */
+  /** External links and mailto open outside the Next router. */
   external?: boolean;
 };
 
-/** Navegación principal del menú overlay fullscreen. */
+/** Main navigation of the fullscreen overlay menu. */
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "About us", href: "/about" },
@@ -15,5 +15,5 @@ export const navLinks: NavLink[] = [
   { label: "Contact", href: mailtoHref, external: true },
 ];
 
-/** Enlace secundario destacado dentro del overlay. */
+/** Secondary highlighted link inside the overlay. */
 export const labsLink: NavLink = { label: "Labs", href: "/labs" };

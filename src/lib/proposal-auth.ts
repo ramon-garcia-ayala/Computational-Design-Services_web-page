@@ -1,22 +1,22 @@
 /**
- * Verificación de contraseña de las propuestas.
+ * Password verification for proposals.
  *
- * Todo va sobre Web Crypto (`crypto.subtle`), así que el mismo módulo corre
- * igual en el middleware, en el Route Handler y en el script de Node que genera
- * los hashes. Nada de `bcrypt`: es una dependencia nativa y no funciona en el
- * runtime del middleware.
+ * Everything runs on Web Crypto (`crypto.subtle`), so the same module works
+ * unchanged in the proxy, in the Route Handler and in the Node script that
+ * generates the hashes. No `bcrypt`: it is a native dependency and does not
+ * work in the proxy runtime.
  */
 
 const encoder = new TextEncoder();
 
-/** 30 días. Lo que dura el acceso antes de volver a pedir la contraseña. */
+/** 30 days. How long access lasts before the password is asked for again. */
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 30;
 
 export const COOKIE_PREFIX = "r2ch_proposal_";
 
 export function cookieName(slug: string): string {
-  /* El slug lleva puntos, que son válidos en un nombre de cookie pero no en
-     todas las implementaciones antiguas. Se normaliza a guiones bajos. */
+  /* Slugs contain dots, which are valid in a cookie name but not in every
+     older implementation. They are normalised to underscores. */
   return COOKIE_PREFIX + slug.replace(/[^a-zA-Z0-9_-]/g, "_");
 }
 
@@ -26,7 +26,7 @@ function toHex(buffer: ArrayBuffer): string {
     .join("");
 }
 
-/** SHA-256 de `salt + password`, en hexadecimal. */
+/** SHA-256 of `salt + password`, in hexadecimal. */
 export async function hashPassword(
   password: string,
   salt: string,
@@ -38,7 +38,7 @@ export async function hashPassword(
   return toHex(digest);
 }
 
-/** Comparación en tiempo constante: no revela cuántos caracteres acertaste. */
+/** Constant-time comparison: it leaks no hint of how many characters matched. */
 export function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -60,8 +60,8 @@ async function hmac(message: string, secret: string): Promise<string> {
 }
 
 /**
- * Token de sesión: `<caducidad>.<firma>`. La firma cubre el slug, así que una
- * cookie de una propuesta no sirve para abrir otra.
+ * Session token: `<expiry>.<signature>`. The signature covers the slug, so one
+ * proposal's cookie cannot be used to open another.
  */
 export async function signToken(
   slug: string,
@@ -90,9 +90,9 @@ export async function verifyToken(
 }
 
 /**
- * Secreto de firma. En producción es obligatorio: sin él se deniega el acceso
- * en vez de firmar con algo adivinable. En desarrollo se permite un valor fijo
- * para que el sitio funcione recién clonado.
+ * Signing secret. Required in production: without it access is denied rather
+ * than signed with something guessable. In development a fixed value is
+ * allowed so the site works straight after cloning.
  */
 export function getSecret(): string | null {
   const secret = process.env.PROPOSAL_SECRET;

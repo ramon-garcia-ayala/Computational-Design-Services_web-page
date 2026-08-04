@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 import { BlockShell } from "./BlockShell";
 
 /**
- * Tabla de datos. Sin bordes completos — solo separadores horizontales, que es
- * lo que ya hace el resto del sitio. En móvil hace scroll dentro de su propio
- * contenedor para que el `<body>` nunca se desplace en horizontal.
+ * Data table. No full borders — just horizontal separators, which is what the
+ * rest of the site already does. On mobile it scrolls inside its own container
+ * so that the `<body>` never scrolls horizontally.
  */
 export function TableBlock({ block }: { block: TableBlockData }) {
   return (

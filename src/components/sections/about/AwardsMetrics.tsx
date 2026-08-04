@@ -1,7 +1,7 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { awards, studioMetrics } from "@/data/awards";
 
-/** Bloque de reconocimientos y métricas de estudio de /about. */
+/** Recognition and studio metrics block on /about. */
 export function AwardsMetrics() {
   return (
     <section

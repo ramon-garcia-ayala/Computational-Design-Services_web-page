@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 type MenuOverlayProps = {
   open: boolean;
   onClose: () => void;
-  /** Id del botón que abre el menú, para devolverle el foco al cerrar. */
+  /** Id of the button that opens the menu, to return focus to it on close. */
   labelledBy: string;
 };
 
@@ -19,15 +19,15 @@ const FOCUSABLE =
   'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])';
 
 /**
- * Menú fullscreen. Se monta siempre y se oculta con `pointer-events` y
- * visibilidad para poder animar la salida; cuando está cerrado queda fuera del
- * árbol de accesibilidad (`aria-hidden` + `inert`).
+ * Fullscreen menu. It is always mounted and hidden through `pointer-events`
+ * and visibility so the exit can be animated; while closed it stays out of the
+ * accessibility tree (`aria-hidden` + `inert`).
  */
 export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
-  // Cierre con Escape y bloqueo del scroll de fondo mientras está abierto.
+  // Escape closes it, and background scroll is locked while it is open.
   useEffect(() => {
     if (!open) return;
 
@@ -38,7 +38,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
       }
       if (event.key !== "Tab" || !containerRef.current) return;
 
-      // Trampa de foco: el tabulador circula solo dentro del overlay.
+      // Focus trap: tabbing cycles only within the overlay.
       const items = Array.from(
         containerRef.current.querySelectorAll<HTMLElement>(FOCUSABLE),
       );
@@ -61,7 +61,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
     document.documentElement.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
 
-    // El primer enlace recibe el foco al abrir.
+    // The first link takes focus on open.
     const firstItem =
       containerRef.current?.querySelector<HTMLElement>(FOCUSABLE);
     firstItem?.focus();
@@ -72,7 +72,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
     };
   }, [open, onClose]);
 
-  // Entrada escalonada de los enlaces. Con reduced motion no hay tween.
+  // Staggered entrance for the links. With reduced motion there is no tween.
   useGSAP(
     () => {
       if (!open || reducedMotion) return;
@@ -148,7 +148,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
           data-menu-aside
           className="flex w-full flex-col gap-8 lg:max-w-sm lg:pb-4"
         >
-          {/* Newsletter: solo UI en esta fase, sin backend conectado. */}
+          {/* Newsletter: UI only at this phase, no backend wired up. */}
           <form
             className="flex flex-col gap-3"
             onSubmit={(event) => event.preventDefault()}

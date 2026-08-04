@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 import { Icon } from "../icons";
 
 /**
- * Aviso corto entre secciones. No lleva la carcasa de bloque: es una nota, no
- * un apartado, y por eso tampoco aparece en el índice lateral.
+ * Short aside between sections. It carries no block shell: it is a note, not a
+ * section, which is also why it never shows up in the side index.
  */
 export function NoteBlock({ block }: { block: NoteBlockData }) {
   return (

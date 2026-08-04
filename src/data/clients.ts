@@ -1,14 +1,14 @@
 export type Client = {
   id: string;
-  /** Nombre mostrado en el placeholder gris hasta tener el SVG real. */
+  /** Name shown in the grey placeholder until the real SVG is available. */
   name: string;
-  /** Ruta del logo en /public cuando exista. Si falta, se dibuja el placeholder. */
+  /** Logo path under /public once it exists. If missing, the placeholder is drawn. */
   logo?: string;
 };
 
 /**
- * Banda de logos de cliente. Mientras `logo` esté vacío, `LogoPlaceholder`
- * dibuja un bloque gris con el nombre, sin depender de ningún asset externo.
+ * Client logo strip. While `logo` is empty, `LogoPlaceholder` draws a grey
+ * block with the name, without depending on any external asset.
  */
 export const clients: Client[] = [
   { id: "client-1", name: "Nordhaus" },

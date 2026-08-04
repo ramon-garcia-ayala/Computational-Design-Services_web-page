@@ -5,11 +5,11 @@ import type { ExpertiseArea } from "@/data/expertise";
 import { cn } from "@/lib/utils";
 
 /**
- * Áreas de expertise: acordeón en móvil y tabs a partir de `lg`.
+ * Expertise areas: an accordion on mobile and tabs from `lg` up.
  *
- * Ambas variantes comparten el mismo estado (`activeId`), así que al cambiar de
- * breakpoint no se pierde la selección. Solo una está visible a la vez, por eso
- * los paneles de escritorio se marcan `aria-hidden` cuando no son el activo.
+ * Both variants share the same state (`activeId`), so crossing the breakpoint
+ * does not lose the selection. Only one is visible at a time, which is why the
+ * desktop panels are marked `aria-hidden` when they are not the active one.
  */
 export function Accordion({ items }: { items: ExpertiseArea[] }) {
   const [activeId, setActiveId] = useState(items[0]?.id ?? "");
@@ -17,7 +17,7 @@ export function Accordion({ items }: { items: ExpertiseArea[] }) {
 
   return (
     <div>
-      {/* Acordeón (móvil y tablet) */}
+      {/* Accordion (mobile and tablet) */}
       <div className="flex flex-col lg:hidden">
         {items.map((item) => {
           const open = item.id === activeId;
@@ -77,7 +77,7 @@ export function Accordion({ items }: { items: ExpertiseArea[] }) {
         })}
       </div>
 
-      {/* Tabs (lg en adelante) */}
+      {/* Tabs (lg and up) */}
       <div className="hidden gap-12 lg:grid lg:grid-cols-[minmax(0,18rem)_1fr]">
         <div role="tablist" aria-label="Expertise areas" className="flex flex-col">
           {items.map((item) => {

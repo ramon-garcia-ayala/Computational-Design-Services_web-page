@@ -2,7 +2,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { LogoPlaceholder } from "@/components/ui/LogoPlaceholder";
 import { clients } from "@/data/clients";
 
-/** Banda de logos de cliente. Se usa igual en el home y en /about. */
+/** Band of client logos. Used the same way on the home page and on /about. */
 export function ClientLogos({ title = "Trusted by teams building the built world" }) {
   return (
     <section

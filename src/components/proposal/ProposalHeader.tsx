@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Proposal } from "@/data/proposals";
 
-/** Barra fija del documento. Sin navegación: el cliente no debe salirse. */
+/** Fixed document bar. No navigation: the client should not wander off. */
 export function ProposalHeader({ proposal }: { proposal: Proposal }) {
   return (
     <header

@@ -2,7 +2,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/utils";
 
-/** Carcasa común de todas las secciones del documento: ritmo y cabecera. */
+/** Shared shell for every section of the document: rhythm and heading. */
 export function BlockShell({
   id,
   kicker,
@@ -16,7 +16,7 @@ export function BlockShell({
   kicker?: string;
   title?: string;
   lead?: string;
-  /** Añade la retícula de fondo. Reservado a las secciones de más peso. */
+  /** Adds the background grid. Reserved for the heaviest sections. */
   grid?: boolean;
   className?: string;
   children: React.ReactNode;

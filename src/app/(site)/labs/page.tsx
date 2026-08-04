@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Experiments, prototypes and open tools from R2ch-Tech. Coming soon.",
 };
 
-/** Playground del estudio. Placeholder hasta que haya contenido real. */
+/** Studio playground. Placeholder until there is real content. */
 export default function LabsPage() {
   return (
     <section className="relative flex min-h-[100svh] items-center overflow-hidden pt-32 pb-24">

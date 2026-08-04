@@ -1,41 +1,41 @@
 import type { IconName } from "@/components/proposal/icons";
 
 /**
- * Modelo de datos de las propuestas de cliente.
+ * Data model for the client proposals.
  *
- * Una propuesta es un documento heterogéneo: narrativa, diagramas, tablas y
- * preguntas abiertas. En vez de una página a medida por cliente, se describe
- * como una lista de bloques tipados que `ProposalRenderer` mapea a componentes.
- * Igual que en `data/projects.ts`, aquí vive todo el copy.
+ * A proposal is a heterogeneous document: narrative, diagrams, tables and open
+ * questions. Instead of a bespoke page per client, it is described as a list of
+ * typed blocks that `ProposalRenderer` maps to components. Just like in
+ * `data/projects.ts`, all the copy lives here.
  */
 
 /* --------------------------------------------------------------------------
-   Diagrama de flujo
-   Convención heredada del propio dibujo técnico: sólido = construido,
-   discontinuo = propuesto.
+   Flow diagram
+   Convention inherited from technical drawing itself: solid = built,
+   dashed = proposed.
 -------------------------------------------------------------------------- */
 
 export type NodeStatus =
-  /** Construido y probado contra datos reales. */
+  /** Built and tested against real data. */
   | "built"
-  /** Definido pero todavía sin construir. */
+  /** Defined but not built yet. */
   | "pending"
-  /** Fuera del alcance inmediato, fase posterior. */
+  /** Outside the immediate scope, a later phase. */
   | "deferred"
-  /** Fichero de configuración: el contrato de datos de una etapa. */
+  /** Configuration file: the data contract of a stage. */
   | "config"
-  /** Artefacto que viaja entre etapas (un fichero, una estructura). */
+  /** Artifact travelling between stages (a file, a structure). */
   | "artifact";
 
 export type FlowNode = {
   id: string;
-  /** Número de etapa en la espina principal. Los config/artifact no lo llevan. */
+  /** Stage number on the main spine. config/artifact nodes do not carry one. */
   stage?: string;
   title: string;
-  /** Segunda línea: el nombre técnico del módulo o del fichero. */
+  /** Second line: the technical name of the module or the file. */
   meta?: string;
   status: NodeStatus;
-  /** Quién es responsable de construirlo, si aún no existe. */
+  /** Who is responsible for building it, if it does not exist yet. */
   owner?: string;
   detail?: string;
 };
@@ -43,22 +43,22 @@ export type FlowNode = {
 export type FlowEdge = {
   from: string;
   to: string;
-  /** `config` y `optional` se dibujan discontinuos. */
+  /** `config` and `optional` are drawn dashed. */
   kind?: "flow" | "config" | "optional";
 };
 
 /* --------------------------------------------------------------------------
-   Preguntas abiertas
+   Open questions
 -------------------------------------------------------------------------- */
 
 export type Priority = "Blocking" | "High" | "Medium" | "Low";
 
 export type Question = {
-  /** Referencia corta y estable para citarla en la reunión: "Q-01". */
+  /** Short, stable reference for citing it in the meeting: "Q-01". */
   id: string;
   priority: Priority;
   question: string;
-  /** Por qué importa la respuesta. Una frase. */
+  /** Why the answer matters. One sentence. */
   why: string;
 };
 
@@ -69,23 +69,23 @@ export type QuestionGroup = {
 };
 
 /* --------------------------------------------------------------------------
-   Bloques
+   Blocks
 -------------------------------------------------------------------------- */
 
 type BlockBase = {
-  /** Ancla de la sección y clave del índice lateral. */
+  /** Section anchor and key in the side index. */
   id: string;
   kicker?: string;
   title?: string;
   lead?: string;
-  /** Oculta la sección del índice lateral (para bloques de apoyo). */
+  /** Hides the section from the side index (for supporting blocks). */
   unlisted?: boolean;
 };
 
 export type ProseBlockData = BlockBase & {
   kind: "prose";
   body?: string[];
-  /** Lista de comprobación con ancla, para mapear requisitos a secciones. */
+  /** Checklist with anchors, to map requirements to sections. */
   checklist?: { label: string; href?: string }[];
   cta?: { label: string; href: string; external?: boolean };
 };
@@ -162,25 +162,25 @@ export type ProposalBlock =
   | NoteBlockData;
 
 /* --------------------------------------------------------------------------
-   Propuesta
+   Proposal
 -------------------------------------------------------------------------- */
 
 export type Proposal = {
-  /** Es también la URL: r2ch.tech/<slug>. Formato DD.MM.YYYY_cliente. */
+  /** Also the URL: r2ch.tech/<slug>. Format DD.MM.YYYY_client. */
   slug: string;
   client: string;
   project: string;
   phase: string;
   dateLabel: string;
   reviewLabel: string;
-  /** Muestra el tag CONFIDENTIAL en la cabecera. */
+  /** Shows the CONFIDENTIAL tag in the header. */
   confidential?: boolean;
-  /** Resumen para el <title> y la metadata. */
+  /** Summary for the <title> and the metadata. */
   summary: string;
   hero: {
     kicker: string;
     title: string;
-    /** Fragmento del título que se pinta en acento. Debe aparecer en `title`. */
+    /** Fragment of the title rendered in the accent colour. Must appear in `title`. */
     accent?: string;
     lead: string;
   };

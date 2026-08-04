@@ -2,7 +2,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { approachSteps } from "@/data/approach";
 
-/** "Our Approach": metodología en pasos numerados. */
+/** "Our Approach": the methodology as numbered steps. */
 export function Approach() {
   return (
     <section

@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 import { BlockShell } from "./BlockShell";
 
 /**
- * Dos columnas de estado. Toma prestada la convención del propio dibujo
- * técnico: línea sólida para lo construido, discontinua para lo propuesto.
+ * Two status columns. It borrows the convention of technical drawing itself: a
+ * solid line for what is built, a dashed one for what is proposed.
  */
 export function SplitBlock({ block }: { block: SplitBlockData }) {
   return (

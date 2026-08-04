@@ -1,10 +1,10 @@
 export type ProjectPanel = {
   id: string;
-  /** Etiqueta corta que ordena el recorrido: "01 · Context", "02 · System"... */
+  /** Short label that orders the walkthrough: "01 · Context", "02 · System"... */
   kicker: string;
   title: string;
   body: string;
-  /** Datos sueltos que se pintan como lista en el panel. Opcional. */
+  /** Loose data points rendered as a list in the panel. Optional. */
   facts?: { label: string; value: string }[];
 };
 
@@ -13,23 +13,23 @@ export type Project = {
   title: string;
   client: string;
   year: string;
-  /** Disciplina o tipo de encargo, se pinta como chips. */
+  /** Discipline or type of engagement, rendered as chips. */
   tags: string[];
-  /** Frase de una línea para el grid. */
+  /** One-line sentence for the grid. */
   summary: string;
-  /** Párrafo de apertura en la página de detalle. */
+  /** Opening paragraph on the detail page. */
   intro: string;
-  /** Marca los que salen en el grid de destacados del home. */
+  /** Marks the ones that appear in the home page featured grid. */
   featured?: boolean;
-  /** Imagen de portada en /public. Sin ella se pinta un placeholder con retícula. */
+  /** Cover image under /public. Without it, a grid placeholder is drawn. */
   cover?: string;
-  /** Paneles que recorre el scroll horizontal de la página de detalle. */
+  /** Panels the horizontal scroll of the detail page travels through. */
   panels: ProjectPanel[];
 };
 
 /**
- * Proyectos de EJEMPLO. Sustituir por los reales manteniendo la forma del tipo.
- * `slug` alimenta las rutas estáticas de /projects/[slug].
+ * PLACEHOLDER projects. Replace with the real ones, keeping the type's shape.
+ * `slug` feeds the static routes of /projects/[slug].
  */
 export const projects: Project[] = [
   {
@@ -194,14 +194,14 @@ export const projects: Project[] = [
   },
 ];
 
-/** Proyectos destacados del home, en el orden del array. */
+/** Featured projects on the home page, in array order. */
 export const featuredProjects = projects.filter((project) => project.featured);
 
 export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug);
 }
 
-/** Siguiente proyecto, con vuelta al principio, para la navegación del detalle. */
+/** Next project, wrapping around to the first, for the detail page nav. */
 export function getNextProject(slug: string): Project {
   const index = projects.findIndex((project) => project.slug === slug);
   return projects[(index + 1) % projects.length];

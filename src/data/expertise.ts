@@ -2,13 +2,13 @@ export type ExpertiseArea = {
   id: string;
   title: string;
   body: string;
-  /** Capacidades concretas del área, se listan dentro del panel. */
+  /** Concrete capabilities of the area, listed inside the panel. */
   capabilities: string[];
 };
 
 /**
- * Áreas de expertise de /about.
- * Se muestran como acordeón en móvil y como tabs a partir de `lg`.
+ * Expertise areas on /about.
+ * Shown as an accordion on mobile and as tabs from `lg` upwards.
  */
 export const expertiseAreas: ExpertiseArea[] = [
   {

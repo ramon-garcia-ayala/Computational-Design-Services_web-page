@@ -1,17 +1,17 @@
 export type Stat = {
   id: string;
   label: string;
-  /** Valor numérico final. El contador anima de 0 a este número. */
+  /** Final numeric value. The counter animates from 0 up to this number. */
   value: number;
   prefix?: string;
   suffix?: string;
-  /** Decimales a mostrar durante y después de la animación. */
+  /** Decimal places to show during and after the animation. */
   decimals?: number;
 };
 
 /**
- * Las 5 métricas del home. Valores de EJEMPLO, sustituir por cifras reales.
- * Añadir o quitar entradas no rompe el layout: la grilla se adapta.
+ * The 5 home page metrics. PLACEHOLDER values, replace with real figures.
+ * Adding or removing entries does not break the layout: the grid adapts.
  */
 export const stats: Stat[] = [
   {
@@ -41,7 +41,7 @@ export const stats: Stat[] = [
     decimals: 1,
   },
   {
-    // Quinto slot libre: cambiar label y value por la métrica definitiva.
+    // Fifth slot is free: swap label and value for the definitive metric.
     id: "hours-reclaimed",
     label: "Engineering hours reclaimed",
     value: 96000,

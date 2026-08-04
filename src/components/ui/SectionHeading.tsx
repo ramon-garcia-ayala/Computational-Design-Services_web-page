@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 
 type SectionHeadingProps = {
-  /** Etiqueta pequeña en mono sobre el título. */
+  /** Small mono label above the title. */
   kicker?: string;
   title: string;
   lead?: string;
   className?: string;
-  /** El home usa h2; en páginas donde encabeza el contenido, h1. */
+  /** The home uses h2; on pages where it leads the content, h1. */
   as?: "h1" | "h2";
 };
 

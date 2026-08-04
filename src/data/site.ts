@@ -1,43 +1,43 @@
 /**
- * Constantes globales del sitio.
+ * Global site constants.
  *
- * Contacto: todo mailto del sitio va a los dos socios a la vez, y la dirección
- * NUNCA se imprime como texto visible — ni en el header, ni en el footer, ni en
- * los CTA, ni en las propuestas. Los CTA usan `contactLabel`; quien pulsa abre
- * su cliente de correo ya relleno. Esto también evita que los rastreadores de
- * spam cosechen las direcciones del HTML.
+ * Contact: every mailto on the site goes to both partners at once, and the
+ * address is NEVER printed as visible text — not in the header, not in the
+ * footer, not in the CTAs, not in the proposals. CTAs use `contactLabel`;
+ * whoever clicks gets their mail client opened prefilled. This also keeps spam
+ * harvesters from scraping the addresses out of the HTML.
  */
 export const site = {
   name: "R²ch-Tech",
-  /** Versión plana para <title>, alt y metadatos donde el superíndice estorba. */
+  /** Flat version for <title>, alt and metadata where the superscript gets in the way. */
   nameFlat: "R2ch-Tech",
   tagline: "We automate AEC. You ship faster.",
   subcopy:
     "We build custom automation tools and computational workflows for AEC firms, from parametric design pipelines to AI-driven systems.",
-  /** Descriptor corto para el header y los metadatos. */
+  /** Short descriptor for the header and the metadata. */
   descriptor: "Computational automation studio for architecture, engineering and construction.",
   contactSubject: "Project inquiry",
-  /** Texto visible de cualquier CTA de contacto. Nunca la dirección. */
+  /** Visible text of any contact CTA. Never the address. */
   contactLabel: "Get in touch",
   location: "Remote · Worldwide",
   foundedYear: 2024,
 } as const;
 
-/** Destinatarios de todo mailto del sitio. Los dos, siempre. */
+/** Recipients of every mailto on the site. Both of them, always. */
 const contactRecipients = [
   "gramonga4434@gmail.com",
   "ramyayoub8@gmail.com",
 ] as const;
 
-/** Construye un mailto a ambos socios con el asunto indicado. */
+/** Builds a mailto to both partners with the given subject. */
 export function contactHref(subject: string = site.contactSubject): string {
   return `mailto:${contactRecipients.join(",")}?subject=${encodeURIComponent(subject)}`;
 }
 
-/** href listo para usar en cualquier CTA de contacto. */
+/** Ready-to-use href for any contact CTA. */
 export const mailtoHref = contactHref();
 
-/** Enlaces sociales. Vaciar el array oculta el bloque en el footer. */
+/** Social links. Emptying the array hides the block in the footer. */
 export const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/" },
   { label: "GitHub", href: "https://github.com/" },

@@ -3,15 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-/** Pista opcional. Colocar el archivo en /public y descomentar para activarla. */
-const AUDIO_SRC: string | null = null; // p.ej. "/audio/ambient.mp3"
+/** Optional track. Drop the file in /public and uncomment to enable it. */
+const AUDIO_SRC: string | null = null; // e.g. "/audio/ambient.mp3"
 
 /**
- * Botón de música del header.
+ * Music button in the header.
  *
- * Fase 1: el botón es funcional pero no hay pista cargada. Si `AUDIO_SRC` es
- * null se comporta como un interruptor visual (las barras se animan) sin tocar
- * el DOM de audio, así que no hay 404 ni promesas de reproducción rechazadas.
+ * Phase 1: the button works but no track is loaded. When `AUDIO_SRC` is null it
+ * behaves as a visual switch (the bars animate) without touching the audio DOM,
+ * so there is no 404 and no rejected playback promises.
  */
 export function MusicToggle({ className }: { className?: string }) {
   const [playing, setPlaying] = useState(false);
@@ -22,7 +22,7 @@ export function MusicToggle({ className }: { className?: string }) {
     if (!audio) return;
 
     if (playing) {
-      // El navegador puede bloquear la reproducción: si falla, revertimos.
+      // The browser may block playback: if it fails, we revert.
       audio.play().catch(() => setPlaying(false));
     } else {
       audio.pause();

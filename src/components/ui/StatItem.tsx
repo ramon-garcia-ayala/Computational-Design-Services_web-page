@@ -13,11 +13,11 @@ function format(value: number, decimals: number) {
 }
 
 /**
- * Métrica con contador animado.
+ * Metric with an animated counter.
  *
- * El valor final se renderiza en servidor, así que es correcto sin JS y para
- * lectores de pantalla. La animación solo reescribe el textContent del nodo.
- * Con `prefers-reduced-motion` no se anima nada.
+ * The final value is rendered on the server, so it is correct without JS and
+ * for screen readers. The animation only rewrites the node's textContent.
+ * With `prefers-reduced-motion` nothing animates.
  */
 export function StatItem({ stat }: { stat: Stat }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -30,9 +30,9 @@ export function StatItem({ stat }: { stat: Stat }) {
       if (!node) return;
 
       if (reducedMotion) {
-        // Restaura el valor final explícitamente: en el render de hidratación
-        // el hook todavía devuelve false, así que el tween puede haber puesto
-        // ya el contador a 0 antes de que la preferencia se conozca.
+        // Restore the final value explicitly: on the hydration render the hook
+        // still returns false, so the tween may already have set the counter
+        // to 0 before the preference became known.
         node.textContent = format(stat.value, decimals);
         return;
       }

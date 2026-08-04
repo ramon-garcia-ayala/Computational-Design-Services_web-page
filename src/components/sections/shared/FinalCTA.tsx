@@ -3,8 +3,8 @@ import { CTALink } from "@/components/ui/CTALink";
 import { mailtoHref, site } from "@/data/site";
 
 /**
- * CTA de cierre, justo antes del footer. Se reutiliza en varias páginas, por eso
- * el título es configurable.
+ * Closing CTA, right before the footer. It is reused across several pages,
+ * which is why the title is configurable.
  */
 export function FinalCTA({
   title = "Tell us where your team loses its hours.",

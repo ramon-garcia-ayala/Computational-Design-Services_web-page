@@ -11,20 +11,20 @@ import { cn } from "@/lib/utils";
 const MENU_BUTTON_ID = "menu-trigger";
 
 /**
- * Header fijo: logo a la izquierda, descriptor al centro, controles a la derecha
- * (música, "let's talk" y el disparador del menú fullscreen).
+ * Fixed header: logo on the left, descriptor in the middle, controls on the
+ * right (music, "let's talk" and the fullscreen menu trigger).
  *
- * El estado del menú vive aquí porque el disparador y el overlay tienen que
- * compartirlo y devolverse el foco entre sí.
+ * The menu state lives here because the trigger and the overlay have to share
+ * it and hand focus back to each other.
  */
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const [lastPathname, setLastPathname] = useState(pathname);
 
-  // Cambiar de ruta cierra el menú. Se ajusta durante el render (patrón de
-  // estado derivado de React) en vez de con un efecto, que provocaría un
-  // segundo render en cascada.
+  // Changing route closes the menu. Adjusted during render (React's derived
+  // state pattern) instead of in an effect, which would trigger a second
+  // cascading render.
   if (pathname !== lastPathname) {
     setLastPathname(pathname);
     setMenuOpen(false);
@@ -33,8 +33,8 @@ export function Header() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50">
-        {/* Degradado de legibilidad: el header flota sobre el contenido, sin él
-            los controles se pierden al pasar secciones claras por debajo. */}
+        {/* Legibility gradient: the header floats over the content, and without
+            it the controls get lost as light sections scroll underneath. */}
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-carbon via-carbon/80 to-transparent"
           aria-hidden="true"

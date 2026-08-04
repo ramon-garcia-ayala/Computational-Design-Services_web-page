@@ -1,7 +1,7 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { manifesto } from "@/data/approach";
 
-/** Manifiesto corto entre el hero y las métricas. */
+/** Short manifesto between the hero and the metrics. */
 export function Manifesto() {
   return (
     <section className="border-t border-line py-20 sm:py-28 lg:py-32">

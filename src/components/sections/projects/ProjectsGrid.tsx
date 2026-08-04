@@ -2,7 +2,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { projects } from "@/data/projects";
 
-/** Grid completo de /projects: 1 columna en móvil, 2 desde `lg`. */
+/** Full /projects grid: 1 column on mobile, 2 from `lg` up. */
 export function ProjectsGrid() {
   return (
     <section aria-label="All projects" className="pb-24 sm:pb-32">

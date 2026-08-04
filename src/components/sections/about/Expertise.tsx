@@ -3,7 +3,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Accordion } from "@/components/ui/Accordion";
 import { expertiseAreas } from "@/data/expertise";
 
-/** Áreas de expertise: acordeón en móvil, tabs en escritorio. */
+/** Expertise areas: accordion on mobile, tabs on desktop. */
 export function Expertise() {
   return (
     <section

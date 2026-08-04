@@ -4,7 +4,7 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { site } from "@/data/site";
 
-/* Fuentes expuestas como variables CSS y consumidas desde el @theme de globals.css */
+/* Fonts exposed as CSS variables and consumed from the @theme in globals.css */
 const sora = Sora({
   variable: "--font-sora",
   subsets: ["latin"],
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   description: site.subcopy,
 };
 
-/* El chrome (header, footer, <main>) lo pone cada route group: (site) usa la
-   navegación del sitio, (proposal) una barra propia. Aquí solo queda lo que no
-   puede duplicarse: <html>, las fuentes y la única instancia de Lenis. */
+/* Each route group provides its own chrome (header, footer, <main>): (site)
+   uses the site navigation, (proposal) its own bar. Only what must never be
+   duplicated stays here: <html>, the fonts and the single Lenis instance. */
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

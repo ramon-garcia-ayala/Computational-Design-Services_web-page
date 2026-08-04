@@ -6,19 +6,19 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 /**
- * Smooth scroll global (Lenis) acoplado a GSAP.
+ * Global smooth scroll (Lenis) coupled to GSAP.
  *
- * Puntos importantes:
- *  - Lenis se instancia UNA sola vez y se conduce desde el ticker de GSAP.
- *    Si cada librería corriese su propio requestAnimationFrame el scroll y los
- *    ScrollTriggers se desincronizarían un frame.
- *  - `lenis.on("scroll", ScrollTrigger.update)` mantiene los triggers al día,
- *    porque Lenis no dispara el evento scroll nativo del documento.
- *  - Los saltos a anclas TIENEN que pasar por Lenis. Un salto nativo mueve el
- *    documento sin que Lenis lo sepa, así que ScrollTrigger sigue creyendo que
- *    estamos arriba y nada de lo que anima llega a revelarse: la página se ve
- *    en blanco. De ahí `anchors` y el salto inicial de abajo.
- *  - Con `prefers-reduced-motion` no se instancia nada: scroll nativo del navegador.
+ * Key points:
+ *  - Lenis is instantiated ONCE and driven from the GSAP ticker. If each
+ *    library ran its own requestAnimationFrame, the scroll and the
+ *    ScrollTriggers would drift one frame apart.
+ *  - `lenis.on("scroll", ScrollTrigger.update)` keeps the triggers up to date,
+ *    because Lenis never fires the document's native scroll event.
+ *  - Anchor jumps MUST go through Lenis. A native jump moves the document
+ *    without Lenis knowing, so ScrollTrigger still believes we are at the top
+ *    and nothing it animates ever reveals itself: the page looks blank. Hence
+ *    `anchors` and the initial jump below.
+ *  - With `prefers-reduced-motion` nothing is instantiated: native browser scroll.
  */
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const reducedMotion = useReducedMotion();
@@ -28,10 +28,10 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
     const lenis = new Lenis({
       duration: 1.1,
-      // Curva de salida suave; sin overshoot para que el pin no vibre.
+      // Soft ease-out curve; no overshoot so the pin does not jitter.
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      // Lenis intercepta los clics en enlaces internos y los anima él mismo.
+      // Lenis intercepts clicks on internal links and animates them itself.
       anchors: true,
     });
 
@@ -39,12 +39,12 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
     const raf = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(raf);
-    // El ticker de GSAP normalmente limita el delta; aquí estorba.
+    // The GSAP ticker normally clamps the delta; here it gets in the way.
     gsap.ticker.lagSmoothing(0);
 
-    /* Entrada directa a una URL con hash: el navegador ya ha saltado por su
-       cuenta antes de que Lenis existiera. Se rehace el salto a través de él
-       para que su posición y la del documento vuelvan a coincidir. */
+    /* Landing straight on a URL with a hash: the browser has already jumped on
+       its own, before Lenis existed. The jump is redone through Lenis so that
+       its position and the document's line up again. */
     const { hash } = window.location;
     if (hash.length > 1) {
       const target = document.querySelector(hash);
