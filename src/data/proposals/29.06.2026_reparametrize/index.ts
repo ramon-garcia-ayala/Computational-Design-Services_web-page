@@ -66,6 +66,7 @@ export const reparametrize20260629: Proposal = {
       id: "workflow",
       kicker: "Workflow",
       title: "How an engagement runs",
+      layout: "flow",
       steps: [
         {
           number: "01",

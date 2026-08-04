@@ -142,7 +142,7 @@ export const ecogenFluence: Proposal = {
         {
           icon: "route",
           title: "Both deliverables share one source",
-          body: "Estimate and schedule are generated from the same component records. That is what makes the numbers agree by construction, and what later makes a 4D link to the model possible without a second data path.",
+          body: "Estimate and schedule are generated from the same component records. That is what makes the numbers agree by construction, and what makes the 4D link to the model possible without a second data path.",
         },
       ],
     },
@@ -154,6 +154,7 @@ export const ecogenFluence: Proposal = {
       kicker: "The process",
       title: "How a site drawing becomes a schedule",
       lead: "Five stages, each one feeding the next automatically. No step requires re-entering data by hand.",
+      layout: "flow",
       steps: [
         {
           number: "01",
@@ -190,7 +191,7 @@ export const ecogenFluence: Proposal = {
       kicker: "Technical process",
       title: "The pipeline, stage by stage",
       lead: "The same process in engineering terms: six modules, the configuration each one reads, and what it hands to the next.",
-      note: "Stage 04 is the only code that touches the Revit API. Everything after it runs as plain Python against a documented data structure, so costing and both writers can be developed and verified without opening Revit — which also means a change to the pricing rules never risks the model. Saving the coordinated model and exporting a Navisworks cache is an optional step off stage 03, in scope only if 4D sequencing is confirmed.",
+      note: "Stage 04 is the only code that touches the Revit API. Everything after it runs as plain Python against a documented data structure, so costing and both writers can be developed and verified without opening Revit — which also means a change to the pricing rules never risks the model.",
       nodes: [
         {
           id: "input",
@@ -310,6 +311,20 @@ export const ecogenFluence: Proposal = {
           title: "Construction schedule · xlsx",
           status: "artifact",
         },
+        {
+          id: "fourd",
+          stage: "07",
+          title: "Navisworks 4D integration",
+          meta: "revit_output/ + TimeLiner",
+          status: "stage",
+          detail:
+            "Saves the coordinated model, exports the Navisworks cache and links it to the generated schedule, so the build sequence plays back against the model. It draws the model from stage 03 and the dates from stage 06 — the same records, so what runs on screen and what is in the workbook cannot drift apart.",
+        },
+        {
+          id: "fourd-out",
+          title: "4D sequence · nwd",
+          status: "artifact",
+        },
       ],
       edges: [
         { from: "input", to: "preflight" },
@@ -329,6 +344,9 @@ export const ecogenFluence: Proposal = {
         { from: "records", to: "excel" },
         { from: "excel", to: "estimate-out" },
         { from: "excel", to: "schedule-out" },
+        { from: "document", to: "fourd" },
+        { from: "schedule-out", to: "fourd" },
+        { from: "fourd", to: "fourd-out" },
       ],
     },
 
@@ -394,7 +412,7 @@ export const ecogenFluence: Proposal = {
             "Building the standalone family library",
             "Running the full chain against one real layout, start to finish",
             "Packaging the tool for installation on EcoGen machines",
-            "Model and Navisworks export, if 4D is confirmed as in scope",
+            "Model and Navisworks export, and the 4D link to the schedule",
           ],
         },
       ],
@@ -426,8 +444,8 @@ export const ecogenFluence: Proposal = {
         },
         {
           icon: "route",
-          title: "Optional 4D handover",
-          body: "A Navisworks cache or IFC export for linking the generated schedule to the model in TimeLiner. Deferred until the scope question on Navisworks is answered, and not a prerequisite for anything above.",
+          title: "4D Navisworks integration",
+          body: "The coordinated model exported as a Navisworks cache and linked to the generated schedule in TimeLiner, so the construction sequence can be played back against the model. Because both come from the same component records, the simulation and the workbook cannot disagree.",
         },
       ],
     },
@@ -500,9 +518,9 @@ export const ecogenFluence: Proposal = {
           component: "Autodesk Navisworks Manage",
           version: "Matching Revit 2027",
           license: "Commercial subscription",
-          cost: "Only if 4D is confirmed",
+          cost: "Existing licence",
           provider: "EcoGen / Fluence",
-          purpose: "Optional 4D sequencing from the generated schedule",
+          purpose: "4D sequencing: links the generated schedule to the model in TimeLiner",
         },
         {
           component: "AutoCAD or ODA File Converter",
@@ -615,24 +633,24 @@ export const ecogenFluence: Proposal = {
           body: "The component types actually used on projects, and their key adjustable properties.",
         },
         {
-          icon: "mapPin",
-          title: "Confirmation of a fixed reference point",
-          body: "Whether every site drawing's origin is tied to a known, fixed point on the site — the way it appeared in the drawings reviewed so far — or whether that is not guaranteed going forward.",
-        },
-        {
           icon: "nested",
           title: "Clean, self-contained component families",
           body: "Each component delivered as one standalone family file, rather than an entire project broken up and divided across multiple linked or nested families.",
         },
         {
           icon: "spreadsheet",
-          title: "One completed reference project",
-          body: "A finished estimate and schedule for a project we can run the pipeline against, so the generated numbers can be reconciled against a known result.",
+          title: "Your cost data",
+          body: "The unit costs, crew rates, wastage and markups you actually bid with. This is what lets each family be wired to the cost lines it produces, instead of to figures we reverse-engineered from one reference workbook.",
         },
         {
-          icon: "cpu",
-          title: "A test machine or environment",
-          body: "One workstation with Revit 2027 where the extension can be installed and validated before rollout.",
+          icon: "calendar",
+          title: "Your sequencing data",
+          body: "Real durations and predecessor logic per activity type. Same reason: the schedule a family feeds has to be built on your construction logic, not on placeholders.",
+        },
+        {
+          icon: "file",
+          title: "One completed reference project",
+          body: "A finished estimate and schedule for a project we can run the pipeline against, so the generated numbers can be reconciled against a known result.",
         },
       ],
     },
@@ -792,18 +810,6 @@ export const ecogenFluence: Proposal = {
               question:
                 "Does the schedule need resource loading, or are dates and float enough?",
               why: "Resource loading means carrying crew assignments through from the estimate into the schedule, which is additional scope rather than a setting.",
-            },
-          ],
-        },
-        {
-          id: "delivery",
-          category: "Delivery",
-          questions: [
-            {
-              id: "Q-18",
-              priority: "Medium",
-              question: "Is Navisworks part of the deliverable?",
-              why: "The Revit target is confirmed as Revit 2027. Navisworks is still open, and the answer decides whether the model export stage is built at all.",
             },
           ],
         },

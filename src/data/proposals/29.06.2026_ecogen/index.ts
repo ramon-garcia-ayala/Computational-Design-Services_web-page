@@ -67,6 +67,7 @@ export const ecogen20260629: Proposal = {
       kicker: "Workflow",
       title: "How the pipeline runs",
       lead: "Four stages, from the drawing you already produce to the model you can coordinate with.",
+      layout: "flow",
       steps: [
         {
           number: "01",

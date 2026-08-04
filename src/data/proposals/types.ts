@@ -91,6 +91,12 @@ export type ProseBlockData = BlockBase & {
 
 export type StepsBlockData = BlockBase & {
   kind: "steps";
+  /**
+   * `flow` lays the steps out as a horizontal chain from `lg` up — right for a
+   * pipeline, where the point is that each step feeds the next. `list` is the
+   * default: a numbered column, right for actions the reader has to take.
+   */
+  layout?: "list" | "flow";
   /** `title` is optional so the same block serves plain ordered lists. */
   steps: { number: string; title?: string; body: string }[];
 };
