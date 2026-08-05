@@ -7,6 +7,11 @@ import { BlockShell } from "./BlockShell";
  * Data table. No full borders — just horizontal separators, which is what the
  * rest of the site already does. On mobile it scrolls inside its own container
  * so that the `<body>` never scrolls horizontally.
+ *
+ * Cells carry their gutter as symmetric `px-3` — dropped on the first and last
+ * column so the table still aligns to the shell — rather than a one-sided
+ * `pr-6`. The spacing is identical, but it means the hover tint sits evenly
+ * around the text instead of trailing off to one side.
  */
 export function TableBlock({ block }: { block: TableBlockData }) {
   return (
@@ -25,7 +30,7 @@ export function TableBlock({ block }: { block: TableBlockData }) {
                   <th
                     key={column.key}
                     scope="col"
-                    className="pb-4 pr-6 font-mono text-[10px] font-normal uppercase tracking-widest text-fg-muted last:pr-0"
+                    className="px-3 pb-4 font-mono text-[10px] font-normal uppercase tracking-widest text-fg-muted first:pl-0 last:pr-0"
                   >
                     {column.label}
                   </th>
@@ -43,7 +48,7 @@ export function TableBlock({ block }: { block: TableBlockData }) {
                     <td
                       key={column.key}
                       className={cn(
-                        "py-4 pr-6 text-sm leading-relaxed last:pr-0",
+                        "px-3 py-4 text-sm leading-relaxed transition-colors first:pl-0 last:pr-0 hover:bg-accent/10",
                         column.emphasis ? "text-fg" : "text-fg-muted",
                       )}
                     >

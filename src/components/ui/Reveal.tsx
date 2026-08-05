@@ -50,8 +50,8 @@ export function Reveal({
       if (targets.length === 0) return;
 
       if (reducedMotion) {
-        // No animation: settle on the final state and clear the initial class.
-        gsap.set(targets, { opacity: 1, y: 0, clearProps: "transform" });
+        // No animation: settle straight on the final state.
+        gsap.set(targets, { opacity: 1, y: 0 });
         return;
       }
 
@@ -60,10 +60,16 @@ export function Reveal({
          before this effect runs. Whatever sits at or above the landing point
          will never receive the scroll event its trigger waits for, and would
          stay invisible: the reader lands on a blank screen. Settle those on the
-         spot and let everything further down animate as usual. */
+         spot and let everything further down animate as usual.
+
+         Settling writes the end state inline and leaves it there: clearing the
+         transform instead would hand control back to `reveal-init`, whose whole
+         job is to hold the element 24px low. That offset is invisible on most
+         blocks but not on the `gap-px` card grids, where it uncovers a bar of
+         the border colour along the top of the grid. */
       const landedOnAnchor = window.location.hash.length > 1;
       if (landedOnAnchor && root.getBoundingClientRect().top < window.innerHeight * 0.85) {
-        gsap.set(targets, { opacity: 1, y: 0, clearProps: "transform" });
+        gsap.set(targets, { opacity: 1, y: 0 });
         return;
       }
 

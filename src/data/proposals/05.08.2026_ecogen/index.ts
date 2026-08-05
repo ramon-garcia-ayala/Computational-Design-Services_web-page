@@ -355,8 +355,8 @@ export const ecogenFluence: Proposal = {
       kind: "cards",
       id: "contracts",
       kicker: "Data contracts",
-      title: "The four files that govern the pipeline",
-      lead: "Each of these is a plain, readable file rather than logic buried in code. They are the points where EcoGen's answers enter the system, and changing behaviour usually means editing one of them, not rewriting a module.",
+      title: "The four inputs that govern the pipeline",
+      lead: "Each of these is a declared input rather than logic buried in code. They are the points where EcoGen's answers enter the system, and changing behaviour usually means editing one of them, not rewriting a module.",
       columns: 2,
       cards: [
         {
@@ -365,19 +365,19 @@ export const ecogenFluence: Proposal = {
           body: "Declares which drawing layers are required, which are recognised but optional, and which are deliberately out of scope. It is what turns an unfamiliar drawing into a clear error instead of a wrong model. Currently derived from the sample drawings and awaiting confirmation of the production format.",
         },
         {
+          icon: "nested",
+          title: "Family library",
+          body: "One Revit family per component type, and the map from a drawing category to the family and type placed for it. This is the input EcoGen owns most directly: the families themselves set what the model is able to represent, so covering a new component type means supplying its family, not changing the placement code.",
+        },
+        {
           icon: "window",
           title: "Shared parameter contract",
-          body: "Defines exactly which measurements each family carries — concrete volume, formwork area, rebar weight, surface area, fence length, and so on. Deliberately raw quantities only: the model reports what it physically is, and classification, pricing and sequencing are decided downstream where they can be changed without touching the model.",
+          body: "Defines exactly which measurements each family carries — concrete volume, formwork area, rebar weight, surface area, fence length, and so on. It is authored as one new standard applied identically to every family, not inherited from the conventions each one happens to carry today, because a name or unit that varies between components lands as an inconsistency in the workbook. Deliberately raw quantities only: the model reports what it physically is, and classification, pricing and sequencing are decided downstream where they can be changed without touching the model.",
         },
         {
           icon: "spreadsheet",
           title: "Cost book",
-          body: "Unit costs, wastage, crew rates, markups and default construction sequencing in one place. Its values were back-derived from the reference estimate to make the pipeline run end to end, and are explicitly marked provisional until EcoGen validates them.",
-        },
-        {
-          icon: "cube",
-          title: "Component record",
-          body: "The structure that joins the two halves of the system. It carries identification, CSI classification, quantities, cost inputs and sequencing for one priced line. Because it is a documented structure rather than a live Revit connection, the entire downstream half runs and is tested in seconds without opening Revit.",
+          body: "Unit costs, wastage, crew rates, markups and default construction sequencing in one place. Its values were back-derived from the reference estimate to make the pipeline run end to end, and are explicitly marked provisional until EcoGen validates them. The book records one source for the whole set today; giving each figure its own origin and the component it prices is what makes a number in the workbook traceable back to the object that produced it.",
         },
       ],
     },
@@ -566,7 +566,7 @@ export const ecogenFluence: Proposal = {
       id: "roadmap",
       kicker: "Roadmap",
       title: "The three phases of the engagement",
-      lead: "Seven weeks end to end. Phase 2 cannot start cleanly until the four blocking questions below are answered — everything after that is sequencing, not uncertainty.",
+      lead: "Seven weeks end to end. Phase 2 cannot start cleanly until the five blocking questions below are answered — everything after that is sequencing, not uncertainty.",
       phases: [
         {
           label: "Phase 1",
@@ -610,57 +610,62 @@ export const ecogenFluence: Proposal = {
 
     /* ------------------------------------------------------------------ 11 */
     {
-      kind: "cards",
+      kind: "checklist",
       id: "requests",
       kicker: "Material",
       title: "What we need from EcoGen",
       lead: "Files and access, so that Phase 2 starts on solid ground. These are separate from the questions in the next section: this is what we need to receive, that is what we need confirmed.",
-      columns: 3,
-      cards: [
+      note: "None of these has to arrive all at once. The drawing items are the ones that gate the start of Phase 2; the cost and schedule data can follow while geometry work is under way, as long as it lands before the numbers are quoted anywhere.",
+      groups: [
         {
-          icon: "layers",
-          title: "Consistent layer naming",
-          body: "Confirmation that every site drawing follows the same naming convention we have tested against.",
+          id: "drawings",
+          category: "Drawings",
+          items: [
+            {
+              title: "Consistent layer naming",
+              body: "Confirmation that every site drawing follows the same naming convention we have tested against.",
+            },
+            {
+              title: "The final production DXF, and a date for it",
+              body: "The drawing every future project will follow, covering every element type expected on a real site rather than only the most common ones. Everything downstream is standardised against it — the layer contract, the parser, the element mapping — so the sooner it is fixed, the sooner the workflow stops being written against a moving target.",
+            },
+            {
+              title: "Confirmation of drawing style",
+              body: "That future drawings are produced the same way — placed components, not raw exploded geometry.",
+            },
+          ],
         },
         {
-          icon: "grid",
-          title: "A more complete sample drawing",
-          body: "One that includes every element type expected in a real project, not just the most common ones.",
+          id: "components",
+          category: "Components",
+          items: [
+            {
+              title: "Confirmed element-to-component mapping",
+              body: "Which drawing elements correspond to which 3D components, confirmed once and locked in.",
+            },
+            {
+              title: "Clean, self-contained component families",
+              body: "Each component delivered as one standalone family file, with its adjustable properties exposed, rather than an entire project broken up and divided across multiple linked or nested families. We would then add our own shared parameter set on top, applied identically across every family, and leave the geometry as you built it.",
+            },
+            {
+              title: "Cabling and connection logic",
+              body: "How the equipment is actually wired together: which runs connect to what, the routing and clearance rules the conduit follows, and the sizing conventions behind them. Phase 2 needs it to model the connections rather than only the objects, and it is what turns the raceway scope question into geometry that can be placed.",
+            },
+          ],
         },
         {
-          icon: "cropMarks",
-          title: "Confirmed element-to-component mapping",
-          body: "Which drawing elements correspond to which 3D components, confirmed once and locked in.",
-        },
-        {
-          icon: "rules",
-          title: "Confirmation of drawing style",
-          body: "That future drawings are produced the same way — placed components, not raw exploded geometry.",
-        },
-        {
-          icon: "window",
-          title: "Access to the real component library",
-          body: "The component types actually used on projects, and their key adjustable properties.",
-        },
-        {
-          icon: "nested",
-          title: "Clean, self-contained component families",
-          body: "Each component delivered as one standalone family file, rather than an entire project broken up and divided across multiple linked or nested families.",
-        },
-        {
-          icon: "spreadsheet",
-          title: "Your cost data",
-          body: "The unit costs, crew rates, wastage and markups you actually bid with. This is what lets each family be wired to the cost lines it produces, instead of to figures we reverse-engineered from one reference workbook.",
-        },
-        {
-          icon: "calendar",
-          title: "Your sequencing data",
-          body: "Real durations and predecessor logic per activity type. Same reason: the schedule a family feeds has to be built on your construction logic, not on placeholders.",
-        },
-        {
-          icon: "file",
-          title: "One completed reference project",
-          body: "A finished estimate and schedule for a project we can run the pipeline against, so the generated numbers can be reconciled against a known result.",
+          id: "figures",
+          category: "Cost and schedule",
+          items: [
+            {
+              title: "Your cost data, and where each figure comes from",
+              body: "The unit costs, crew rates, wastage and markups you actually bid with — and, alongside each one, its origin and the component it attaches to. That list is what lets a family be wired to the cost lines it produces, so every number in the workbook traces back to an object in the model instead of to figures we reverse-engineered from one reference sample.",
+            },
+            {
+              title: "Your sequencing data, and what drives each duration",
+              body: "Real durations and predecessor logic per activity type, with the basis behind each one and the component or quantity that drives it. Same reason as the cost list: the schedule a family feeds has to be built on your construction logic, not on placeholders, and each date has to trace back to something in the model.",
+            },
+          ],
         },
       ],
     },
@@ -671,7 +676,7 @@ export const ecogenFluence: Proposal = {
       id: "questions",
       kicker: "Open questions",
       title: "Questions to resolve with EcoGen",
-      lead: "These are the decisions only EcoGen can make. Each one is tied to a specific part of the pipeline, and each answer either unblocks work or replaces a provisional value with a real one. Four of them block the start of Phase 2.",
+      lead: "These are the decisions only EcoGen can make. Each one is tied to a specific part of the pipeline, and each answer either unblocks work or replaces a provisional value with a real one. Five of them block the start of Phase 2.",
       note: "This list is the agenda for the August 5 review session. Until the blocking items are answered, geometry work cannot start against a stable target; until the costing and schedule items are answered, the numbers the pipeline produces remain structurally correct but based on provisional inputs.",
       groups: [
         {
@@ -682,15 +687,15 @@ export const ecogenFluence: Proposal = {
               id: "Q-01",
               priority: "Blocking",
               question:
-                "Which drawing format is the production one — the clean sixteen-layer layout, or the export from the custom layout generator?",
-              why: "The two differ by nearly three hundred layers and mix different kinds of content. The parser has to be written against one of them, and the layer contract has to match it.",
+                "When can we have the final production DXF — the one every future drawing will follow?",
+              why: "This is not a question of which sample is the better one. The layer contract, the parser and the element mapping are all standardised against a single format, and the whole workflow is written once against it. What we need is that file, and a date for it.",
             },
             {
               id: "Q-02",
               priority: "Blocking",
               question:
                 "What is the layer naming convention used in production, and is it enforced across projects?",
-              why: "Element identification runs off layer names. If they vary per project or per author, the parser needs a mapping step rather than a fixed contract.",
+              why: "Element identification runs off layer names. If they vary per project or per author, the parser needs a mapping step rather than a fixed contract. A convention that is genuinely enforced also settles the question above: it is what makes any drawing following it the production format.",
             },
           ],
         },
@@ -702,28 +707,36 @@ export const ecogenFluence: Proposal = {
               id: "Q-03",
               priority: "Blocking",
               question:
-                "Are transformers and electrical raceway in scope for this estimate?",
-              why: "They exist in the drawings and in the family library but are currently excluded. Including them adds a CSI division, new families and new cost lines, so it changes the shape of Phase 2 rather than just its volume.",
+                "Are the families we already have the final ones, and if not, when is the finished library ready?",
+              why: "Phase 2 places what the library contains, so it has to be written against the final version. If the components we hold are still provisional, or more are on the way, every placement rule and every parameter written against them is redone when they change. A date for the finished library is what makes the geometry work schedulable.",
             },
             {
               id: "Q-04",
               priority: "High",
               question:
-                "Are the battery enclosure and the light fixture themselves in the contractor's cost scope, or owner-supplied equipment?",
-              why: "Today the pipeline prices only the concrete work under them. If the units are in scope, they need their own cost lines and their own procurement sequencing.",
+                "Are the cabling rules ready — families, types and connection logic — or does that work start with us?",
+              why: "Phase 2 has to model connections, not only objects. If the routing rules, the cable and conduit types and the connection logic already exist, we implement them. If they do not, defining them becomes part of the phase and has to be planned as such.",
             },
-          ],
-        },
-        {
-          id: "placement",
-          category: "Placement rules",
-          questions: [
             {
               id: "Q-05",
-              priority: "Blocking",
+              priority: "High",
               question:
-                "What are the real spacing and clearance rules between components — enclosure separation, fence offset, pole spacing?",
-              why: "The placement engine has to enforce them when it positions families. Without them it can only reproduce whatever the drawing already shows, and cannot validate or derive anything.",
+                "Can we author the family metadata to our own standard, rather than keeping whatever conventions the families carry today?",
+              why: "The measurements a family exposes have to be identical in name and unit across every component, or the inconsistency lands straight in the workbooks. We would add one shared parameter set, applied the same way everywhere, and leave the geometry untouched.",
+            },
+            {
+              id: "Q-06",
+              priority: "Medium",
+              question:
+                "Are transformers and electrical raceway in scope for this estimate?",
+              why: "They exist in the drawings and in the family library but are currently excluded. Including them adds a CSI division, new families and new cost lines.",
+            },
+            {
+              id: "Q-07",
+              priority: "Medium",
+              question:
+                "Can we treat the DXF as the single source of truth for the site?",
+              why: "That is the assumption the pipeline is built on: the drawing is read, and the model, the estimate and the schedule all follow from it. It works in our favour — one file drives everything — but it also means any change to the drawing convention, however small, propagates through the whole chain.",
             },
           ],
         },
@@ -732,67 +745,31 @@ export const ecogenFluence: Proposal = {
           category: "Cost basis",
           questions: [
             {
-              id: "Q-06",
-              priority: "High",
-              question:
-                "Which CSI divisions should the estimate cover in full?",
-              why: "The reference sample only exercises four. Any division that appears on a real project but not in the sample needs its classification and lines defined before it can be priced.",
-            },
-            {
-              id: "Q-07",
-              priority: "High",
-              question:
-                "What are the current crew rates, and do they vary by trade, shift or region?",
-              why: "Labour cost is crew rate multiplied by manhours on every single line. A rate structure that varies means the cost book needs a dimension it does not have today.",
-            },
-            {
               id: "Q-08",
-              priority: "High",
+              priority: "Blocking",
               question:
-                "What wastage percentage applies to each material family?",
-              why: "Wastage is applied before pricing, so it moves both material and labour totals. The current values were inferred from the sample and are effectively one flat figure.",
+                "Can you share the complete list of where each of your costs comes from?",
+              why: "Every figure in the cost book today was back-derived from a single reference workbook, and the book records one source for all of it. A list of the actual origins — price book, supplier quote, subcontractor bid, historical job — is what lets each figure be traced, updated and defended instead of inherited.",
             },
             {
               id: "Q-09",
               priority: "High",
-              question:
-                "What are the current markup rates, and does the tax line apply to material only?",
-              why: "Markups are applied per division and again on the project roll-up. Whether tax applies to material alone changes both the division totals and the final bid.",
+              question: "Which CSI divisions should the estimate cover in full?",
+              why: "The reference sample only exercises four. Any division that appears on a real project but not in the sample needs its classification and lines defined before it can be priced.",
             },
             {
               id: "Q-10",
               priority: "High",
               question:
-                "What rebar density should be assumed per component category?",
-              why: "Rebar weight is derived from concrete volume where it is not modelled explicitly. The current densities were back-derived from the sample and are the least defensible numbers in the cost book.",
+                "What does each of those costs attach to physically — which component, and measured how?",
+              why: "This is the link the whole estimate is built on: object → measurement → cost line → row in the workbook. Once each cost is keyed to a component and a unit, every number in the output can be traced back to the thing in the model that produced it, and a price change becomes one edit rather than a re-derivation.",
             },
             {
               id: "Q-11",
               priority: "Medium",
               question:
-                "Should the medium-voltage skid pad carry its own rebar line, or is that already embedded in its concrete unit cost?",
-              why: "Getting this wrong double-counts reinforcement on every skid in the project.",
-            },
-            {
-              id: "Q-12",
-              priority: "Medium",
-              question:
                 "Should general requirements stay as lump sums, or be broken into manhour-driven lines?",
               why: "Lump sums are simpler and match the sample. Manhour-driven lines make mobilisation and supervision scale with project size instead of staying fixed.",
-            },
-            {
-              id: "Q-13",
-              priority: "Medium",
-              question:
-                "What escalation or bid-validity date are the unit costs pegged to?",
-              why: "Without a reference date, a generated estimate carries no indication of how long its pricing is good for.",
-            },
-            {
-              id: "Q-14",
-              priority: "Low",
-              question:
-                "How should excavation split between backfill and haul-off?",
-              why: "Excavation is aggregated site-wide into a single line, and there is no example in the reference material from which to derive the ratio.",
             },
           ],
         },
@@ -801,25 +778,45 @@ export const ecogenFluence: Proposal = {
           category: "Schedule",
           questions: [
             {
-              id: "Q-15",
-              priority: "High",
+              id: "Q-12",
+              priority: "Blocking",
               question:
                 "What are the real activity durations and predecessor relationships per activity type?",
-              why: "Current values are placeholders. They produce a structurally valid schedule with critical path and float, but the dates themselves are not yet meaningful.",
+              why: "Current values are placeholders. They produce a structurally valid schedule with critical path and float, but the dates themselves are not yet meaningful, so nothing generated from them can be issued.",
             },
             {
-              id: "Q-16",
+              id: "Q-13",
               priority: "High",
+              question:
+                "Can you share the complete list of how each duration and each precedence is arrived at?",
+              why: "The same ask as on the cost side, for the other half of the output. Knowing whether a figure comes from crew productivity, a historical job, a subcontractor commitment or a standard template is what lets it be defended and updated rather than re-guessed.",
+            },
+            {
+              id: "Q-14",
+              priority: "High",
+              question:
+                "What drives each activity's duration — which component, and which quantity?",
+              why: "This closes the same loop the cost questions open: object → quantity → activity → row in the schedule. Without it, durations have to be typed in per project; with it, the schedule is generated from the model exactly like the estimate, and the two cannot drift apart.",
+            },
+            {
+              id: "Q-15",
+              priority: "Medium",
               question:
                 "What is the project start date, the site holiday list, and the working week — five, six or seven days?",
               why: "Every date in the schedule is derived from the working calendar. There is no configuration file for this yet, so it has to be supplied on every run until it is fixed.",
             },
+          ],
+        },
+        {
+          id: "placement",
+          category: "Placement rules",
+          questions: [
             {
-              id: "Q-17",
-              priority: "Medium",
+              id: "Q-16",
+              priority: "High",
               question:
-                "Does the schedule need resource loading, or are dates and float enough?",
-              why: "Resource loading means carrying crew assignments through from the estimate into the schedule, which is additional scope rather than a setting.",
+                "What are the real spacing and clearance rules between components — enclosure separation, fence offset, pole spacing?",
+              why: "The placement engine has to enforce them when it positions families. Without them it can only reproduce whatever the drawing already shows, and cannot validate or derive anything.",
             },
           ],
         },
@@ -847,7 +844,7 @@ export const ecogenFluence: Proposal = {
       title: "Review on August 5, final delivery on August 7",
       lead: "One session, working through the questions above in priority order, and two days to fold the answers back in.",
       body: [
-        "The four blocking items open Phase 2; the costing and schedule items convert the pipeline's provisional inputs into real ones. Answers to the rest can follow in writing afterwards without holding anything up.",
+        "The five blocking items open Phase 2; the costing and schedule items convert the pipeline's provisional inputs into real ones. Answers to the rest can follow in writing afterwards without holding anything up.",
         "If it is useful, we can run the current pipeline live during the session — from a sample drawing's layer validation through to both generated workbooks — so the discussion is about real output rather than description.",
         "Whatever is settled on the 5th is incorporated into the final Phase 1 package delivered on August 7. Anything still open by then is carried into Phase 2 as a named assumption rather than left implicit.",
       ],

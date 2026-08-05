@@ -119,6 +119,21 @@ export type CardsBlockData = BlockBase & {
   cards: { icon: IconName; title: string; body: string }[];
 };
 
+/**
+ * A checklist of things to be handed over, grouped by topic. Distinct from
+ * `cards`: these are items to tick off, so they read as a list with the count
+ * visible, not as a grid of equal-weight statements.
+ */
+export type ChecklistBlockData = BlockBase & {
+  kind: "checklist";
+  groups: {
+    id: string;
+    category: string;
+    items: { title: string; body: string }[];
+  }[];
+  note?: string;
+};
+
 export type QaBlockData = BlockBase & {
   kind: "qa";
   groups: QuestionGroup[];
@@ -198,6 +213,7 @@ export type ProposalBlock =
   | FlowBlockData
   | SplitBlockData
   | CardsBlockData
+  | ChecklistBlockData
   | QaBlockData
   | TableBlockData
   | StatsBlockData

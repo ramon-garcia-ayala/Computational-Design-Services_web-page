@@ -100,8 +100,8 @@ public/proposals/
 
 **To add one**: create the folder with an `index.ts` and register it in
 `index.ts`. A proposal is a list of typed blocks — `prose`, `steps`, `flow`,
-`split`, `cards`, `qa`, `table`, `stats`, `pricing`, `docs`, `timeline`, `note` —
-mapped to components by `ProposalRenderer`. To add a new kind, extend the union
+`split`, `cards`, `checklist`, `qa`, `table`, `stats`, `pricing`, `docs`,
+`timeline`, `note` — mapped to components by `ProposalRenderer`. To add a new kind, extend the union
 in `types.ts`, write the component under `blocks/`, and wire it into the switch;
 that switch is the only place a kind maps to a component.
 
@@ -123,7 +123,11 @@ configuration or artifacts to show, `steps` is lighter than `flow`, and it
 carries two layouts of its own: `flow` chains the numbered markers left to right
 from `lg` up, which is how a pipeline should read and costs a fraction of the
 height; `list`, the default, keeps them in a numbered column, which is right for
-actions the reader has to take rather than a chain.
+actions the reader has to take rather than a chain. `checklist` is for items the
+client has to hand over or tick off: grouped by category, each with an empty box
+and each group with its count, so the reader sees how much is outstanding.
+`cards` would flatten exactly that — a grid gives every item equal weight and
+hides the total.
 
 **The card grids have no borders.** `cards`, `docs`, `timeline`, `pricing` and
 the `prose` checklist draw their dividers with `gap-px` over a `bg-line`
@@ -181,6 +185,11 @@ site, and a block component has no business owning scroll animation.
   Proposals link to their own sections, so real readers hit this, not just
   people pasting deep links — test any new animated block by loading its anchor
   directly, not only by scrolling to it.
+- **Settling means writing the end state, never `clearProps: "transform"`.**
+  Clearing hands control back to `reveal-init`, whose entire job is to hold the
+  element 24px low, so the element settles *offset*. It reads as a rendering
+  fault rather than an animation one: on the `gap-px` card grids it uncovers a
+  bar of border colour along the top of the grid.
 - **Breakpoints in JS**: use `gsap.matchMedia()` (see `HorizontalScroll.tsx`), not
   resize listeners.
 
