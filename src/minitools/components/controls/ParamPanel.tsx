@@ -2,21 +2,9 @@
 
 import type { ParamDef } from "../../schema/registry";
 import { viewerCopy } from "../../data/copy";
+import { formatParamValue } from "../../lib/format";
 
 export type ParamValues = Record<string, number | string>;
-
-/**
- * How many decimals to show, taken from the step's own precision — a step of
- * 0.5 reads as "3.5", a step of 1 as "4". Capped, because a model-authored
- * step can carry floating-point noise and no readout beside a slider is worth
- * seventeen digits.
- */
-function decimalsOf(step: number): number {
-  if (step >= 1) return 0;
-  const text = String(step);
-  const point = text.indexOf(".");
-  return point === -1 ? 0 : Math.min(4, text.length - point - 1);
-}
 
 /**
  * The dials for a generated tool. Driven entirely by `ParamDef`s, so a fixed
@@ -71,7 +59,6 @@ export function ParamPanel({
         }
 
         const value = Number(values[def.key] ?? def.default);
-        const decimals = decimalsOf(def.step);
 
         return (
           <div key={def.key}>
@@ -83,8 +70,7 @@ export function ParamPanel({
                 {def.label}
               </label>
               <span className="font-mono text-xs text-fg">
-                {value.toFixed(decimals)}
-                {def.unit ?? ""}
+                {formatParamValue(def, value)}
               </span>
             </div>
             <input

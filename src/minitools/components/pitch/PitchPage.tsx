@@ -1,4 +1,3 @@
-import { ClosingBlock } from "../ClosingBlock";
 import { pitchCopy } from "../../data/copy";
 import type { PitchSpec } from "../../schema/spec";
 
@@ -9,11 +8,14 @@ import type { PitchSpec } from "../../schema/spec";
  * DWG uploaded, a Revit session, a client's data. Answering "I can't do that"
  * would waste the only moment the visitor is paying attention, so the
  * assistant scopes the work instead and this page shows the result. Same URL
- * mechanics, same closing argument, no 3D.
+ * mechanics, no 3D.
+ *
+ * The closing argument is not this component's to render — `ToolViewerPage`
+ * mounts `InquiryBand` once, full-bleed and outside `Shell`, shared with the
+ * viewer archetypes. This is pure content.
  */
 export function PitchPage({ spec }: { spec: PitchSpec }) {
   return (
-    <>
       <div className="grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-16">
         <div className="max-w-2xl">
           {spec.problem ? (
@@ -94,12 +96,5 @@ export function PitchPage({ spec }: { spec: PitchSpec }) {
           ) : null}
         </aside>
       </div>
-
-      <ClosingBlock
-        template="pitch"
-        generationMs={spec.meta.generationMs}
-        subject={pitchCopy.contactSubject}
-      />
-    </>
   );
 }

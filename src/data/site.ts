@@ -29,13 +29,31 @@ const contactRecipients = [
   "ramyayoub8@gmail.com",
 ] as const;
 
-/** Builds a mailto to both partners with the given subject. */
-export function contactHref(subject: string = site.contactSubject): string {
-  return `mailto:${contactRecipients.join(",")}?subject=${encodeURIComponent(subject)}`;
+/**
+ * Builds a mailto to both partners with the given subject and, optionally, a
+ * prewritten body.
+ *
+ * Each part is escaped on its own with `encodeURIComponent` rather than built
+ * through `URLSearchParams`, which serialises a space as `+` — correct for a
+ * form body, wrong here: several mail clients drop the `+` straight into the
+ * message text a visitor is about to read. Line breaks in `body` should be
+ * `\r\n` (RFC 6068), which every handler agrees on.
+ */
+export function contactHref(subject: string = site.contactSubject, body?: string): string {
+  const query = [`subject=${encodeURIComponent(subject)}`];
+  if (body) query.push(`body=${encodeURIComponent(body)}`);
+  return `mailto:${contactRecipients.join(",")}?${query.join("&")}`;
 }
 
 /** Ready-to-use href for any contact CTA. */
 export const mailtoHref = contactHref();
+
+/**
+ * Practical ceiling for a whole mailto href, measured across Outlook and
+ * Gmail handlers. Above this, some clients silently truncate the body rather
+ * than opening it in full — worse than a shorter, honest draft.
+ */
+export const MAILTO_MAX_CHARS = 1800;
 
 /** Social links. Emptying the array hides the block in the footer. */
 export const socialLinks = [

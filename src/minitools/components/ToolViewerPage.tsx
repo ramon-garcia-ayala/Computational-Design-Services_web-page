@@ -13,7 +13,7 @@ import { isViewerSpec, type MinitoolSpec } from "../schema/spec";
 import { viewerCopy } from "../data/copy";
 import { ParamPanel, type ParamValues } from "./controls/ParamPanel";
 import { ProgramLegend, type LegendEntry } from "./ProgramLegend";
-import { ClosingBlock } from "./ClosingBlock";
+import { InquiryBand } from "./InquiryBand";
 import { PitchPage } from "./pitch/PitchPage";
 
 const ViewerCanvas = dynamic(() => import("./viewer/ViewerCanvas"), {
@@ -68,6 +68,8 @@ function withParam(
 export function ToolViewerPage() {
   const [phase, setPhase] = useState<Phase>("loading");
   const [spec, setSpec] = useState<MinitoolSpec | null>(null);
+  /** The absolute link the closing band composes its mailto around. */
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -115,17 +117,32 @@ export function ToolViewerPage() {
   }, []);
 
   /* Every adjustment goes back into the address bar, so the link the visitor
-     copies is the version they are looking at, not the one they were sent. */
+     copies is the version they are looking at, not the one they were sent.
+     The closing band's mailto rides the same encode rather than running its
+     own: a second debounced encoder would call `CompressionStream` twice per
+     slider drag and could disagree with what actually landed in the URL. */
   useEffect(() => {
     if (!spec) return;
 
+    /* Consecutive edits overlap two in-flight encodes when the first is slow
+       enough (CompressionStream on a large freeform scene) for the second to
+       finish first. Without this flag the slower, older encode would resolve
+       last and clobber both the address bar and `shareUrl` with a stale link. */
+    let cancelled = false;
+
     const timeout = window.setTimeout(() => {
       encodeSpec(spec).then((payload) => {
-        window.history.replaceState(null, "", `${TOOL_PATH}#${payload}`);
+        if (cancelled) return;
+        const href = `${TOOL_PATH}#${payload}`;
+        window.history.replaceState(null, "", href);
+        setShareUrl(`${window.location.origin}${href}`);
       });
     }, 250);
 
-    return () => window.clearTimeout(timeout);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
+    };
   }, [spec]);
 
   const handleParam = useCallback((key: string, value: number | string) => {
@@ -162,24 +179,24 @@ export function ToolViewerPage() {
   }
 
   return (
-    <Shell>
-      <header className="max-w-3xl">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
-          {spec.template === "pitch" ? "Scoped for you" : "Generated tool"}
-        </p>
-        <h1 className="mt-4 font-display text-3xl leading-tight text-fg sm:text-4xl lg:text-5xl">
-          {spec.meta.title}
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-fg-muted sm:text-lg">
-          {spec.meta.tagline}
-        </p>
-      </header>
+    <>
+      <Shell>
+        <header className="max-w-3xl">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+            {spec.template === "pitch" ? "Scoped for you" : "Generated tool"}
+          </p>
+          <h1 className="mt-4 font-display text-3xl leading-tight text-fg sm:text-4xl lg:text-5xl">
+            {spec.meta.title}
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-fg-muted sm:text-lg">
+            {spec.meta.tagline}
+          </p>
+        </header>
 
-      <div className="mt-12 lg:mt-16">
-        {spec.template === "pitch" ? (
-          <PitchPage spec={spec} />
-        ) : (
-          <>
+        <div className="mt-12 lg:mt-16">
+          {spec.template === "pitch" ? (
+            <PitchPage spec={spec} />
+          ) : (
             <div className="grid gap-8 lg:grid-cols-[1fr_340px] lg:gap-12">
               <div>
                 {/* Lenis owns the wheel everywhere else on the site; inside the
@@ -222,16 +239,12 @@ export function ToolViewerPage() {
                 </p>
               </aside>
             </div>
+          )}
+        </div>
+      </Shell>
 
-            <ClosingBlock
-              template={spec.template}
-              generationMs={spec.meta.generationMs}
-              subject={viewerCopy.contactSubject}
-            />
-          </>
-        )}
-      </div>
-    </Shell>
+      <InquiryBand spec={spec} shareUrl={shareUrl} />
+    </>
   );
 }
 

@@ -67,6 +67,48 @@ export const pitchCopy = {
   contactSubject: "About the project your assistant scoped",
 } as const;
 
+/**
+ * The closing band: the kicker, the two optional fields, and the templates
+ * the prewritten email body is assembled from. Never hardcoded in
+ * `InquiryBand` or `inquiry.ts`.
+ */
+export const inquiryCopy = {
+  kicker: "Built by",
+  nameLabel: "Your name",
+  namePlaceholder: "Ana Ruiz",
+  /* Not "Email" — in a mailto flow the address already travels in the From
+     header, so asking for it needs a reason of its own. Framed as where the
+     reply should land, it earns its place: the handler that opens the draft
+     is often not the account someone wants an answer at, and with no handler
+     at all the draft gets copied out by hand, at which point the From header
+     is gone but this line survives inside the body. */
+  emailLabel: "Reply to",
+  emailPlaceholder: "you@studio.com",
+  /* Literally true, which is what makes it work as reassurance without
+     asking for anyone's trust. */
+  trust: "Both optional. Nothing leaves this page — these only fill in the draft your own mail app opens.",
+  emailNudge: "That doesn't look like an address — we'll reply to whatever you send from.",
+
+  /**
+   * The prewritten email itself. Short on purpose — a starting point, not a
+   * transcript of the conversation — and `draftNote` says so up front, so it
+   * never reads as something the visitor supposedly wrote unprompted.
+   */
+  mail: {
+    draftNote:
+      "[This is a draft based on your conversation with the assistant — edit it however you like before sending.]",
+    settingsLabel: "Settings:",
+    planLabel: "Plan:",
+    stackLabel: "Stack:",
+    deliverablesLabel: "Deliverables:",
+    timelineLabel: "Timeline:",
+    linkLabel: "Link:",
+    linkOmitted: "(The link is too long for an email — it's in my address bar, I'll paste it separately.)",
+    moreParams: (n: number) => `…and ${n} more`,
+    signoffEmail: (email: string) => `Best reached at ${email}`,
+  },
+} as const;
+
 /** What the confirmation card says is about to be built. */
 export const templateLabels: Record<TemplateId, string> = {
   facade: "a facade panelisation tool",
@@ -107,12 +149,14 @@ export function progressMessages(template: TemplateId): string[] {
 
 /**
  * The closing argument. Two variants because the two page kinds earn their
- * claim differently: a 3D tool was *built*, a proposal was *scoped*.
+ * claim differently: a 3D tool was *built*, a proposal was *scoped*. The
+ * headline is split in two so the band can set the second half in the accent
+ * colour — the claim, then the turn toward the visitor.
  */
 export function closingLine(
   template: TemplateId,
   generationMs?: number,
-): { headline: string; body: string; cta: string } {
+): { headline: string; headlineAccent: string; body: string; cta: string } {
   const verb = template === "pitch" ? "Scoped" : "Built";
   /* Past half a minute the number stops being a boast — a first request for an
      archetype pays the API's one-time schema compilation and can run long, and
@@ -125,6 +169,7 @@ export function closingLine(
 
   return {
     headline: seconds ? `${verb} in ${seconds} seconds.` : `${verb} from one conversation.`,
+    headlineAccent: "Now build the real one.",
     body:
       template === "pitch"
         ? "That is a scope, a stack and a plan, from a few sentences you typed. Bring us the real constraints — the standards, the file formats, the deadline — and the first working version lands just as fast."

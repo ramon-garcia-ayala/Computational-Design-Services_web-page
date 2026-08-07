@@ -285,6 +285,62 @@ it ticks ten times a second inside an atomic live region. And the input is
 focused element blurs it, and the browser drops focus to `<body>` on every
 single message.
 
+**`InquiryBand` is the single closing argument for every generated page** —
+`ToolViewerPage` mounts it once as a sibling of `Shell`, not inside it, so it
+can run full-bleed the way `FinalCTA` does on the marketing pages. Neither
+`PitchPage` nor the viewer branch renders its own closing anymore; the band
+picks its subject from `spec.template` itself. It carries no `Reveal`, for the
+same reason as the rest of this page: the content only exists after an async
+hash decode, and a ScrollTrigger built against the pre-decode spinner measures
+the wrong position and never fires.
+
+**The inquiry email is composed, never left blank — and kept deliberately
+short.** `lib/inquiry.ts` builds a draft from fields the spec already has —
+never a new schema field, since widening the schema recompiles the
+structured-outputs JSON Schema (the ~110s first-use cost above). An early
+version wrote a small essay in the visitor's own voice, tagline and full sales
+paragraph included, and it read like something the visitor never actually
+said; the fix was to cut it down and say so. Every draft opens with
+`inquiryCopy.mail.draftNote` — "this is a draft, edit before sending" — before
+anything else, and the body itself is short: `spec.meta.pitch` (the 2-3
+sentence sales paragraph) is not part of the email at all, only the one-line
+`meta.tagline` (or `problem`, for a pitch spec); parameters cap at
+`MAX_LISTED_PARAMS` and pitch steps show titles only, never a step's own
+`detail`. Two rules keep it inside `MAILTO_MAX_CHARS` (1800, chosen for the
+tightest real mail clients rather than the ~2000 the average handler
+tolerates):
+
+- **The share link is decided once, before the trim ladder runs, and is
+  either kept whole or dropped whole — never truncated.** It is the one
+  section with no bound (a near-max `freeform` scene runs past 20KB on the
+  browsers that fall back to the uncompressed `v1u.` payload), so left inside
+  the ladder it would starve every other section without ever fitting; and
+  half a link reads as a working one, right up until the visitor clicks it and
+  lands on the invalid-link screen.
+- **The trim ladder (`bodyAtLevel`, 5 levels) drops sections in this order**:
+  the `pitch` extras (stack / deliverables / timeline) first, then the
+  parameter list or plan entirely, then the one-line tagline/problem, and only
+  as the last resort the link itself. The draft note, the opening line and the
+  signoff are never dropped.
+
+`cleanVisitorField` (`lib/visitor.ts`) strips control characters and caps
+length but never trims — it runs on every keystroke, and trimming there eats
+a trailing space the instant it is typed, before the visitor can start the
+next word. Trimming happens at the boundary instead: once in `readVisitor`,
+once in `inquiryHref`. **Any other place that reads `visitor.email` for
+validation has to trim too** — `InquiryBand`'s `emailInvalid` check does, on
+purpose, so a pasted address with incidental whitespace never gets flagged
+invalid in the UI when it would have composed into a perfectly good mailto.
+
+**The encode-to-URL effect in `ToolViewerPage` guards against its own
+staleness.** Two slider edits close together start two overlapping
+`encodeSpec(...).then(...)` calls, and nothing about promise ordering
+guarantees the newer one resolves last — a large `freeform` scene alone can
+make its `CompressionStream` call the slow one. The effect's cleanup sets a
+`cancelled` flag (the same pattern the fragment-decode effect above it
+already uses) so an older encode that resolves after a newer one is a no-op
+instead of clobbering `shareUrl` and the address bar with a stale link.
+
 `ANTHROPIC_API_KEY` is read only in `server/anthropic.ts` and fails closed: no
 key means 503 and a chat that says it is offline. There is no development
 fallback, unlike `PROPOSAL_SECRET`.
