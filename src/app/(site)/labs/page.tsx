@@ -23,13 +23,16 @@ export default function LabsPage() {
         <Reveal>
           <SectionHeading
             as="h1"
-            kicker="Labs · coming soon"
+            kicker="Labs"
             title="A playground for the things we build between projects"
-            lead="Prototypes, geometry experiments and small open tools. We are still deciding which ones survive contact with the public."
+            lead="Prototypes, geometry experiments and small open tools. The first one is already live: tell the assistant on the home page what you would automate and it builds you a parametric tool in seconds."
           />
 
           <div className="mt-12 flex flex-wrap items-center gap-4">
-            <CTALink href="/projects" size="lg">
+            <CTALink href="/" size="lg">
+              Build one now
+            </CTALink>
+            <CTALink href="/projects" variant="outline" size="lg">
               See client work instead
             </CTALink>
             <CTALink href={mailtoHref} variant="ghost" size="lg" external>

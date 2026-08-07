@@ -47,7 +47,17 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
        its position and the document's line up again. */
     const { hash } = window.location;
     if (hash.length > 1) {
-      const target = document.querySelector(hash);
+      /* Not every hash is a selector. `/labs/tool` carries its whole spec in
+         the fragment, and a payload starting with a digit throws inside
+         `querySelector` — which would take the Lenis setup, and with it every
+         reveal on the page, down with it. */
+      let target: Element | null = null;
+      try {
+        target = document.querySelector(hash);
+      } catch {
+        target = null;
+      }
+
       if (target) {
         window.scrollTo(0, 0);
         lenis.scrollTo(target as HTMLElement, { immediate: true });

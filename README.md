@@ -51,6 +51,9 @@ No component carries copy or figures inside it. Everything lives in `src/data/`:
 | `awards.ts` | recognitions and studio metrics |
 | `proposals/` | client proposals — see below |
 
+The assistant and the tools it generates keep their own copy in
+`src/minitools/data/copy.ts`, next to the rest of that module.
+
 ## Client proposals
 
 Each proposal is its own shareable page at the site root, e.g.
@@ -93,6 +96,32 @@ it fails safe.
 Currently live: the August 2026 Ecogen Discovery report is protected; the two
 June 2026 commercial proposals are open, and they show pricing, so their URLs are
 effectively public.
+
+## The assistant and its mini tools
+
+The panel in the hero is a working assistant. Describe something you would
+automate and it builds a live parametric tool in seconds, then hands over a
+link — a facade panelisation, a massing study with a program mix, a floor
+layout, or a small scene of its own devising. When a request genuinely cannot be
+demonstrated in a browser — anything needing an uploaded DWG, a Revit session or
+your own data — it writes a short scoped proposal instead of refusing.
+
+The whole thing lives in `src/minitools/`, deliberately self-contained so it can
+move to a package later. The model fills in typed archetypes through structured
+outputs; it never writes code, and nothing generated is ever evaluated.
+
+Each tool's configuration travels in the URL fragment, so `/labs/tool` is one
+static page however many tools exist, and a link carries its tool with it.
+Adjusting a slider rewrites the address bar, which makes the result shareable
+exactly as the visitor left it.
+
+**Production needs `ANTHROPIC_API_KEY`** (see `.env.example`). Without it the
+endpoint answers 503 and the chat says it is offline — it fails closed, and
+there is no development fallback. Conversation runs on Haiku 4.5 and only tool
+generation reaches Sonnet 5, so a typical exchange costs a few cents.
+
+See `CLAUDE.md` for the archetypes, the validation rules and the three-dimensional
+traps worth knowing before touching the viewer.
 
 ## Deployment
 

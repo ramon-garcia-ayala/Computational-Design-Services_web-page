@@ -63,11 +63,13 @@ proposals don't inherit the site navigation:
 | `/projects` | `src/app/(site)/projects/page.tsx` |
 | `/projects/[slug]` | `src/app/(site)/projects/[slug]/page.tsx` (`generateStaticParams`) |
 | `/labs` | `src/app/(site)/labs/page.tsx` (placeholder) |
+| `/labs/tool` | `src/app/(site)/labs/tool/page.tsx` (a generated mini tool) |
 | `/<proposal-slug>` | `src/app/(proposal)/[proposal]/page.tsx` (`generateStaticParams`) |
 | `/unlock` | `src/app/(proposal)/unlock/page.tsx` |
 | `/api/proposal-unlock` | `src/app/api/proposal-unlock/route.ts` (checks the password) |
+| `/api/minitools-chat` | `src/app/api/minitools-chat/route.ts` (the hero assistant) |
 
-Everything is static except that route handler and `src/proxy.ts`.
+Everything is static except those two route handlers and `src/proxy.ts`.
 
 The root layout holds only what must never be duplicated: `<html>`, the fonts and
 the single Lenis instance. `(site)/layout.tsx` adds the header and footer;
@@ -158,6 +160,90 @@ It is a Server Component with no animation of its own. An earlier version
 hand-rolled per-stage ScrollTriggers, which silently never ran and left the
 whole diagram blank — entrances go through `Reveal`, as everywhere else on the
 site, and a block component has no business owning scroll animation.
+
+## The assistant and its mini tools
+
+`src/minitools/` is a self-contained module: the chat in the hero, the API
+behind it, and the pages it generates. Nothing outside it imports from it except
+`ChatPlaceholder` and the two routes, which is deliberate — it is meant to be
+liftable into a package when the other site wants it.
+
+```
+src/minitools/
+  schema/     spec union, parameter registry, JSON Schema, validation
+  lib/        URL encoding, SSE reader, rate limit, geometry helpers
+  server/     API key, prompts, the route handler
+  components/ chat widget, viewer, param panel, proposal page
+  data/copy.ts  all the words
+```
+
+**Two models, and the visitor between them.** Haiku 4.5 holds the conversation
+and decides when there is enough to build on; its tool call is a *proposal* —
+the server emits a `confirm` frame and stops, the widget shows a card, and only
+the visitor's yes sends the `build` request that pays for Sonnet 5. Typing
+another message instead dismisses the card: continuing the conversation is
+declining. Small talk therefore never touches the expensive model, and neither
+does a proposal nobody confirmed. Both calls live in `server/chat-handler.ts`.
+
+**The model writes data, never code.** It fills in one of five archetypes —
+`facade`, `massing`, `layout`, `freeform`, `pitch` — through structured outputs.
+Even `freeform`, which looks the most open-ended, is a bounded scene graph of
+five primitives that `lib/scene.ts` walks; there is no evaluator anywhere, which
+is the only reason it is safe to render generated content on this domain.
+
+**`pitch` is the one that keeps the promise.** Some requests cannot honestly be
+demonstrated in a browser — they need an uploaded DWG, a Revit session, the
+client's own data. Rather than refuse, the assistant scopes the work and the
+page renders a short proposal instead. The router prompt says so explicitly:
+never end a conversation empty-handed.
+
+**`registry.ts` is the single source of truth for ranges.** The sliders, the
+clamping in `validate.ts` and the bounds written into the JSON Schema are all
+derived from it. Widen a range there, not in three places.
+
+**Everything is validated twice.** `parseSpec` runs on the model's output *and*
+on whatever comes out of the URL, and it clamps rather than rejects — someone
+who edits a number in the address bar should still see their tool. It only
+returns `null` when there is no usable `template`.
+
+**The spec travels in the URL fragment** (`/labs/tool#v1z.<deflated base64url>`),
+so the page stays static and a link carries its tool with it. Two consequences
+worth remembering: the fragment never reaches the server, and it is not a
+selector — `SmoothScroll` has to guard its `querySelector(hash)` or Lenis throws
+on every one of these links and takes the whole page's reveals with it.
+
+**The viewer's canvas leaves `frameloop` on the default.** `"demand"` is the
+obvious choice for a scene that only changes on input, and it fails here: R3F
+drives every root from one global animation frame that shuts down on any tick
+where nothing asks for work, and it reliably stops in the gap before this root
+goes active. The tool then renders nothing until the visitor happens to drag it.
+`StartRenderLoop` in `ViewerCanvas` kicks it once after mount for the same
+reason — without that, even the default frameloop starts out stalled.
+
+**A camera with a `position` still looks down -Z.** Every template builds itself
+around the origin, so `ViewerCanvas` calls `camera.lookAt(0, 0, 0)` in
+`onCreated`. Without it the framing misses the model entirely.
+
+**Geometry and material go in as children, not as `args`.** Disposing memoized
+three.js objects from an effect breaks under StrictMode, whose second mount
+reuses what the first mount's cleanup destroyed. Let R3F own the lifecycle.
+
+**Anything scrollable or draggable inside the panel needs `data-lenis-prevent`** —
+the message list and the canvas both carry it. Lenis owns the wheel everywhere
+else, so without it reading a reply scrolls the page instead.
+
+`ANTHROPIC_API_KEY` is read only in `server/anthropic.ts` and fails closed: no
+key means 503 and a chat that says it is offline. There is no development
+fallback, unlike `PROPOSAL_SECRET`.
+
+**The first build of each archetype can take minutes.** Structured outputs
+compiles a new JSON Schema once (then caches it for 24h server-side); the pitch
+schema has been observed at 110 s on first use. Three consequences already
+handled — keep them: a failed build restores the confirmation card so retrying
+is one click; `closingLine` drops the seconds figure above 30 s rather than
+bragging about a slow one; and the same-tab handoff also passes the spec
+through `sessionStorage` (`lib/handoff.ts`), so the tool page never shows the
+invalid-link screen to the visitor who just generated it.
 
 ## Animation conventions
 

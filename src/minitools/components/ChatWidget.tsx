@@ -1,0 +1,412 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { readSseStream } from "../lib/sse";
+import { toolHref } from "../lib/encode";
+import { stashSpec } from "../lib/handoff";
+import { parseSpec } from "../schema/validate";
+import { ROUTABLE_TEMPLATE_IDS, type TemplateId } from "../schema/spec";
+import {
+  confirmQuestion,
+  progressMessages,
+  widgetCopy,
+} from "../data/copy";
+
+type Phase = "idle" | "streaming" | "generating" | "error";
+
+type Entry = {
+  id: number;
+  role: "user" | "assistant";
+  text: string;
+  /** Set once a tool has been built and encoded into a link. */
+  href?: string;
+  linkLabel?: string;
+};
+
+/** A proposal Haiku made that the visitor has not yet said yes to. */
+type Pending = { template: TemplateId; brief: string };
+
+/** Maps a failed response to something a visitor can act on. */
+function messageForStatus(status: number): string {
+  if (status === 503) return widgetCopy.errors.offline;
+  if (status === 429) return widgetCopy.errors.rateLimited;
+  return widgetCopy.errors.generic;
+}
+
+/** How long each progress line holds before the next one takes over. */
+const PROGRESS_STEP_MS = 2600;
+
+/**
+ * The wait, made legible: elapsed seconds, a live dot pulse, and a rotating
+ * line of what is being worked on. The lines advance on a clock rather than on
+ * real signals — Sonnet answers in one pass, so there is nothing to subscribe
+ * to — but the last one holds until the tool actually lands. The pulse is
+ * plain CSS animation, which the global reduced-motion block already freezes.
+ */
+function BuildProgress({ template }: { template: TemplateId }) {
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    const startedAt = Date.now();
+    const interval = window.setInterval(
+      () => setElapsed((Date.now() - startedAt) / 1000),
+      100,
+    );
+    return () => window.clearInterval(interval);
+  }, []);
+
+  const lines = progressMessages(template);
+  const line = lines[Math.min(Math.floor((elapsed * 1000) / PROGRESS_STEP_MS), lines.length - 1)];
+
+  return (
+    <div
+      role="status"
+      className="flex items-center gap-3 rounded-xl border border-line bg-carbon/50 px-4 py-3"
+    >
+      <span aria-hidden="true" className="flex items-center gap-1">
+        {[0, 1, 2].map((dot) => (
+          <span
+            key={dot}
+            className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent"
+            style={{ animationDelay: `${dot * 220}ms` }}
+          />
+        ))}
+      </span>
+      <span className="flex-1 text-sm text-fg-muted">{line}</span>
+      <span className="font-mono text-xs tabular-nums text-accent">
+        {elapsed.toFixed(1)}s
+      </span>
+    </div>
+  );
+}
+
+/**
+ * The conversational assistant in the hero.
+ *
+ * Lives inside `ChatPlaceholder`, whose dimensions are fixed so that mounting
+ * this does not move the LCP. Everything scrollable is inside the panel, which
+ * is why the message list carries `data-lenis-prevent`: without it the wheel
+ * would scroll the page out from under someone reading a reply.
+ *
+ * Building is a two-step: when Haiku proposes a tool the server stops and this
+ * shows a confirmation card, and only the visitor's yes sends the `build`
+ * request that pays for Sonnet. Sending another message instead dismisses the
+ * card — continuing the conversation *is* declining.
+ */
+export function ChatWidget() {
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [draft, setDraft] = useState("");
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [pending, setPending] = useState<Pending | null>(null);
+  /** Which archetype the progress panel narrates while Sonnet works. */
+  const [building, setBuilding] = useState<TemplateId>("facade");
+
+  const listRef = useRef<HTMLDivElement>(null);
+  const nextId = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => abortRef.current?.abort();
+  }, []);
+
+  // Keep the latest line in view as the reply streams in.
+  useEffect(() => {
+    const list = listRef.current;
+    if (list) list.scrollTop = list.scrollHeight;
+  }, [entries, phase, pending]);
+
+  const historyOf = (list: Entry[]) =>
+    list.map((entry) => ({ role: entry.role, content: entry.text }));
+
+  /**
+   * POSTs one request and folds its stream into the entry `replyId`. Both the
+   * chat turn and the build go-ahead run through here; they only differ in the
+   * body and in which events they expect back. Reports whether the exchange
+   * delivered what it promised, so a failed build can offer itself again.
+   */
+  const runStream = useCallback(
+    async (
+      body: Record<string, unknown>,
+      replyId: number,
+    ): Promise<"ok" | "failed" | "aborted"> => {
+      let failed = false;
+      const update = (patch: (entry: Entry) => Entry) =>
+        setEntries((current) =>
+          current.map((entry) => (entry.id === replyId ? patch(entry) : entry)),
+        );
+
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      try {
+        const response = await fetch("/api/minitools-chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          update((entry) => ({ ...entry, text: messageForStatus(response.status) }));
+          setPhase("error");
+          return "failed";
+        }
+
+        await readSseStream(response, {
+          onText: (delta) =>
+            update((entry) => ({ ...entry, text: entry.text + delta })),
+
+          onConfirm: (proposal) => {
+            if (
+              (ROUTABLE_TEMPLATE_IDS as readonly string[]).includes(proposal.template)
+            ) {
+              setPending({
+                template: proposal.template as TemplateId,
+                brief: proposal.brief,
+              });
+            }
+          },
+
+          onStatus: (value) => {
+            if (value === "generating") setPhase("generating");
+          },
+
+          onSpec: async (raw) => {
+            /* Validated again on this side: the link is built from it, and a
+               spec that cannot be parsed would produce a dead URL. */
+            const spec = parseSpec(raw);
+            if (!spec) return;
+
+            /* Same-tab safety net: the tool page falls back to this stash if
+               anything mangles the fragment on the way over. */
+            stashSpec(spec);
+
+            const href = await toolHref(spec);
+            update((entry) => ({
+              ...entry,
+              text: entry.text || spec.meta.title,
+              href,
+              linkLabel:
+                spec.template === "pitch" ? widgetCopy.openPitch : widgetCopy.openTool,
+            }));
+          },
+
+          onError: () => {
+            failed = true;
+            update((entry) => ({
+              ...entry,
+              text: entry.text || widgetCopy.errors.generic,
+            }));
+          },
+        });
+
+        setPhase("idle");
+        return failed ? "failed" : "ok";
+      } catch (error) {
+        if ((error as Error)?.name === "AbortError") return "aborted";
+        update((entry) => ({ ...entry, text: widgetCopy.errors.generic }));
+        setPhase("error");
+        return "failed";
+      } finally {
+        abortRef.current = null;
+      }
+    },
+    [],
+  );
+
+  const send = useCallback(
+    async (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed || phase === "streaming" || phase === "generating") return;
+
+      // Typing onward instead of confirming is an answer: not now.
+      setPending(null);
+
+      const userEntry: Entry = { id: nextId.current++, role: "user", text: trimmed };
+      const replyId = nextId.current++;
+      const history = historyOf([...entries, userEntry]);
+
+      setEntries((current) => [
+        ...current,
+        userEntry,
+        { id: replyId, role: "assistant", text: "" },
+      ]);
+      setDraft("");
+      setPhase("streaming");
+
+      await runStream({ messages: history }, replyId);
+    },
+    [entries, phase, runStream],
+  );
+
+  const build = useCallback(async () => {
+    if (!pending || phase === "streaming" || phase === "generating") return;
+
+    const replyId = nextId.current++;
+    const history = historyOf(entries);
+
+    setEntries((current) => [...current, { id: replyId, role: "assistant", text: "" }]);
+    setPhase("generating");
+
+    const request = pending;
+    setBuilding(request.template);
+    setPending(null);
+
+    const outcome = await runStream({ messages: history, build: request }, replyId);
+
+    /* Generation can fail transiently — an overloaded upstream, or the first
+       request for an archetype paying its one-time schema compilation. The
+       card comes back so the visitor can just press Build again instead of
+       reconstructing the conversation. */
+    if (outcome === "failed") setPending(request);
+  }, [entries, pending, phase, runStream]);
+
+  const decline = useCallback(() => {
+    setPending(null);
+    setEntries((current) => [
+      ...current,
+      { id: nextId.current++, role: "assistant", text: widgetCopy.confirm.declined },
+    ]);
+  }, []);
+
+  const busy = phase === "streaming" || phase === "generating";
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div
+        ref={listRef}
+        data-lenis-prevent
+        role="log"
+        aria-live="polite"
+        aria-label={widgetCopy.heading}
+        className="min-h-0 flex-1 overflow-y-auto px-4 py-4"
+      >
+        {entries.length === 0 ? (
+          <div>
+            <p className="max-w-[34ch] text-sm leading-relaxed text-fg-muted">
+              {widgetCopy.welcome}
+            </p>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {widgetCopy.suggestions.map((suggestion) => (
+                <li key={suggestion}>
+                  <button
+                    type="button"
+                    onClick={() => void send(suggestion)}
+                    className="rounded-full border border-line px-3 py-1.5 text-xs text-fg-muted transition-colors duration-200 hover:border-accent hover:text-accent"
+                  >
+                    {suggestion}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <ul className="flex flex-col gap-4">
+            {entries.map((entry) => (
+              <li
+                key={entry.id}
+                className={entry.role === "user" ? "flex justify-end" : ""}
+              >
+                <div
+                  className={
+                    entry.role === "user"
+                      ? "max-w-[85%] rounded-xl rounded-br-sm bg-graphite-hi px-3 py-2 text-sm text-fg"
+                      : "max-w-[92%] text-sm leading-relaxed text-fg-muted"
+                  }
+                >
+                  {entry.text}
+                  {entry.role === "assistant" && !entry.text && phase === "streaming" ? (
+                    <span className="text-fg-muted">{widgetCopy.thinking}…</span>
+                  ) : null}
+
+                  {entry.href ? (
+                    <Link
+                      href={entry.href}
+                      /* `flex w-fit`, not inline: on its own line below the
+                         title instead of crowding the last line of text. */
+                      className="mt-3 flex w-fit items-center gap-2 rounded-full bg-accent px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim"
+                    >
+                      {entry.linkLabel ?? widgetCopy.openTool}
+                      <span aria-hidden="true">→</span>
+                    </Link>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+
+            {pending && !busy ? (
+              <li>
+                <div className="rounded-xl border border-accent/40 bg-carbon/50 px-4 py-3">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+                    {widgetCopy.confirm.lead}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-fg">
+                    {confirmQuestion(pending.template)}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => void build()}
+                      className="rounded-full bg-accent px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim"
+                    >
+                      {widgetCopy.confirm.build}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={decline}
+                      className="rounded-full border border-line px-4 py-2 font-mono text-xs tracking-wide text-fg-muted uppercase transition-colors duration-200 hover:border-accent hover:text-accent"
+                    >
+                      {widgetCopy.confirm.refine}
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ) : null}
+
+            {phase === "generating" ? (
+              <li>
+                <BuildProgress template={building} />
+              </li>
+            ) : null}
+          </ul>
+        )}
+      </div>
+
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          void send(draft);
+        }}
+        className="flex items-end gap-2 border-t border-line px-3 py-3"
+      >
+        <label htmlFor="minitools-input" className="sr-only">
+          {widgetCopy.inputLabel}
+        </label>
+        <textarea
+          id="minitools-input"
+          rows={1}
+          value={draft}
+          disabled={busy}
+          placeholder={widgetCopy.placeholder}
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={(event) => {
+            // Enter sends; Shift+Enter is a newline, as in every chat ever.
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              void send(draft);
+            }
+          }}
+          className="max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-line bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none disabled:opacity-50"
+        />
+        <button
+          type="submit"
+          disabled={busy || draft.trim().length === 0}
+          className="rounded-lg bg-accent px-3 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {busy ? widgetCopy.sending : widgetCopy.send}
+        </button>
+      </form>
+    </div>
+  );
+}
