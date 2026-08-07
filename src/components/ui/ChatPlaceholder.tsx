@@ -5,16 +5,25 @@ import { cn } from "@/lib/utils";
 /**
  * The hero's conversational assistant.
  *
- * The wrapper stays a Server Component and keeps the exact dimensions it had
- * while this was an empty slot, so mounting the widget did not move the LCP.
- * Only the inner panel is client-side.
+ * The wrapper stays a Server Component; only the inner panel is client-side.
+ *
+ * Its height is *definite* at every breakpoint, which matters more than it
+ * looks: the widget's message list is `flex-1 overflow-y-auto`, and in an
+ * auto-height column flex container that resolves to the content's own height,
+ * so the list would never overflow and never scroll. The panel would simply
+ * grow with the conversation, pushing every section below the hero down
+ * mid-chat and leaving the newest reply below the fold with no way back to it.
+ * `min-h-*` alone is not a height. Above `lg` the aspect ratio does the job,
+ * below it the viewport-relative height does, bounded so it stays sane on a
+ * short phone and on a tall desktop window alike.
  */
 export function ChatPlaceholder({ className }: { className?: string }) {
   return (
     <div
       className={cn(
         "relative flex w-full flex-col overflow-hidden rounded-xl border border-line bg-graphite/60 backdrop-blur-sm",
-        "min-h-[220px] sm:min-h-[280px] lg:aspect-[4/3] lg:min-h-0",
+        "h-[60svh] max-h-[440px] min-h-[300px]",
+        "lg:aspect-[4/3] lg:h-auto lg:max-h-none lg:min-h-0",
         className,
       )}
       data-slot="chat"

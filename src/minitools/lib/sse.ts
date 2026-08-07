@@ -6,15 +6,21 @@
  * and the frames — `event: <name>\ndata: <json>\n\n` — are split out here.
  */
 
+/**
+ * Handlers may be async — `onSpec` has to encode the spec into a link before
+ * it can finish — and each one is awaited before the next frame is read. The
+ * caller is therefore entitled to assume that when `readSseStream` resolves,
+ * every handler it triggered has run to completion.
+ */
 export type SseHandlers = {
-  onText?: (delta: string) => void;
-  onStatus?: (phase: string) => void;
-  onConfirm?: (proposal: { template: string; brief: string }) => void;
-  onSpec?: (spec: unknown) => void;
-  onError?: (error: string) => void;
+  onText?: (delta: string) => void | Promise<void>;
+  onStatus?: (phase: string) => void | Promise<void>;
+  onConfirm?: (proposal: { template: string; brief: string }) => void | Promise<void>;
+  onSpec?: (spec: unknown) => void | Promise<void>;
+  onError?: (error: string) => void | Promise<void>;
 };
 
-function dispatch(frame: string, handlers: SseHandlers): void {
+async function dispatch(frame: string, handlers: SseHandlers): Promise<void> {
   let event = "";
   const dataLines: string[] = [];
 
@@ -34,21 +40,23 @@ function dispatch(frame: string, handlers: SseHandlers): void {
 
   switch (event) {
     case "text":
-      if (typeof data.delta === "string") handlers.onText?.(data.delta);
+      if (typeof data.delta === "string") await handlers.onText?.(data.delta);
       break;
     case "status":
-      if (typeof data.phase === "string") handlers.onStatus?.(data.phase);
+      if (typeof data.phase === "string") await handlers.onStatus?.(data.phase);
       break;
     case "confirm":
       if (typeof data.template === "string" && typeof data.brief === "string") {
-        handlers.onConfirm?.({ template: data.template, brief: data.brief });
+        await handlers.onConfirm?.({ template: data.template, brief: data.brief });
       }
       break;
     case "spec":
-      handlers.onSpec?.(data.spec);
+      await handlers.onSpec?.(data.spec);
       break;
     case "error":
-      handlers.onError?.(typeof data.error === "string" ? data.error : "upstream_error");
+      await handlers.onError?.(
+        typeof data.error === "string" ? data.error : "upstream_error",
+      );
       break;
   }
 }
@@ -73,7 +81,7 @@ export async function readSseStream(
        partial frame and waits for the next chunk. */
     let split = buffer.indexOf("\n\n");
     while (split !== -1) {
-      dispatch(buffer.slice(0, split), handlers);
+      await dispatch(buffer.slice(0, split), handlers);
       buffer = buffer.slice(split + 2);
       split = buffer.indexOf("\n\n");
     }

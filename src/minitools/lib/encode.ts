@@ -20,8 +20,17 @@ const VERSION = "v1";
 const DEFLATED = `${VERSION}z.`;
 const PLAIN = `${VERSION}u.`;
 
-/** Well past the largest real spec; a longer fragment is an attack, not a tool. */
-const MAX_PAYLOAD_CHARS = 4096;
+/**
+ * Well past the largest real spec; a longer fragment is an attack, not a tool.
+ *
+ * Sized for the *uncompressed* worst case, not the deflated one. A 48-node
+ * freeform scene — the ceiling `LIMITS.sceneNodes` allows — deflates to under
+ * a kilobyte but runs to roughly 17 KB written plain, and the plain branch is
+ * the one older Safari takes. A cap that only fits the deflated form would let
+ * those browsers generate links that nobody, including their author on the
+ * next reload, could open.
+ */
+const MAX_PAYLOAD_CHARS = 24576;
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();

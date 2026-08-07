@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { readSseStream } from "../lib/sse";
+import { CHAT_LIMITS } from "../lib/chat-limits";
 import { toolHref } from "../lib/encode";
 import { stashSpec } from "../lib/handoff";
 import { parseSpec } from "../schema/validate";
@@ -74,7 +76,11 @@ function BuildProgress({ template }: { template: TemplateId }) {
         ))}
       </span>
       <span className="flex-1 text-sm text-fg-muted">{line}</span>
-      <span className="font-mono text-xs tabular-nums text-accent">
+      {/* Hidden from assistive tech: the readout changes ten times a second,
+          and this region is atomic, so announcing it would re-read the whole
+          panel on every tick for as long as the build runs. The rotating line
+          above carries the same information at a readable pace. */}
+      <span aria-hidden="true" className="font-mono text-xs tabular-nums text-accent">
         {elapsed.toFixed(1)}s
       </span>
     </div>
@@ -103,6 +109,8 @@ export function ChatWidget() {
   const [building, setBuilding] = useState<TemplateId>("facade");
 
   const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const buildRef = useRef<HTMLButtonElement>(null);
   const nextId = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -116,8 +124,46 @@ export function ChatWidget() {
     if (list) list.scrollTop = list.scrollHeight;
   }, [entries, phase, pending]);
 
+  const busy = phase === "streaming" || phase === "generating";
+
+  /**
+   * The transcript is a browsable log, not a live region — announcing it as it
+   * streams would read the same reply back in overlapping fragments, once per
+   * token. So the finished turn is mirrored into a polite region instead, and
+   * the confirmation question comes with it, since that is the part the
+   * visitor has to act on. Empty while busy, which is what makes the arrival
+   * of the finished text a change worth announcing.
+   */
+  const last = entries[entries.length - 1];
+  const announcement = busy
+    ? ""
+    : [
+        last?.role === "assistant" && last.text ? last.text : "",
+        pending ? confirmQuestion(pending.template) : "",
+      ]
+        .filter((part) => part.length > 0)
+        .join(" ");
+
+  /* Focus follows the conversation: to the decision when there is one to make,
+     back to the input when the turn is over. Without this the visitor is left
+     wherever the browser dropped them. `preventScroll` because a reply can
+     land while they are reading further down the page, and Lenis owns the
+     scroll position — the focus should move, the page should not. */
+  useEffect(() => {
+    if (busy) return;
+    if (pending) buildRef.current?.focus({ preventScroll: true });
+    else if (entries.length > 0) inputRef.current?.focus({ preventScroll: true });
+  }, [busy, pending, entries.length]);
+
+  /* Two rules, both of them the server's: never send an empty turn — the
+     router answers a ready-enough message with a tool call and no text, and
+     an empty message is not a thing the API accepts — and never send more
+     turns than the model is given anyway. */
   const historyOf = (list: Entry[]) =>
-    list.map((entry) => ({ role: entry.role, content: entry.text }));
+    list
+      .filter((entry) => entry.text.trim().length > 0)
+      .slice(-CHAT_LIMITS.historyMessages)
+      .map((entry) => ({ role: entry.role, content: entry.text }));
 
   /**
    * POSTs one request and folds its stream into the entry `replyId`. Both the
@@ -210,6 +256,18 @@ export function ChatWidget() {
         return "failed";
       } finally {
         abortRef.current = null;
+
+        /* A router turn that went straight to a tool call leaves this entry
+           with nothing in it. Dropping it keeps the transcript free of blank
+           bubbles and, more to the point, out of the next request. */
+        setEntries((current) =>
+          current.filter(
+            (entry) =>
+              entry.id !== replyId ||
+              entry.text.trim().length > 0 ||
+              entry.href !== undefined,
+          ),
+        );
       }
     },
     [],
@@ -270,15 +328,20 @@ export function ChatWidget() {
     ]);
   }, []);
 
-  const busy = phase === "streaming" || phase === "generating";
-
   return (
     <div className="flex min-h-0 flex-1 flex-col">
+      <p role="status" className="sr-only">
+        {announcement}
+      </p>
+
       <div
         ref={listRef}
         data-lenis-prevent
         role="log"
-        aria-live="polite"
+        /* Off on purpose: the finished turn is announced through the region
+           above, so streaming does not read a growing fragment on every SSE
+           delta. The log itself stays browsable. */
+        aria-live="off"
         aria-label={widgetCopy.heading}
         className="min-h-0 flex-1 overflow-y-auto px-4 py-4"
       >
@@ -346,6 +409,7 @@ export function ChatWidget() {
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
+                      ref={buildRef}
                       type="button"
                       onClick={() => void build()}
                       className="rounded-full bg-accent px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim"
@@ -383,11 +447,18 @@ export function ChatWidget() {
         <label htmlFor="minitools-input" className="sr-only">
           {widgetCopy.inputLabel}
         </label>
+        {/* `readOnly` rather than `disabled` while a turn is in flight:
+            disabling the element the visitor is typing in blurs it, and the
+            browser drops focus to the document body on every single message.
+            `send` already refuses to run while busy. */}
         <textarea
+          ref={inputRef}
           id="minitools-input"
           rows={1}
           value={draft}
-          disabled={busy}
+          readOnly={busy}
+          aria-disabled={busy}
+          maxLength={CHAT_LIMITS.messageChars}
           placeholder={widgetCopy.placeholder}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
@@ -397,12 +468,18 @@ export function ChatWidget() {
               void send(draft);
             }
           }}
-          className="max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-line bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none disabled:opacity-50"
+          className={cn(
+            "max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-line bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none",
+            busy && "opacity-50",
+          )}
         />
         <button
           type="submit"
-          disabled={busy || draft.trim().length === 0}
-          className="rounded-lg bg-accent px-3 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim disabled:cursor-not-allowed disabled:opacity-40"
+          aria-disabled={busy || draft.trim().length === 0}
+          className={cn(
+            "rounded-lg bg-accent px-3 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim",
+            (busy || draft.trim().length === 0) && "cursor-not-allowed opacity-40",
+          )}
         >
           {busy ? widgetCopy.sending : widgetCopy.send}
         </button>

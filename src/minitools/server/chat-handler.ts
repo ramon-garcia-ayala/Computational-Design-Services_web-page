@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type Anthropic from "@anthropic-ai/sdk";
 import {
-  MAX_HISTORY,
   ROUTER_MAX_TOKENS,
   ROUTER_MODEL,
   SPEC_MAX_TOKENS,
@@ -13,6 +12,7 @@ import { ROUTER_SYSTEM, SPEC_SYSTEM, specInstruction } from "./prompts";
 import { specSchemaFor } from "../schema/json-schema";
 import { parseSpec } from "../schema/validate";
 import { ROUTABLE_TEMPLATE_IDS, type MinitoolSpec, type TemplateId } from "../schema/spec";
+import { CHAT_LIMITS } from "../lib/chat-limits";
 import { clientIp, withinRateLimit } from "../lib/rate-limit";
 
 /**
@@ -40,9 +40,6 @@ import { clientIp, withinRateLimit } from "../lib/rate-limit";
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 type BuildRequest = { template: TemplateId; brief: string };
-
-const MAX_INCOMING_MESSAGES = 16;
-const MAX_MESSAGE_CHARS = 2000;
 
 const encoder = new TextEncoder();
 
@@ -82,7 +79,7 @@ function parseMessages(payload: unknown): ChatMessage[] | null {
   if (typeof payload !== "object" || payload === null) return null;
 
   const raw = (payload as { messages?: unknown }).messages;
-  if (!Array.isArray(raw) || raw.length === 0 || raw.length > MAX_INCOMING_MESSAGES) {
+  if (!Array.isArray(raw) || raw.length === 0 || raw.length > CHAT_LIMITS.incomingMessages) {
     return null;
   }
 
@@ -94,16 +91,22 @@ function parseMessages(payload: unknown): ChatMessage[] | null {
 
     if (role !== "user" && role !== "assistant") return null;
     if (typeof content !== "string") return null;
+    if (content.length > CHAT_LIMITS.messageChars) return null;
 
+    /* An empty turn is dropped rather than rejected. The router answers a
+       ready-enough first message with a tool call and no text at all, which
+       leaves the widget holding a blank assistant entry; failing the whole
+       payload over it would 400 every request from that point on, including
+       the build the visitor just confirmed. */
     const trimmed = content.trim();
-    if (!trimmed || trimmed.length > MAX_MESSAGE_CHARS) return null;
+    if (!trimmed) continue;
 
     messages.push({ role, content: trimmed });
   }
 
   /* Only the tail is worth paying for, and the API needs the first turn to be
      the visitor's — so anything the truncation left dangling goes too. */
-  const tail = messages.slice(-MAX_HISTORY);
+  const tail = messages.slice(-CHAT_LIMITS.historyMessages);
   while (tail.length > 0 && tail[0].role !== "user") tail.shift();
 
   return tail.length > 0 ? tail : null;
@@ -129,7 +132,7 @@ function parseBuild(payload: unknown): BuildRequest | null | undefined {
   }
 
   const trimmed = brief.trim();
-  if (!trimmed || trimmed.length > MAX_MESSAGE_CHARS) return null;
+  if (!trimmed || trimmed.length > CHAT_LIMITS.messageChars) return null;
 
   return { template: template as TemplateId, brief: trimmed };
 }

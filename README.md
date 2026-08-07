@@ -120,8 +120,8 @@ endpoint answers 503 and the chat says it is offline — it fails closed, and
 there is no development fallback. Conversation runs on Haiku 4.5 and only tool
 generation reaches Sonnet 5, so a typical exchange costs a few cents.
 
-See `CLAUDE.md` for the archetypes, the validation rules and the three-dimensional
-traps worth knowing before touching the viewer.
+See `.claude/CLAUDE.md` for the archetypes, the validation rules and the
+three-dimensional traps worth knowing before touching the viewer.
 
 ## Deployment
 
@@ -148,5 +148,5 @@ harvesters. Edit `contactRecipients` in `src/data/site.ts`.
 
 ## Documentation
 
-`CLAUDE.md` holds the project conventions: design tokens, the animation pattern,
+`.claude/CLAUDE.md` holds the project conventions: design tokens, the animation pattern,
 how to add a project or a proposal, and how `prefers-reduced-motion` is honoured.

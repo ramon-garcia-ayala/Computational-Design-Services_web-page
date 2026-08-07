@@ -72,14 +72,23 @@ export function ToolViewerPage() {
   useEffect(() => {
     let cancelled = false;
 
-    const load = () => {
-      decodeSpec(window.location.hash).then((parsed) => {
+    /**
+     * `arriving` marks the first read, the one that may be the same-tab click
+     * out of the chat widget. Only that read may fall back to the stash, and
+     * only when there was a fragment to fail: the stash holds whatever this
+     * tab generated last, with nothing tying it to the link being opened, so
+     * using it later would render one visitor's tool under another's URL — and
+     * the writeback below would then rewrite the address bar to match it.
+     */
+    const load = (arriving: boolean) => {
+      const hash = window.location.hash;
+
+      decodeSpec(hash).then((parsed) => {
         if (cancelled) return;
 
-        /* The fragment is canonical, but a same-tab arrival from the chat has
-           a second chance: the widget stashed the spec it just generated. Only
-           when both fail is the link truly empty. */
-        const recovered = parsed ?? readStashedSpec();
+        const recovered =
+          parsed ?? (arriving && hash.length > 1 ? readStashedSpec() : null);
+
         if (!recovered) {
           setPhase("invalid");
           return;
@@ -90,17 +99,18 @@ export function ToolViewerPage() {
       });
     };
 
-    load();
+    load(true);
 
     /* Pasting a different tool's link into the same tab only changes the
        fragment, so there is no navigation and nothing would re-read it.
        `replaceState` — how the sliders write back — does not fire this event,
        so the listener never sees our own updates. */
-    window.addEventListener("hashchange", load);
+    const onHashChange = () => load(false);
+    window.addEventListener("hashchange", onHashChange);
 
     return () => {
       cancelled = true;
-      window.removeEventListener("hashchange", load);
+      window.removeEventListener("hashchange", onHashChange);
     };
   }, []);
 

@@ -5,11 +5,17 @@ import { viewerCopy } from "../../data/copy";
 
 export type ParamValues = Record<string, number | string>;
 
+/**
+ * How many decimals to show, taken from the step's own precision — a step of
+ * 0.5 reads as "3.5", a step of 1 as "4". Capped, because a model-authored
+ * step can carry floating-point noise and no readout beside a slider is worth
+ * seventeen digits.
+ */
 function decimalsOf(step: number): number {
   if (step >= 1) return 0;
   const text = String(step);
   const point = text.indexOf(".");
-  return point === -1 ? 0 : text.length - point - 1;
+  return point === -1 ? 0 : Math.min(4, text.length - point - 1);
 }
 
 /**

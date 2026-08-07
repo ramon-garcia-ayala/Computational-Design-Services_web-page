@@ -31,6 +31,3 @@ export const ROUTER_MAX_TOKENS = 512;
 /** A spec plus its copy. Freeform scenes and five-step pitches are the long
     ones; a truncated JSON is unrepairable, so the ceiling errs high. */
 export const SPEC_MAX_TOKENS = 4000;
-
-/** Turns handed to the model. Older ones are dropped before the request. */
-export const MAX_HISTORY = 12;

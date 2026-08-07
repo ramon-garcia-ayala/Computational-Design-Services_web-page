@@ -9,6 +9,11 @@
  * navigation quirk; whoever they *share* the link with still exercises the
  * URL path in full.
  *
+ * Nothing here ties the stash to a particular link, so the tool page only
+ * consults it on the arriving read — see `ToolViewerPage`. Applied to any
+ * failed decode it would answer a stranger's broken link with whatever this
+ * tab happened to generate last.
+ *
  * One slot, newest wins. `sessionStorage` so it dies with the tab.
  */
 

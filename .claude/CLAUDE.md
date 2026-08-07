@@ -206,11 +206,33 @@ on whatever comes out of the URL, and it clamps rather than rejects — someone
 who edits a number in the address bar should still see their tool. It only
 returns `null` when there is no usable `template`.
 
+Two exceptions to "clamp, don't reject", both deliberate. A binding whose node
+index is out of range is *dropped*: clamping it would hand the slider to
+whichever node sits at the end of the scene, and a control labelled "Roof
+pitch" quietly rotating something else is worse than one that does nothing.
+And a clamped value that lands back in a *loop bound* has to be re-clamped
+where it is applied — `resolveScene` caps `repeat.count` at `LIMITS.repeatCount`
+again, because a binding is `value * factor + offset` and both sides of that
+reach a thousand. Every other bindable property ends in a transform, where an
+absurd number is only absurd to look at; that one ends in a `for`.
+
 **The spec travels in the URL fragment** (`/labs/tool#v1z.<deflated base64url>`),
 so the page stays static and a link carries its tool with it. Two consequences
 worth remembering: the fragment never reaches the server, and it is not a
 selector — `SmoothScroll` has to guard its `querySelector(hash)` or Lenis throws
 on every one of these links and takes the whole page's reveals with it.
+
+`MAX_PAYLOAD_CHARS` is sized for the *uncompressed* fallback, not the deflated
+form. A 48-node scene deflates to under a kilobyte and runs to some 17 KB
+written plain, and plain is the branch a browser without `CompressionStream`
+takes — a cap that only fits the deflated size would let those browsers
+generate links nobody could open, including their author on the next reload.
+
+**The sessionStorage handoff is for the arriving read only.** Nothing ties the
+stash to a particular link, so `ToolViewerPage` consults it on mount and only
+when there was a fragment that failed; applied to any failed decode it answers
+a stranger's broken link with whatever this tab generated last, and the slider
+writeback then rewrites the address bar to match.
 
 **The viewer's canvas leaves `frameloop` on the default.** `"demand"` is the
 obvious choice for a scene that only changes on input, and it fails here: R3F
@@ -231,6 +253,37 @@ reuses what the first mount's cleanup destroyed. Let R3F own the lifecycle.
 **Anything scrollable or draggable inside the panel needs `data-lenis-prevent`** —
 the message list and the canvas both carry it. Lenis owns the wheel everywhere
 else, so without it reading a reply scrolls the page instead.
+
+**`ChatPlaceholder` needs a *definite* height at every breakpoint**, not a
+`min-h-*`. The message list is `flex-1 overflow-y-auto`, and in an auto-height
+column flex container that resolves to the content's own height: the list never
+overflows, never scrolls, and the panel grows with the conversation instead —
+pushing every section below the hero down mid-chat, leaving the newest reply
+under the fold, and making both `data-lenis-prevent` and the scroll-to-bottom
+effect no-ops. Above `lg` the aspect ratio supplies the height; below it a
+bounded `svh` does.
+
+**An empty turn never goes to the API.** The router answers a ready-enough
+message with a tool call and *no text at all*, which leaves the widget holding a
+blank assistant entry. `historyOf` filters those out and the route drops them
+rather than rejecting the payload — an empty message the API will not accept,
+answered with a 400, poisons every later request in the conversation including
+the build the visitor just confirmed. The two sides agree on the caps through
+`lib/chat-limits.ts`; enforce a new one in both places or not at all.
+
+**`readSseStream` awaits its handlers.** `onSpec` has to encode the spec into a
+link before it can finish, so when the reader resolves, every handler it fired
+has run. Anything the caller does after the stream — the widget prunes the
+empty entry there — would otherwise race the handler that fills it.
+
+**The transcript is `aria-live="off"`.** Announcing it as it streams reads the
+same reply back in overlapping fragments, once per SSE delta; the finished turn
+is mirrored into a `role="status"` region instead, together with the
+confirmation question. For the same reason the build timer is `aria-hidden` —
+it ticks ten times a second inside an atomic live region. And the input is
+`readOnly` rather than `disabled` while a turn is in flight: disabling the
+focused element blurs it, and the browser drops focus to `<body>` on every
+single message.
 
 `ANTHROPIC_API_KEY` is read only in `server/anthropic.ts` and fails closed: no
 key means 503 and a chat that says it is offline. There is no development

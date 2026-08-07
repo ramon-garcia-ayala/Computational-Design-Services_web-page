@@ -37,6 +37,15 @@ function NodeGeometry({ node }: { node: SceneNode }) {
     return shape;
   }, [node.shape, node.profile]);
 
+  /* Memoised because R3F compares `args` by reference: a fresh options literal
+     on every render makes it tear the geometry down and re-triangulate it,
+     once per instance, on every frame of a slider drag — to rebuild exactly
+     what was there before, since neither `size` nor `profile` is bindable. */
+  const prismOptions = useMemo(
+    () => ({ depth: size.z, bevelEnabled: false }),
+    [size.z],
+  );
+
   switch (node.shape) {
     case "cylinder":
       return <cylinderGeometry args={[size.x / 2, size.x / 2, size.y, 32]} />;
@@ -52,9 +61,7 @@ function NodeGeometry({ node }: { node: SceneNode }) {
       );
     case "prism":
       return prismShape ? (
-        <extrudeGeometry
-          args={[prismShape, { depth: size.z, bevelEnabled: false }]}
-        />
+        <extrudeGeometry args={[prismShape, prismOptions]} />
       ) : (
         <boxGeometry args={[size.x, size.y, size.z]} />
       );

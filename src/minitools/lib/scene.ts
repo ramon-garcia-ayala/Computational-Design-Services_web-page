@@ -14,6 +14,7 @@ import type {
   SceneNode,
   Vec3,
 } from "../schema/spec";
+import { LIMITS } from "../schema/registry";
 
 /** World units the whole composition is normalised into. */
 const FIT = 6;
@@ -38,8 +39,20 @@ function applyBinding(node: SceneNode, property: BindableProp, value: number): v
 
   if (group === "repeat") {
     if (!node.repeat) return;
-    if (axis === "count") node.repeat.count = Math.max(1, Math.round(value));
-    else node.repeat.angleDeg = value;
+    /* The same ceiling the validator applies to an authored count. A binding
+       is `value * factor + offset`, and both sides of that reach a thousand,
+       so without the clamp a slider could ask for a million copies of a mesh
+       and take the tab down with it. Every other bindable property lands in a
+       transform, where an absurd number is only ever absurd to look at; this
+       one lands in a loop bound. */
+    if (axis === "count") {
+      node.repeat.count = Math.min(
+        LIMITS.repeatCount,
+        Math.max(1, Math.round(value)),
+      );
+    } else {
+      node.repeat.angleDeg = Math.min(360, Math.max(0, value));
+    }
     return;
   }
 

@@ -252,10 +252,17 @@ function bindings(raw: unknown, nodeCount: number): ParamBinding[] {
       const source = record(entry);
       if (!source) return null;
 
-      const node = Math.round(numberIn(source.node, 0, Math.max(0, nodeCount - 1), 0));
-      /* A binding pointing past the end of the scene would silently do
-         nothing; dropping it keeps the slider honest. */
-      if (node >= nodeCount) return null;
+      /* A binding pointing past the end of the scene is dropped, not clamped.
+         Clamping would hand the slider to whichever node happens to sit at the
+         end — a control labelled "Roof pitch" quietly rotating something else
+         is worse than a control that does nothing, and worse than no control
+         at all, which is what `controls` falls back to when every binding of a
+         slider is dropped. */
+      const index = source.node;
+      if (typeof index !== "number" || !Number.isFinite(index)) return null;
+
+      const node = Math.round(index);
+      if (node < 0 || node >= nodeCount) return null;
 
       return {
         node,
@@ -287,7 +294,17 @@ function controls(raw: unknown, nodeCount: number): ExposedParam[] {
 
       seen.add(key);
 
-      const step = numberIn(source.step, 0.001, (max - min) / 2, (max - min) / 100);
+      /* Rounded to the same four decimals `snap` works in. The clamp above can
+         knock a clean step off by one ULP — half of `0.3 - 0.1` is
+         `0.09999999999999999` — and the panel derives its display precision
+         from the step's own digits, so the readout would grow to seventeen
+         decimals over an invisible difference. */
+      const step = Math.max(
+        0.0001,
+        Number(
+          numberIn(source.step, 0.001, (max - min) / 2, (max - min) / 100).toFixed(4),
+        ),
+      );
 
       return {
         key,
