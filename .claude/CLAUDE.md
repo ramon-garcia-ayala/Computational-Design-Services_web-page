@@ -8,13 +8,21 @@ messages. The team does not read Spanish.
 ## Commands
 
 ```bash
-npm run dev      # dev server on localhost:3000
-npm run build    # production build (also runs the TypeScript check)
-npm run lint     # ESLint
-npm run start    # serves the production build
+npm run dev       # dev server on localhost:3000
+npm run build     # production build (also runs the TypeScript check)
+npm run lint      # ESLint
+npm run start     # serves the production build
+
+npm run anim <spec.json> --out <dir>   # concept animation: SVG, poster, GIF, sidecar
+npm run anim:test                      # the animation invariants
+
+node scripts/minitool-link.mjs <spec.ts|spec.json> [--plain] [--origin URL]
+# Prints the /labs/tool#… link for a mini tool spec, so an archetype can be
+# opened in a browser without holding a conversation with the assistant first.
 ```
 
-There are no tests. TypeScript errors surface on `npm run build`.
+There are no tests, apart from `anim:test`. TypeScript errors surface on
+`npm run build`; `npx tsc --noEmit` is the faster loop while iterating.
 
 ## Stack
 
@@ -25,6 +33,8 @@ There are no tests. TypeScript errors surface on `npm run build`.
 - **Lenis 1.3** — smooth scroll
 - **React Three Fiber 9 + three 0.185** — hero only, lazy loaded
 - **clsx + tailwind-merge** — through `cn()` in `src/lib/utils.ts`
+- **sharp** — build-time only, and pinned rather than relied on transitively; see
+  the concept animations section for why removing it is a silent regression
 
 ## Tailwind v4: the critical difference
 
@@ -266,6 +276,12 @@ The section is modelled as two chords at ±depth/2 rather than a solid
 rectangle; the first version used a solid section and put every default at five
 percent utilisation, so the colour ramp — the one output the archetype exists
 to show — never moved.
+
+**Nothing in a render path calls `Math.random()`.** `lib/random.ts` holds the
+one PRNG, seeded, and every archetype with a seed slider draws from it. This is
+the product rather than tidiness: the spec travels in the URL, so a link is
+only a link if it renders the same thing twice, and a stray random call turns a
+shared tool into a different tool on every load — invisibly to whoever sent it.
 
 **Five controls is the ceiling for any archetype**, `LIMITS.freeformControls`.
 The panel is a 340px column with no scroll, so a longer list stretches the
@@ -528,9 +544,12 @@ reduction and then be reverted. Two practical consequences:
 `src/components/sections/home/Hero.tsx` is a Server Component: tagline, subcopy
 and the chat slot ship already rendered in the HTML.
 
-- `ChatPlaceholder` (`src/components/ui/ChatPlaceholder.tsx`) is **deliberately
-  empty**. It reserves height and position for the Phase 2 chatbot. When
-  implementing it, keep the container's dimensions so the LCP doesn't move.
+- `ChatPlaceholder` (`src/components/ui/ChatPlaceholder.tsx`) holds the live
+  assistant. It is the shell, not the chat: its whole job is to own the
+  dimensions so that mounting `ChatWidget` inside it does not move the LCP.
+  **Whatever changes in there, the container keeps a definite height at every
+  breakpoint** — the reason that is load-bearing rather than tidy is in the
+  mini tools section above.
 - `HeroCanvas` imports the scene with `dynamic(..., { ssr: false })` and mounts it
   in `requestIdleCallback`, after first paint. That keeps `three` out of the
   initial bundle. Do not turn it into a static import.
