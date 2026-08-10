@@ -61,6 +61,23 @@ key or driving a value the geometry ignores, and it is invisible in the build.
 While you are here, ask whether each one earns its place — this is the moment
 the "five controls, each one changes the design" rule is actually enforceable.
 
+**Does the archetype's own headline output move across that range?** This is
+the subtler version of the same question and it is the one that gets missed,
+because everything *works*: the sliders respond, the geometry updates, nothing
+errors. What fails is calibration.
+
+`structure` shipped its first draft assuming a solid rectangular section, which
+at any plausible depth is an enormous plate — so every configuration in the
+slider ranges came out around five percent utilisation, and the colour ramp,
+the single output the archetype exists to show, sat at one end and never moved.
+The geometry was right, the arithmetic was right, and the tool was useless.
+
+So after the controls work, look at whatever number or colour the archetype is
+*for* and push the inputs to both extremes. It has to travel: comfortable to
+overloaded, sparse to dense, one valid answer to a visibly different one. If it
+does not, the constants you assumed are wrong for the ranges you chose — fix
+the constants, or move the ranges to where the interesting behaviour lives.
+
 **Does the address bar rewrite as you drag?** The spec round-trips through the
 URL on a 250 ms debounce. If it does not update, the writeback is broken and
 nothing the visitor does is shareable.
