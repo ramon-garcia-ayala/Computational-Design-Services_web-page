@@ -32,3 +32,6 @@ yarn-error.log*
 *.tsbuildinfo
 
 .vercel
+
+# skill-creator eval runs — large, regenerable, and not part of the site
+.claude/skills/*-workspace/

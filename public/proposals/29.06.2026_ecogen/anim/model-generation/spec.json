@@ -1,0 +1,62 @@
+{
+  "archetype": "transform",
+  "id": "model-generation",
+  "duration": 6400,
+  "meta": {
+    "title": "Automated model generation",
+    "subtitle": "From site layout to coordinated model",
+    "description": "A 2D site layout becomes a coordinated Revit model without anyone redrawing it.",
+    "alt": "Animated diagram on a white background. Flat plates appear one by one across an isometric site grid, then rise into three-dimensional volumes of varying height, resolving into a massing model. Three labelled stages run in sequence: 2D site layout, extruding geometry, 3D Revit model.",
+    "caption": "Each stage is a scripted step. The layout you send is the only input.",
+    "tags": [
+      "revit",
+      "automation",
+      "geometry",
+      "massing",
+      "model-generation"
+    ]
+  },
+  "stages": [
+    {
+      "label": "2D site layout",
+      "legend": "2D",
+      "mode": "plan"
+    },
+    {
+      "label": "Extruding geometry",
+      "legend": "Extrude",
+      "mode": "extrude"
+    },
+    {
+      "label": "3D Revit model",
+      "legend": "3D",
+      "mode": "model"
+    }
+  ],
+  "subject": {
+    "cols": 5,
+    "rows": 4,
+    "heights": [
+      2,
+      3,
+      1,
+      2,
+      4,
+      1,
+      2,
+      3,
+      2,
+      1,
+      3,
+      1,
+      4,
+      2,
+      2,
+      2,
+      3,
+      1,
+      2,
+      3
+    ]
+  }
+}

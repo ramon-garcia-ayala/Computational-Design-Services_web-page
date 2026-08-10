@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "anim": "node .claude/skills/workflow-anim/scripts/render.mjs",
+    "anim:test": "node .claude/skills/workflow-anim/scripts/selftest.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
@@ -30,6 +32,7 @@
     "@types/three": "^0.185.0",
     "eslint": "^9",
     "eslint-config-next": "^16.2.9",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

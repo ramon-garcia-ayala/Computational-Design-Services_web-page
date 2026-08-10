@@ -2,6 +2,7 @@ import type { ProposalBlock } from "@/data/proposals";
 import { CardsBlock } from "./blocks/CardsBlock";
 import { ChecklistBlock } from "./blocks/ChecklistBlock";
 import { DocsBlock } from "./blocks/DocsBlock";
+import { FigureBlock } from "./blocks/FigureBlock";
 import { FlowBlock } from "./blocks/FlowBlock";
 import { NoteBlock } from "./blocks/NoteBlock";
 import { PricingBlock } from "./blocks/PricingBlock";
@@ -41,6 +42,8 @@ export function ProposalRenderer({ blocks }: { blocks: ProposalBlock[] }) {
             return <PricingBlock key={block.id} block={block} />;
           case "docs":
             return <DocsBlock key={block.id} block={block} />;
+          case "figure":
+            return <FigureBlock key={block.id} block={block} />;
           case "timeline":
             return <TimelineBlock key={block.id} block={block} />;
           case "note":

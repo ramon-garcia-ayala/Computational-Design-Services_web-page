@@ -62,6 +62,25 @@ export const ecogen20260629: Proposal = {
     },
 
     {
+      kind: "figure",
+      id: "model-generation",
+      kicker: "In one picture",
+      title: "Automated model generation",
+      lead: "A 2D site layout becomes a coordinated Revit model without anyone redrawing it.",
+      src: "/proposals/29.06.2026_ecogen/anim/model-generation/model-generation.svg",
+      poster:
+        "/proposals/29.06.2026_ecogen/anim/model-generation/model-generation.poster.svg",
+      download: {
+        label: "Animation (GIF)",
+        file: "/proposals/29.06.2026_ecogen/anim/model-generation/model-generation.gif",
+      },
+      alt: "Animated diagram on a white background. Flat plates appear one by one across an isometric site grid, then rise into three-dimensional volumes of varying height, resolving into a massing model. Three labelled stages run in sequence: 2D site layout, extruding geometry, 3D Revit model.",
+      caption:
+        "Each stage is a scripted step. The layout you send is the only input.",
+      tags: ["revit", "automation", "geometry", "massing", "model-generation"],
+    },
+
+    {
       kind: "steps",
       id: "workflow",
       kicker: "Workflow",
