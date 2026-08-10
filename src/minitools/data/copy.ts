@@ -11,10 +11,15 @@ export const widgetCopy = {
   heading: "Assistant",
   welcome:
     "Tell me what you would automate, and I will build you a working tool in seconds.",
+  /* Four, one per family the router can reach: a surface, a volume, a span,
+     a generated field. A visitor who reads only these should come away with
+     the right idea of the range, which is why none of them is a variation on
+     another. */
   suggestions: [
     "Panelise a curved facade",
     "Stack a mixed-use tower",
-    "Lay out a floor plan",
+    "Check a long-span truss",
+    "Aggregate a masterplan block",
   ],
   inputLabel: "Message the assistant",
   placeholder: "Describe the tool you want…",
@@ -52,6 +57,11 @@ export const viewerCopy = {
   },
   parameters: "Parameters",
   legend: "Program",
+  /* Neither of these is a program, and calling them one is the kind of small
+     wrongness the people this site is aimed at notice before anything else:
+     open ground is not an occupancy, and a deflection is not a use. */
+  performance: "Performance",
+  mix: "Mix",
   emptyParameters: "This one has no dials — drag to orbit and look around.",
   orbitHint: "Drag to orbit · scroll to zoom",
   shareHint: "Every change is in the address bar. Copy it to share this exact version.",
@@ -109,11 +119,19 @@ export const inquiryCopy = {
   },
 } as const;
 
+/** The words that only surface when a preset stands in for a generated spec. */
+export const presetCopy = {
+  fallbackTagline:
+    "An example of this tool — the build from your brief did not come through, so this is the reference one.",
+} as const;
+
 /** What the confirmation card says is about to be built. */
 export const templateLabels: Record<TemplateId, string> = {
   facade: "a facade panelisation tool",
   massing: "a massing study with a program mix",
   layout: "a floor layout generator",
+  structure: "a span you can load and watch deflect",
+  wfc: "a rule-based aggregation you can reseed",
   freeform: "a parametric model",
   pitch: "a scoped proposal",
 };
@@ -140,6 +158,10 @@ export function progressMessages(template: TemplateId): string[] {
       return ["Reading your brief…", "Stacking the floor plates…", "Distributing the program…", ...closing];
     case "layout":
       return ["Reading your brief…", "Subdividing the floor plate…", "Sizing the rooms…", ...closing];
+    case "structure":
+      return ["Reading your brief…", "Sizing the members…", "Running the load case…", ...closing];
+    case "wfc":
+      return ["Reading your brief…", "Writing the adjacency rules…", "Collapsing the field…", ...closing];
     case "freeform":
       return ["Reading your brief…", "Composing the geometry…", "Wiring up the sliders…", ...closing];
     case "pitch":

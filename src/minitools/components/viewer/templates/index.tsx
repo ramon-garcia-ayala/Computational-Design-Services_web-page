@@ -5,6 +5,8 @@ import { FacadeMesh } from "./FacadeMesh";
 import { FreeformScene } from "./FreeformScene";
 import { LayoutMesh } from "./LayoutMesh";
 import { MassingMesh } from "./MassingMesh";
+import { StructureMesh } from "./StructureMesh";
+import { WfcMesh } from "./WfcMesh";
 
 /**
  * The one place an archetype maps to a component — same rule as the proposal
@@ -19,6 +21,10 @@ export function TemplateScene({ spec }: { spec: ViewerSpec }) {
       return <MassingMesh spec={spec} />;
     case "layout":
       return <LayoutMesh spec={spec} />;
+    case "structure":
+      return <StructureMesh spec={spec} />;
+    case "wfc":
+      return <WfcMesh spec={spec} />;
     case "freeform":
       return <FreeformScene spec={spec} />;
   }

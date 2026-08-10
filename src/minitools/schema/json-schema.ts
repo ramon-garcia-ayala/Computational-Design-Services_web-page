@@ -300,6 +300,26 @@ const CONTROL_SCHEMA: JsonSchema = {
   additionalProperties: false,
 };
 
+/**
+ * Same shape as `wfc` and for the same reason: the analysis lives in
+ * `lib/structure.ts`, and the model chooses a system and four numbers rather
+ * than describing behaviour it would have to be trusted to get right.
+ */
+const STRUCTURE_SCHEMA = specSchema("structure", {
+  params: paramsSchema(PARAM_REGISTRY.structure),
+});
+
+/**
+ * The whole archetype is five dials, so there is nothing here beyond the
+ * registry. That is the point: the rules live in `lib/wfc.ts` where they can
+ * be reasoned about, and the model chooses between them rather than writing
+ * them. A schema that let it author adjacency tables would be a schema that
+ * let it author behaviour.
+ */
+const WFC_SCHEMA = specSchema("wfc", {
+  params: paramsSchema(PARAM_REGISTRY.wfc),
+});
+
 const FREEFORM_SCHEMA = specSchema("freeform", {
   scene: {
     type: "array",
@@ -317,6 +337,8 @@ const SCHEMAS: Partial<Record<TemplateId, JsonSchema>> = {
   facade: FACADE_SCHEMA,
   massing: MASSING_SCHEMA,
   layout: LAYOUT_SCHEMA,
+  structure: STRUCTURE_SCHEMA,
+  wfc: WFC_SCHEMA,
   freeform: FREEFORM_SCHEMA,
   pitch: PITCH_SCHEMA,
 };

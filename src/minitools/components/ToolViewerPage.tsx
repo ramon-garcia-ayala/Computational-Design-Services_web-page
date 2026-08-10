@@ -7,7 +7,16 @@ import { decodeSpec, encodeSpec, TOOL_PATH } from "../lib/encode";
 import { readStashedSpec } from "../lib/handoff";
 import { bandSummaries, formatArea } from "../lib/program";
 import { planFloor } from "../lib/subdivide";
-import { PROGRAM_LABELS } from "../lib/palette";
+import { solveField, WFC_TILES } from "../lib/wfc";
+import { analyse, DEFLECTION_LIMIT } from "../lib/structure";
+import {
+  FG_MUTED,
+  PROGRAM_COLORS,
+  PROGRAM_LABELS,
+  utilisationColor,
+  WFC_TILE_COLORS,
+  WFC_TILE_LABELS,
+} from "../lib/palette";
 import { paramDefsFor } from "../schema/validate";
 import { isViewerSpec, type MinitoolSpec } from "../schema/spec";
 import { viewerCopy } from "../data/copy";
@@ -22,25 +31,108 @@ const ViewerCanvas = dynamic(() => import("./viewer/ViewerCanvas"), {
 
 type Phase = "loading" | "ready" | "invalid";
 
-/** Legend rows, if this archetype has a program worth naming. */
-function legendFor(spec: MinitoolSpec): LegendEntry[] {
+/**
+ * The legend, if this archetype colours anything worth naming.
+ *
+ * The heading comes back with the rows rather than being decided at the call
+ * site, because the two are the same decision: a structural readout is not a
+ * program and a tile mix is not one either, and splitting that across two
+ * places is how this page starts growing a second switch per archetype.
+ */
+function legendFor(spec: MinitoolSpec): { heading: string; entries: LegendEntry[] } {
   if (spec.template === "massing") {
-    return bandSummaries(spec.program, spec.params).map((band) => ({
-      use: band.use,
+    return {
+      heading: viewerCopy.legend,
+      entries: bandSummaries(spec.program, spec.params).map((band) => ({
       name: PROGRAM_LABELS[band.use],
-      value: `${band.floors} fl · ${formatArea(band.area)}`,
-    }));
+        value: `${band.floors} fl · ${formatArea(band.area)}`,
+        color: PROGRAM_COLORS[band.use],
+      })),
+    };
   }
 
   if (spec.template === "layout") {
-    return planFloor(spec.spaces, spec.params).spaces.map((space) => ({
-      use: space.use,
-      name: space.name,
-      value: formatArea(space.area),
-    }));
+    return {
+      heading: viewerCopy.legend,
+      entries: planFloor(spec.spaces, spec.params).spaces.map((space) => ({
+        name: space.name,
+        value: formatArea(space.area),
+        color: PROGRAM_COLORS[space.use],
+        /* The room's own name says nothing about what the colour means, so the
+           program still has to be read out. */
+        srLabel: PROGRAM_LABELS[space.use],
+      })),
+    };
   }
 
-  return [];
+  /* The readout is the archetype. A structural tool that shows a bent line
+     and no numbers is a picture of a beam, and the visitor this is aimed at
+     will say so. The swatch doubles as the pass/fail indicator — which is why
+     each row also carries an `srLabel`: a verdict delivered only in colour is
+     no verdict for anyone who cannot see it. */
+  if (spec.template === "structure") {
+    const result = analyse(spec.params);
+    const verdict = result.passesDeflection ? "within limits" : "over limit";
+    const limitColor = utilisationColor(result.passesDeflection ? 0.2 : 1);
+
+    return {
+      heading: viewerCopy.performance,
+      entries: [
+        {
+          name: "Max deflection",
+          value: `${Math.round(result.deflection * 1000)} mm`,
+          color: limitColor,
+          srLabel: verdict,
+        },
+        {
+          name: "Span / deflection",
+          value: Number.isFinite(result.ratio) ? `L/${Math.round(result.ratio)}` : "L/∞",
+          color: limitColor,
+          srLabel: `${verdict}, against L/${DEFLECTION_LIMIT}`,
+        },
+        {
+          name: "Utilisation",
+          value: `${Math.round(result.utilisation * 100)}%`,
+          color: utilisationColor(result.utilisation),
+          srLabel: result.utilisation > 1 ? "over allowable" : "within allowable",
+        },
+        {
+          name: "Depth",
+          value: `L/${Math.round(result.depthRatio)}`,
+          color: FG_MUTED,
+        },
+      ],
+    };
+  }
+
+  /* Counting the field is the only way to read a generated result as a mix
+     rather than as a picture — "eleven towers out of a hundred and twenty-one
+     cells" is the number an architect actually argues about. Empty ground is
+     listed too, and deliberately: `openness` exists to produce it, so a
+     control whose whole job is absence needs somewhere its effect shows up as
+     a figure.
+
+     Solving twice — here and in the mesh — is the same trade `layout` already
+     makes with `planFloor`, and it is the cheaper coupling: the alternative is
+     lifting an archetype's solver into this page and threading its result
+     down, which is how a generic viewer starts growing archetype-shaped
+     branches. Both callers memoise, and the field is bounded by
+     `LIMITS.wfcCells`. */
+  if (spec.template === "wfc") {
+    const field = solveField(spec.params);
+    const cells = field.size * field.size;
+
+    return {
+      heading: viewerCopy.mix,
+      entries: WFC_TILES.filter((tile) => field.counts[tile] > 0).map((tile) => ({
+        name: WFC_TILE_LABELS[tile],
+        value: `${field.counts[tile]} · ${Math.round((field.counts[tile] / cells) * 100)}%`,
+        color: WFC_TILE_COLORS[tile],
+      })),
+    };
+  }
+
+  return { heading: viewerCopy.legend, entries: [] };
 }
 
 function withParam(
@@ -150,7 +242,10 @@ export function ToolViewerPage() {
   }, []);
 
   const defs = useMemo(() => (spec ? paramDefsFor(spec) : []), [spec]);
-  const legend = useMemo(() => (spec ? legendFor(spec) : []), [spec]);
+  const legend = useMemo(
+    () => (spec ? legendFor(spec) : { heading: viewerCopy.legend, entries: [] }),
+    [spec],
+  );
 
   if (phase === "loading") {
     return (
@@ -232,7 +327,7 @@ export function ToolViewerPage() {
                   </div>
                 </section>
 
-                <ProgramLegend entries={legend} />
+                <ProgramLegend entries={legend.entries} heading={legend.heading} />
 
                 <p className="text-xs leading-relaxed text-fg-muted">
                   {viewerCopy.shareHint}

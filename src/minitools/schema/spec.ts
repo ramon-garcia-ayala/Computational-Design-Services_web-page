@@ -19,17 +19,25 @@ export const TEMPLATE_IDS = [
   "facade",
   "massing",
   "layout",
+  "structure",
+  "wfc",
   "freeform",
   "pitch",
 ] as const;
 
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
 
-/** Archetypes the router may pick. */
+/**
+ * Archetypes the router may pick. Deliberately a separate list: leaving an id
+ * out keeps it renderable from a link while hiding it from the assistant,
+ * which is how a half-finished archetype is staged.
+ */
 export const ROUTABLE_TEMPLATE_IDS = [
   "facade",
   "massing",
   "layout",
+  "structure",
+  "wfc",
   "freeform",
   "pitch",
 ] as const satisfies readonly TemplateId[];
@@ -55,18 +63,17 @@ type SpecBase = {
 ------------------------------------------------------------------------- */
 
 export type FacadeParams = {
-  surface: "flat" | "curved";
-  /** Sweep of the cylindrical segment. Ignored when `surface` is flat. */
+  /**
+   * Sweep of the cylindrical segment. Zero is a flat surface — this used to be
+   * a separate `surface` toggle, and folding it in cost nothing: flat is just
+   * the left end of the slider, and one control does what two did.
+   */
   curvatureDeg: number;
+  /** Panels across. The row count follows from it, so the grid stays square-ish. */
   columns: number;
-  rows: number;
   /** Attractor position in normalised surface coordinates. */
   attractorX: number;
   attractorY: number;
-  /** Exponent of the attractor falloff: higher concentrates the effect. */
-  falloff: number;
-  minOpen: number;
-  maxOpen: number;
   /** What openness drives on each panel. */
   mode: "rotate" | "scale" | "depth";
 };
@@ -102,12 +109,17 @@ export type ProgramBand = {
   floors: number;
 };
 
+/**
+ * `floorHeight` and `baseDepth` used to be dials too. Both were measurements
+ * rather than moves: one scaled the tower vertically and the other made the
+ * plate less square, and neither changed what the study was about. They live
+ * in `lib/program.ts` now as `FLOOR_HEIGHT` and a ratio off the width, which
+ * keeps the reported areas honest without spending two of five rows on them.
+ */
 export type MassingParams = {
   floors: number;
-  /** Metres. Drives both the model and the reported areas. */
-  floorHeight: number;
+  /** Metres. The plate depth follows from it. */
   baseWidth: number;
-  baseDepth: number;
   /** Footprint scale at the top relative to the base. */
   taper: number;
   twistDeg: number;
@@ -149,7 +161,67 @@ export type LayoutSpec = SpecBase & {
 };
 
 /* -------------------------------------------------------------------------
-   4. freeform — declarative scene graph
+   4. structure — a span sized against a load
+   Covers beams, trusses and arches: the archetype where the answer is a
+   number and the geometry is there to make the number legible.
+------------------------------------------------------------------------- */
+
+export const STRUCTURE_SYSTEMS = ["beam", "truss", "arch"] as const;
+
+export type StructureSystem = (typeof STRUCTURE_SYSTEMS)[number];
+
+export type StructureParams = {
+  system: StructureSystem;
+  /** Clear span in metres. */
+  span: number;
+  /** Uniformly distributed load, kN/m². */
+  load: number;
+  /** Structural depth in metres: beam depth, or chord separation for a truss. */
+  depth: number;
+  /** Frames drawn across, so the span reads as a roof rather than a section. */
+  bays: number;
+};
+
+export type StructureSpec = SpecBase & {
+  template: "structure";
+  params: StructureParams;
+};
+
+/* -------------------------------------------------------------------------
+   5. wfc — rule-based aggregation
+   Covers wave function collapse, modular and volumetric aggregation, tile
+   sets, generated urban blocks. The archetype where the ruleset is the design
+   and the geometry is only what falls out of it.
+------------------------------------------------------------------------- */
+
+/**
+ * Which adjacency rules the solver runs. Not a cosmetic choice — each set
+ * produces a different kind of settlement, which is the point of the
+ * archetype, so it is the first control rather than a hidden constant.
+ */
+export const WFC_RULESETS = ["city", "terrace", "lattice"] as const;
+
+export type WfcRuleset = (typeof WFC_RULESETS)[number];
+
+export type WfcParams = {
+  rules: WfcRuleset;
+  /** Cells per side of the square site. */
+  grid: number;
+  /** Reseeds the collapse without changing any rule. */
+  seed: number;
+  /** Storeys the tallest tile reaches; every other tile is a fraction of it. */
+  height: number;
+  /** Extra weight on the empty tile, so the grid can breathe. */
+  openness: number;
+};
+
+export type WfcSpec = SpecBase & {
+  template: "wfc";
+  params: WfcParams;
+};
+
+/* -------------------------------------------------------------------------
+   6. freeform — declarative scene graph
    The interactive escape hatch: vessels, pavilions, furniture, schematic
    houses. The model emits nodes, never code, so there is nothing to evaluate.
 ------------------------------------------------------------------------- */
@@ -232,7 +304,7 @@ export type FreeformSpec = SpecBase & {
 };
 
 /* -------------------------------------------------------------------------
-   5. pitch — the no-3D fallback
+   7. pitch — the no-3D fallback
 ------------------------------------------------------------------------- */
 
 export type PitchStep = {
@@ -257,6 +329,8 @@ export type MinitoolSpec =
   | FacadeSpec
   | MassingSpec
   | LayoutSpec
+  | StructureSpec
+  | WfcSpec
   | FreeformSpec
   | PitchSpec;
 

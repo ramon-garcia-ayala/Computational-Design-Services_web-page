@@ -12,6 +12,7 @@ import { ROUTER_SYSTEM, SPEC_SYSTEM, specInstruction } from "./prompts";
 import { specSchemaFor } from "../schema/json-schema";
 import { parseSpec } from "../schema/validate";
 import { ROUTABLE_TEMPLATE_IDS, type MinitoolSpec, type TemplateId } from "../schema/spec";
+import { fallbackSpec, presetFor } from "../data/presets";
 import { CHAT_LIMITS } from "../lib/chat-limits";
 import { clientIp, withinRateLimit } from "../lib/rate-limit";
 
@@ -70,8 +71,19 @@ const CREATE_TOOL: Anthropic.Tool = {
         description:
           "Everything known about what the visitor wants, in one paragraph and in their own terms.",
       },
+      /* The gate. Naming what decides the choice is what stops a one-line
+         brief being routed on its first keyword, and since the sentence is
+         shown on the confirmation card it also tells the visitor what the
+         tool is going to be built around before they pay any attention to
+         it. Required, because an optional justification is one the model
+         skips exactly when it is least sure. */
+      why: {
+        type: "string",
+        description:
+          "One sentence for the visitor, naming the thing in their request that decides which archetype this is. No archetype names — they mean nothing outside our code.",
+      },
     },
-    required: ["template", "brief"],
+    required: ["template", "brief", "why"],
   },
 };
 
@@ -145,7 +157,7 @@ async function runRouter(
   client: Anthropic,
   messages: ChatMessage[],
   emit: (chunk: Uint8Array) => void,
-): Promise<{ template: TemplateId; brief: string } | null> {
+): Promise<{ template: TemplateId; brief: string; why: string } | null> {
   const stream = client.messages.stream({
     model: ROUTER_MODEL,
     max_tokens: ROUTER_MAX_TOKENS,
@@ -165,9 +177,10 @@ async function runRouter(
   for (const block of message.content) {
     if (block.type !== "tool_use" || block.name !== CREATE_TOOL.name) continue;
 
-    const input = block.input as { template?: unknown; brief?: unknown };
+    const input = block.input as { template?: unknown; brief?: unknown; why?: unknown };
     const template = input.template;
     const brief = input.brief;
+    const why = input.why;
 
     if (
       typeof template === "string" &&
@@ -175,7 +188,15 @@ async function runRouter(
       typeof brief === "string" &&
       brief.trim().length > 0
     ) {
-      return { template: template as TemplateId, brief: brief.trim() };
+      /* `why` is required of the model but not of this branch: it is a gate on
+         the model's reasoning, and a build that is otherwise well-formed is
+         not worth throwing away over a missing sentence. The card falls back
+         to its own question when there is nothing to show. */
+      return {
+        template: template as TemplateId,
+        brief: brief.trim(),
+        why: typeof why === "string" ? why.trim().slice(0, CHAT_LIMITS.messageChars) : "",
+      };
     }
   }
 
@@ -200,7 +221,12 @@ async function runSpec(
          and the demo's whole claim is that it lands in seconds. */
       thinking: { type: "disabled" },
       output_config: { format: { type: "json_schema", schema } },
-      messages: [{ role: "user", content: specInstruction(template, brief) }],
+      messages: [
+        {
+          role: "user",
+          content: specInstruction(template, brief, presetFor(template) ?? undefined),
+        },
+      ],
     },
     /* The client fails fast (one retry) so chat turns feel alive; this call is
        the one the visitor already confirmed and is watching a progress bar
@@ -279,18 +305,37 @@ export async function handleMinitoolsChat(request: NextRequest): Promise<Respons
         if (build) {
           emit(frame("status", { phase: "generating", template: build.template }));
 
-          const spec = await runSpec(client, build.template, build.brief);
+          const generated = await runSpec(client, build.template, build.brief);
+
+          /* A visitor who pressed Build and got an error learned nothing about
+             the studio. The archetype's preset is a working tool of the same
+             kind, and `fallbackSpec` relabels it so that nobody is told it was
+             built for them. */
+          const spec = generated ?? fallbackSpec(build.template);
 
           if (spec) {
             emit(
               frame("spec", {
                 spec: {
                   ...spec,
-                  meta: { ...spec.meta, generationMs: Date.now() - startedAt },
+                  /* Only a real build gets to claim a time. The preset was
+                     written months ago; "built in 0.4 seconds" over someone
+                     else's numbers is the kind of boast that reads as a lie
+                     the moment the tagline underneath admits the swap. */
+                  meta: generated
+                    ? { ...spec.meta, generationMs: Date.now() - startedAt }
+                    : spec.meta,
                 },
               }),
             );
-          } else {
+          }
+
+          /* Emitted after the spec, not instead of it. The frame is what
+             brings the confirmation card back on the client, so retrying a
+             transient failure — an overloaded upstream, or a first request
+             paying the schema's one-time compilation — stays one click, and
+             the visitor has something to look at in the meantime. */
+          if (!generated) {
             emit(frame("error", { error: "generation_failed" }));
           }
         } else {
@@ -299,7 +344,13 @@ export async function handleMinitoolsChat(request: NextRequest): Promise<Respons
           /* The tool call is a proposal, not an order: the visitor gets the
              last word, and Sonnet is not paid for until they give it. */
           if (proposal) {
-            emit(frame("confirm", { template: proposal.template, brief: proposal.brief }));
+            emit(
+              frame("confirm", {
+                template: proposal.template,
+                brief: proposal.brief,
+                why: proposal.why,
+              }),
+            );
           }
         }
 

@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import * as THREE from "three";
 import type { MassingSpec } from "../../../schema/spec";
-import { floorScale, floorUses } from "../../../lib/program";
+import { FLOOR_HEIGHT, floorScale, floorUses, planDepth } from "../../../lib/program";
 import { PROGRAM_COLORS } from "../../../lib/palette";
 
 const FIT = 6;
@@ -23,7 +23,8 @@ export function MassingMesh({ spec }: { spec: MassingSpec }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
   const floors = Math.round(params.floors);
-  const totalHeight = floors * params.floorHeight;
+  const totalHeight = floors * FLOOR_HEIGHT;
+  const baseDepth = planDepth(params);
 
   useLayoutEffect(() => {
     const mesh = meshRef.current;
@@ -35,17 +36,13 @@ export function MassingMesh({ spec }: { spec: MassingSpec }) {
       const t = floors <= 1 ? 0 : index / (floors - 1);
       const scale = floorScale(params, index);
 
-      dummy.position.set(
-        0,
-        (index + 0.5) * params.floorHeight - totalHeight / 2,
-        0,
-      );
+      dummy.position.set(0, (index + 0.5) * FLOOR_HEIGHT - totalHeight / 2, 0);
       dummy.rotation.set(0, (params.twistDeg * Math.PI * t) / 180, 0);
       dummy.scale.set(
         params.baseWidth * scale,
         // A sliver of air between plates: the stack has to read as floors.
-        params.floorHeight * 0.86,
-        params.baseDepth * scale,
+        FLOOR_HEIGHT * 0.86,
+        baseDepth * scale,
       );
 
       dummy.updateMatrix();
@@ -59,10 +56,9 @@ export function MassingMesh({ spec }: { spec: MassingSpec }) {
     /* Derived from the instance matrices: a tower that grew taller than the
        stale bounding sphere would get culled on the way up. */
     mesh.computeBoundingSphere();
-  }, [params, program, floors, totalHeight]);
+  }, [params, program, floors, totalHeight, baseDepth]);
 
-  const fit =
-    FIT / Math.max(totalHeight, params.baseWidth, params.baseDepth, 1);
+  const fit = FIT / Math.max(totalHeight, params.baseWidth, baseDepth, 1);
 
   return (
     <group scale={fit}>

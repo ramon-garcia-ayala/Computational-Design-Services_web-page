@@ -6,6 +6,22 @@
 import type { MassingParams, ProgramBand, ProgramUse } from "../schema/spec";
 
 /**
+ * Metres. A plausible floor-to-floor for the mixed-use towers this archetype
+ * gets asked for, and the number the reported areas are quoted against. It
+ * was a slider; it measured rather than moved, and five rows are worth more
+ * than an adjustable constant.
+ */
+export const FLOOR_HEIGHT = 3.5;
+
+/** Plate proportion. Square plates read as a diagram rather than a building. */
+const DEPTH_RATIO = 0.75;
+
+/** Plate depth, in metres. Derived so the plan never becomes an odd sliver. */
+export function planDepth(params: MassingParams): number {
+  return params.baseWidth * DEPTH_RATIO;
+}
+
+/**
  * Spreads the program across the current floor count.
  *
  * `ProgramBand.floors` is treated as a weight rather than an absolute, so
@@ -50,7 +66,7 @@ export function floorScale(params: MassingParams, index: number): number {
 export function floorArea(params: MassingParams, index: number): number {
   const scale = floorScale(params, index);
   const width = params.baseWidth * scale;
-  const depth = params.baseDepth * scale;
+  const depth = planDepth(params) * scale;
   return params.plan === "ellipse" ? (Math.PI / 4) * width * depth : width * depth;
 }
 

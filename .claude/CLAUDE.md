@@ -161,6 +161,46 @@ hand-rolled per-stage ScrollTriggers, which silently never ran and left the
 whole diagram blank — entrances go through `Reveal`, as everywhere else on the
 site, and a block component has no business owning scroll animation.
 
+## Concept animations
+
+`.claude/skills/workflow-anim/` generates the conceptual diagrams that sell a
+proposal: an animated SVG, a static poster, a GIF and a metadata sidecar, all on
+white, from a 40–80 line JSON spec. Four archetypes — `pipeline`, `transform`,
+`iterate`, `exchange`. `npm run anim <spec.json> --out <dir>`, and
+`npm run anim:test` for the invariants.
+
+Same principle as `src/minitools/`: **the model writes data, never code.** The
+spec carries content and semantics only — no colours, no coordinates, no
+durations — which is what keeps four archetypes looking like one studio.
+
+**The `figure` block** displays one inline. It exists because the one animation
+this repo already had, `29.06.2026_ecogen/header.gif`, is reachable only as a
+`docs` link and is never shown on the page it explains. `docs` is for things that
+leave the page; a diagram that *is* the argument belongs in the argument.
+`FigureBlock` needs a white plate — the diagrams are white and the page is
+carbon, so dropped in raw one reads as a hole punched in the sheet.
+
+Three constraints the renderer is built around, all measured rather than assumed:
+
+- **librsvg ignores CSS `@keyframes` and rasterizes the declared attribute
+  state.** So every element is declared at `sample(track, duration)` — its *end*
+  state, not its authored rest values, which differ whenever something fades out
+  as it hands over. Get this wrong and the GIF, any PDF import and every
+  reduced-motion reader see a blank white rectangle, silently. Same rule the site
+  already follows for GSAP: settling means writing the end state.
+- **A GIF's frame delays must be passed as an array.** As a scalar, sharp writes
+  the delay into the first frame's Graphic Control Extension and zero into every
+  other, and the animation flashes past in a fraction of a second while
+  reporting a perfectly healthy frame count. `sharp.metadata().delay` echoes back
+  what it was given, so only parsing the file catches it.
+- **libvips merges identical consecutive frames and sums their delays.** 24 in,
+  18 out, same playback time. Assert on duration, never on page count.
+
+`sharp` is pinned in devDependencies although Next already pulls it in
+transitively: it arrives flagged optional, so `npm ci --omit=optional` or a Next
+major would take it away. The GIF path fails soft regardless — SVG, poster and
+sidecar are written first, and a missing sharp is a printed note and exit 0.
+
 ## The assistant and its mini tools
 
 `src/minitools/` is a self-contained module: the chat in the hero, the API
@@ -174,8 +214,18 @@ src/minitools/
   lib/        URL encoding, SSE reader, rate limit, geometry helpers
   server/     API key, prompts, the route handler
   components/ chat widget, viewer, param panel, proposal page
-  data/copy.ts  all the words
+  data/copy.ts     all the words
+  data/presets/    one hand-written spec per archetype
 ```
+
+**Adding an archetype is a skill, not a checklist to rediscover.**
+`.claude/skills/minitool-archetype/` has the ten edit points in dependency
+order, the R3F conventions with their failure modes listed by symptom, and the
+verification sequence. Read it before touching `TEMPLATE_IDS`. The one thing
+worth knowing up front is that four of the edits are exhaustive switches the
+compiler will force you to complete, and two — `PARAM_REGISTRY`'s `Extract<>`
+and the `SCHEMAS` map, which is `Partial` — fail silently in production
+instead.
 
 **Two models, and the visitor between them.** Haiku 4.5 holds the conversation
 and decides when there is enough to build on; its tool call is a *proposal* —
@@ -185,11 +235,71 @@ another message instead dismisses the card: continuing the conversation is
 declining. Small talk therefore never touches the expensive model, and neither
 does a proposal nobody confirmed. Both calls live in `server/chat-handler.ts`.
 
-**The model writes data, never code.** It fills in one of five archetypes —
-`facade`, `massing`, `layout`, `freeform`, `pitch` — through structured outputs.
-Even `freeform`, which looks the most open-ended, is a bounded scene graph of
-five primitives that `lib/scene.ts` walks; there is no evaluator anywhere, which
-is the only reason it is safe to render generated content on this domain.
+**The router has to justify itself before it can propose.** `create_minitool`
+requires a `why`: one sentence, in the visitor's language, naming what in their
+request decides the archetype. It is a gate in both directions — the model
+cannot route on a single keyword without articulating the discriminator, and
+the sentence is shown on the confirmation card, so a bad route is visible
+before Sonnet is paid for. The archetype list in `ROUTER_SYSTEM` is written to
+support it: every entry carries a "not this if…" clause naming its nearest
+neighbour, and without that clause the `why` has nothing to say. Order in that
+list runs specific to general, with `freeform` and `pitch` last as the two
+catch-alls.
+
+**The model writes data, never code.** It fills in one of seven archetypes —
+`facade`, `massing`, `layout`, `structure`, `wfc`, `freeform`, `pitch` —
+through structured outputs. Even `freeform`, which looks the most open-ended,
+is a bounded scene graph of five primitives that `lib/scene.ts` walks; there is
+no evaluator anywhere, which is the only reason it is safe to render generated
+content on this domain. `wfc` and `structure` make the same point from the
+other side: the adjacency tables and the analysis live in `lib/wfc.ts` and
+`lib/structure.ts`, and the model picks between behaviours rather than
+authoring any.
+
+**`structure` is closed-form, and the copy never implies otherwise.** It is the
+check an engineer runs in thirty seconds before opening a model — simply
+supported, uniformly loaded, with a per-system efficiency factor standing in
+for how a beam, a truss and an arch use the same depth. That is enough to be
+right about the *trends*, which is what the visitor is there to feel. An
+engineer who catches us implying FEM stops believing the rest of the site.
+The section is modelled as two chords at ±depth/2 rather than a solid
+rectangle; the first version used a solid section and put every default at five
+percent utilisation, so the colour ramp — the one output the archetype exists
+to show — never moved.
+
+**Five controls is the ceiling for any archetype**, `LIMITS.freeformControls`.
+The panel is a 340px column with no scroll, so a longer list stretches the
+page, and a visitor given ten dials moves none of them. When a design is over,
+cut the controls that resize and keep the ones that reconfigure. `facade` went
+from ten to five that way and `massing` from seven: `surface` folded into
+`curvatureDeg` (zero is flat), and the pure measurements — rows, falloff,
+aperture range, floor height, plate depth — became derived constants next to
+the geometry that uses them.
+
+**The legend is a key, not a table, and it names itself.** `legendFor` in
+`ToolViewerPage` returns its own heading with its rows, because "Program" is
+wrong for a tile mix and badly wrong for a deflection — and splitting that
+decision from the rows is how this page grows a second switch per archetype.
+Rows carry their own colour and an optional `srLabel`; on `structure` the
+swatch doubles as the pass/fail verdict, which is exactly why the label is
+there, since a verdict delivered only in colour is no verdict at all.
+
+**Every archetype ships a preset** — one hand-written spec in `data/presets/`,
+put through `parseSpec` at module load and dropped with a log rather than
+thrown if it fails. It does three jobs: the few-shot example in
+`specInstruction` (the schema guarantees shape, so an example is the only way
+to teach judgement about numbers), the fallback when generation fails, and the
+fastest way to look at an archetype during development. That last one goes
+through `scripts/minitool-link.mjs`, which turns a preset into its
+`/labs/tool#…` link — which is why a preset file may **import only types**, so
+Node's type stripping can load it without following this codebase's
+extensionless imports.
+
+**A failed build now serves the preset *and* an `error` frame**, in that order.
+The spec gives the visitor something that works; the error frame is what brings
+the confirmation card back, so retrying stays one click. Only a real build
+carries a `generationMs` — claiming a time over someone else's numbers would
+contradict the tagline directly underneath it.
 
 **`pitch` is the one that keeps the promise.** Some requests cannot honestly be
 demonstrated in a browser — they need an uploaded DWG, a Revit session, the

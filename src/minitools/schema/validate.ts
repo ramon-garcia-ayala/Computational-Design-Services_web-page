@@ -31,8 +31,10 @@ import {
   type ProgramUse,
   type SceneNode,
   type SpecMeta,
+  type StructureParams,
   type TemplateId,
   type Vec3,
+  type WfcParams,
 } from "./spec";
 import {
   FACADE_DEFAULTS,
@@ -40,6 +42,8 @@ import {
   LIMITS,
   MASSING_DEFAULTS,
   PARAM_REGISTRY,
+  STRUCTURE_DEFAULTS,
+  WFC_DEFAULTS,
   type NumberParamDef,
   type ParamDef,
 } from "./registry";
@@ -413,6 +417,29 @@ export function parseSpec(input: unknown): MinitoolSpec | null {
         spaces: layoutSpaces(source.spaces),
       };
 
+    case "structure":
+      return {
+        ...base,
+        template: "structure",
+        params: {
+          ...STRUCTURE_DEFAULTS,
+          ...params(PARAM_REGISTRY.structure, source.params),
+        } as StructureParams,
+      };
+
+    /* No failure branch: a ruleset and four numbers always collapse into
+       something, so a hand-edited fragment is clamped back into range rather
+       than answered with the invalid-link screen. */
+    case "wfc":
+      return {
+        ...base,
+        template: "wfc",
+        params: {
+          ...WFC_DEFAULTS,
+          ...params(PARAM_REGISTRY.wfc, source.params),
+        } as WfcParams,
+      };
+
     case "freeform": {
       const scene = sceneNodes(source.scene);
       if (scene.length === 0) return null;
@@ -457,6 +484,8 @@ export function paramDefsFor(spec: MinitoolSpec): readonly ParamDef[] {
     case "facade":
     case "massing":
     case "layout":
+    case "structure":
+    case "wfc":
       return PARAM_REGISTRY[spec.template];
     case "freeform":
       return spec.controls.map((control) => ({

@@ -15,7 +15,12 @@
 export type SseHandlers = {
   onText?: (delta: string) => void | Promise<void>;
   onStatus?: (phase: string) => void | Promise<void>;
-  onConfirm?: (proposal: { template: string; brief: string }) => void | Promise<void>;
+  onConfirm?: (proposal: {
+    template: string;
+    brief: string;
+    /** Empty when the router skipped its justification. */
+    why: string;
+  }) => void | Promise<void>;
   onSpec?: (spec: unknown) => void | Promise<void>;
   onError?: (error: string) => void | Promise<void>;
 };
@@ -47,7 +52,14 @@ async function dispatch(frame: string, handlers: SseHandlers): Promise<void> {
       break;
     case "confirm":
       if (typeof data.template === "string" && typeof data.brief === "string") {
-        await handlers.onConfirm?.({ template: data.template, brief: data.brief });
+        await handlers.onConfirm?.({
+          template: data.template,
+          brief: data.brief,
+          /* Not part of the guard above: the proposal is still actionable
+             without it, and dropping a whole build over a missing sentence
+             would be the wrong trade. */
+          why: typeof data.why === "string" ? data.why : "",
+        });
       }
       break;
     case "spec":

@@ -26,8 +26,12 @@ type Entry = {
   linkLabel?: string;
 };
 
-/** A proposal Haiku made that the visitor has not yet said yes to. */
-type Pending = { template: TemplateId; brief: string };
+/**
+ * A proposal Haiku made that the visitor has not yet said yes to. `why` is the
+ * one-line justification it had to write before it was allowed to propose
+ * anything; empty when it skipped it.
+ */
+type Pending = { template: TemplateId; brief: string; why: string };
 
 /** Maps a failed response to something a visitor can act on. */
 function messageForStatus(status: number): string {
@@ -139,6 +143,7 @@ export function ChatWidget() {
     ? ""
     : [
         last?.role === "assistant" && last.text ? last.text : "",
+        pending?.why ?? "",
         pending ? confirmQuestion(pending.template) : "",
       ]
         .filter((part) => part.length > 0)
@@ -210,6 +215,7 @@ export function ChatWidget() {
               setPending({
                 template: proposal.template as TemplateId,
                 brief: proposal.brief,
+                why: proposal.why,
               });
             }
           },
@@ -311,7 +317,13 @@ export function ChatWidget() {
     setBuilding(request.template);
     setPending(null);
 
-    const outcome = await runStream({ messages: history, build: request }, replyId);
+    /* Only the two fields the server reads. `why` was written for this card
+       and has done its job; sending it on would put it in front of Sonnet as
+       if it were part of the brief. */
+    const outcome = await runStream(
+      { messages: history, build: { template: request.template, brief: request.brief } },
+      replyId,
+    );
 
     /* Generation can fail transiently — an overloaded upstream, or the first
        request for an archetype paying its one-time schema compilation. The
@@ -404,7 +416,20 @@ export function ChatWidget() {
                   <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
                     {widgetCopy.confirm.lead}
                   </p>
-                  <p className="mt-2 text-sm leading-relaxed text-fg">
+                  {/* The router's own sentence leads, because it is the only
+                      line on the card that is about the visitor's project
+                      rather than about ours. The question follows in a
+                      quieter tone: by the time they read it they already know
+                      what they are saying yes to. */}
+                  {pending.why ? (
+                    <p className="mt-2 text-sm leading-relaxed text-fg">{pending.why}</p>
+                  ) : null}
+                  <p
+                    className={cn(
+                      "mt-2 text-sm leading-relaxed",
+                      pending.why ? "text-fg-muted" : "text-fg",
+                    )}
+                  >
                     {confirmQuestion(pending.template)}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
