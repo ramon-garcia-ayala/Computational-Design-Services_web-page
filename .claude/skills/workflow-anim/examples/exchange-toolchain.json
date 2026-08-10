@@ -1,0 +1,28 @@
+{
+  "archetype": "exchange",
+  "id": "toolchain",
+  "duration": 8000,
+  "meta": {
+    "title": "How the tools connect",
+    "subtitle": "What moves, and who runs it",
+    "description": "Geometry, quantities and cost move between the tools automatically; only the authoring ends stay in your team's hands.",
+    "alt": "Animated diagram on a white background. Six tools sit on a ring in the order work travels through them: Rhino, Grasshopper, Revit, Excel, Power BI and the client's own cost system. Each line is labelled with what passes along it, and a dot animates from one tool to the next to show the direction.",
+    "caption": "Dashed boxes are yours to run. Solid lines run without anyone opening a file.",
+    "tags": ["interoperability", "rhino", "grasshopper", "revit", "power-bi", "automation"]
+  },
+  "nodes": [
+    { "id": "rhino", "label": "Rhino", "sub": "Concept geometry", "role": "authoring" },
+    { "id": "gh", "label": "Grasshopper", "sub": "Rules", "role": "compute" },
+    { "id": "revit", "label": "Revit", "sub": "The model", "role": "authoring" },
+    { "id": "excel", "label": "Excel", "sub": "Quantities", "role": "store" },
+    { "id": "bi", "label": "Power BI", "sub": "Dashboards", "role": "view" },
+    { "id": "cost", "label": "Cost system", "sub": "Your platform", "role": "client" }
+  ],
+  "links": [
+    { "from": "rhino", "to": "gh", "payload": "Surfaces" },
+    { "from": "gh", "to": "revit", "payload": "Placed elements" },
+    { "from": "revit", "to": "excel", "payload": "Quantities" },
+    { "from": "excel", "to": "bi", "payload": "Rolled up" },
+    { "from": "excel", "to": "cost", "payload": "Priced lines", "owner": "client" }
+  ]
+}

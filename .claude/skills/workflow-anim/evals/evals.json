@@ -1,0 +1,26 @@
+{
+  "skill_name": "workflow-anim",
+  "evals": [
+    {
+      "id": 0,
+      "name": "transform-acceptance",
+      "prompt": "For the EcoGen proposal I'm putting together, I need the header visual. The situation is: the client hands us a 2D site layout as a DWG, our Revit add-in reads it and builds the massing automatically, and what comes out is a coordinated Revit 2027 model. White background please, it goes near the top of the proposal page. Save whatever you produce under a folder I can point the proposal at.",
+      "expected_output": "A transform-archetype animation: 3 stages, isometric plates rising into volumes, animated SVG + poster + GIF + sidecar, alt text naming all three stages, and a paste-ready figure block. Must be dramatically lighter than the existing 2 MB header.gif.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "pipeline-translation",
+      "prompt": "We take the client's Revit model, run a script that pulls quantities out of it, match those against a rate library they gave us, and push out a cost estimate plus a Navisworks 4D sequence. I want this animated for the proposal so the client can see how it hangs together.",
+      "expected_output": "A pipeline-archetype animation, 4-5 stages, the client's model and rate library marked as client-owned (dashed), two outputs, artifacts named on the connectors. Crucially the labels should be in client language — 'Quantities', not 'script' or 'takeoff API'.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "exchange-archetype-choice",
+      "prompt": "I want something showing how all our tools connect for the interoperability section of a proposal — Rhino, Grasshopper, Revit, Excel, Power BI, and the client's own cost system. Can you make that?",
+      "expected_output": "An exchange-archetype animation with 6 nodes, every link carrying a named payload, the client's cost system marked as theirs, and a direction of travel. Should NOT be a pipeline with an invented linear order, and should not be a hairball.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "archetype": "pipeline",
+  "id": "quantities-to-cost",
+  "duration": 7200,
+  "meta": {
+    "title": "Quantities to cost and sequence",
+    "subtitle": "One model, two deliverables",
+    "description": "Your model and your rate library produce a cost estimate and a 4D sequence, refreshed on every design update.",
+    "alt": "Animated diagram on a white background showing five stages left to right, joined by arrows with the file passing between them labelled on each line. Revit model and rate library arrive from the client; quantities are read from the model; they are priced against the library; two outputs follow, a cost estimate and a Navisworks sequence.",
+    "caption": "Both outputs regenerate from the same run. No re-entry between them.",
+    "tags": ["revit", "quantities", "cost-estimation", "navisworks", "4d", "automation"]
+  },
+  "stages": [
+    { "id": "model", "label": "Revit model", "sub": "Your live model", "kind": "input", "owner": "client" },
+    { "id": "takeoff", "label": "Quantities", "sub": "Element by element", "kind": "process" },
+    { "id": "price", "label": "Priced", "sub": "Your rate library", "kind": "process" },
+    { "id": "cost", "label": "Cost estimate", "sub": "A spreadsheet", "kind": "output" },
+    { "id": "seq", "label": "4D sequence", "sub": "Navisworks", "kind": "output" }
+  ],
+  "flows": [
+    { "from": "model", "to": "takeoff", "label": "Model file", "owner": "client" },
+    { "from": "takeoff", "to": "price", "label": "Element list" },
+    { "from": "price", "to": "cost", "label": "Priced items" },
+    { "from": "cost", "to": "seq", "label": "Dated tasks" }
+  ]
+}
