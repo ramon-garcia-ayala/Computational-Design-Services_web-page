@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import * as THREE from "three";
 import type { MassingSpec } from "../../../schema/spec";
-import { FLOOR_HEIGHT, floorScale, floorUses, planDepth } from "../../../lib/program";
+import { floorHeightOf, floorScale, floorUses, planDepth } from "../../../lib/program";
 import { PROGRAM_COLORS } from "../../../lib/palette";
 
 const FIT = 6;
@@ -23,7 +23,8 @@ export function MassingMesh({ spec }: { spec: MassingSpec }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
   const floors = Math.round(params.floors);
-  const totalHeight = floors * FLOOR_HEIGHT;
+  const floorHeight = floorHeightOf(params);
+  const totalHeight = floors * floorHeight;
   const baseDepth = planDepth(params);
 
   useLayoutEffect(() => {
@@ -36,12 +37,12 @@ export function MassingMesh({ spec }: { spec: MassingSpec }) {
       const t = floors <= 1 ? 0 : index / (floors - 1);
       const scale = floorScale(params, index);
 
-      dummy.position.set(0, (index + 0.5) * FLOOR_HEIGHT - totalHeight / 2, 0);
+      dummy.position.set(0, (index + 0.5) * floorHeight - totalHeight / 2, 0);
       dummy.rotation.set(0, (params.twistDeg * Math.PI * t) / 180, 0);
       dummy.scale.set(
         params.baseWidth * scale,
         // A sliver of air between plates: the stack has to read as floors.
-        FLOOR_HEIGHT * 0.86,
+        floorHeight * 0.86,
         baseDepth * scale,
       );
 
@@ -56,7 +57,7 @@ export function MassingMesh({ spec }: { spec: MassingSpec }) {
     /* Derived from the instance matrices: a tower that grew taller than the
        stale bounding sphere would get culled on the way up. */
     mesh.computeBoundingSphere();
-  }, [params, program, floors, totalHeight, baseDepth]);
+  }, [params, program, floors, floorHeight, totalHeight, baseDepth]);
 
   const fit = FIT / Math.max(totalHeight, params.baseWidth, baseDepth, 1);
 

@@ -86,6 +86,13 @@ nothing the visitor does is shareable.
 decode against each other. A mismatch here usually means a param key exists in
 the registry but not in the spec type, or vice versa.
 
+**If you changed an existing archetype's params, does a link written before
+your change still render what it rendered?** Encode a spec in the *old* shape
+with `scripts/minitool-link.mjs` and open it. `params()` drops unknown keys
+silently, so the link will open either way — it will just be a different
+building, and nobody finds out until a client reopens the one they were sent.
+Migrate the key if its meaning survives, carry it if it does not.
+
 **Does an out-of-range edit clamp instead of failing?** Take the fragment,
 change a number in it to something absurd, reload. The tool must still open,
 with the value clamped. The invalid-link screen is the wrong answer:

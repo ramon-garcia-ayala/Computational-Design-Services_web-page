@@ -42,6 +42,12 @@ export const widgetCopy = {
     offline: "The assistant is offline right now. Get in touch and we will answer in person.",
     rateLimited: "That was a lot of questions at once. Give it a minute and try again.",
     generic: "Something broke on our side. Try again, or get in touch directly.",
+    /* Says the build failed *and* what the link beside it therefore is. The
+       swapped tagline on the tool page is not enough on its own: it is one
+       click away, and a visitor who never takes that click would otherwise
+       read someone else's worked example as their own. */
+    fellBack:
+      "That build did not come through. The link below is our worked example of the same kind of tool — press build again whenever you like.",
   },
 } as const;
 
@@ -62,6 +68,28 @@ export const viewerCopy = {
      open ground is not an occupancy, and a deflection is not a use. */
   performance: "Performance",
   mix: "Mix",
+
+  /**
+   * The structural readout, rows and verdicts alike. These were written inline
+   * in `ToolViewerPage` while the headings above sat here, which left one
+   * legend's words split across two files for no reason anyone could have
+   * guessed at.
+   *
+   * The verdicts are read out after the value, because on this archetype the
+   * swatch colour *is* the pass/fail — and a verdict delivered only in colour
+   * is no verdict for the people most likely to need it.
+   */
+  structure: {
+    deflection: "Max deflection",
+    ratio: "Span / deflection",
+    utilisation: "Utilisation",
+    depth: "Depth",
+    withinLimits: "within limits",
+    overLimit: "over limit",
+    against: (limit: number) => `against L/${limit}`,
+    withinAllowable: "within allowable",
+    overAllowable: "over allowable",
+  },
   emptyParameters: "This one has no dials — drag to orbit and look around.",
   orbitHint: "Drag to orbit · scroll to zoom",
   shareHint: "Every change is in the address bar. Copy it to share this exact version.",

@@ -7,14 +7,7 @@
  * outputs rejects numeric `minimum`/`maximum`).
  */
 
-import type {
-  FacadeParams,
-  LayoutParams,
-  MassingParams,
-  StructureParams,
-  TemplateId,
-  WfcParams,
-} from "./spec";
+import type { TemplateId } from "./spec";
 
 export type NumberParamDef = {
   kind: "number";
@@ -245,17 +238,12 @@ export const PARAM_REGISTRY: Record<
   wfc: wfcParams,
 };
 
-function defaultsOf(defs: readonly ParamDef[]): Record<string, number | string> {
-  const out: Record<string, number | string> = {};
-  for (const def of defs) out[def.key] = def.default;
-  return out;
-}
-
-export const FACADE_DEFAULTS = defaultsOf(facadeParams) as unknown as FacadeParams;
-export const MASSING_DEFAULTS = defaultsOf(massingParams) as unknown as MassingParams;
-export const LAYOUT_DEFAULTS = defaultsOf(layoutParams) as unknown as LayoutParams;
-export const STRUCTURE_DEFAULTS = defaultsOf(structureParams) as unknown as StructureParams;
-export const WFC_DEFAULTS = defaultsOf(wfcParams) as unknown as WfcParams;
+/* There were five `*_DEFAULTS` exports here, each a double cast, each spread
+   in front of `params()` in `validate.ts` as a safety net. The net could never
+   catch anything: `params()` iterates the definitions and writes `def.default`
+   for every key the input does not supply, so the spread behind it was
+   unreachable by construction. They are gone, and with them the one place in
+   this file where registry keys were asserted onto a type without a check. */
 
 /* -------------------------------------------------------------------------
    Hard limits on anything the model can size freely. The URL is untrusted
@@ -282,13 +270,6 @@ export const LIMITS = {
   freeformControls: 5,
   bindingsPerControl: 8,
   repeatCount: 40,
-  /**
-   * Cells the aggregation solver will lay out, as a backstop above the `grid`
-   * slider's own range. Propagation is worst-case quadratic in the cell count,
-   * and this runs synchronously on every drag of a slider, so the ceiling is
-   * about the frame budget rather than about memory.
-   */
-  wfcCells: 256,
   pitchSteps: 5,
   pitchStack: 8,
   pitchDeliverables: 6,

@@ -37,13 +37,8 @@ import {
   type WfcParams,
 } from "./spec";
 import {
-  FACADE_DEFAULTS,
-  LAYOUT_DEFAULTS,
   LIMITS,
-  MASSING_DEFAULTS,
   PARAM_REGISTRY,
-  STRUCTURE_DEFAULTS,
-  WFC_DEFAULTS,
   type NumberParamDef,
   type ParamDef,
 } from "./registry";
@@ -115,6 +110,61 @@ function params(defs: readonly ParamDef[], raw: unknown): Record<string, unknown
           ? snap(value, def)
           : def.default
         : oneOf(value, def.options, def.default);
+  }
+
+  return out;
+}
+
+/* ------------------------------------------------------------------ legacy
+
+   `facade` and `massing` were cut from ten and seven controls to five. The
+   panel is better for it; the links already in the world are not. A fragment
+   is the whole tool and it never reaches a server, so there is no version to
+   branch on and no way to reissue one — a link pasted into a proposal or a
+   client email is simply reinterpreted under the new vocabulary, and the
+   visitor sees a different building from the one they were sent. A flat
+   louvre band reopened curved; a slab tower reopened as a point tower, with
+   the legend quoting areas four times smaller than the ones that were on the
+   page when it was shared.
+
+   So the removed keys are still read when they are present, with the bounds
+   they had when they were written. They are not controls: nothing puts them
+   back in the panel, `paramDefsFor` still returns five, and the JSON Schema
+   is derived from the registry, so the model cannot author them. They exist
+   only so that an old link still renders what it rendered.
+
+   `surface` is the exception, and is migrated rather than carried: `"flat"`
+   becomes a zero curvature, which is exactly what it meant. Carrying it would
+   have pinned the geometry flat while leaving a Curvature slider on screen
+   that did nothing.
+------------------------------------------------------------------------- */
+
+function legacyFacade(raw: unknown): Partial<FacadeParams> {
+  const source = record(raw);
+  if (!source) return {};
+
+  const out: Partial<FacadeParams> = {};
+
+  if (source.surface === "flat") out.curvatureDeg = 0;
+  if (typeof source.rows === "number") out.rows = Math.round(numberIn(source.rows, 4, 24, 10));
+  if (typeof source.falloff === "number") out.falloff = numberIn(source.falloff, 0.5, 5, 2);
+  if (typeof source.minOpen === "number") out.minOpen = numberIn(source.minOpen, 0, 1, 0.1);
+  if (typeof source.maxOpen === "number") out.maxOpen = numberIn(source.maxOpen, 0, 1, 0.9);
+
+  return out;
+}
+
+function legacyMassing(raw: unknown): Partial<MassingParams> {
+  const source = record(raw);
+  if (!source) return {};
+
+  const out: Partial<MassingParams> = {};
+
+  if (typeof source.floorHeight === "number") {
+    out.floorHeight = numberIn(source.floorHeight, 2.8, 5, 3.5);
+  }
+  if (typeof source.baseDepth === "number") {
+    out.baseDepth = numberIn(source.baseDepth, 15, 60, 24);
   }
 
   return out;
@@ -385,60 +435,50 @@ export function parseSpec(input: unknown): MinitoolSpec | null {
   const base = { version: 1 as const, meta: meta(source.meta) };
 
   switch (template as TemplateId) {
+    /* The five registry-driven archetypes share one arm. They used to have one
+       each, all five identical but for a name and a defaults spread that could
+       never win — `params()` fills every key in the definitions, so the
+       fallback behind it was unreachable. Five copies of a dead line is five
+       chances to mistype the sixth.
+
+       None of these can fail: a bag of clamped numbers always renders, so a
+       hand-edited fragment comes back in range rather than as the
+       invalid-link screen. */
     case "facade":
-      return {
-        ...base,
-        template: "facade",
-        params: {
-          ...FACADE_DEFAULTS,
-          ...params(PARAM_REGISTRY.facade, source.params),
-        } as FacadeParams,
-      };
-
     case "massing":
-      return {
-        ...base,
-        template: "massing",
-        params: {
-          ...MASSING_DEFAULTS,
-          ...params(PARAM_REGISTRY.massing, source.params),
-        } as MassingParams,
-        program: programBands(source.program),
-      };
-
     case "layout":
-      return {
-        ...base,
-        template: "layout",
-        params: {
-          ...LAYOUT_DEFAULTS,
-          ...params(PARAM_REGISTRY.layout, source.params),
-        } as LayoutParams,
-        spaces: layoutSpaces(source.spaces),
-      };
-
     case "structure":
-      return {
-        ...base,
-        template: "structure",
-        params: {
-          ...STRUCTURE_DEFAULTS,
-          ...params(PARAM_REGISTRY.structure, source.params),
-        } as StructureParams,
-      };
+    case "wfc": {
+      const id = template as keyof typeof PARAM_REGISTRY;
+      const values = params(PARAM_REGISTRY[id], source.params);
 
-    /* No failure branch: a ruleset and four numbers always collapse into
-       something, so a hand-edited fragment is clamped back into range rather
-       than answered with the invalid-link screen. */
-    case "wfc":
-      return {
-        ...base,
-        template: "wfc",
-        params: {
-          ...WFC_DEFAULTS,
-          ...params(PARAM_REGISTRY.wfc, source.params),
-        } as WfcParams,
-      };
+      switch (id) {
+        case "facade":
+          return {
+            ...base,
+            template: "facade",
+            params: { ...values, ...legacyFacade(source.params) } as FacadeParams,
+          };
+        case "massing":
+          return {
+            ...base,
+            template: "massing",
+            params: { ...values, ...legacyMassing(source.params) } as MassingParams,
+            program: programBands(source.program),
+          };
+        case "layout":
+          return {
+            ...base,
+            template: "layout",
+            params: values as unknown as LayoutParams,
+            spaces: layoutSpaces(source.spaces),
+          };
+        case "structure":
+          return { ...base, template: "structure", params: values as unknown as StructureParams };
+        case "wfc":
+          return { ...base, template: "wfc", params: values as unknown as WfcParams };
+      }
+    }
 
     case "freeform": {
       const scene = sceneNodes(source.scene);

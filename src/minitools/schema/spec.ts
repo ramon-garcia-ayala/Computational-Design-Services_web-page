@@ -76,6 +76,15 @@ export type FacadeParams = {
   attractorY: number;
   /** What openness drives on each panel. */
   mode: "rotate" | "scale" | "depth";
+
+  /* Carried from links written before the panel was cut to five, and only
+     from those: no control writes them, and the JSON Schema comes from the
+     registry so the model cannot either. See the legacy block in
+     `validate.ts` for why they are read at all. */
+  rows?: number;
+  falloff?: number;
+  minOpen?: number;
+  maxOpen?: number;
 };
 
 export type FacadeSpec = SpecBase & {
@@ -124,6 +133,10 @@ export type MassingParams = {
   taper: number;
   twistDeg: number;
   plan: "rect" | "ellipse";
+
+  /* Legacy only, same as on `FacadeParams`. */
+  floorHeight?: number;
+  baseDepth?: number;
 };
 
 export type MassingSpec = SpecBase & {

@@ -71,33 +71,35 @@ function legendFor(spec: MinitoolSpec): { heading: string; entries: LegendEntry[
      each row also carries an `srLabel`: a verdict delivered only in colour is
      no verdict for anyone who cannot see it. */
   if (spec.template === "structure") {
+    const words = viewerCopy.structure;
     const result = analyse(spec.params);
-    const verdict = result.passesDeflection ? "within limits" : "over limit";
+    const verdict = result.passesDeflection ? words.withinLimits : words.overLimit;
     const limitColor = utilisationColor(result.passesDeflection ? 0.2 : 1);
 
     return {
       heading: viewerCopy.performance,
       entries: [
         {
-          name: "Max deflection",
+          name: words.deflection,
           value: `${Math.round(result.deflection * 1000)} mm`,
           color: limitColor,
           srLabel: verdict,
         },
         {
-          name: "Span / deflection",
+          name: words.ratio,
           value: Number.isFinite(result.ratio) ? `L/${Math.round(result.ratio)}` : "L/∞",
           color: limitColor,
-          srLabel: `${verdict}, against L/${DEFLECTION_LIMIT}`,
+          srLabel: `${verdict}, ${words.against(DEFLECTION_LIMIT)}`,
         },
         {
-          name: "Utilisation",
+          name: words.utilisation,
           value: `${Math.round(result.utilisation * 100)}%`,
           color: utilisationColor(result.utilisation),
-          srLabel: result.utilisation > 1 ? "over allowable" : "within allowable",
+          srLabel:
+            result.utilisation > 1 ? words.overAllowable : words.withinAllowable,
         },
         {
-          name: "Depth",
+          name: words.depth,
           value: `L/${Math.round(result.depthRatio)}`,
           color: FG_MUTED,
         },

@@ -119,7 +119,31 @@ function momentShape(t: number): number {
   return 4 * t * (1 - t);
 }
 
+/**
+ * One result per params object.
+ *
+ * Two callers want the same analysis from the same spec on every render: the
+ * mesh needs the members, the legend needs four scalars. Splitting the
+ * function in two would work and would put the burden on every future caller
+ * to know which half to ask for; keying on the params object instead is
+ * invisible at the call site, and the reference is stable because `parseSpec`
+ * builds it once per spec and `withParam` replaces it wholesale.
+ *
+ * A `WeakMap` rather than a one-entry cache: a stale spec's entry disappears
+ * with the spec, and nothing has to decide when to evict.
+ */
+const cache = new WeakMap<StructureParams, StructureResult>();
+
 export function analyse(params: StructureParams): StructureResult {
+  const hit = cache.get(params);
+  if (hit) return hit;
+
+  const result = solve(params);
+  cache.set(params, result);
+  return result;
+}
+
+function solve(params: StructureParams): StructureResult {
   const span = params.span;
   const load = params.load * BAY_SPACING;
   const { inertia, modulus } = section(params);
@@ -133,8 +157,26 @@ export function analyse(params: StructureParams): StructureResult {
   const rise = arch ? span * ARCH_RISE : 0;
 
   /* Clamped so a deliberately hopeless case bends rather than folds in half.
-     An over-limit span should look alarming, not like a rendering fault. */
-  const sag = Math.min(span * 0.22, deflection * EXAGGERATION);
+     An over-limit span should look alarming, not like a rendering fault.
+
+     The arch gets its own ceiling, and it is the load-bearing half of this
+     line. Its drawn height is `rise - sag` through the same shape function, so
+     under the flat cap of 0.22·span against a rise of 0.20·span, any
+     deflection past about span/125 flattened the arch and then pushed it
+     *below* its own supports: the tool drew a hanging cable and called it an
+     arch. A real one that inverts has snapped through, and nothing in this
+     analysis knows whether it did.
+
+     Capping at a third of the rise rather than merely at the rise is the
+     second half of the same argument. Leaving 25% of 0.20·span is 1:20 —
+     arithmetically still an arch, visually a straight line, so the fix would
+     have swapped one wrong picture for another. A third keeps at least 1:7.7
+     at the worst setting, which still reads as an arch while the difference
+     between a light and a punishing load stays plain. The honest number is in
+     the readout beside it; the geometry's job here is to stay recognisable. */
+  const sag = arch
+    ? Math.min(rise / 3, deflection * EXAGGERATION)
+    : Math.min(span * 0.22, deflection * EXAGGERATION);
 
   const members: Member[] = [];
   const halfSpan = span / 2;

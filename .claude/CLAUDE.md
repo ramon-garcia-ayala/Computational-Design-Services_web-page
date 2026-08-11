@@ -277,6 +277,18 @@ rectangle; the first version used a solid section and put every default at five
 percent utilisation, so the colour ramp — the one output the archetype exists
 to show — never moved.
 
+**Removing a param is removing it from every link ever shared.** The fragment
+*is* the tool, it never reaches a server, and there is no version to branch on
+— so a spec written last month is simply reread under today's vocabulary, and
+`params()` drops the keys it no longer knows about without a word. That is how
+cutting `facade` and `massing` turned a flat louvre band into a curved skin and
+a slab tower into a point tower quoting areas four times too small. The removed
+keys are therefore still *read* (see the legacy block in `validate.ts`): they
+are optional, no control writes them, the JSON Schema cannot author them, and
+they exist only so an old link renders what it rendered. Migrate where the
+meaning survives — `surface: "flat"` became a zero curvature — and carry where
+it does not.
+
 **Nothing in a render path calls `Math.random()`.** `lib/random.ts` holds the
 one PRNG, seeded, and every archetype with a seed slider draws from it. This is
 the product rather than tidiness: the spec travels in the URL, so a link is

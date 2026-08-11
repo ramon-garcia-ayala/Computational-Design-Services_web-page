@@ -16,9 +16,19 @@ export const FLOOR_HEIGHT = 3.5;
 /** Plate proportion. Square plates read as a diagram rather than a building. */
 const DEPTH_RATIO = 0.75;
 
-/** Plate depth, in metres. Derived so the plan never becomes an odd sliver. */
+/**
+ * Plate depth, in metres. Derived so the plan never becomes an odd sliver —
+ * unless the spec came from a link written while depth was still a control,
+ * in which case that link's own number wins and the tower it was shared as is
+ * the tower it reopens as.
+ */
 export function planDepth(params: MassingParams): number {
-  return params.baseWidth * DEPTH_RATIO;
+  return params.baseDepth ?? params.baseWidth * DEPTH_RATIO;
+}
+
+/** Floor-to-floor, in metres. Same legacy rule as `planDepth`. */
+export function floorHeightOf(params: MassingParams): number {
+  return params.floorHeight ?? FLOOR_HEIGHT;
 }
 
 /**

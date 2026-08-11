@@ -182,6 +182,11 @@ export function ChatWidget() {
       replyId: number,
     ): Promise<"ok" | "failed" | "aborted"> => {
       let failed = false;
+      /* A failed build still delivers a spec — the archetype's preset stands
+         in — and the `spec` frame arrives *before* the `error` frame. Without
+         this flag `onError` finds the entry already carrying the preset's
+         title, keeps it, and the visitor is never told anything went wrong. */
+      let delivered = false;
       const update = (patch: (entry: Entry) => Entry) =>
         setEntries((current) =>
           current.map((entry) => (entry.id === replyId ? patch(entry) : entry)),
@@ -235,6 +240,7 @@ export function ChatWidget() {
             stashSpec(spec);
 
             const href = await toolHref(spec);
+            delivered = true;
             update((entry) => ({
               ...entry,
               text: entry.text || spec.meta.title,
@@ -248,7 +254,13 @@ export function ChatWidget() {
             failed = true;
             update((entry) => ({
               ...entry,
-              text: entry.text || widgetCopy.errors.generic,
+              /* When a spec did land, the title it wrote has to give way: it
+                 names someone else's brief, and leaving it there is the whole
+                 failure this branch exists to stop. The link stays — the
+                 example is still worth opening. */
+              text: delivered
+                ? widgetCopy.errors.fellBack
+                : entry.text || widgetCopy.errors.generic,
             }));
           },
         });

@@ -50,7 +50,9 @@ function rowsFor(columns: number): number {
 export function FacadeMesh({ params }: { params: FacadeParams }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
-  const rows = rowsFor(params.columns);
+  /* `??`, not `||`: these come from links written before the panel was cut to
+     five, and `minOpen: 0` is a value someone chose. */
+  const rows = params.rows ?? rowsFor(params.columns);
   const count = params.columns * rows;
 
   useLayoutEffect(() => {
@@ -71,8 +73,9 @@ export function FacadeMesh({ params }: { params: FacadeParams }) {
        surface keeps the same amount of facade on screen. */
     const radius = curved ? FIT / sweep : 0;
 
-    const lo = MIN_OPEN;
-    const hi = MAX_OPEN;
+    const falloff = params.falloff ?? FALLOFF;
+    const lo = Math.min(params.minOpen ?? MIN_OPEN, params.maxOpen ?? MAX_OPEN);
+    const hi = Math.max(params.minOpen ?? MIN_OPEN, params.maxOpen ?? MAX_OPEN);
 
     for (let row = 0; row < rows; row += 1) {
       for (let column = 0; column < columns; column += 1) {
@@ -85,7 +88,7 @@ export function FacadeMesh({ params }: { params: FacadeParams }) {
         const distance = Math.hypot(u - params.attractorX, v - params.attractorY);
         const proximity = Math.pow(
           Math.max(0, 1 - Math.min(1, distance / Math.SQRT2)),
-          FALLOFF,
+          falloff,
         );
         const openness = lo + (hi - lo) * proximity;
 

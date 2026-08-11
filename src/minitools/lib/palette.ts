@@ -61,11 +61,10 @@ export const WFC_TILE_LABELS: Record<WfcTile, string> = {
  */
 const STRUCTURE_STOPS = ["#4f7f46", "#c8f94e", "#ff8f5e"] as const;
 
-export const STRUCTURE_LABELS = {
-  low: "Comfortable",
-  working: "Working hard",
-  over: "Over allowable",
-} as const;
+/* There was a `STRUCTURE_LABELS` here — three band names for a legend that
+   ended up reading out numbers rather than bands. Nothing imported it, and
+   copy belongs in `data/copy.ts` regardless, where `viewerCopy.structure`
+   now holds every word this archetype shows. */
 
 function mix(from: string, to: string, t: number): string {
   const parse = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));

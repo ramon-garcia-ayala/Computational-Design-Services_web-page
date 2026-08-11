@@ -21,7 +21,6 @@
  */
 
 import type { WfcParams, WfcRuleset } from "../schema/spec";
-import { LIMITS } from "../schema/registry";
 import { rng } from "./random";
 
 export const WFC_TILES = ["void", "low", "court", "mid", "tall"] as const;
@@ -199,12 +198,30 @@ export type WfcField = {
   counts: Record<WfcTile, number>;
 };
 
+/** One field per params object; see the note on the same cache in `structure.ts`. */
+const cache = new WeakMap<WfcParams, WfcField>();
+
 export function solveField(params: WfcParams): WfcField {
-  /* The slider's own range is narrower; this is the backstop against a grid
-     count edited into the URL fragment, where the cost is quadratic and paid
-     on the main thread. */
-  const maxSide = Math.floor(Math.sqrt(LIMITS.wfcCells));
-  const size = Math.max(2, Math.min(Math.round(params.grid), maxSide));
+  const hit = cache.get(params);
+  if (hit) return hit;
+
+  const field = collapse(params);
+  cache.set(params, field);
+  return field;
+}
+
+function collapse(params: WfcParams): WfcField {
+  /* `grid` is bounded by its registry range, and `parseSpec` is the only way
+     in — from the model and from the URL alike — so it has already been
+     clamped by the time it reaches here.
+
+     There used to be a second ceiling at this line, derived from a
+     `LIMITS.wfcCells` constant. It could never fire, and it was worse than
+     dead: widening the slider in `registry.ts`, which is where the file says
+     ranges live, would have left the panel and the schema agreeing on a range
+     the solver silently truncated, with the only clue a constant in another
+     file. */
+  const size = Math.max(2, Math.round(params.grid));
   const cells = size * size;
 
   const rules = RULESETS[params.rules] ?? RULESETS.city;
@@ -260,8 +277,23 @@ export function solveField(params: WfcParams): WfcField {
         if (next === before) continue;
 
         if (next === 0) {
-          domain[neighbour] = heaviest(before, weights);
+          const salvaged = heaviest(before, weights);
           forced += 1;
+
+          /* The monotonicity this loop's termination rests on is that a
+             domain only ever shrinks. The forced branch is the one place that
+             can break it: when `before` is already a single bit, `heaviest`
+             hands back the same mask, and because the adjacency table is
+             symmetrised the neighbour's own pass then contradicts straight
+             back — two collapsed cells re-queueing each other forever, on the
+             main thread, inside a slider drag.
+
+             None of the three shipped rulesets can reach it. The next one
+             added might, and "the page hangs" is not how that should be
+             discovered, so the queue is only fed when something actually
+             changed. */
+          if (salvaged === before) continue;
+          domain[neighbour] = salvaged;
         } else {
           domain[neighbour] = next;
         }
