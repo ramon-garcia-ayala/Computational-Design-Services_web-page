@@ -152,3 +152,71 @@ Findings from the first working review of `/design-lab`. All scoped to `/design-
 9. **Panels are unbuilt/empty** — Services brief, Labs teaser, About teaser, and Closing CTA panels currently render blank after the hero sequence ends. Build them out and populate with the finalized copy from §11.2 (Services), §11.3 (About/Closing), and the existing Labs component (§11 point 6, with the amber token per §6). Featured work stays intentionally blank per §11 point 7 — no action there.
 10. **Footer visual style** — content and links are correct (matches the reference screenshot: logo lockup, tagline, "Get in touch", Site/Elsewhere link columns, copyright, "Remote · Worldwide"), but it's currently a direct visual copy of the original mockup's styling. Restyle it to match the new design system — typeface, spacing, color tokens — while keeping all existing content and links unchanged.
 11. **Hero → panel transition seam** — the cut from the end of the hero video sequence to the first panel morphing up currently feels abrupt. Add a visual transition element between them (a hairline separator, gradient blend, or similar) so the handoff reads as intentional rather than a jarring cut.
+
+---
+
+## 13. Round 3 fixes — post-promotion visual review
+
+Findings from reviewing the promoted Home page (formerly `/design-lab`). Assume all typography fixes should use the site-wide typeface established in §12.1, applied consistently — several items below are instances of it not yet reaching every panel.
+
+### 13.1 Global
+
+- **Scroll progress indicator** (the small circular icon, bottom-left, visible on every panel) — restyle to something minimal and "black and elegant," not a generic/default-looking progress dot.
+- **Hero → panel seam** — still reads as a hard edge, not a gradient. The blend gradient from §12.11 needs to be more pronounced/smoother so the transition from video to panel feels continuous, not cut.
+- **Scroll behavior across panels** — each panel currently "holds"/pins the scroll for longer than expected; it takes 2–3 scroll gestures to pass through a single panel. Reduce the pin duration / scrub distance so scrolling through all panels feels smooth and continuous, not sticky.
+- **Remove all remaining lime/green (`#c8f94e`)** accent instances site-wide — this color is leftover from the original mockup and should not appear anywhere anymore. Every accent use should come from the site's actual established tokens (amber `--color-accent-warm` per §12, or whichever token is the final single accent). The palette should read as one consistent mode, not mixed.
+- **Section index numbers** ("01", "02", "03", "04", "05" before each panel's category label) — remove these across all panels for consistency (explicitly confirmed for Services and Featured Work below; applying the same treatment to Labs, About, and Closing for visual consistency — flag if any panel should keep it).
+
+### 13.2 Services panel ("What we build")
+
+- Background is currently pure black — change to a lighter color, distinct from the hero's warm greige but not black. Pick a tone that reads as "panel state" without matching either the hero or being flat black.
+- Remove the "01" prefix before "SERVICES" — keep "SERVICES" alone.
+- "What we build" heading: increase size, move toward the upper part of the panel.
+- "SERVICES" label and "What we build" heading should align together, sized appropriately relative to each other.
+- Service cards: increase size overall.
+- Add a small animated network/particle motion graphic above each service card, distinct per service (e.g. nodes connecting/reconfiguring for Computational Design, a different motion pattern for Design Automation, AI-Driven Design Tools, and Custom Software & Plugins) — same visual family as the Hero's geodesic field, just smaller and simplified per-card.
+- All colors within this panel must come from the single established site palette — no mixed modes.
+
+### 13.3 Labs / Playground panel ("Try it yourself")
+
+- Increase the "ASSISTANT" chat widget's size, both width and height.
+- Add a looping background video behind the widget within this panel. Video file location: `public/videos/panels/labs-loop.mp4` (create this folder). Loop continuously, muted, autoplay.
+- The widget itself should be semi-transparent (not fully opaque) so the looping video is visible through it.
+
+### 13.4 Featured Work panel
+
+- Increase "Featured work" label size.
+- Move label to the top-left of the panel.
+- Remove the "03" prefix — keep "FEATURED WORK" alone.
+- Panel content remains blank/placeholder per §11 point 7 — no project content yet, this is layout/label only.
+
+### 13.5 About panel
+
+- Increase body text size.
+- Text alignment: justified, positioned on the left side of the panel.
+- Reserve space on the right side of the panel for two founder photos (Rami and Ramon) — to be uploaded later. Photos should render in grayscale by default, transitioning to full color on hover (CSS `filter: grayscale(100%)` → `grayscale(0%)` on `:hover`, with a smooth transition).
+- The "R²XTECH" mention within the About copy should use the actual logo asset/typography, not plain text — awaiting the exact font/logo file from the user for this inline usage.
+- Remove the "04" prefix per §13.1.
+
+### 13.6 Closing CTA panel ("Next")
+
+- Increase heading size ("We're already thinking in code. Let's think about your project next.").
+- Align the heading further left, matching the left position of the "Contact us" button beneath it.
+- "Contact us" button: change color from lime green to the site's established accent token (same fix as §13.1's global green removal).
+- Add a looping background video to this panel as well. Video file location: `public/videos/panels/closing-loop.mp4` (same folder as §13.3). Loop continuously, muted, autoplay.
+- Remove the "05" prefix per §13.1.
+
+### 13.7 Footer
+
+- Increase size of all elements: logo lockup, tagline text, and both link columns (Site / Elsewhere).
+- Increase horizontal spread: push the right-side content (link columns) further right, and the left-side content (logo/tagline) further left, so the footer uses more of the available width.
+- Bottom row: move "Remote · Worldwide" to sit on the left side alongside the copyright line (currently right-aligned opposite it) — both bottom-row items should be grouped on the left.
+- The horizontal divider line above the bottom row should span the full width of the page edge-to-edge (currently stops short of the right edge).
+- Flag for review: the copyright text currently reads "© 2026 R2CH-TECH" — confirm whether this should be "R²XTECH" to match the current brand name exactly.
+
+### 13.8 Open items
+
+- [ ] Founder photos (Rami, Ramon) — not yet supplied, About panel layout should reserve the space regardless.
+- [ ] Exact logo/font file for the inline "R²XTECH" mention in About copy — not yet supplied.
+- [ ] Two looping background videos (Labs panel, Closing panel) — not yet supplied; folder convention established at `public/videos/panels/`.
+- [ ] Confirm whether section index numbers should be removed from Labs/About/Closing panels too, or only Services/Featured Work as explicitly stated.

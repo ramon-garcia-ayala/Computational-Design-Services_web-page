@@ -34,7 +34,7 @@
   --breakpoint-*: initial;
   --breakpoint-sm: 640px;
   --breakpoint-lg: 1024px;
-  --breakpoint-xl: 2440px;
+  --breakpoint-xl: 1440px;
 
   /* `/design-lab` only. Prefixed `lab-*` deliberately: an unprefixed
      `--color-accent` etc. would collide with the live site's tokens above,
