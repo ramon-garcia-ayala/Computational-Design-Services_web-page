@@ -88,11 +88,11 @@ export function InquiryBand({
       <div aria-hidden="true" className="grid-bg pointer-events-none absolute inset-0 opacity-40" />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_115%,rgba(200,249,78,0.16),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_115%,rgba(232,169,74,0.16),transparent_70%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,rgba(200,249,78,0.55),transparent)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,rgba(232,169,74,0.55),transparent)]"
       />
       <div
         aria-hidden="true"
@@ -104,7 +104,7 @@ export function InquiryBand({
           <p className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-accent">
             <span aria-hidden="true" className="h-px w-8 bg-accent/60" />
             <span>
-              {inquiryCopy.kicker} R<sup className="text-accent">2</sup>ch-Tech
+              {inquiryCopy.kicker} R<sup className="text-accent">2</sup>&#967;TECH
             </span>
           </p>
 

@@ -10,12 +10,12 @@ export function Footer() {
       <div className="shell flex flex-col gap-10 py-12 lg:flex-row lg:justify-between lg:py-16">
         <div className="max-w-sm">
           <p className="font-display text-xl font-semibold tracking-tight text-fg">
-            R<sup className="text-accent">2</sup>ch-Tech
+            R<sup className="text-accent">2</sup>&#967;TECH
           </p>
           <p className="mt-3 text-sm text-fg-muted">{site.descriptor}</p>
           <a
             href={mailtoHref}
-            className="mt-5 inline-block border-b border-accent-warm pb-0.5 text-sm text-accent-warm transition-opacity hover:opacity-70"
+            className="mt-5 inline-block border-b border-accent pb-0.5 text-sm text-accent transition-opacity hover:opacity-70"
           >
             {site.contactLabel}
           </a>

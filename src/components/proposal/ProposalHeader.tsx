@@ -13,7 +13,7 @@ export function ProposalHeader({ proposal }: { proposal: Proposal }) {
           href="/"
           className="font-display text-sm font-semibold tracking-tight text-fg transition-colors hover:text-accent"
         >
-          R<sup className="text-accent">2</sup>ch-Tech
+          R<sup className="text-accent">2</sup>&#967;TECH
         </Link>
 
         <p className="hidden font-mono text-[10px] uppercase tracking-widest text-fg-muted lg:block">

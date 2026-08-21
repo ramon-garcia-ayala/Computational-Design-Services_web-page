@@ -8,8 +8,8 @@
 
 import type { WfcTile } from "./wfc";
 
-export const ACCENT = "#c8f94e";
-export const ACCENT_DIM = "#a3cc3e";
+export const ACCENT = "#e8a94a";
+export const ACCENT_DIM = "#c8913a";
 export const LINE = "#262b2e";
 export const FG_MUTED = "#8a918c";
 export const CARBON = "#0a0c0b";

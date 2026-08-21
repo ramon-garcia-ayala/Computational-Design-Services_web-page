@@ -96,7 +96,7 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
               />
             ) : (
               <>
-                R<sup className="text-accent">2</sup>ch-Tech
+                R<sup className="text-accent">2</sup>&#967;TECH
               </>
             )}
           </Link>

@@ -44,4 +44,7 @@ yarn-error.log*
 /public/geodesic-01/frames/
 # Kling MP4s from the abandoned video-scrubbing approach, superseded by the
 # frame sequence. Unused by any route.
-/public/videos/
+/public/videos/design-lab/
+# HEVC source for the Labs loop. Chrome and Firefox cannot decode H.265, so
+# what the app serves is the transcoded labs-loop.mp4 beside it.
+/public/videos/panels/*.mov

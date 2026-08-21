@@ -25,21 +25,21 @@ export function LabFooter() {
   const { mask } = designLab;
 
   const linkClass =
-    "text-sm text-fg-muted transition-colors hover:text-fg";
+    "text-base text-fg-muted transition-colors hover:text-fg sm:text-lg";
 
   const headingClass =
-    "font-mono text-[10px] uppercase tracking-[0.25em] text-fg-muted/70";
+    "font-mono text-[11px] uppercase tracking-[0.3em] text-fg-muted/70 sm:text-xs";
 
   return (
-    <footer className="font-lab border-t border-line/60 bg-carbon">
-      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-6 py-20 sm:px-10 lg:flex-row lg:justify-between lg:px-16 lg:py-24">
-        <div className="max-w-sm">
+    <footer className="font-lab border-t border-line/60 bg-panel">
+      <div className="flex w-full flex-col gap-16 px-6 py-24 sm:px-10 lg:flex-row lg:justify-between lg:px-16 lg:py-28 xl:px-24">
+        <div className="max-w-lg">
           {/* The real asset, filled through the mask so it reads light on
               this dark plate — the source ink is near-black. */}
           <span
             role="img"
             aria-label={site.nameFlat}
-            className="block w-[172px] bg-fg"
+            className="block w-[228px] bg-fg sm:w-[264px]"
             style={{
               aspectRatio: `${mask.width} / ${mask.height}`,
               WebkitMaskImage: `url('${mask.src}')`,
@@ -51,23 +51,23 @@ export function LabFooter() {
             }}
           />
 
-          <p className="mt-6 text-sm leading-relaxed text-fg-muted">
+          <p className="mt-8 max-w-md text-base leading-relaxed text-fg-muted sm:text-lg">
             {site.descriptor}
           </p>
 
           {/* The warm accent, exactly as on the live footer (§11.10 / §6). */}
           <a
             href={mailtoHref}
-            className="mt-8 inline-block border-b border-accent-warm pb-1 text-sm text-accent-warm transition-opacity hover:opacity-70"
+            className="mt-10 inline-block border-b border-accent pb-1 text-base text-accent transition-opacity hover:opacity-70 sm:text-lg"
           >
             {site.contactLabel}
           </a>
         </div>
 
-        <div className="flex gap-16 sm:gap-24">
+        <div className="flex gap-20 sm:gap-32 lg:gap-40">
           <nav aria-label="Footer">
             <p className={headingClass}>Site</p>
-            <ul className="mt-6 flex flex-col gap-3">
+            <ul className="mt-8 flex flex-col gap-4">
               {[...navLinks, labsLink].map((link) => (
                 <li key={link.label}>
                   {link.external ? (
@@ -86,7 +86,7 @@ export function LabFooter() {
 
           <div>
             <p className={headingClass}>Elsewhere</p>
-            <ul className="mt-6 flex flex-col gap-3">
+            <ul className="mt-8 flex flex-col gap-4">
               {socialLinks.map((link) => (
                 <li key={link.label}>
                   <a
@@ -104,11 +104,21 @@ export function LabFooter() {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-2 border-t border-line/60 px-6 py-8 sm:flex-row sm:justify-between sm:px-10 lg:px-16">
-        <p className={headingClass}>
-          © {year} {site.nameFlat}
-        </p>
-        <p className={headingClass}>{site.location}</p>
+      {/* §13.7: the rule runs the full width of the page. It used to sit on
+          the padded column, which is why it stopped short of the right edge —
+          the padding was inside the bordered element, so the border inherited
+          the inset. The border is on the full-width wrapper now and the
+          padding moved to the row inside it. */}
+      <div className="w-full border-t border-line/60">
+        <div className="flex flex-col gap-2 px-6 py-10 sm:flex-row sm:gap-10 sm:px-10 lg:px-16 xl:px-24">
+          {/* Both items grouped on the left: the location used to be pushed
+              opposite the copyright, which read as two unrelated notes rather
+              than one colophon. */}
+          <p className={headingClass}>
+            © {year} {site.nameFlat}
+          </p>
+          <p className={headingClass}>{site.location}</p>
+        </div>
       </div>
     </footer>
   );

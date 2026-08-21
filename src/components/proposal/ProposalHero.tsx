@@ -30,7 +30,7 @@ export function ProposalHero({ proposal }: { proposal: Proposal }) {
     <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
       <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(200,249,78,0.07),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(232,169,74,0.07),transparent_60%)]"
         aria-hidden="true"
       />
 

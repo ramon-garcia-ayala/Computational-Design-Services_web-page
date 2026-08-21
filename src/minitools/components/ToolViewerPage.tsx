@@ -350,7 +350,7 @@ function Shell({ children }: { children: React.ReactNode }) {
     <section className="relative min-h-[100svh] overflow-hidden pt-32 pb-24">
       <div className="grid-bg absolute inset-0 opacity-30" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(200,249,78,0.05),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(232,169,74,0.05),transparent_60%)]"
         aria-hidden="true"
       />
       <div className="shell relative">{children}</div>

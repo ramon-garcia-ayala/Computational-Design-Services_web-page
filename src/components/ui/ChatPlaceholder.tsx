@@ -33,7 +33,7 @@ export function ChatPlaceholder({ className }: { className?: string }) {
           {widgetCopy.heading}
         </span>
         <span className="flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent-warm" />
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           <span className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">
             {widgetCopy.statusLabel}
           </span>

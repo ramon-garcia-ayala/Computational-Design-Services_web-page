@@ -10,6 +10,7 @@ export type NavLink = {
 /** Main navigation of the fullscreen overlay menu. */
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
+  { label: "Services", href: "/services" },
   { label: "About us", href: "/about" },
   { label: "Projects", href: "/projects" },
   { label: "Contact", href: mailtoHref, external: true },

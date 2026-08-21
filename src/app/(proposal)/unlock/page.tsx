@@ -21,7 +21,7 @@ export default async function UnlockPage({ searchParams }: PageProps) {
     <section className="relative flex min-h-[100svh] items-center overflow-hidden py-20">
       <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(200,249,78,0.07),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(232,169,74,0.07),transparent_60%)]"
         aria-hidden="true"
       />
 
@@ -31,7 +31,7 @@ export default async function UnlockPage({ searchParams }: PageProps) {
             href="/"
             className="font-display text-lg font-semibold tracking-tight text-fg transition-colors hover:text-accent"
           >
-            R<sup className="text-accent">2</sup>ch-Tech
+            R<sup className="text-accent">2</sup>&#967;TECH
           </Link>
 
           <p className="mt-12 font-mono text-[10px] uppercase tracking-widest text-accent">

@@ -129,6 +129,24 @@ export function HeroOverlay() {
 
   return (
     <div ref={rootRef} className="pointer-events-none absolute inset-0 font-lab">
+      {/* The hero's bottom edge, dissolved into the page colour.
+
+          The hard line that survived the panel-gradient work was never the
+          panel: it is where the *canvas* ends. `FrameCanvas` fills its stage
+          by stretching the frame's own outermost pixels outward, and the
+          frame's bottom row runs #a7a5a3 to #c0bcb8 — close to the page's
+          #b8b4b1 but not equal to it, and not equal across its width either.
+          So the canvas met flat greige at a step that shifted along the join.
+          Fading the last stretch to the page colour removes the meeting
+          point altogether, and does it without touching the scrub. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-[22svh]"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgb(184 180 177 / 0) 0%, rgb(184 180 177 / 0.6) 55%, var(--color-lab-bg) 100%)",
+        }}
+      />
       {/* Opening lockup, present from the first frame and faded out by ~18. */}
       <div
         data-lockup

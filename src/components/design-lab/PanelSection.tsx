@@ -47,7 +47,10 @@ type PanelSectionProps = {
  */
 export function PanelSection({
   children,
-  runway = 160,
+  /* §13.1: was 160svh, which held each panel for 60svh after it had finished
+     covering — two or three gestures to clear one panel. 115 keeps a short
+     beat to read on without the scroll feeling stuck. */
+  runway = 115,
   blend = false,
   className,
 }: PanelSectionProps) {
@@ -103,7 +106,7 @@ export function PanelSection({
 
   if (reducedMotion) {
     return (
-      <section className={cn("relative w-full bg-carbon", className)}>
+      <section className={cn("relative w-full bg-panel", className)}>
         {children}
       </section>
     );
@@ -120,7 +123,7 @@ export function PanelSection({
           ref={panelRef}
           className={cn(
             "absolute inset-0 flex flex-col justify-center will-change-transform",
-            !blend && "bg-carbon",
+            !blend && "bg-panel",
             className,
           )}
           style={{
@@ -130,20 +133,27 @@ export function PanelSection({
                nothing to blend into. Past the last stop the gradient is
                solid carbon, so only the leading band is translucent and the
                hero shows through it as the panel climbs. */
+            /* §13.1: 16svh still read as an edge — too short a ramp against a
+               plate as pale as the hero, and a single linear stop puts the
+               steepest change right at the top where the eye is. Three stops
+               over 46svh ease it in instead: barely-there for the first
+               stretch, then most of the opacity gained in the middle, so the
+               join itself has no discernible line. */
             ...(blend
               ? {
                   background:
-                    "linear-gradient(to bottom, transparent 0, var(--color-carbon) 16svh)",
+                    "linear-gradient(to bottom, " +
+                    "rgb(61 57 52 / 0) 0, " +
+                    "rgb(61 57 52 / 0.35) 14svh, " +
+                    "rgb(61 57 52 / 0.85) 30svh, " +
+                    "var(--color-panel) 46svh)",
                 }
               : null),
           }}
         >
-          {blend ? (
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-lab-ink/20"
-            />
-          ) : null}
+          {/* The hairline that used to sit here is gone (§13.1). It was drawn
+              to mark the join, but a 1px rule *is* a hard edge — it was part
+              of what kept the seam reading as a cut rather than a blend. */}
           {children}
         </div>
       </div>

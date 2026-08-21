@@ -10,7 +10,7 @@ import { FinalCTA } from "@/components/sections/shared/FinalCTA";
 export const metadata: Metadata = {
   title: "About us",
   description:
-    "How R2ch-Tech works with AEC teams: methodology, expertise areas and studio track record.",
+    "How R²XTECH works with AEC teams: methodology, expertise areas and studio track record.",
 };
 
 export default function AboutPage() {

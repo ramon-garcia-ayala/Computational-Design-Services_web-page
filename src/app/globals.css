@@ -12,14 +12,13 @@
   --color-graphite-hi: #1c2024; /* elevated surface */
   --color-line: #262b2e; /* borders */
   --color-line-soft: #1a1e21; /* subtle borders */
-  --color-accent: #c8f94e; /* electric lime */
-  --color-accent-dim: #a3cc3e; /* hover / dimmed states */
-  /* Second accent, used ONLY by the Labs teaser widget and the footer's
-     "Get in touch" link. It is not a replacement for the lime above, which
-     stays the site-wide accent — anything else reaching for this is a bug.
-     Filled buttons darken on hover with an opacity modifier rather than a
-     paired `-dim` token, so this stays a single addition. */
-  --color-accent-warm: #e8a94a; /* amber */
+  /* One accent, everywhere (§13.1). The electric lime this replaced came from
+     the original mockup and is retired: a second accent is what made the
+     palette read as two mixed modes. There is deliberately no `-warm` token
+     any more — a single name is the only way "one accent" stays true, since
+     an alias invites the split to grow back. */
+  --color-accent: #e8a94a; /* amber */
+  --color-accent-dim: #c8913a; /* hover / dimmed states */
   --color-fg: #f2f4f0; /* primary text */
   --color-fg-muted: #8a918c; /* secondary text */
 
@@ -46,6 +45,13 @@
      is the spec's `--color-structure` value (§3). */
   --color-lab-ink: #2a2826;
   --color-lab-ink-muted: #57534e;
+
+  /* Panel plate (§13.2). Pure carbon read as flat black against the hero;
+     this is a warm charcoal — clearly lighter than black, clearly darker
+     than the greige, so a panel reads as its own state rather than as the
+     page ending. Light type still passes on it comfortably. */
+  --color-panel: #3d3934;
+  --color-panel-line: #55504a;
 
   /* `/design-lab`'s one typeface (spec §12.1): geometric and technical, to
      sit with the logo's squared, monolinear letterforms. `--font-space` is

@@ -17,7 +17,7 @@ export function Hero() {
       {/* Background: CSS grid always present + optional R3F scene on top */}
       <div className="grid-bg absolute inset-0 opacity-50" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,rgba(200,249,78,0.07),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,rgba(232,169,74,0.07),transparent_60%)]"
         aria-hidden="true"
       />
 

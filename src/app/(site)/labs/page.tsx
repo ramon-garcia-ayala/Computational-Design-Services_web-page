@@ -6,7 +6,7 @@ import { mailtoHref } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Labs",
-  description: "Experiments, prototypes and open tools from R2ch-Tech. Coming soon.",
+  description: "Experiments, prototypes and open tools from R²XTECH. Coming soon.",
 };
 
 /** Studio playground. Placeholder until there is real content. */
@@ -15,7 +15,7 @@ export default function LabsPage() {
     <section className="relative flex min-h-[100svh] items-center overflow-hidden pt-32 pb-24">
       <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(200,249,78,0.06),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(232,169,74,0.06),transparent_60%)]"
         aria-hidden="true"
       />
 

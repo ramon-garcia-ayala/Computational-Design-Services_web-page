@@ -8,9 +8,9 @@
  * harvesters from scraping the addresses out of the HTML.
  */
 export const site = {
-  name: "R²ch-Tech",
+  name: "R²χTECH",
   /** Flat version for <title>, alt and metadata where the superscript gets in the way. */
-  nameFlat: "R2ch-Tech",
+  nameFlat: "R²XTECH",
   tagline: "We automate AEC. You ship faster.",
   subcopy:
     "We build custom automation tools and computational workflows for AEC firms, from parametric design pipelines to AI-driven systems.",

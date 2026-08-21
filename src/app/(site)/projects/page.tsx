@@ -7,7 +7,7 @@ import { FinalCTA } from "@/components/sections/shared/FinalCTA";
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "Automation systems and computational workflows R2ch-Tech built for AEC firms.",
+    "Automation systems and computational workflows R²XTECH built for AEC firms.",
 };
 
 export default function ProjectsPage() {

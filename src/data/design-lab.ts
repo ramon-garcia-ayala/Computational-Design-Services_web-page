@@ -42,7 +42,7 @@ export const designLab = {
 
   /* Spec §11.3 / §11.1. Shown over the sequence from the first frame. */
   hero: {
-    logoAlt: "R²XTECH",
+    logoAlt: "R²χTECH",
     headline: "Architecture, computed.",
     description:
       "We are a computational studio embedded in architecture, engineering, and construction. We build the parametric pipelines, model automations, and AI-driven systems.",
@@ -60,29 +60,35 @@ export const designLab = {
 
   /* Spec §11.5–11.9, in scroll order. `kind` picks the body component; the
      copy for each lives with it here. */
+  /* No panel carries an index number any more (§13.1): the eyebrow is the
+     category alone. */
   panels: {
     services: {
       id: "services",
-      index: "01",
       kicker: "Services",
       title: "What we build",
-      /* Spec §11.2. The per-service shape/icon treatment is an open item in
-         §11.3 and is not designed yet, so these render as text only. */
+      /* `motif` picks the animated figure above each card (§13.2). They are
+         behaviours, not decorations: the motion is meant to say what the
+         service does, so a card keeps the one that matches it. */
       items: [
         {
           name: "Computational Design",
+          motif: "network" as const,
           body: "Parametric modeling and generative workflows that turn design intent into explorable, optimizable systems.",
         },
         {
           name: "Design Automation",
+          motif: "pipeline" as const,
           body: "Custom tools and scripts that eliminate repetitive work across your studio's modeling, documentation, and delivery pipeline.",
         },
         {
           name: "AI-Driven Design Tools",
+          motif: "inference" as const,
           body: "AI-assisted generation, analysis, and decision-making built directly into your design process, from massing studies to facade systems.",
         },
         {
           name: "Custom Software & Plugins",
+          motif: "assembly" as const,
           body: "Bespoke Grasshopper, Revit, and Rhino tooling built for your specific studio workflow, not off-the-shelf.",
         },
       ],
@@ -90,31 +96,42 @@ export const designLab = {
 
     labs: {
       id: "labs",
-      index: "02",
       kicker: "Playground",
       title: "Try it yourself",
+      /* Transcoded from the supplied .mov: the source is HEVC, which Chrome
+         and Firefox cannot decode at all, so the container was never the
+         problem — the codec was. See scripts note in the panels README. */
+      video: "/videos/panels/labs-loop.mp4",
     },
 
     /* Spec §11.7: present but intentionally blank. Kept in the scroll order
        so the rhythm of the page is the real one while the content is decided. */
     featured: {
       id: "featured",
-      index: "03",
       kicker: "Featured work",
       title: "",
     },
 
     about: {
       id: "about",
-      index: "04",
       kicker: "About",
-      body: "R²XTECH was founded by two architects who met at IAAC in Barcelona, studying computational design. We saw an industry where automation and AI were still on the sidelines, and built a studio to put them at the center.",
+      /* The brand name is split out of the sentence only so the superscript
+         can be set properly; it reads as plain body copy otherwise. */
+      lead: "R²χTECH",
+      body: " was founded by two architects who met at IAAC in Barcelona, studying computational design. We saw an industry where automation and AI were still on the sidelines, and built a studio to put them at the center.",
+      /* Square sources (400x400), so the slots are square too — a portrait
+         crop of a square headshot cuts through the face. */
+      founders: [
+        { id: "ramy", name: "Ramy", photo: "/founders/ramy.jpg" },
+        { id: "ramon", name: "Ramon", photo: "/founders/ramon.jpg" },
+      ],
     },
 
     closing: {
       id: "closing",
-      index: "05",
       kicker: "Next",
+      /* §13.6, same arrangement as the Labs loop. */
+      video: "/videos/panels/closing-loop.mp4",
       body: "We're already thinking in code. Let's think about your project next.",
       /* §11.9 specifies `/contact`, which does not exist yet; the mailto is
          what every other CTA on the site uses. Swap to the route when it
