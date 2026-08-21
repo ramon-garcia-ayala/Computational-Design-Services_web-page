@@ -24,7 +24,7 @@ export const site = {
 } as const;
 
 /** Recipients of every mailto on the site. Both of them, always. */
-const contactRecipients = [
+export const contactRecipients = [
   "gramonga4434@gmail.com",
   "ramyayoub8@gmail.com",
 ] as const;

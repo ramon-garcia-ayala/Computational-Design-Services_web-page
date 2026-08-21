@@ -1,5 +1,3 @@
-import { mailtoHref } from "./site";
-
 export type NavLink = {
   label: string;
   href: string;
@@ -13,7 +11,7 @@ export const navLinks: NavLink[] = [
   { label: "Services", href: "/services" },
   { label: "About us", href: "/about" },
   { label: "Projects", href: "/projects" },
-  { label: "Contact", href: mailtoHref, external: true },
+  { label: "Contact", href: "/contact" },
 ];
 
 /** Secondary highlighted link inside the overlay. */
