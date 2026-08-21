@@ -44,7 +44,7 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50">
+      <header className="font-lab fixed inset-x-0 top-0 z-50">
         {/* Legibility gradient: the header floats over the content, and without
             it the controls get lost as light sections scroll underneath. */}
         <div
@@ -74,7 +74,7 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
               "shrink-0 transition-opacity",
               light
                 ? "opacity-100 hover:opacity-70"
-                : "font-display text-lg font-semibold tracking-tight text-fg transition-colors hover:text-accent",
+                : "text-lg font-semibold tracking-tight text-fg transition-colors hover:text-accent",
             )}
             aria-label={`${site.nameFlat} home`}
           >

@@ -1,4 +1,3 @@
-import { Space_Grotesk } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Preloader } from "@/components/ui/Preloader";
 import { FrameCanvas } from "@/components/design-lab/FrameCanvas";
@@ -14,17 +13,6 @@ import {
 import { LabFooter } from "@/components/design-lab/LabFooter";
 import { ScrollProgress } from "@/components/design-lab/ScrollProgress";
 import { StatsBar } from "@/components/design-lab/StatsBar";
-
-/* The page's one typeface, geometric and technical to sit with the logo's
-   squared letterforms. Loaded here rather than in the root layout so the
-   rest of the site keeps Sora/Inter and never downloads this: `--font-space`
-   is what `--font-lab` in globals.css resolves to, and the variable exists
-   only inside this subtree. */
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 /**
  * Home.
@@ -45,7 +33,7 @@ const spaceGrotesk = Space_Grotesk({
  */
 export default function HomePage() {
   return (
-    <main id="main" data-design-lab className={spaceGrotesk.variable}>
+    <main id="main" data-design-lab>
       {/* Plays once per full document load, and blocks scroll until it is
           done. It decides that for itself, so mounting it is the wiring. */}
       <Preloader />

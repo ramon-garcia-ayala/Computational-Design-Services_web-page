@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Sora, Inter, JetBrains_Mono } from "next/font/google";
+import { Sora, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { site } from "@/data/site";
@@ -23,6 +23,16 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+/* The site's geometric face. It moved here from the Home page once the header
+   and the menu had to carry it too: both render on every route, so scoping the
+   font to one page would have left the nav in Sora everywhere else — the exact
+   inconsistency it exists to remove. */
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: `${site.nameFlat} · ${site.tagline}`,
@@ -38,10 +48,21 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}
-      >
+    /* The font variables belong on <html>, not <body>.
+
+       Tailwind v4 declares every `@theme` token on `:root`, so
+       `--font-display: var(--font-sora)` is substituted *there*. next/font's
+       classes were on <body>, one level below — and a `var()` on :root cannot
+       see a variable defined on a descendant. Every font token was therefore
+       invalid at computed-value time and silently fell back: measured, `h1`
+       and `body` alike were resolving to the system stack, so Sora, Inter and
+       JetBrains never actually rendered anywhere on the site. Moving the
+       classes up one element is the whole fix. */
+    <html
+      lang="en"
+      className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable}`}
+    >
+      <body className="antialiased">
         <SmoothScroll>
           <a
             href="#main"

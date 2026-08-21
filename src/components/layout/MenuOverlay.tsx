@@ -107,13 +107,13 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
       aria-hidden={!open}
       inert={!open ? true : undefined}
       className={cn(
-        "fixed inset-0 z-40 flex flex-col bg-carbon transition-opacity duration-500",
+        "font-lab fixed inset-0 z-40 flex flex-col bg-panel transition-opacity duration-500",
         open
           ? "pointer-events-auto opacity-100"
           : "pointer-events-none opacity-0",
       )}
     >
-      <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="grid-bg absolute inset-0 opacity-20" aria-hidden="true" />
 
       <div className="shell relative flex min-h-0 flex-1 flex-col justify-center gap-12 pt-24 pb-12 lg:flex-row lg:items-end lg:justify-between lg:gap-16 lg:pb-20">
         <nav aria-labelledby={labelledBy} className="flex-1">
@@ -125,7 +125,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
                     data-menu-item
                     href={link.href}
                     onClick={onClose}
-                    className="block font-display text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent sm:text-6xl lg:text-7xl"
+                    className="block text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent sm:text-6xl lg:text-7xl"
                   >
                     {link.label}
                   </a>
@@ -134,7 +134,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
                     data-menu-item
                     href={link.href}
                     onClick={onClose}
-                    className="block font-display text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent sm:text-6xl lg:text-7xl"
+                    className="block text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent sm:text-6xl lg:text-7xl"
                   >
                     {link.label}
                   </Link>
@@ -159,7 +159,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
             >
               Newsletter
             </label>
-            <div className="flex items-center gap-2 border-b border-line pb-2 focus-within:border-accent">
+            <div className="flex items-center gap-2 border-b border-panel-line pb-2 focus-within:border-accent">
               <input
                 id="newsletter-email"
                 type="email"
@@ -182,10 +182,10 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
           <Link
             href={labsLink.href}
             onClick={onClose}
-            className="group flex items-center justify-between rounded-lg border border-line bg-graphite px-4 py-4 transition-colors hover:border-accent"
+            className="group flex items-center justify-between rounded-lg border border-panel-line bg-carbon/40 px-4 py-4 transition-colors hover:border-accent"
           >
             <span>
-              <span className="block font-display text-lg font-semibold text-fg">
+              <span className="block text-lg font-semibold text-fg">
                 {labsLink.label}
               </span>
               <span className="block text-xs text-fg-muted">
