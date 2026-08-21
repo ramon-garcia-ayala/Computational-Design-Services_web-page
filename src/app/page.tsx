@@ -13,6 +13,7 @@ import {
 } from "@/components/design-lab/Panels";
 import { LabFooter } from "@/components/design-lab/LabFooter";
 import { ScrollProgress } from "@/components/design-lab/ScrollProgress";
+import { StatsBar } from "@/components/design-lab/StatsBar";
 
 /* The page's one typeface, geometric and technical to sit with the logo's
    squared letterforms. Loaded here rather than in the root layout so the
@@ -57,6 +58,11 @@ export default function HomePage() {
       <FrameCanvas>
         <HeroOverlay />
       </FrameCanvas>
+
+      {/* The four figures, in the ground the hero fades into and the first
+          panel rises out of. Sitting between the two rather than on either
+          means it needs no blending of its own. */}
+      <StatsBar />
 
       {/* Only the first panel blends its leading edge: it is the one that
           meets the light hero, and every panel after it rises over carbon,

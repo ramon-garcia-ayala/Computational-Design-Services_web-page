@@ -48,6 +48,25 @@ export const designLab = {
       "We are a computational studio embedded in architecture, engineering, and construction. We build the parametric pipelines, model automations, and AI-driven systems.",
   },
 
+  /* The bar in the transition between the hero and the first panel.
+     Deliberately unrelated to `data/stats.ts` and `data/awards.ts`: those hold
+     the original mockup's placeholder figures and are still wired to
+     `/archive-home`. These are the real ones, and reusing that shape would
+     have tied the live page to numbers nobody has verified. */
+  stats: [
+    { id: "founded", value: "2026", label: "Founded" },
+    { id: "market", value: "US", label: "First market" },
+    { id: "projects", value: "4+", label: "Projects delivered" },
+    {
+      id: "countries",
+      value: "3",
+      label: "Countries",
+      /* Revealed on hover in place of the label. Kept in the DOM either way,
+         so assistive tech gets the names without needing the pointer. */
+      detail: "Lebanon · Mexico · US",
+    },
+  ],
+
   /* Spec §11.1. `from`/`to` are 1-based frame numbers, matching how the spec
      and the filenames count. The component converts them to scroll progress,
      so the ranges stay readable against the spec rather than being pre-baked
