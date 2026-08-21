@@ -132,6 +132,43 @@ html:has([data-site-warm]),
 html:has([data-site-warm]) body {
   background-color: #3d3934;
 }
+/* ---------------------------------------------------------------------------
+   The pale mood — the hero's own ground, for the pages that are mostly
+   reading: /about and /contact.
+
+   Same mechanism as the warm scope above, different values, and it sits after
+   it so a page declaring both lands here.
+
+   The accent needs care rather than a remap. Amber on this ground measures
+   1.00:1 against it — identical luminance, invisible — and darkening it far
+   enough to pass (#6b4206) stops it being the brand colour at all. But amber
+   is only illegible as *ink*: as a button's background with dark type on it,
+   it is perfectly readable and still amber. So the token keeps its value and
+   only its use as a text or border colour is redirected, which is what the
+   two overrides below do.
+--------------------------------------------------------------------------- */
+[data-site-pale] {
+  --color-carbon: #b8b4b1; /* page ground — the hero's plate */
+  --color-graphite: #c1bdba; /* surfaces */
+  --color-graphite-hi: #c9c5c2; /* elevated surface */
+  --color-line: #9c9793; /* borders */
+  --color-line-soft: #aaa6a2; /* subtle borders, the background grid */
+  --color-fg: #2a2826; /* primary text — 7.13:1 */
+  --color-fg-muted: #4a4642; /* secondary text — 4.54:1, where #57534e was 3.71 */
+}
+
+[data-site-pale] .text-accent {
+  color: var(--color-fg);
+}
+[data-site-pale] .border-accent {
+  border-color: var(--color-fg);
+}
+
+html:has([data-site-pale]),
+html:has([data-site-pale]) body {
+  background-color: #b8b4b1;
+}
+
 
 ::selection {
   background-color: var(--color-accent);

@@ -23,6 +23,7 @@ export const metadata: Metadata = {
  */
 export default function ContactPage() {
   return (
+    <div data-site-pale>
     <section className="relative overflow-hidden pt-32 pb-24 sm:pt-40 sm:pb-28">
       <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
       <div
@@ -100,5 +101,6 @@ export default function ContactPage() {
         </div>
       </div>
     </section>
+    </div>
   );
 }

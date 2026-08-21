@@ -26,7 +26,7 @@ export const metadata: Metadata = {
  */
 export default function AboutPage() {
   return (
-    <>
+    <div data-site-pale>
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-20">
         <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
         <div
@@ -119,6 +119,6 @@ export default function AboutPage() {
           </Reveal>
         </div>
       </section>
-    </>
+    </div>
   );
 }
