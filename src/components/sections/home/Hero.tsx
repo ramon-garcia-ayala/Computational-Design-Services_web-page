@@ -33,7 +33,7 @@ export function Hero() {
             <span className="text-fg-muted">You ship faster.</span>
           </h1>
 
-          <p className="mt-7 max-w-xl text-base leading-relaxed text-fg-muted sm:text-lg">
+          <p className="text-justify hyphens-auto mt-7 max-w-xl text-base leading-relaxed text-fg-muted sm:text-lg">
             {site.subcopy}
           </p>
 

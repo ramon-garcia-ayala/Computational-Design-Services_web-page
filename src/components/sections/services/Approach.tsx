@@ -37,7 +37,7 @@ export function Approach() {
               <h3 className="font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
                 {step.title}
               </h3>
-              <p className="text-sm leading-relaxed text-fg-muted">
+              <p className="text-justify hyphens-auto text-sm leading-relaxed text-fg-muted">
                 {step.body}
               </p>
             </article>

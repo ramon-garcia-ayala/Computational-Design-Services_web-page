@@ -15,7 +15,7 @@ export function Manifesto() {
             <p className="font-display text-2xl leading-snug font-semibold tracking-tight text-fg sm:text-3xl lg:text-4xl">
               {manifesto.lead}
             </p>
-            <p className="mt-8 text-base leading-relaxed text-fg-muted sm:text-lg">
+            <p className="text-justify hyphens-auto mt-8 text-base leading-relaxed text-fg-muted sm:text-lg">
               {manifesto.body}
             </p>
           </div>

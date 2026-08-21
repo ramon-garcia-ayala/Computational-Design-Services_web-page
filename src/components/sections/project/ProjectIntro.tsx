@@ -21,7 +21,7 @@ export function ProjectIntro({ project }: { project: Project }) {
             {project.title}
           </h1>
 
-          <p className="mt-8 max-w-2xl text-base leading-relaxed text-fg-muted sm:text-lg">
+          <p className="text-justify hyphens-auto mt-8 max-w-2xl text-base leading-relaxed text-fg-muted sm:text-lg">
             {project.intro}
           </p>
         </Reveal>

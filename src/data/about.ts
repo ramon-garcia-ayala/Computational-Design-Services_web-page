@@ -12,6 +12,11 @@ export const about = {
 
   storyKicker: "How it started",
 
+  /* Loops beside the story. Compressed from the supplied 13.2 MB original,
+     which is a lot to ask of a reading page for five seconds of motion; the
+     source stays out of git beside it. */
+  video: "/videos/panels/about.mp4",
+
   /* Two paragraphs, not three. The founders came from the same kind of
      practice — an earlier draft had them arriving from very different ones,
      which was invented and wrong. */

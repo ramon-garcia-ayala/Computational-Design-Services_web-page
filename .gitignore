@@ -48,3 +48,4 @@ yarn-error.log*
 # HEVC source for the Labs loop. Chrome and Firefox cannot decode H.265, so
 # what the app serves is the transcoded labs-loop.mp4 beside it.
 /public/videos/panels/*.mov
+/public/videos/panels/*.source.mp4

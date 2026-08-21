@@ -96,7 +96,7 @@ export function HorizontalScroll({ panels }: { panels: ProjectPanel[] }) {
             <h2 className="mt-6 max-w-xl font-display text-2xl leading-tight font-semibold tracking-tight text-fg sm:text-3xl lg:text-4xl">
               {panel.title}
             </h2>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-fg-muted">
+            <p className="text-justify hyphens-auto mt-6 max-w-xl text-base leading-relaxed text-fg-muted">
               {panel.body}
             </p>
 

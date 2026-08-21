@@ -28,7 +28,7 @@ export function SectionHeading({
         {title}
       </Tag>
       {lead ? (
-        <p className="mt-5 text-base leading-relaxed text-fg-muted sm:text-lg">
+        <p className="text-justify hyphens-auto mt-5 text-base leading-relaxed text-fg-muted sm:text-lg">
           {lead}
         </p>
       ) : null}

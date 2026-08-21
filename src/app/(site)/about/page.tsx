@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Reveal } from "@/components/ui/Reveal";
+import { AboutLoop } from "@/components/sections/about/AboutLoop";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { about } from "@/data/about";
 import { founders } from "@/data/founders";
@@ -43,23 +44,29 @@ export default function AboutPage() {
             />
           </Reveal>
 
-          <Reveal className="mt-16">
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
-              {about.storyKicker}
-            </p>
-          </Reveal>
+          {/* The loop and the story are one grid on `items-stretch`, so the
+              video's height is whatever the words next to it come to — which
+              is what keeps the two aligned instead of the video guessing at a
+              fixed ratio. */}
+          <Reveal className="mt-20">
+            <div className="grid items-stretch gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
+              <div className="relative min-h-[260px] overflow-hidden rounded-sm ring-1 ring-line lg:min-h-0">
+                <AboutLoop src={about.video} />
+              </div>
 
-          <Reveal stagger="[data-story]" className="mt-6">
-            <div className="max-w-3xl">
-              {about.story.map((paragraph, i) => (
-                <p
-                  key={i}
-                  data-story
-                  className="reveal-init mt-6 text-base leading-relaxed text-fg-muted first:mt-0 sm:text-lg"
-                >
-                  {paragraph}
+              <div>
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-accent">
+                  {about.storyKicker}
                 </p>
-              ))}
+                {about.story.map((paragraph, i) => (
+                  <p
+                    key={i}
+                    className="mt-6 text-justify text-base leading-relaxed text-fg-muted sm:text-lg"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
           </Reveal>
         </div>
@@ -108,7 +115,7 @@ export default function AboutPage() {
                       <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
                         {founder.title}
                       </p>
-                      <p className="mt-5 text-sm leading-relaxed text-fg-muted sm:text-base">
+                      <p className="text-justify hyphens-auto mt-5 text-sm leading-relaxed text-fg-muted sm:text-base">
                         {founder.bio}
                       </p>
                     </figcaption>

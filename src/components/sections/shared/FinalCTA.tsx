@@ -22,7 +22,7 @@ export function FinalCTA({
           <h2 className="font-display text-3xl leading-[1.1] font-semibold tracking-tight text-fg sm:text-5xl lg:text-6xl">
             {title}
           </h2>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-fg-muted sm:text-lg">
+          <p className="text-justify hyphens-auto mt-6 max-w-xl text-base leading-relaxed text-fg-muted sm:text-lg">
             {body}
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
