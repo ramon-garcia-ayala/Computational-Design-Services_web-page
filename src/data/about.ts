@@ -4,15 +4,20 @@
  */
 export const about = {
   kicker: "About us",
-  title: "Two architects who went looking for the tools",
 
-  /* The Home teaser opened this story in three sentences; here it runs to its
-     end. The teaser copy stays where it is — this is the longer telling, not a
-     second version of the same paragraph. */
+  /* The page opens on what the studio is, not on the story. The story is what
+     someone reads next, once they know why it matters. */
+  title: "A computational studio that stays inside the workflow",
+  lead: "We are engineers and computational designers who build the tools AEC teams keep using after we leave. How we run an engagement, and what we go deep on, live on the services page.",
+
+  storyKicker: "How it started",
+
+  /* Two paragraphs, not three. The founders came from the same kind of
+     practice — an earlier draft had them arriving from very different ones,
+     which was invented and wrong. */
   story: [
-    "R²XTECH was founded by two architects who met at IAAC in Barcelona, studying computational design. They had come from opposite sides of the world and from very different practices, and found they had been fighting the same thing: the hours a studio loses to work a machine should have done.",
-    "They saw an industry where automation and AI were still on the sidelines — pilot projects, a plugin someone wrote once and nobody could maintain, research that never left the presentation. Meanwhile the actual bottlenecks stayed exactly where they were.",
-    "So they built a studio to put them at the center. Not a consultancy that hands over a report, and not a software company selling the same product to everyone: a practice that works inside a team's own files and workflows, and leaves tools behind that the team can keep running without us.",
+    "R²XTECH was founded by two architects who met at IAAC in Barcelona, studying computational design. They came from the same kind of practice, and had been fighting the same thing: the hours a studio loses to work a machine should have done.",
+    "They saw an industry where automation and AI were still on the sidelines — a pilot project, a plugin nobody could maintain, research that never left the presentation. So they built a studio to put them at the center instead.",
   ],
 
   /* Stated outright rather than hidden behind a hover, unlike Home's version:

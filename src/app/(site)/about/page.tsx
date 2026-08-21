@@ -35,10 +35,21 @@ export default function AboutPage() {
         />
         <div className="shell relative">
           <Reveal>
-            <SectionHeading as="h1" kicker={about.kicker} title={about.title} />
+            <SectionHeading
+              as="h1"
+              kicker={about.kicker}
+              title={about.title}
+              lead={about.lead}
+            />
           </Reveal>
 
-          <Reveal stagger="[data-story]" className="mt-12">
+          <Reveal className="mt-16">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
+              {about.storyKicker}
+            </p>
+          </Reveal>
+
+          <Reveal stagger="[data-story]" className="mt-6">
             <div className="max-w-3xl">
               {about.story.map((paragraph, i) => (
                 <p
