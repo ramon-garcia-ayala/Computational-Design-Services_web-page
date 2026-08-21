@@ -10,14 +10,26 @@ import { cn } from "@/lib/utils";
 
 const MENU_BUTTON_ID = "menu-trigger";
 
+/* The wordmark as a CSS mask, for the light header only. Hardcoded rather
+   than read from `data/design-lab.ts` so this shared component keeps no
+   dependency on the sandbox route's data — the asset itself is the site's,
+   built by `scripts/logo-mask.mjs`. Ratio is the source PNG's own. */
+const LOGO = { src: "/logo/logo-mask.png", width: 3103, height: 611 };
+
 /**
  * Fixed header: logo on the left, descriptor in the middle, controls on the
  * right (music, "let's talk" and the fullscreen menu trigger).
  *
  * The menu state lives here because the trigger and the overlay have to share
  * it and hand focus back to each other.
+ *
+ * `variant` exists for `/design-lab`, whose hero is a light greige plate: the
+ * default near-white type and carbon legibility gradient all but vanish on
+ * it. `"dark"` is the original and is what every live page gets by leaving
+ * the prop off, so this is additive — nothing on the live site changes.
  */
-export function Header() {
+export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const light = variant === "light";
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const [lastPathname, setLastPathname] = useState(pathname);
@@ -36,29 +48,85 @@ export function Header() {
         {/* Legibility gradient: the header floats over the content, and without
             it the controls get lost as light sections scroll underneath. */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-carbon via-carbon/80 to-transparent"
+          className={cn(
+            "pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b to-transparent",
+            light
+              ? "from-lab-bg via-lab-bg/80"
+              : "from-carbon via-carbon/80",
+          )}
           aria-hidden="true"
         />
 
-        <div className="shell relative flex items-center justify-between gap-4 py-5">
+        {/* The light header runs edge to edge rather than inside `.shell`:
+            its logo sits flush left and its controls flush right, so the
+            chrome frames the full-bleed hero instead of floating in a
+            narrower column over it. The dark header keeps `.shell`, which is
+            what every live page uses. */}
+        <div
+          className={cn(
+            "relative flex items-center justify-between gap-4 py-5",
+            light ? "px-6 sm:px-8 lg:px-10" : "shell",
+          )}
+        >
           <Link
             href="/"
-            className="font-display text-lg font-semibold tracking-tight text-fg transition-colors hover:text-accent"
+            className={cn(
+              "shrink-0 transition-opacity",
+              light
+                ? "opacity-100 hover:opacity-70"
+                : "font-display text-lg font-semibold tracking-tight text-fg transition-colors hover:text-accent",
+            )}
             aria-label={`${site.nameFlat} home`}
           >
-            R<sup className="text-accent">2</sup>ch-Tech
+            {light ? (
+              /* The real wordmark, not set type. Same mask the hero and the
+                 design-lab footer use, so all three are one asset; it takes
+                 the ink colour of wherever it lands. */
+              <span
+                className="block w-[132px] bg-lab-ink sm:w-[150px]"
+                style={{
+                  aspectRatio: `${LOGO.width} / ${LOGO.height}`,
+                  WebkitMaskImage: `url('${LOGO.src}')`,
+                  maskImage: `url('${LOGO.src}')`,
+                  WebkitMaskSize: "contain",
+                  maskSize: "contain",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskRepeat: "no-repeat",
+                }}
+              />
+            ) : (
+              <>
+                R<sup className="text-accent">2</sup>ch-Tech
+              </>
+            )}
           </Link>
 
-          <p className="hidden max-w-xs text-center text-xs leading-tight text-fg-muted lg:block">
+          {/* Centred on the viewport, not merely between its neighbours: as a
+              flex child its position would shift with the width of the logo
+              and the control cluster, which are not the same size. Absolute
+              centring makes it independent of both. One line, never wrapped. */}
+          <p
+            className={cn(
+              "hidden text-center text-xs leading-tight lg:block",
+              light
+                ? "absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-lab-ink-muted"
+                : "max-w-xs text-fg-muted",
+            )}
+          >
             {site.descriptor}
           </p>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <MusicToggle className="hidden sm:flex" />
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <MusicToggle className="hidden sm:flex" variant={variant} />
 
             <a
               href={mailtoHref}
-              className="rounded-full border border-line px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-fg transition-colors hover:border-accent hover:text-accent sm:px-4 sm:text-xs"
+              className={cn(
+                "rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
+                light
+                  ? "border-lab-ink/25 text-lab-ink/80 hover:border-lab-ink hover:font-bold hover:text-lab-ink"
+                  : "border-line text-fg hover:border-accent hover:text-accent",
+              )}
             >
               Let&apos;s talk
             </a>
@@ -69,7 +137,12 @@ export function Header() {
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls="menu-overlay"
-              className="group flex items-center gap-2 rounded-full border border-line px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-fg transition-colors hover:border-accent hover:text-accent sm:px-4 sm:text-xs"
+              className={cn(
+                "group flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
+                light
+                  ? "border-lab-ink/25 text-lab-ink/80 hover:border-lab-ink hover:font-bold hover:text-lab-ink"
+                  : "border-line text-fg hover:border-accent hover:text-accent",
+              )}
             >
               <span className="flex w-4 flex-col gap-[3px]" aria-hidden="true">
                 <span

@@ -15,7 +15,7 @@ export function Footer() {
           <p className="mt-3 text-sm text-fg-muted">{site.descriptor}</p>
           <a
             href={mailtoHref}
-            className="mt-5 inline-block border-b border-accent pb-0.5 text-sm text-accent transition-opacity hover:opacity-70"
+            className="mt-5 inline-block border-b border-accent-warm pb-0.5 text-sm text-accent-warm transition-opacity hover:opacity-70"
           >
             {site.contactLabel}
           </a>

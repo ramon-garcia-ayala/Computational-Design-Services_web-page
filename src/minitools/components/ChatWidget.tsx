@@ -74,7 +74,7 @@ function BuildProgress({ template }: { template: TemplateId }) {
         {[0, 1, 2].map((dot) => (
           <span
             key={dot}
-            className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent"
+            className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-warm"
             style={{ animationDelay: `${dot * 220}ms` }}
           />
         ))}
@@ -84,7 +84,7 @@ function BuildProgress({ template }: { template: TemplateId }) {
           and this region is atomic, so announcing it would re-read the whole
           panel on every tick for as long as the build runs. The rotating line
           above carries the same information at a readable pace. */}
-      <span aria-hidden="true" className="font-mono text-xs tabular-nums text-accent">
+      <span aria-hidden="true" className="font-mono text-xs tabular-nums text-accent-warm">
         {elapsed.toFixed(1)}s
       </span>
     </div>
@@ -380,7 +380,7 @@ export function ChatWidget() {
                   <button
                     type="button"
                     onClick={() => void send(suggestion)}
-                    className="rounded-full border border-line px-3 py-1.5 text-xs text-fg-muted transition-colors duration-200 hover:border-accent hover:text-accent"
+                    className="rounded-full border border-line px-3 py-1.5 text-xs text-fg-muted transition-colors duration-200 hover:border-accent-warm hover:text-accent-warm"
                   >
                     {suggestion}
                   </button>
@@ -412,7 +412,7 @@ export function ChatWidget() {
                       href={entry.href}
                       /* `flex w-fit`, not inline: on its own line below the
                          title instead of crowding the last line of text. */
-                      className="mt-3 flex w-fit items-center gap-2 rounded-full bg-accent px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim"
+                      className="mt-3 flex w-fit items-center gap-2 rounded-full bg-accent-warm px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-warm/85"
                     >
                       {entry.linkLabel ?? widgetCopy.openTool}
                       <span aria-hidden="true">→</span>
@@ -424,8 +424,8 @@ export function ChatWidget() {
 
             {pending && !busy ? (
               <li>
-                <div className="rounded-xl border border-accent/40 bg-carbon/50 px-4 py-3">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+                <div className="rounded-xl border border-accent-warm/40 bg-carbon/50 px-4 py-3">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-accent-warm">
                     {widgetCopy.confirm.lead}
                   </p>
                   {/* The router's own sentence leads, because it is the only
@@ -449,14 +449,14 @@ export function ChatWidget() {
                       ref={buildRef}
                       type="button"
                       onClick={() => void build()}
-                      className="rounded-full bg-accent px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim"
+                      className="rounded-full bg-accent-warm px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-warm/85"
                     >
                       {widgetCopy.confirm.build}
                     </button>
                     <button
                       type="button"
                       onClick={decline}
-                      className="rounded-full border border-line px-4 py-2 font-mono text-xs tracking-wide text-fg-muted uppercase transition-colors duration-200 hover:border-accent hover:text-accent"
+                      className="rounded-full border border-line px-4 py-2 font-mono text-xs tracking-wide text-fg-muted uppercase transition-colors duration-200 hover:border-accent-warm hover:text-accent-warm"
                     >
                       {widgetCopy.confirm.refine}
                     </button>
@@ -506,7 +506,7 @@ export function ChatWidget() {
             }
           }}
           className={cn(
-            "max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-line bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none",
+            "max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-line bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent-warm focus:outline-none",
             busy && "opacity-50",
           )}
         />
@@ -514,7 +514,7 @@ export function ChatWidget() {
           type="submit"
           aria-disabled={busy || draft.trim().length === 0}
           className={cn(
-            "rounded-lg bg-accent px-3 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim",
+            "rounded-lg bg-accent-warm px-3 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-warm/85",
             (busy || draft.trim().length === 0) && "cursor-not-allowed opacity-40",
           )}
         >

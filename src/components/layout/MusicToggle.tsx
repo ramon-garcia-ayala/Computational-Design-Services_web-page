@@ -13,7 +13,21 @@ const AUDIO_SRC: string | null = null; // e.g. "/audio/ambient.mp3"
  * behaves as a visual switch (the bars animate) without touching the audio DOM,
  * so there is no 404 and no rejected playback promises.
  */
-export function MusicToggle({ className }: { className?: string }) {
+/**
+ * `variant` mirrors `Header`'s: `"dark"` is the original and is what every
+ * live page gets by leaving the prop off. `"light"` exists for `/design-lab`,
+ * where the dark border and muted grey would all but vanish on the greige
+ * plate. It cannot be done with `className` alone — the level bars and the
+ * On/Off label carry their own colours and are out of reach from outside.
+ */
+export function MusicToggle({
+  className,
+  variant = "dark",
+}: {
+  className?: string;
+  variant?: "dark" | "light";
+}) {
+  const light = variant === "light";
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -36,7 +50,10 @@ export function MusicToggle({ className }: { className?: string }) {
       aria-pressed={playing}
       aria-label={playing ? "Turn sound off" : "Turn sound on"}
       className={cn(
-        "group flex items-center gap-2 rounded-full border border-line px-3 py-1.5 transition-colors hover:border-accent",
+        "group flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors",
+        light
+          ? "border-lab-ink/25 hover:border-lab-ink"
+          : "border-line hover:border-accent",
         className,
       )}
     >
@@ -45,8 +62,11 @@ export function MusicToggle({ className }: { className?: string }) {
           <span
             key={index}
             className={cn(
-              "w-[2px] origin-bottom bg-fg-muted transition-all duration-300 group-hover:bg-accent",
-              playing ? "animate-pulse bg-accent" : "",
+              "w-[2px] origin-bottom transition-all duration-300",
+              light
+                ? "bg-lab-ink/60 group-hover:bg-lab-ink"
+                : "bg-fg-muted group-hover:bg-accent",
+              playing && (light ? "animate-pulse bg-lab-ink" : "animate-pulse bg-accent"),
             )}
             style={{
               height: playing ? `${6 + index * 3}px` : "4px",
@@ -55,7 +75,14 @@ export function MusicToggle({ className }: { className?: string }) {
           />
         ))}
       </span>
-      <span className="font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors group-hover:text-accent">
+      <span
+        className={cn(
+          "font-mono text-[10px] uppercase tracking-widest transition-colors",
+          light
+            ? "text-lab-ink/70 group-hover:font-bold group-hover:text-lab-ink"
+            : "text-fg-muted group-hover:text-accent",
+        )}
+      >
         {playing ? "On" : "Off"}
       </span>
       {AUDIO_SRC ? <audio ref={audioRef} src={AUDIO_SRC} loop preload="none" /> : null}

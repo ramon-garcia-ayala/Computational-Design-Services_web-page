@@ -1,0 +1,202 @@
+"use client";
+
+import { useRef } from "react";
+import { gsap, useGSAP } from "@/lib/gsap";
+import { useReducedMotion } from "@/lib/useReducedMotion";
+import { designLab } from "@/data/design-lab";
+import { cn } from "@/lib/utils";
+
+/** Fraction of the runway a statement takes to fade in or out (~4 frames). */
+const FADE = 0.04;
+
+/** Progress at which the opening lockup has fully faded (spec §12.6). */
+const LOCKUP_OUT = 0.18;
+
+/**
+ * Everything that sits over the geodesic sequence: the lockup, headline and
+ * description, and the two statements that come and go at specific frames
+ * (spec §11.1).
+ *
+ * **The statements are driven off scroll progress, not off the frame the
+ * canvas is painting.** `FrameCanvas` owns that scrub and is deliberately
+ * untouched here, so instead this reads the same runway with its own
+ * ScrollTrigger and converts the spec's frame numbers into progress. The two
+ * stay in step because the canvas tween is linear (`ease: "none"`) across the
+ * identical start/end, so progress `p` is frame `p * (count - 1)` by
+ * definition — invert that and a frame number becomes a timeline position.
+ *
+ * Frame numbers in the data are 1-based, matching the spec and the filenames,
+ * so they convert through `(frame - 1) / (count - 1)`.
+ *
+ * One scrubbed timeline drives the lockup's exit and both statements.
+ * Scrubbing is what makes them reversible for free: scrolling back up plays
+ * every fade backwards rather than needing a second set of triggers.
+ *
+ * The lockup fades out by frame ~18, just before the first statement arrives
+ * at frame 20 — so the hero hands over to the statements rather than cutting
+ * (§12.6), and the two never compete for the same screen.
+ */
+export function HeroOverlay() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
+  const { hero, statements, sequence, mask } = designLab;
+
+  useGSAP(
+    () => {
+      const root = rootRef.current;
+      if (!root) return;
+
+      const lockup = root.querySelector<HTMLElement>("[data-lockup]");
+      const targets = statements.map((statement) =>
+        root.querySelector<HTMLElement>(`[data-statement="${statement.id}"]`),
+      );
+
+      if (reducedMotion) {
+        // No scroll-linked reveal: everything is simply legible at rest.
+        if (lockup) gsap.set(lockup, { opacity: 1 });
+        targets.forEach((target) => target && gsap.set(target, { opacity: 1, x: 0 }));
+        return;
+      }
+
+      const runway = document.querySelector<HTMLElement>("[data-sequence-runway]");
+      if (!runway) return;
+
+      const lastIndex = sequence.count - 1;
+      const toProgress = (frame: number) =>
+        Math.min(1, Math.max(0, (frame - 1) / lastIndex));
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: runway,
+          // Identical to the canvas tween's window, which is what keeps the
+          // frame maths honest.
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.5,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // §12.6: a gradual fade tied to scroll, not a hard cut.
+      if (lockup) {
+        tl.fromTo(
+          lockup,
+          { opacity: 1 },
+          { opacity: 0, ease: "power1.out", duration: LOCKUP_OUT },
+          0,
+        );
+      }
+
+      statements.forEach((statement, i) => {
+        const target = targets[i];
+        if (!target) return;
+
+        const from = toProgress(statement.from);
+        const to = toProgress(statement.to);
+        const offset = statement.side === "right" ? 32 : -32;
+
+        tl.fromTo(
+          target,
+          { opacity: 0, x: offset },
+          { opacity: 1, x: 0, ease: "power2.out", duration: FADE },
+          from,
+        );
+
+        /* A statement that runs to the final frame is still on screen when
+           the first panel rises over it, which is the intended handoff — so
+           it is never faded out. */
+        if (to < 1) {
+          tl.to(
+            target,
+            { opacity: 0, x: -offset, ease: "power2.in", duration: FADE },
+            Math.max(from + FADE, to - FADE),
+          );
+        }
+      });
+
+      // Pin the timeline's length to the full runway so the positions above
+      // are read as the progress fractions they are, whatever the last tween
+      // happens to end at.
+      tl.set({}, {}, 1);
+
+      return () => {
+        tl.scrollTrigger?.kill();
+        tl.kill();
+      };
+    },
+    { scope: rootRef, dependencies: [reducedMotion] },
+  );
+
+  return (
+    <div ref={rootRef} className="pointer-events-none absolute inset-0 font-lab">
+      {/* Opening lockup, present from the first frame and faded out by ~18. */}
+      <div
+        data-lockup
+        className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 lg:px-16"
+      >
+        <div className="w-full max-w-3xl">
+          {/* §12.2: the real logo asset, not type. Rendered as a mask filled
+              with `currentColor` rather than an <img>, because the file's ink
+              is near-black — fine on this greige plate, invisible on the dark
+              panels and footer that reuse the same asset. A mask takes the
+              colour of whatever context it lands in. */}
+          <span
+            role="img"
+            aria-label={hero.logoAlt}
+            className="block w-[200px] bg-lab-ink sm:w-[260px] lg:w-[450px]"
+            style={{
+              aspectRatio: `${mask.width} / ${mask.height}`,
+              WebkitMaskImage: `url('${mask.src}')`,
+              maskImage: `url('${mask.src}')`,
+              WebkitMaskSize: "contain",
+              maskSize: "contain",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+            }}
+          />
+
+          {/* §12.3: one line at every width. The clamp floor is sized so the
+              longest word run still fits a 375px viewport without wrapping,
+              which is what `whitespace-nowrap` would otherwise overflow. */}
+          <h1 className="mt-8 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.6rem,6.2vw,3.2rem)] leading-[1.05]">
+            {hero.headline}
+          </h1>
+
+          {/* §12.4: justified. */}
+          <p className="mt-6 max-w-lg text-justify text-sm leading-relaxed text-lab-ink-muted sm:text-base">
+            {hero.description}
+          </p>
+        </div>
+      </div>
+
+      {/* §12.7: vertically centred, statement 1 right, statement 2 left. The
+          flex wrapper does the centring so GSAP owns `x` alone — animating a
+          transform on an element that also carries a `-translate-y-1/2` would
+          have GSAP overwrite the centring on its first tick. */}
+      {statements.map((statement) => (
+        <div
+          key={statement.id}
+          className={cn(
+            "absolute inset-y-0 flex items-center px-6 sm:px-10 lg:px-16",
+            statement.side === "right" ? "right-0 justify-end" : "left-0 justify-start",
+          )}
+        >
+          <p
+            data-statement={statement.id}
+            className={cn(
+              /* One line, never two. The `max-w` that used to sit here is
+                 what forced the wrap, so it is gone rather than widened; the
+                 clamp floor is what keeps the longer of the two statements
+                 ("Design that scales itself.", 25 characters) inside a 375px
+                 viewport once wrapping is off the table. */
+              "whitespace-nowrap font-semibold leading-tight tracking-tight text-lab-ink opacity-0 text-[clamp(1.05rem,2.9vw,2.5rem)]",
+              statement.side === "right" ? "text-right" : "text-left",
+            )}
+          >
+            {statement.text}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}

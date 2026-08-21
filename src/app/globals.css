@@ -14,6 +14,12 @@
   --color-line-soft: #1a1e21; /* subtle borders */
   --color-accent: #c8f94e; /* electric lime */
   --color-accent-dim: #a3cc3e; /* hover / dimmed states */
+  /* Second accent, used ONLY by the Labs teaser widget and the footer's
+     "Get in touch" link. It is not a replacement for the lime above, which
+     stays the site-wide accent — anything else reaching for this is a bug.
+     Filled buttons darken on hover with an opacity modifier rather than a
+     paired `-dim` token, so this stays a single addition. */
+  --color-accent-warm: #e8a94a; /* amber */
   --color-fg: #f2f4f0; /* primary text */
   --color-fg-muted: #8a918c; /* secondary text */
 
@@ -28,7 +34,26 @@
   --breakpoint-*: initial;
   --breakpoint-sm: 640px;
   --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1440px;
+  --breakpoint-xl: 2440px;
+
+  /* `/design-lab` only. Prefixed `lab-*` deliberately: an unprefixed
+     `--color-accent` etc. would collide with the live site's tokens above,
+     repainting every CTA and focus ring on the real site the moment this
+     sandbox route touches globals.css. Sampled from the reference frames. */
+  --color-lab-bg: #b8b4b1;
+  /* Type over the greige plate. The site's `fg` is near-white and would be
+     illegible there, so the hero overlay needs its own dark pair. Charcoal
+     is the spec's `--color-structure` value (§3). */
+  --color-lab-ink: #2a2826;
+  --color-lab-ink-muted: #57534e;
+
+  /* `/design-lab`'s one typeface (spec §12.1): geometric and technical, to
+     sit with the logo's squared, monolinear letterforms. `--font-space` is
+     supplied by next/font from the design-lab page itself, not from the root
+     layout, so the live site neither loads it nor changes typeface — §12 is
+     design-lab only. Anything using `font-lab` outside that page gets the
+     fallback, which is the intended failure. */
+  --font-lab: var(--font-space), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ---------------------------------------------------------------------------
@@ -47,6 +72,22 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* `/design-lab` owns its whole viewport on a background that has to match the
+   frame plate, so the carbon above has to be overridden at the document root
+   rather than on a wrapper: a full-height element covers the viewport but not
+   the overscroll bounce, and not the paint before hydration — both of which
+   would flash black against a greige page.
+
+   Deliberately a plain rule and not a `bg-lab-bg` utility. The utility form
+   silently generated nothing while Tailwind had not picked the route's
+   directory up, which is what left this page black; a real selector cannot
+   fail that way. Scoped by `:has()` to the route's own attribute, so the site
+   is untouched. */
+html:has([data-design-lab]),
+html:has([data-design-lab]) body {
+  background-color: var(--color-lab-bg);
 }
 
 ::selection {

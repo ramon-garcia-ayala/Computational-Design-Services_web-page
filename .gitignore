@@ -35,3 +35,13 @@ yarn-error.log*
 
 # skill-creator eval runs — large, regenerable, and not part of the site
 .claude/skills/*-workspace/
+
+# Source media kept out of the repo: large, and not what the app serves.
+# `geodesic-01/frames` is the 191 MB PNG export that `scripts/frames-to-webp.mjs`
+# converts into `geodesic-01/webp` (9.4 MB) — the WebP set IS committed, since
+# the hero sequence cannot render without it. Keep the PNGs backed up outside
+# git; re-running the script needs them.
+/public/geodesic-01/frames/
+# Kling MP4s from the abandoned video-scrubbing approach, superseded by the
+# frame sequence. Unused by any route.
+/public/videos/
