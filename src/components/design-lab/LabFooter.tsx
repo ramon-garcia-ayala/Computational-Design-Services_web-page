@@ -31,7 +31,7 @@ export function LabFooter() {
     "font-mono text-[11px] uppercase tracking-[0.3em] text-fg-muted/70 sm:text-xs";
 
   return (
-    <footer className="font-lab border-t border-line/60 bg-panel">
+    <footer data-dark-plate className="font-lab border-t border-line/60 bg-panel">
       <div className="flex w-full flex-col gap-16 px-6 py-24 sm:px-10 lg:flex-row lg:justify-between lg:px-16 lg:py-28 xl:px-24">
         <div className="max-w-lg">
           {/* The real asset, filled through the mask so it reads light on

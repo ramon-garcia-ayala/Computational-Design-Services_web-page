@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ServiceMotif } from "@/components/design-lab/ServiceMotif";
-import { CapabilityIcon } from "@/components/sections/services/CapabilityIcon";
 import { Approach } from "@/components/sections/services/Approach";
 import { Expertise } from "@/components/sections/services/Expertise";
 import { FinalCTA } from "@/components/sections/shared/FinalCTA";
@@ -37,6 +36,19 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   const { services } = designLab.panels;
 
+  /* Core offers first, then the capabilities around them. One array so the
+     grid cannot fall out of step with itself, and so the ten cards flow
+     rather than restarting at a second heading. */
+  const offers = [
+    ...services.items.map((item) => ({
+      id: item.name,
+      motif: item.motif,
+      title: item.name,
+      body: item.body,
+    })),
+    ...capabilities,
+  ];
+
   return (
     <>
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-24">
@@ -57,62 +69,28 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* The four core offers, same copy as Home's panel. */}
+      {/* One continuous grid. The capabilities used to sit in a second
+          section under a heading of their own, which read as an afterthought;
+          merged, the page makes one list of what the studio does. Each
+          carries the same animated motif as the four it now sits with. */}
       <section className="relative pb-20 sm:pb-28">
         <div className="shell">
           <Reveal stagger="[data-service]">
-            <ul className="grid gap-px bg-line sm:grid-cols-2">
-              {services.items.map((item) => (
+            <ul className="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
+              {offers.map((offer) => (
                 <li
-                  key={item.name}
+                  key={offer.id}
                   data-service
                   className="reveal-init flex flex-col bg-carbon p-8 sm:p-10"
                 >
-                  <div className="flex justify-center text-accent/70">
-                    <ServiceMotif kind={item.motif} />
+                  <div className="flex justify-center text-accent">
+                    <ServiceMotif kind={offer.motif} />
                   </div>
                   <h2 className="mt-8 font-display text-xl font-semibold leading-snug text-fg sm:text-2xl">
-                    {item.name}
+                    {offer.title}
                   </h2>
                   <p className="mt-4 text-justify text-sm leading-relaxed text-fg-muted sm:text-base">
-                    {item.body}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Secondary row. Lighter treatment than the four above on purpose:
-          these are capabilities rather than offers, and giving them the same
-          weight would flatten the distinction the page is built on. */}
-      <section className="relative border-t border-line py-20 sm:py-28">
-        <div className="shell">
-          <Reveal>
-            <SectionHeading
-              kicker="Also"
-              title="Additional capabilities"
-              lead="The work that surrounds a pipeline once it is running."
-            />
-          </Reveal>
-
-          <Reveal stagger="[data-capability]" className="mt-14">
-            <ul className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-              {capabilities.map((capability) => (
-                <li
-                  key={capability.id}
-                  data-capability
-                  className="reveal-init border-t border-line pt-6"
-                >
-                  <span className="block text-accent">
-                    <CapabilityIcon kind={capability.icon} />
-                  </span>
-                  <h3 className="mt-5 font-display text-lg font-semibold leading-snug text-fg">
-                    {capability.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-fg-muted">
-                    {capability.body}
+                    {offer.body}
                   </p>
                 </li>
               ))}

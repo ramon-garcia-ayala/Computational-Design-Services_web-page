@@ -4,7 +4,20 @@ import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
-export type MotifKind = "network" | "pipeline" | "inference" | "assembly";
+export type MotifKind =
+  | "network"
+  | "pipeline"
+  | "inference"
+  | "assembly"
+  /* The secondary capabilities, added when they merged into the same grid as
+     the four above. Same rule: each is a *behaviour*, so ten cards still read
+     as one set rather than ten illustrations. */
+  | "learning"
+  | "model"
+  | "dashboard"
+  | "fabrication"
+  | "cloud"
+  | "training";
 
 /**
  * Seeded PRNG (mulberry32), inlined on purpose.
@@ -98,6 +111,79 @@ export function ServiceMotif({ kind }: { kind: MotifKind }) {
             .to("[data-hub]", { opacity: 1, scale: 1.6, duration: 0.5, transformOrigin: "center" }, "-=0.3")
             .to("[data-hub]", { scale: 1, duration: 0.6 })
             .to(lines, { opacity: 0.1, duration: 0.7 }, "-=0.4");
+          break;
+
+        case "learning":
+          // Weights settling: links firm up, then the whole net holds.
+          tl.fromTo(
+            lines,
+            { opacity: 0.12 },
+            { opacity: 0.8, duration: 1.3, stagger: { each: 0.05, from: "random" } },
+          )
+            .to(dots, { opacity: 1, duration: 0.4 }, "-=0.5")
+            .to(lines, { opacity: 0.35, duration: 0.9 })
+            .to(dots, { opacity: 0.5, duration: 0.6 }, "-=0.7");
+          break;
+
+        case "model":
+          // Storeys resolving from the ground up.
+          tl.fromTo(
+            dots,
+            { opacity: 0.2, y: 6 },
+            { opacity: 1, y: 0, duration: 0.55, stagger: { each: 0.13, from: "end" } },
+          )
+            .to(lines, { opacity: 0.85, duration: 0.5 }, "-=0.5")
+            .to({}, { duration: 0.6 })
+            .to([dots, lines], { opacity: 0.22, duration: 0.7 });
+          break;
+
+        case "dashboard":
+          // A reading that keeps updating.
+          tl.fromTo(
+            dots,
+            { opacity: 0.25, scale: 0.85 },
+            { opacity: 1, scale: 1.2, duration: 0.5, stagger: 0.11, transformOrigin: "center" },
+          )
+            .to(lines, { opacity: 0.9, duration: 0.45 }, "-=0.6")
+            .to(dots, { opacity: 0.35, scale: 0.9, duration: 0.55, stagger: 0.09 })
+            .to(lines, { opacity: 0.15, duration: 0.5 }, "-=0.5");
+          break;
+
+        case "fabrication":
+          // Material laid down in passes.
+          tl.fromTo(
+            lines,
+            { opacity: 0.1 },
+            { opacity: 0.95, duration: 0.4, stagger: { each: 0.18, from: "start" } },
+          )
+            .to({}, { duration: 0.5 })
+            .to(lines, { opacity: 0.18, duration: 0.6 })
+            .to(dots, { opacity: 0.8, duration: 0.4 }, "-=0.6")
+            .to(dots, { opacity: 0.4, duration: 0.5 });
+          break;
+
+        case "cloud":
+          // One centre, many seats checking in.
+          tl.fromTo(
+            lines,
+            { opacity: 0.12 },
+            { opacity: 0.85, duration: 0.5, stagger: { each: 0.14, from: "center" } },
+          )
+            .to(dots, { opacity: 1, duration: 0.4 }, "-=0.5")
+            .to(lines, { opacity: 0.12, duration: 0.6, stagger: { each: 0.1, from: "center" } })
+            .to(dots, { opacity: 0.45, duration: 0.5 }, "-=0.5");
+          break;
+
+        case "training":
+          // A definition passed from one side to the other.
+          tl.fromTo(
+            dots,
+            { opacity: 0.3 },
+            { opacity: 1, duration: 0.45, stagger: { each: 0.12, from: "start" } },
+          )
+            .to(lines, { opacity: 0.9, duration: 0.5 }, "-=0.4")
+            .to({}, { duration: 0.5 })
+            .to([dots, lines], { opacity: 0.25, duration: 0.7 });
           break;
 
         case "assembly":
@@ -205,6 +291,81 @@ function layoutFor(kind: MotifKind): {
       nodes.push([100, 30]); // the hub, always last
       const hub = nodes.length - 1;
       for (let i = 0; i < hub; i++) links.push([i, hub]);
+      break;
+    }
+
+    case "learning": {
+      // Three layers, every node joined to the next layer: a small net.
+      const layers = [3, 4, 3];
+      const cols = layers.map((_, i) => 14 + i * 46);
+      const idx: number[][] = [];
+      layers.forEach((count, c) => {
+        const here: number[] = [];
+        for (let i = 0; i < count; i++) {
+          here.push(nodes.length);
+          nodes.push([cols[c], (60 / (count + 1)) * (i + 1)]);
+        }
+        idx.push(here);
+      });
+      for (let c = 0; c < idx.length - 1; c++)
+        for (const a of idx[c]) for (const b of idx[c + 1]) links.push([a, b]);
+      break;
+    }
+
+    case "model": {
+      // Stacked plates, seen square on.
+      for (let row = 0; row < 4; row++) {
+        const y = 48 - row * 12;
+        const half = 30 - row * 3;
+        const left = nodes.length;
+        nodes.push([60 - half, y], [60 + half, y]);
+        links.push([left, left + 1]);
+        if (row > 0) links.push([left - 2, left], [left - 1, left + 1]);
+      }
+      break;
+    }
+
+    case "dashboard": {
+      // A plotted series over its own baseline.
+      const vals = [40, 26, 33, 18, 24, 10];
+      vals.forEach((y, i) => {
+        nodes.push([12 + i * 19, y]);
+        if (i > 0) links.push([i - 1, i]);
+      });
+      break;
+    }
+
+    case "fabrication": {
+      // Passes of deposited material, alternating direction.
+      for (let row = 0; row < 5; row++) {
+        const y = 14 + row * 8;
+        const a = nodes.length;
+        nodes.push([16, y], [104, y]);
+        links.push([a, a + 1]);
+      }
+      break;
+    }
+
+    case "cloud": {
+      // A hub with clients around it.
+      nodes.push([60, 30]);
+      const ring = 6;
+      for (let i = 0; i < ring; i++) {
+        const angle = (Math.PI * 2 * i) / ring - Math.PI / 2;
+        nodes.push([60 + Math.cos(angle) * 42, 30 + Math.sin(angle) * 22]);
+        links.push([0, i + 1]);
+      }
+      break;
+    }
+
+    case "training": {
+      // Two definitions side by side, joined across.
+      for (const baseX of [10, 66]) {
+        const start = nodes.length;
+        for (let i = 0; i < 4; i++) nodes.push([baseX + (i % 2) * 30, 16 + Math.floor(i / 2) * 26]);
+        links.push([start, start + 1], [start + 2, start + 3], [start, start + 2], [start + 1, start + 3]);
+      }
+      links.push([1, 4]);
       break;
     }
 
