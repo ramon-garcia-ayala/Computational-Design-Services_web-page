@@ -1,6 +1,7 @@
 import { ChatPlaceholder } from "@/components/ui/ChatPlaceholder";
 import { mailtoHref } from "@/data/site";
 import { designLab } from "@/data/design-lab";
+import { cn } from "@/lib/utils";
 import { ServiceMotif } from "./ServiceMotif";
 import { PanelVideo } from "./PanelVideo";
 import { ExploreMore } from "./ExploreMore";
@@ -24,9 +25,23 @@ const SHELL = "font-lab mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16";
  * is the category alone. The rule that used to separate number from label
  * went with them: a lone hairline before a single word reads as debris.
  */
-function Eyebrow({ children }: { children: React.ReactNode }) {
+function Eyebrow({
+  children,
+  /* Amber carries every panel's eyebrow except the Labs one, whose plate is
+     the pale greige the clip is shot on — amber on that is barely a shade
+     apart from its background. Dark ink is the only legible option there. */
+  tone = "accent",
+}: {
+  children: React.ReactNode;
+  tone?: "accent" | "ink";
+}) {
   return (
-    <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">
+    <p
+      className={cn(
+        "font-mono text-xs uppercase tracking-[0.3em] sm:text-sm",
+        tone === "ink" ? "text-lab-ink" : "text-accent",
+      )}
+    >
       {children}
     </p>
   );
@@ -88,9 +103,9 @@ export function LabsPanel() {
           panel to itself. Type is dark here, not light: this panel's plate is
           the greige the clip is shot on, so the light copy every other panel
           uses would be unreadable. */}
-      <div className={`${SHELL} relative flex h-full flex-col justify-start pt-[9svh]`}>
+      <div className={`${SHELL} relative flex h-full flex-col justify-start pt-[4svh]`}>
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
-          <Eyebrow>{labs.kicker}</Eyebrow>
+          <Eyebrow tone="ink">{labs.kicker}</Eyebrow>
           <h2 className="mt-3 font-semibold leading-tight tracking-tight text-lab-ink text-[clamp(2rem,4.4vw,3.6rem)]">
             {labs.title}
           </h2>

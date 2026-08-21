@@ -5,6 +5,36 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 import { cn } from "@/lib/utils";
 
 /**
+ * Feather for a contained clip, so it has no frame.
+ *
+ * The clip is a subject on a plate, and the plate is the problem: it is the
+ * same greige the page uses but not evenly — its corners run #a1a09e to
+ * #c5c0bd against the page's flat #b8b4b1 — so wherever the video's rectangle
+ * ends, a faint edge appears, lighter on one side and darker on the other.
+ * The fix is to stop the plate ever reaching its own boundary.
+ *
+ * Two linear gradients intersected rather than one ellipse. The subject sits
+ * at x 20.6–75.6% and y 12.8–87.6% of the frame — measured, not guessed — so
+ * it needs far more vertical room than horizontal. An ellipse fades both axes
+ * on one schedule, which meant either clipping the top and bottom of the form
+ * or leaving the left and right edges too crisp. Crossed linear gradients set
+ * each axis independently: solid through the subject, transparent well before
+ * the frame edge on all four sides.
+ */
+const CONTAINED_FEATHER = {
+  WebkitMaskImage:
+    "linear-gradient(to right, transparent 0%, #000 17%, #000 83%, transparent 100%), " +
+    "linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%)",
+  maskImage:
+    "linear-gradient(to right, transparent 0%, #000 17%, #000 83%, transparent 100%), " +
+    "linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%)",
+  // Both masks must apply, not stack: `intersect` is what makes the corners
+  // fade too. WebKit's older spelling of the same thing is `source-in`.
+  WebkitMaskComposite: "source-in",
+  maskComposite: "intersect",
+} as const;
+
+/**
  * A looping background clip behind a panel's content (spec §13.3, §13.6).
  *
  * Muted, autoplaying, looping and `playsInline` — the last of those matters
@@ -84,23 +114,7 @@ export function PanelVideo({
             ? "h-auto max-h-[88%] w-auto max-w-[94%] object-contain"
             : "h-full w-full object-cover opacity-45",
         )}
-        style={
-          contained
-            ? {
-                /* The clip's own backdrop is the same greige studio plate the
-                   hero frames use — measured #b4b0ad to #b6b2af against the
-                   page's #b8b4b1. Close, but its corners run #a1a09e to
-                   #c5c0bd, so a hard rectangle edge would show the same
-                   shifting step the hero seam did. Feathering the outer few
-                   percent dissolves the boundary instead of trying to match
-                   a colour that varies along it. */
-                WebkitMaskImage:
-                  "radial-gradient(ellipse 92% 92% at 50% 50%, #000 62%, transparent 100%)",
-                maskImage:
-                  "radial-gradient(ellipse 92% 92% at 50% 50%, #000 62%, transparent 100%)",
-              }
-            : undefined
-        }
+        style={contained ? CONTAINED_FEATHER : undefined}
       />
       {/* Full-bleed clips keep a scrim so copy stays legible over them. A
           contained clip does not: it sits on a plate that already matches its
