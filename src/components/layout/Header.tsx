@@ -71,34 +71,30 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
           <Link
             href="/"
             className={cn(
-              "shrink-0 transition-opacity",
-              light
-                ? "opacity-100 hover:opacity-70"
-                : "text-lg font-semibold tracking-tight text-fg transition-colors hover:text-accent",
+              "shrink-0 opacity-100 transition-opacity hover:opacity-70",
             )}
             aria-label={`${site.nameFlat} home`}
           >
-            {light ? (
-              /* The real wordmark, not set type. Same mask the hero and the
-                 design-lab footer use, so all three are one asset; it takes
-                 the ink colour of wherever it lands. */
-              <span
-                className="block w-[132px] bg-lab-ink sm:w-[150px]"
-                style={{
-                  aspectRatio: `${LOGO.width} / ${LOGO.height}`,
-                  WebkitMaskImage: `url('${LOGO.src}')`,
-                  maskImage: `url('${LOGO.src}')`,
-                  WebkitMaskSize: "contain",
-                  maskSize: "contain",
-                  WebkitMaskRepeat: "no-repeat",
-                  maskRepeat: "no-repeat",
-                }}
-              />
-            ) : (
-              <>
-                R<sup className="text-accent">2</sup>&#967;TECH
-              </>
-            )}
+            {/* The real wordmark on every page. It used to be set type outside the
+                light variant, which meant the logo changed shape depending on
+                which route you were on. `variant` decides its ink, nothing
+                more: dark on the hero's pale plate, light on the panel ground
+                the rest of the site sits on. */}
+            <span
+              className={cn(
+                "block w-[132px] sm:w-[150px]",
+                light ? "bg-lab-ink" : "bg-fg",
+              )}
+              style={{
+                aspectRatio: `${LOGO.width} / ${LOGO.height}`,
+                WebkitMaskImage: `url('${LOGO.src}')`,
+                maskImage: `url('${LOGO.src}')`,
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+              }}
+            />
           </Link>
 
           {/* Centred on the viewport, not merely between its neighbours: as a

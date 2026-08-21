@@ -101,51 +101,36 @@ html:has([data-design-lab]) body {
 }
 
 /* ---------------------------------------------------------------------------
-   The light mood, for every page outside Home.
+   The site mood, for every page outside Home.
 
-   Home established a warm greige with dark ink; the rest of the site was
-   still the original carbon, so moving between them read as two products.
-   Rather than rewrite ~170 utility usages across twenty-odd components, this
-   redefines what the tokens *mean* inside the scope: `bg-carbon`,
-   `text-fg`, `border-line` and the rest keep their names and come out light.
-   Components stay unaware there are two themes at all, which is what stops
+   These are the panel charcoal Home already uses for all its content — not
+   the hero's greige, which was tried first and failed on measurement: amber
+   on #b8b4b1 is 1.00:1, identical luminance, so the accent and every animated
+   motif were not faint but literally invisible, and muted body text sat at
+   3.71:1. On this ground the same three read 5.57:1, 10.35:1 and 4.53:1.
+
+   It redefines what the tokens *mean* rather than rewriting ~170 utility
+   usages: `bg-carbon`, `text-fg` and `border-line` keep their names and come
+   out warm. Components stay unaware there are two moods, which is what stops
    the next one from having to remember.
 
-   Values are the hero's, so a subpage and the top of Home are the same
-   surface. Swapping this block for the panel charcoal (#3d3934) is how the
-   whole site would go dark-warm instead — the components would not change.
-
-   `--color-accent` and `--color-on-accent` are deliberately absent: amber
-   works on both moods, and the ink on a filled button must stay dark because
-   its background does not invert.
+   `--color-accent` and `--color-on-accent` are absent on purpose: amber works
+   on both grounds, and the ink on a filled button must stay dark because its
+   background does not change.
 --------------------------------------------------------------------------- */
-[data-site-light] {
-  --color-carbon: #b8b4b1; /* page ground */
-  --color-graphite: #c3bfbb; /* surfaces */
-  --color-graphite-hi: #cbc7c3; /* elevated surface */
-  --color-line: #9d9894; /* borders */
-  --color-line-soft: #aaa6a2; /* subtle borders, the background grid */
-  --color-fg: #2a2826; /* primary text */
-  --color-fg-muted: #57534e; /* secondary text */
+[data-site-warm] {
+  --color-carbon: #3d3934; /* page ground — the panel plate from Home */
+  --color-graphite: #47423c; /* surfaces */
+  --color-graphite-hi: #514b44; /* elevated surface */
+  --color-line: #55504a; /* borders */
+  --color-line-soft: #494440; /* subtle borders, the background grid */
+  --color-fg: #f2f4f0; /* primary text */
+  --color-fg-muted: #a8a29a; /* secondary text */
 }
 
-html:has([data-site-light]),
-html:has([data-site-light]) body {
-  background-color: #b8b4b1;
-}
-
-/* The footer is the same dark plate on every page, Home included, so it holds
-   the dark tokens even inside the light scope. Without this its `text-fg` and
-   `text-fg-muted` invert with everything around them and print dark ink on a
-   dark plate — legible in the markup, invisible on screen. */
-[data-site-light] [data-dark-plate] {
-  --color-carbon: #0a0c0b;
-  --color-graphite: #14171a;
-  --color-graphite-hi: #1c2024;
-  --color-line: #262b2e;
-  --color-line-soft: #1a1e21;
-  --color-fg: #f2f4f0;
-  --color-fg-muted: #8a918c;
+html:has([data-site-warm]),
+html:has([data-site-warm]) body {
+  background-color: #3d3934;
 }
 
 ::selection {

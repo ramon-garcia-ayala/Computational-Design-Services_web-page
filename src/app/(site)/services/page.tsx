@@ -6,6 +6,7 @@ import { Approach } from "@/components/sections/services/Approach";
 import { Expertise } from "@/components/sections/services/Expertise";
 import { FinalCTA } from "@/components/sections/shared/FinalCTA";
 import { capabilities } from "@/data/capabilities";
+import { cardGrid } from "@/components/proposal/blocks/cardGrid";
 import { designLab } from "@/data/design-lab";
 import { site } from "@/data/site";
 
@@ -72,11 +73,17 @@ export default function ServicesPage() {
       {/* One continuous grid. The capabilities used to sit in a second
           section under a heading of their own, which read as an afterthought;
           merged, the page makes one list of what the studio does. Each
-          carries the same animated motif as the four it now sits with. */}
+          carries the same animated motif as the four it now sits with.
+
+          Columns come from `cardGrid`, not a hardcoded count. These grids
+          draw their dividers as the container showing through `gap-px`, so a
+          half-empty last row is not blank — it is a solid bar of border
+          colour. Ten cards in three columns left exactly that beside the last
+          one. */}
       <section className="relative pb-20 sm:pb-28">
         <div className="shell">
           <Reveal stagger="[data-service]">
-            <ul className="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
+            <ul className={`grid gap-px bg-line ${cardGrid(offers.length, 3)}`}>
               {offers.map((offer) => (
                 <li
                   key={offer.id}
