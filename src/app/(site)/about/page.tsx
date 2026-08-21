@@ -35,40 +35,44 @@ export default function AboutPage() {
           aria-hidden="true"
         />
         <div className="shell relative">
-          <Reveal>
-            <SectionHeading
-              as="h1"
-              kicker={about.kicker}
-              title={about.title}
-              lead={about.lead}
-            />
-          </Reveal>
+          {/* One grid, stretched: the loop on the right takes its height from
+              *both* text blocks on the left — the heading and the story — so
+              it spans the whole column rather than lining up with one of them
+              and leaving the other beside empty ground. */}
+          <div className="grid items-stretch gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.78fr)] lg:gap-16">
+            <div>
+              <Reveal>
+                <SectionHeading
+                  as="h1"
+                  kicker={about.kicker}
+                  title={about.title}
+                  lead={about.lead}
+                />
+              </Reveal>
 
-          {/* The loop and the story are one grid on `items-stretch`, so the
-              video's height is whatever the words next to it come to — which
-              is what keeps the two aligned instead of the video guessing at a
-              fixed ratio. */}
-          <Reveal className="mt-20">
-            <div className="grid items-stretch gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
-              <div className="relative min-h-[260px] overflow-hidden rounded-sm ring-1 ring-line lg:min-h-0">
-                <AboutLoop src={about.video} />
-              </div>
-
-              <div>
+              <Reveal className="mt-16">
                 <p className="font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-accent">
                   {about.storyKicker}
                 </p>
                 {about.story.map((paragraph, i) => (
                   <p
                     key={i}
-                    className="mt-6 text-justify text-base leading-relaxed text-fg-muted sm:text-lg"
+                    className="mt-6 text-justify hyphens-auto text-base leading-relaxed text-fg-muted sm:text-lg"
                   >
                     {paragraph}
                   </p>
                 ))}
-              </div>
+              </Reveal>
             </div>
-          </Reveal>
+
+            {/* No frame, no rounding, no ring: the clip is meant to sit on the
+                page rather than on a card, and any border is exactly the edge
+                that should not be visible. It dissolves into the ground
+                instead — see AboutLoop. */}
+            <div className="relative min-h-[320px] lg:min-h-0">
+              <AboutLoop src={about.video} />
+            </div>
+          </div>
         </div>
       </section>
 
