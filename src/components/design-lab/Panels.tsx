@@ -212,7 +212,7 @@ export function AboutPanel() {
                   />
                 </div>
                 <figcaption className="mt-3 font-mono text-[11px] uppercase tracking-widest text-fg/60">
-                  {founder.name}
+                  {founder.short}
                 </figcaption>
               </figure>
             </li>

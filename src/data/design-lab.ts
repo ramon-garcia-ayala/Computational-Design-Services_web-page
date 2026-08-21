@@ -6,6 +6,8 @@
  * copy and no asset paths of its own — they live here.
  */
 
+import { founders } from "./founders";
+
 export const designLab = {
   meta: {
     title: "Design Lab",
@@ -172,12 +174,9 @@ export const designLab = {
          can be set properly; it reads as plain body copy otherwise. */
       lead: "R²χTECH",
       body: " was founded by two architects who met at IAAC in Barcelona, studying computational design. We saw an industry where automation and AI were still on the sidelines, and built a studio to put them at the center.",
-      /* Square sources (400x400), so the slots are square too — a portrait
-         crop of a square headshot cuts through the face. */
-      founders: [
-        { id: "ramy", name: "Ramy", photo: "/founders/ramy.jpg" },
-        { id: "ramon", name: "Ramon", photo: "/founders/ramon.jpg" },
-      ],
+      /* The same two people as `/about`, read from one place. Two copies
+         would drift the moment a title changed on one page and not the other. */
+      founders,
     },
 
     closing: {
