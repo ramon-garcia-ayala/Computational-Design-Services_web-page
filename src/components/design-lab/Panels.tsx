@@ -84,17 +84,21 @@ export function LabsPanel() {
       {/* §13.3: looping backdrop behind everything on this panel. */}
       <PanelVideo src={labs.video} contained />
 
-      <div className={`${SHELL} relative flex h-full flex-col justify-center`}>
+      {/* The heading sits high so the enlarged clip has the middle of the
+          panel to itself. Type is dark here, not light: this panel's plate is
+          the greige the clip is shot on, so the light copy every other panel
+          uses would be unreadable. */}
+      <div className={`${SHELL} relative flex h-full flex-col justify-start pt-[9svh]`}>
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
           <Eyebrow>{labs.kicker}</Eyebrow>
-          <h2 className="mt-4 font-semibold leading-tight tracking-tight text-fg text-[clamp(2rem,4.4vw,3.6rem)]">
+          <h2 className="mt-3 font-semibold leading-tight tracking-tight text-lab-ink text-[clamp(2rem,4.4vw,3.6rem)]">
             {labs.title}
           </h2>
 
-          {/* §13.3: larger in both axes, and semi-transparent so the loop
-              behind it shows through. The translucency is on the shell rather
-              than the widget's own surfaces, so the transcript stays legible. */}
-          <ChatPlaceholder className="mt-10 max-w-3xl border-fg/15 bg-panel/55 backdrop-blur-md lg:aspect-[16/10]" />
+          {/* Translucent on its own shell rather than on the widget's inner
+              surfaces, so the clip shows through without costing the
+              transcript any legibility. */}
+          <ChatPlaceholder className="mt-8 max-w-3xl border-lab-ink/15 bg-carbon/55 backdrop-blur-md lg:aspect-[16/10]" />
         </div>
       </div>
     </>

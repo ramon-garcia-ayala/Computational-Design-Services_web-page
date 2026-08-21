@@ -12,6 +12,7 @@ import {
   ServicesPanel,
 } from "@/components/design-lab/Panels";
 import { LabFooter } from "@/components/design-lab/LabFooter";
+import { ScrollProgress } from "@/components/design-lab/ScrollProgress";
 
 /* The page's one typeface, geometric and technical to sit with the logo's
    squared letterforms. Loaded here rather than in the root layout so the
@@ -50,6 +51,9 @@ export default function HomePage() {
 
       <Header variant="light" />
 
+      {/* Position marker down the right edge, for the whole page. */}
+      <ScrollProgress />
+
       <FrameCanvas>
         <HeroOverlay />
       </FrameCanvas>
@@ -61,7 +65,10 @@ export default function HomePage() {
         <ServicesPanel />
       </PanelSection>
 
-      <PanelSection>
+      {/* The Labs plate is the greige its clip is shot on, not the panel
+          charcoal: the two backdrops are the same studio plate, measured
+          #b4b0ad-#b6b2af against this token's #b8b4b1. */}
+      <PanelSection className="bg-lab-bg">
         <LabsPanel />
       </PanelSection>
 

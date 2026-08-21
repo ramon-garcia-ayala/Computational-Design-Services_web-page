@@ -81,14 +81,32 @@ export function PanelVideo({
         }}
         className={cn(
           contained
-            ? "max-h-[76%] w-auto max-w-[80%] object-contain opacity-70"
+            ? "h-auto max-h-[88%] w-auto max-w-[94%] object-contain"
             : "h-full w-full object-cover opacity-45",
         )}
+        style={
+          contained
+            ? {
+                /* The clip's own backdrop is the same greige studio plate the
+                   hero frames use — measured #b4b0ad to #b6b2af against the
+                   page's #b8b4b1. Close, but its corners run #a1a09e to
+                   #c5c0bd, so a hard rectangle edge would show the same
+                   shifting step the hero seam did. Feathering the outer few
+                   percent dissolves the boundary instead of trying to match
+                   a colour that varies along it. */
+                WebkitMaskImage:
+                  "radial-gradient(ellipse 92% 92% at 50% 50%, #000 62%, transparent 100%)",
+                maskImage:
+                  "radial-gradient(ellipse 92% 92% at 50% 50%, #000 62%, transparent 100%)",
+              }
+            : undefined
+        }
       />
-      {/* Scrim: the panel plate at partial strength, so the copy above keeps
-          its contrast no matter what the loop is showing. Lighter over a
-          contained clip, which is already inset and less assertive. */}
-      <div className={cn("absolute inset-0", contained ? "bg-panel/45" : "bg-panel/65")} />
+      {/* Full-bleed clips keep a scrim so copy stays legible over them. A
+          contained clip does not: it sits on a plate that already matches its
+          own backdrop, and a scrim there is exactly the dark cast that had to
+          go. */}
+      {contained ? null : <div className="absolute inset-0 bg-panel/65" />}
     </div>
   );
 }
