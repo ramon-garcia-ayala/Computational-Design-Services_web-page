@@ -108,15 +108,50 @@ export function LabsPanel() {
 export function FeaturedPanel() {
   const { featured } = designLab.panels;
 
-  /* §11.7 / §13.4: content is deferred until there are projects worth
-     showing, so this is label and layout only — nothing invented to fill it.
-     §13.4 moves the label to the top-left and enlarges it. */
+  /* A showcase strip, not the `/projects` system: three images, a line each,
+     nothing clickable and nothing wired to a route. §13.4 keeps the label at
+     the top-left and enlarged. */
   return (
-    <div className={`${SHELL} flex h-full flex-col justify-start pt-[14svh]`}>
+    <div className={`${SHELL} flex h-full flex-col justify-start pt-[11svh]`}>
       <Eyebrow>{featured.kicker}</Eyebrow>
       <h2 className="mt-4 font-semibold leading-[1.02] tracking-tight text-fg text-[clamp(2.4rem,5.6vw,4.6rem)]">
         {featured.kicker}
       </h2>
+
+      {/* Three columns at every width. The panel is a fixed 100svh with its
+          overflow hidden, so a stacked mobile layout would simply be clipped
+          rather than scrolled — narrow columns beat invisible ones. */}
+      <ul className="mt-[6svh] grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        {featured.items.map((item) => (
+          <li key={item.id}>
+            <figure className="group">
+              {/* One frame for three very different sources — 1.00, 1.93 and
+                  1.16 — so `object-cover` does the reconciling. Greyscale at
+                  rest, true colour on hover, same as the founder portraits. */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-fg/[0.04] ring-1 ring-fg/10 grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0">
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  sizes="(min-width: 1024px) 30vw, 32vw"
+                  /* The GIF has to skip the optimiser, which would re-encode
+                     it to a still and quietly drop the animation. */
+                  unoptimized={item.animated}
+                  className="object-cover"
+                />
+              </div>
+              <figcaption className="mt-3 sm:mt-4">
+                <p className="font-semibold leading-snug text-fg text-[clamp(0.72rem,1.05vw,1.05rem)]">
+                  {item.title}
+                </p>
+                <p className="mt-1 leading-snug text-fg/60 text-[clamp(0.6rem,0.82vw,0.9rem)]">
+                  {item.caption}
+                </p>
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

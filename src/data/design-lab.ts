@@ -110,6 +110,40 @@ export const designLab = {
       id: "featured",
       kicker: "Featured work",
       title: "",
+      /* A showcase strip, deliberately not the `/projects` system: no routes,
+         no detail pages, no entries in `data/projects.ts`. Three images and a
+         line each, nothing clickable.
+
+         `animated` marks the one that must bypass Next's image optimiser —
+         it re-encodes a GIF to a still by default, which would silently drop
+         all 99 frames and leave a frozen first frame that still looks like a
+         working image. */
+      items: [
+        {
+          id: "spatial-flow",
+          src: "/projects/spatial-flow.gif",
+          animated: true,
+          title: "Spatial Flow",
+          caption: "AI-driven layout optimization for industrial environments.",
+          alt: "Generated industrial layouts cycling through machine, workstation and circulation arrangements as the agent searches for a better configuration.",
+        },
+        {
+          id: "hyper-building-automation",
+          src: "/projects/hyper-building-automation.jpg",
+          animated: false,
+          title: "Hyper Building Automation",
+          caption: "Automated data workflow linking structural and façade teams.",
+          alt: "An automated pipeline extracting and distributing data from published 3D model versions across structural and façade teams.",
+        },
+        {
+          id: "la-cite-radieuse",
+          src: "/projects/la-cite-radieuse-topology.png",
+          animated: false,
+          title: "La Cité Radieuse — Topology",
+          caption: "Spatial-graph analysis of circulation and connectivity.",
+          alt: "Floor plans of the Unité d'Habitation converted into spatial graphs, showing circulation and connectivity between apartments and rooms.",
+        },
+      ],
     },
 
     about: {
