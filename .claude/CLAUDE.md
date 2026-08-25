@@ -581,6 +581,36 @@ Every mailto goes to both partners at once, built by `contactHref()` in
 `site.contactLabel` ("Get in touch"). This keeps the addresses out of the page
 for spam harvesters.
 
+## Icons
+
+`scripts/favicon.mjs` builds the whole icon set from `public/logo/logo.png`;
+re-run it whenever that file changes. Output goes to `src/app/`, where Next's
+file conventions write the `<link>` tags themselves — so **never also declare
+`icons` in the metadata export**, that duplicates every tag.
+
+| File | Size | For |
+|---|---|---|
+| `src/app/favicon.ico` | 16 / 32 / 48 | the address bar, and Google's crawler |
+| `src/app/icon.png` | 192 | modern browsers |
+| `src/app/apple-icon.png` | 180 | the iOS touch icon |
+
+The icons carry only the **`R²` glyph**, not the wordmark: the logo is a
+3103x611 lockup and at 16px the whole thing is an unreadable smear. The script
+measures the glyph out of the source by its own alpha profile rather than
+hardcoding a box, so a re-exported logo re-crops itself instead of quietly
+sliding off centre. It is repainted `--color-fg` on a solid `--color-carbon`
+plate, because the source ink is near-black on transparent and disappears into
+a dark browser tab — and because Google's favicon crawler rejects anything that
+is not square.
+
+**The ICO's PNG payloads must be RGBA.** Next's ICO decoder rejects anything
+else with `The PNG is not in RGBA format!`, and that is not an icon-sized
+failure: it is a compile error, so *every route* 500s. The trap is that sharp
+strips a constant alpha channel when `png()` is given an `effort` above the
+default, which switches its encoder to a quantised palette. Hence
+`compressionLevel: 9` and no `effort` — the comment in the script says so, keep
+it there.
+
 ## Deployment
 
 Vercel project `computational-design-services`, deploying `main` from
