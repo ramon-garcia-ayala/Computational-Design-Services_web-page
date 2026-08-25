@@ -19,6 +19,13 @@ export const site = {
   contactSubject: "Project inquiry",
   /** Visible text of any contact CTA. Never the address. */
   contactLabel: "Get in touch",
+  /**
+   * Canonical production origin. `www` is the host that serves; the apex
+   * redirects to it. Needed as `metadataBase` so Open Graph images resolve to
+   * absolute URLs — without it Next falls back to localhost and every shared
+   * link previews a dead image.
+   */
+  origin: "https://www.r-xtech.com",
   location: "Remote · Worldwide",
   foundedYear: 2024,
 } as const;

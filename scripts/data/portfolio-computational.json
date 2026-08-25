@@ -1,0 +1,509 @@
+[
+  {
+    "id": "breathing-mass-hb01-structural-facade",
+    "title": "Breathing Mass – HB01 – Structural/Facade",
+    "date": "2026-01-08",
+    "description": "A vertical ecosystem in Santiago where architecture, wind, and energy converge. The Hyper Lung captures, cleans, and redistributes polluted air through a breathing core, transforming the tower into living infrastructure that breathes with the city.",
+    "cover": "cover.png",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/breathing-mass-hb01-structural-facade/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "01.png"
+      },
+      {
+        "file": "02.gif",
+        "caption": "THE ALVEOLAR SPINE – THE LUNG ANALOGY\n\nSTEP 01 – Defining the Primary Skeleton\nThe design begins by setting hard constraints for the core dimensions, including total height and radius. This phase focuses solely on structural integrity and the \"maximum envelope\" of the building structure.\n\nSTEP 02 – Primary Structural Framing & Modular Unit Integration\nThe building's stability is anchored by a Topology-Optimized Primary Skeleton. Using Alpaca Stress Analysis, the lattice density is strategically increased at high-load junctions and tapered in low-stress zones. The placement and density of the plugin masses are computationally grown along the lattice, with their distribution optimized by incident radiation for thermal regulation, wind pressure for airflow, and volumetric density.\n\nSTEP 03 – Fixed vs. Adaptive Facade\nThe placement and density of the plugin masses are computationally grown along the lattice, with their distribution optimized by incident radiation for thermal regulation, wind pressure for airflow, and volumetric density."
+      },
+      {
+        "file": "03.png"
+      },
+      {
+        "file": "04.mp4"
+      },
+      {
+        "file": "05.mp4"
+      },
+      {
+        "file": "06.png"
+      },
+      {
+        "file": "07.mp4"
+      },
+      {
+        "file": "08.mp4"
+      },
+      {
+        "file": "10.png"
+      },
+      {
+        "file": "11.jpg",
+        "caption": "STRUCTURAL CONCEPT\n\nThe structural approach of the project relies on the core that holds the entire project, where each volume is plugged onto the core. By that, the load is transferred from volume to core to foundation. 3 main cores form a triangle that turns vertical mass into a self-braced structural system."
+      }
+    ]
+  },
+  {
+    "id": "collaborative-workflow-structure-facade-hb01",
+    "title": "Collaborative Workflow: Structure/Facade-HB01",
+    "date": "2026-01-06",
+    "description": "This project develops an automated collaborative workflow that extracts, organizes, and distributes data from newly published 3D model versions, reducing manual file exchange and coordination delays. The workflow connects structural and façade information within a shared pipeline, with future development focused on linking façade geometry and opening areas to environmental radiation data for more informed design decisions.",
+    "cover": "cover.png",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/collaborative-workflow-structure-facade-hb01/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "01.jpg"
+      },
+      {
+        "file": "02.gif"
+      },
+      {
+        "file": "03.jpg"
+      },
+      {
+        "file": "04.png"
+      },
+      {
+        "file": "05.jpg"
+      },
+      {
+        "file": "06.jpg"
+      }
+    ]
+  },
+  {
+    "id": "flat-dream",
+    "title": "FLAT DREAM",
+    "date": "2026-01-04",
+    "description": "FlatDream is an interface inspired by the book Learning from Las Vegas, built on 2 custom-trained LoRA models, fine-tuned on the visual language of the Archigram movement. It connects directly to ComfyUI and LM Studio to generate architectural imagery from text, image references, and multi-input compositions, with outputs that feed into a magazine builder, 3D mesh converter, and model viewer.",
+    "cover": "cover.gif",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/flat-dream/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "1.png"
+      },
+      {
+        "file": "2.png"
+      },
+      {
+        "file": "3.jpg",
+        "caption": "DATABASE"
+      },
+      {
+        "file": "4.jpg"
+      },
+      {
+        "file": "5.png"
+      },
+      {
+        "file": "6.jpg",
+        "caption": "Workflow"
+      },
+      {
+        "file": "7.jpg",
+        "caption": "User Interface"
+      },
+      {
+        "file": "8.png"
+      },
+      {
+        "file": "9.png"
+      },
+      {
+        "file": "10.png"
+      },
+      {
+        "file": "11.png"
+      },
+      {
+        "file": "12.png"
+      },
+      {
+        "file": "13.gif"
+      },
+      {
+        "file": "14.png"
+      }
+    ]
+  },
+  {
+    "id": "la-cite-radieuse",
+    "title": "La cité Radieuse",
+    "date": "2026-01-07",
+    "description": "La Cité Radieuse investigates how the spatial organization of Le Corbusier’s Unité d’Habitation shapes circulation, accessibility, and connectivity between apartments and rooms. Floor plans are converted into spatial graphs and examined at three scales: multiple floors, a single floor, and an individual apartment. Graph-based measurements reveal recurring patterns within the building’s modular organization, while machine-learning models test whether room functions can be predicted from their position, connectivity, and relationships within the overall spatial network.",
+    "cover": "cover.png",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/la-cite-radieuse/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "2.png"
+      },
+      {
+        "file": "3.png"
+      },
+      {
+        "file": "4.png"
+      },
+      {
+        "file": "5.png"
+      },
+      {
+        "file": "6.png"
+      },
+      {
+        "file": "7.png"
+      },
+      {
+        "file": "8.png"
+      },
+      {
+        "file": "9.png"
+      },
+      {
+        "file": "10.png"
+      },
+      {
+        "file": "11.png"
+      },
+      {
+        "file": "12.png"
+      },
+      {
+        "file": "13.png"
+      },
+      {
+        "file": "14.png"
+      },
+      {
+        "file": "15.png"
+      },
+      {
+        "file": "16.png"
+      }
+    ]
+  },
+  {
+    "id": "le-monstre-merveille",
+    "title": "Le Monstre Merveille",
+    "date": "2026-01-10",
+    "description": "The name Le Monstre Merveille reflects the duality: a structure that appears complex and almost monstrous in form, yet creates a delicate, controlled, and humane interior experience. Rather than replacing the existing structure, the concept focuses on preserving the order and hierarchy of the original architecture, while inserting a new system that acts almost like a parasite, adapting, wrapping, and growing within it.",
+    "cover": "le-monstre-merveille-cover.png",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/le-monstre-merveille/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "le-monstre-merveille-01.jpg",
+        "caption": "Design Concept & Computational Design System — The architectural concept is based on three main zones, organized along a central axis. The existing building envelope is preserved, while a new internal structure defines circulation, spatial separation, and visual continuity. A key design move is the central space, which acts as the heart of the project. This void allows light to penetrate deep into the space and organizes movement through ramps and bridges, creating a continuous architectural promenade rather than isolated floors."
+      },
+      {
+        "file": "le-monstre-merveille-02.jpg"
+      },
+      {
+        "file": "le-monstre-merveille-03.jpg",
+        "caption": "Computational Design Methodology & Form Finding Process — For the workflow, the 3 elements created follow the same form-finding using Kangaroo with slightly different setups. For the central area, the approach after using Kangaroo was to create a triangulated tiling that closes at the end and opens in the center of the space using the pull point and scale to get the final shape alongside the main structure using the multipipe. The side consists of the kangaroo and truncation approach. While the separator area follows the same architecture of the central roof, with a difference in the final tiling approach created using Perlin Noise in Python, followed by a cull pattern based on certain points to create a sort of gate to the balconies."
+      },
+      {
+        "file": "le-monstre-merveille-04.jpg",
+        "caption": "Computational Design Methodology & Form Finding Process — For the workflow, the 3 elements created follow the same form-finding using Kangaroo with slightly different setups. For the central area, the approach after using Kangaroo was to create a triangulated tiling that closes at the end and opens in the center of the space using the pull point and scale to get the final shape alongside the main structure using the multipipe. The side consists of the kangaroo and truncation approach. While the separator area follows the same architecture of the central roof, with a difference in the final tiling approach created using Perlin Noise in Python, followed by a cull pattern based on certain points to create a sort of gate to the balconies."
+      },
+      {
+        "file": "le-monstre-merveille-05.jpg"
+      },
+      {
+        "file": "le-monstre-merveille-06.jpg"
+      },
+      {
+        "file": "le-monstre-merveille-07.png"
+      },
+      {
+        "file": "le-monstre-merveille-08.png"
+      },
+      {
+        "file": "le-monstre-merveille-009.png"
+      },
+      {
+        "file": "le-monstre-merveille-010.png"
+      }
+    ]
+  },
+  {
+    "id": "lightweave-pavilion",
+    "title": "Lightweave Pavilion",
+    "date": "2026-01-02",
+    "description": "The pavilion uses a repeated triangulated steel module to form both structure and enclosure, with shifts in height and density shaping circulation, light, and spatial perception.",
+    "cover": "cover.png",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/lightweave-pavilion/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "1.png"
+      },
+      {
+        "file": "2.png"
+      },
+      {
+        "file": "3.png"
+      },
+      {
+        "file": "4.png"
+      },
+      {
+        "file": "5.png"
+      },
+      {
+        "file": "6.png"
+      },
+      {
+        "file": "7.png"
+      },
+      {
+        "file": "8.png"
+      },
+      {
+        "file": "9.mp4"
+      },
+      {
+        "file": "10.png"
+      }
+    ]
+  },
+  {
+    "id": "morphing-sands",
+    "title": "Morphing Sands",
+    "date": "2026-01-09",
+    "description": "<span style='color:#e67e22;font-weight:bold;'>Featured on the official website of MONOCEROS:</span><br>https://www.monoceros.tools/project23/<br><br>Morphing Sands is a climate-responsive mixed-use architectural system developed for Jeddah, Saudi Arabia, addressing urban densification in a hot–humid coastal environment. Inspired by the historic fabric of Al-Balad, the project reinterprets Hijazi principles—such as courtyards, shaded streets, and layered façades—through a modular and computational design approach.<br><br>The project organizes commercial functions horizontally at the lower levels and residential units vertically above, forming a courtyard-based typology that promotes social interaction, ventilation, and daylight control. Environmental performance drives the design logic: building orientation, massing, and height are parametrically defined using solar and wind data to maximize shading, cross-ventilation, and thermal comfort.<br><br>A rule-based aggregation system using modular pods generates adaptable spatial configurations across different site sizes and densities. Structurally, precast pods integrate load transfer, self-shading, and thermal mass. Combined with passive ventilation and façade-integrated energy strategies, Morphing Sands proposes a scalable architectural system rooted in vernacular intelligence and optimized through computation.",
+    "cover": "cover.png",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/morphing-sands/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "1.png"
+      },
+      {
+        "file": "2.png"
+      },
+      {
+        "file": "3.png"
+      },
+      {
+        "file": "4.png"
+      },
+      {
+        "file": "5.png"
+      },
+      {
+        "file": "6.mp4"
+      },
+      {
+        "file": "7.png"
+      },
+      {
+        "file": "8.png"
+      },
+      {
+        "file": "9.png"
+      },
+      {
+        "file": "10.png"
+      },
+      {
+        "file": "11.png"
+      },
+      {
+        "file": "12.png"
+      },
+      {
+        "file": "14.mp4"
+      },
+      {
+        "file": "15.mp4"
+      },
+      {
+        "file": "16.png"
+      },
+      {
+        "file": "17.png"
+      }
+    ]
+  },
+  {
+    "id": "nyc-urban-land-use",
+    "title": "NYC – Urban Land Use",
+    "date": "2026-01-05",
+    "description": "NYC – Urban Land Use investigates whether machine learning can classify urban areas as commercial or residential using built-form morphology, environmental data, and proximity to surrounding city features. The project reframes land-use prediction as a spatial grid-classification problem, combining expanded urban datasets to identify the conditions required for accurate prediction at the city scale.\n\n“Can we predict the land use of a space based on existing environmental information from official and unofficial sources?”\n\nWhat’s the sweet spot for a Machine Learning model to start predicting accurately at an urban level?",
+    "cover": "cover.png",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/nyc-urban-land-use/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "1.png"
+      },
+      {
+        "file": "2.png"
+      },
+      {
+        "file": "3.png"
+      },
+      {
+        "file": "4.png"
+      },
+      {
+        "file": "5.png"
+      },
+      {
+        "file": "6.png",
+        "caption": "We shifted strategy, from predicting shop types to classifying land use across a spatial grid with expanded features."
+      },
+      {
+        "file": "7.png"
+      },
+      {
+        "file": "8.png"
+      },
+      {
+        "file": "9.png"
+      },
+      {
+        "file": "10.png"
+      },
+      {
+        "file": "11.png"
+      },
+      {
+        "file": "12.png"
+      },
+      {
+        "file": "13.png"
+      },
+      {
+        "file": "14.png"
+      },
+      {
+        "file": "15.png"
+      },
+      {
+        "file": "16.png"
+      },
+      {
+        "file": "17.png"
+      },
+      {
+        "file": "18.png"
+      },
+      {
+        "file": "19.png"
+      },
+      {
+        "file": "20.png"
+      },
+      {
+        "file": "21.png"
+      }
+    ]
+  },
+  {
+    "id": "spatial-flow-ai-driven-industrial-layout-agent",
+    "title": "Spatial Flow: AI-Driven Industrial Layout Agent",
+    "date": "2026-01-11",
+    "description": "Spatial Flow is an AI-driven industrial layout agent developed to optimize the placement of machines, workstations, and circulation paths within production environments. The system combines computational design, spatial analysis, and reinforcement learning to generate and evaluate multiple layout configurations based on factors such as travel distance, operational sequence, accessibility, and collision avoidance. Through state graphs, stress testing, and benchmarking, the project explores how AI can support faster and more informed planning decisions while allowing designers to compare solutions and improve overall spatial and production efficiency.",
+    "cover": "cover.jpg",
+    "links": [
+      {
+        "label": "IAAC",
+        "url": "https://blog.iaac.net/spatial-flow/"
+      }
+    ],
+    "gallery": [
+      {
+        "file": "00.mp4"
+      },
+      {
+        "file": "1.png"
+      },
+      {
+        "file": "2.png"
+      },
+      {
+        "file": "3.png"
+      },
+      {
+        "file": "4.png"
+      },
+      {
+        "file": "5.png"
+      },
+      {
+        "file": "6.png"
+      },
+      {
+        "file": "7.gif"
+      },
+      {
+        "file": "8.png"
+      },
+      {
+        "file": "9.png"
+      },
+      {
+        "file": "10.png"
+      },
+      {
+        "file": "11.png"
+      },
+      {
+        "file": "12.png"
+      },
+      {
+        "file": "13.gif"
+      },
+      {
+        "file": "14.gif"
+      },
+      {
+        "file": "15.gif"
+      },
+      {
+        "file": "16.png"
+      },
+      {
+        "file": "17.png"
+      },
+      {
+        "file": "18.jpg"
+      }
+    ]
+  }
+]

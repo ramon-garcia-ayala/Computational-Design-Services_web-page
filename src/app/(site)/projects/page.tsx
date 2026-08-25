@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BackToTop } from "@/components/ui/BackToTop";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProjectsGrid } from "@/components/sections/projects/ProjectsGrid";
@@ -29,6 +30,7 @@ export default function ProjectsPage() {
 
       <ProjectsGrid />
       <FinalCTA />
+      <BackToTop />
     </>
   );
 }

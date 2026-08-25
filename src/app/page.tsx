@@ -1,4 +1,5 @@
 import { Header } from "@/components/layout/Header";
+import { BackToTop } from "@/components/ui/BackToTop";
 import { Preloader } from "@/components/ui/Preloader";
 import { FrameCanvas } from "@/components/design-lab/FrameCanvas";
 import { HeroOverlay } from "@/components/design-lab/HeroOverlay";
@@ -42,6 +43,9 @@ export default function HomePage() {
 
       {/* Position marker down the right edge, for the whole page. */}
       <ScrollProgress />
+
+      {/* Sits clear of the progress bar's 3px on the right edge. */}
+      <BackToTop />
 
       <FrameCanvas>
         <HeroOverlay />

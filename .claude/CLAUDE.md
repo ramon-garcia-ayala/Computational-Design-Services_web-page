@@ -19,6 +19,10 @@ npm run anim:test                      # the animation invariants
 node scripts/minitool-link.mjs <spec.ts|spec.json> [--plain] [--origin URL]
 # Prints the /labs/tool#… link for a mini tool spec, so an archetype can be
 # opened in a browser without holding a conversation with the assistant first.
+
+node scripts/gif-to-video.mjs [--force]   # project GIFs -> mp4 + webm
+node scripts/project-media.mjs            # -> src/data/projects/media.ts
+node scripts/favicon.mjs                  # -> src/app/{favicon.ico,icon.png,apple-icon.png}
 ```
 
 There are no tests, apart from `anim:test`. TypeScript errors surface on
@@ -88,9 +92,91 @@ the single Lenis instance. `(site)/layout.tsx` adds the header and footer;
 **The data layer** (`src/data/`) holds all copy and all figures. Never hardcode
 text in a component. See the table in `README.md`.
 
-**To add a project**: add an entry to `projects` in `src/data/projects.ts`. The
-grid, the static route, the horizontal-scroll detail page and the next-project
-navigation all come from it. `featured: true` also surfaces it on the home page.
+**To add a project**: drop a folder at `public/projects/projects-tabs/<slug>/`,
+add its entry to the snapshot and to `projects` in `src/data/projects.ts`, then
+run `node scripts/project-media.mjs`. The grid, the static route, the
+horizontal-scroll detail page and the next-project navigation all come from it.
+
+`featured: true` surfaces a project on `/archive-home`, **not on `/`** — the
+live home page is the design-lab layout, whose `FeaturedPanel` reads its own
+hardcoded three items from `src/data/design-lab.ts`.
+
+## Project media
+
+The nine real projects carry 121 assets between them. Three files own the
+pipeline, and the order they run in matters:
+
+1. `scripts/gif-to-video.mjs` — every GIF gets an `.mp4` and `.webm` beside it.
+   A GIF has to bypass Next's optimiser, so it ships at export size; converting
+   took 18.2 MB down to 3.8 MB. **Originals are kept**, and the manifest prefers
+   a converted sibling if one exists, so deleting the `.mp4` reverts to the GIF.
+2. `scripts/project-media.mjs` — writes the generated `src/data/projects/media.ts`:
+   every asset with its `kind`, `poster`, `caption` and **intrinsic dimensions**
+   (sharp for stills, `ffprobe` for video).
+3. `src/data/projects.ts` — the copy. `trackOf()` joins it to the manifest.
+
+**Sequence comes from `scripts/data/portfolio-computational.json`, not from
+sorting the folder.** That snapshot is the gallery order lifted from
+ramyayoub.net's page bundle (found via its sitemap), and filename order does not
+reproduce it: `flat-dream` numbers from `1.png` while `breathing-mass` uses
+`01.png`, `le-monstre-merveille` prefixes every file with its own slug and jumps
+`-08` → `-009`, `spatial-flow` opens on `00.mp4`, `la-cite-radieuse` has no `1`,
+and two folders skip a number outright.
+
+**A still sharing a stem with a video is that video's poster, not a gallery
+item.** This is why `morphing-sands` has both `6.mp4` and `6.png`: the two files
+absent from the portfolio gallery are exactly the two hand-made poster frames.
+Anything else gets a first frame extracted by ffmpeg once.
+
+**`Project` has no `client`.** These are research projects, and inventing a
+commissioning company for one would be a lie on a page whose entire job is to be
+believed. The field is `context` ("IAAC · Barcelona") and the label reads
+Context.
+
+**`brief` is quoted, never rewritten.** Everything else on a project page is
+redrafted for a studio selling a service; `brief` stays in the author's own
+words because it is the description of the work itself.
+
+**In the pinned track, media is sized by HEIGHT and the panel width follows.**
+Media used to inherit the text panel's `lg:w-[min(46rem,80vw)]` — a width chosen
+for a readable line of prose — which left every asset 640px wide whatever its
+shape: heights ran 116px to 589px and the average filled 37% of the panel, so a
+5.5:1 diagram was a thin strip in a tall empty box. The frame now takes
+`width: max(20rem, min(86vw, calc(72vh * ratio)))` and lets `aspect-ratio`
+derive the height, which puts 113 of 121 assets at an identical height. The two
+caps resolve in CSS rather than in a branch: a panorama hits `86vw` and gets
+shorter, a portrait hits the `20rem` floor.
+
+Three things this depends on, none of them optional:
+
+- The media `<article>` takes `lg:w-auto` while text panels keep the prose
+  measure. One width for both is the bug.
+- The `<figure>` is `lg:w-auto`, **not `w-full`**. The article shrink-wraps the
+  figure, so a percentage would resolve against a width derived from this
+  figure's own content — the case where intrinsic sizing collapses. The frame
+  holds the only definite width in the chain.
+- `aspect-ratio` still reserves the box, because `HorizontalScroll` measures
+  `track.scrollWidth` for its pin and unloaded media measures as nothing.
+
+`object-contain`, not cover: these are drawings and diagrams, where a crop
+removes content rather than framing it. Stacked layouts (below `lg`, or reduced
+motion at any width) keep `w-full` plus the `62vh` cap.
+
+**`PIN_RATIO` decouples media size from scroll cost.** The tween moves the track
+by its full `getDistance()`; `end` decides only how much scrolling that is
+spread over. Sizing the media properly doubled the track, which would have taken
+the longest case study from 16 to 31 screen-heights; `PIN_RATIO = 0.55` moves the
+track faster than the wheel and buys it back.
+
+**A caption over ~120 characters sits beside the media, not under it.** Four run
+535–1048 characters, one of them ten lines; stacked under a 72vh image in a
+100vh panel there is no room and the panel clips them. The aside column carries
+`data-lenis-prevent`, or scrolling a long caption scrolls the page instead.
+
+`public/projects/` also holds three loose files (`spatial-flow.gif`,
+`hyper-building-automation.jpg`, `la-cite-radieuse-topology.png`) read by
+`src/data/design-lab.ts`. They are not part of this system — **do not move
+them.**
 
 ## Client proposals
 
@@ -525,6 +611,33 @@ invalid-link screen to the visitor who just generated it.
   bar of border colour along the top of the grid.
 - **Breakpoints in JS**: use `gsap.matchMedia()` (see `HorizontalScroll.tsx`), not
   resize listeners.
+- **Never listen for the document's native `scroll` event.** Lenis does not emit
+  it, so a `window.addEventListener("scroll", …)` never fires while smooth
+  scroll is on — and then springs to life the moment reduced motion disables
+  Lenis, which is the kind of bug that looks like it works. Read scroll position
+  through ScrollTrigger, which Lenis drives via `lenis.on("scroll", …)` and the
+  browser drives when Lenis is absent. `BackToTop.tsx` is the worked example.
+- **Scrolling the page from code goes through `scrollToTop()` in
+  `src/lib/lenis.ts`**, which holds the live Lenis instance published by
+  `SmoothScroll`. A native `window.scrollTo` moves the document behind Lenis's
+  back, the two disagree about position, and every reveal below stops firing.
+  The fallback there is deliberately instant, not smooth: no instance means
+  reduced motion, where animating the jump is the one thing ruled out. The
+  Lenis call passes `immediate: true` for the same reason a jump is wanted at
+  all: these pages run to twenty-odd screen-heights, and easing that distance
+  is a second of streaked motion. `immediate` still moves Lenis's own position
+  with the document, which a native `scrollTo` does not.
+- **A "show after scrolling N" ScrollTrigger takes numeric start/end, not a
+  string.** `trigger: document.documentElement, start: "top -90%"` reads as
+  "after 90% of a viewport" and never fires — a negative scroller percentage
+  against a trigger whose top sits at scroll 0 is a different measurement — and
+  it fails *silently*, leaving the control permanently hidden with nothing to
+  find. `start`/`end` accept `number | StartEndFunc`, and `trigger` is optional,
+  so use absolute offsets: `start: () => innerHeight * 0.6`. Keep `end` above
+  `start` (`Math.max(start + 1, ScrollTrigger.maxScroll(window))`) or a short
+  page gives a degenerate range that never activates. Pair `onToggle` with
+  `onRefresh` so landing part-way down a page, where no toggle fires, still
+  sets the state.
 
 ## prefers-reduced-motion
 

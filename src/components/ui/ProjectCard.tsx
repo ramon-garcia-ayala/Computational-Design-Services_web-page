@@ -1,12 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/data/projects";
+import { coverOf, type Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
 /**
  * Project card used in the grid (home and /projects).
  *
- * Without a `cover` it paints a grid-textured block instead of an image, so a
- * project works without any real asset.
+ * The cover comes from the generated media manifest, so its dimensions are
+ * known and it can go through `next/image`. Without one it paints a
+ * grid-textured block instead, so a project still works with no asset at all.
  */
 export function ProjectCard({
   project,
@@ -15,6 +17,8 @@ export function ProjectCard({
   project: Project;
   className?: string;
 }) {
+  const cover = coverOf(project.slug);
+
   return (
     <Link
       href={`/projects/${project.slug}`}
@@ -25,12 +29,13 @@ export function ProjectCard({
       data-reveal
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-line bg-graphite">
-        {project.cover ? (
-          // eslint-disable-next-line @next/next/no-img-element -- covers with varying dimensions
-          <img
-            src={project.cover}
+        {cover ? (
+          <Image
+            src={cover.src}
             alt=""
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            fill
+            sizes="(min-width: 1024px) 46vw, 100vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
           <div className="grid-bg absolute inset-0 opacity-60 transition-transform duration-700 group-hover:scale-105" />

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { setLenis } from "@/lib/lenis";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 /**
@@ -37,6 +38,10 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
     lenis.on("scroll", ScrollTrigger.update);
 
+    /* Published so a control that scrolls on click can go through Lenis
+       rather than past it — see `lib/lenis.ts`. */
+    setLenis(lenis);
+
     const raf = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(raf);
     // The GSAP ticker normally clamps the delta; here it gets in the way.
@@ -66,6 +71,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     }
 
     return () => {
+      setLenis(null);
       gsap.ticker.remove(raf);
       gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy();
