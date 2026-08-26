@@ -64,7 +64,6 @@ export const MAILTO_MAX_CHARS = 1800;
 
 /** Social links. Emptying the array hides the block in the footer. */
 export const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/" },
-  { label: "GitHub", href: "https://github.com/" },
-  { label: "Instagram", href: "https://www.instagram.com/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/r-xtech/" },
+  { label: "Instagram", href: "https://www.instagram.com/r2xtech/" },
 ] as const;

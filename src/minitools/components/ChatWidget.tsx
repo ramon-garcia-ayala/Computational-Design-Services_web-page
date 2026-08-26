@@ -96,8 +96,9 @@ function BuildProgress({ template }: { template: TemplateId }) {
  *
  * Lives inside `ChatPlaceholder`, whose dimensions are fixed so that mounting
  * this does not move the LCP. Everything scrollable is inside the panel, which
- * is why the message list carries `data-lenis-prevent`: without it the wheel
- * would scroll the page out from under someone reading a reply.
+ * is why the message list carries `data-lenis-prevent` — but only while it has
+ * something to scroll, or the widget swallows the wheel of the page it is
+ * sitting in the middle of. See the effect that measures it.
  *
  * Building is a two-step: when Haiku proposes a tool the server stops and this
  * shows a confirmation card, and only the visitor's yes sends the `build`
@@ -111,6 +112,8 @@ export function ChatWidget() {
   const [pending, setPending] = useState<Pending | null>(null);
   /** Which archetype the progress panel narrates while Sonnet works. */
   const [building, setBuilding] = useState<TemplateId>("facade");
+  /** Whether the transcript actually overflows — see the effect below. */
+  const [listScrolls, setListScrolls] = useState(false);
 
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -121,6 +124,34 @@ export function ChatWidget() {
   useEffect(() => {
     return () => abortRef.current?.abort();
   }, []);
+
+  /*
+   * `data-lenis-prevent` below is applied only while the transcript really has
+   * something to scroll.
+   *
+   * Unconditionally it hands Lenis's wheel to this list whenever the pointer is
+   * over it — and on the home page this widget fills the middle of the Labs
+   * panel with an empty transcript. Scrolling the page with the cursor there
+   * did nothing through Lenis and fell back to a native jump, which is what the
+   * panel felt like to scroll past: everything else smooth, this one section
+   * lurching. Reading a reply still needs the wheel captured, so the attribute
+   * tracks whether there is any overflow rather than being dropped.
+   */
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+
+    const measure = () => setListScrolls(list.scrollHeight > list.clientHeight + 1);
+    measure();
+
+    /* Both are needed: the list resizes when the panel does, and its content
+       grows as a reply streams in without the box changing size at all. */
+    const observer = new ResizeObserver(measure);
+    observer.observe(list);
+    for (const child of Array.from(list.children)) observer.observe(child);
+
+    return () => observer.disconnect();
+  }, [entries, pending, phase]);
 
   // Keep the latest line in view as the reply streams in.
   useEffect(() => {
@@ -360,7 +391,7 @@ export function ChatWidget() {
 
       <div
         ref={listRef}
-        data-lenis-prevent
+        data-lenis-prevent={listScrolls ? "" : undefined}
         role="log"
         /* Off on purpose: the finished turn is announced through the region
            above, so streaming does not read a growing fragment on every SSE

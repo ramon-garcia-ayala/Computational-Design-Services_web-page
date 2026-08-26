@@ -147,10 +147,17 @@ export function HeroOverlay() {
             "linear-gradient(to bottom, rgb(184 180 177 / 0) 0%, rgb(184 180 177 / 0.6) 55%, var(--color-lab-bg) 100%)",
         }}
       />
-      {/* Opening lockup, present from the first frame and faded out by ~18. */}
+      {/* Opening lockup, present from the first frame and faded out by ~18.
+
+          Centred from `sm` up, but held near the top below it. On a phone the
+          geodesic fills the middle of the screen and this block is a third of
+          the viewport tall, so centring put the wordmark, headline and
+          description straight through the model — legible as neither. There is
+          only one band of empty plate on a narrow screen, above the model, so
+          the lockup goes there. Desktop has width to spare and is unchanged. */}
       <div
         data-lockup
-        className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 lg:px-16"
+        className="absolute inset-0 flex flex-col justify-start pt-[9svh] px-6 sm:justify-center sm:pt-0 sm:px-10 lg:px-16"
       >
         <div className="w-full max-w-3xl">
           {/* §12.2: the real logo asset, not type. Rendered as a mask filled
@@ -176,12 +183,17 @@ export function HeroOverlay() {
           {/* §12.3: one line at every width. The clamp floor is sized so the
               longest word run still fits a 375px viewport without wrapping,
               which is what `whitespace-nowrap` would otherwise overflow. */}
-          <h1 className="mt-8 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.6rem,6.2vw,3.2rem)] leading-[1.05]">
+          {/* Tighter stack below `sm` (`mt-5`/`mt-4` against `mt-8`/`mt-6`).
+              The block has to fit between the header and the top of the
+              geodesic, which is about a quarter of a phone screen; the ~28px
+              this saves is what takes it from grazing the model to clearing
+              it, without pushing the wordmark up against the header. */}
+          <h1 className="mt-5 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.6rem,6.2vw,3.2rem)] leading-[1.05] sm:mt-8">
             {hero.headline}
           </h1>
 
           {/* §12.4: justified. */}
-          <p className="mt-6 max-w-lg text-justify text-sm leading-relaxed text-lab-ink-muted sm:text-base">
+          <p className="mt-4 max-w-lg text-justify text-sm leading-relaxed text-lab-ink-muted sm:mt-6 sm:text-base">
             {hero.description}
           </p>
         </div>
@@ -195,8 +207,15 @@ export function HeroOverlay() {
         <div
           key={statement.id}
           className={cn(
-            "absolute inset-y-0 flex items-center px-6 sm:px-10 lg:px-16",
+            "absolute inset-y-0 flex px-6 sm:items-center sm:px-10 sm:pt-0 sm:pb-0 lg:px-16",
             statement.side === "right" ? "right-0 justify-end" : "left-0 justify-start",
+            /* Below `sm` the two statements clear the geodesic by going round
+               it rather than through it: the first sits above the model, the
+               second below. Left centred they land on top of it, which is what
+               the phone screenshots showed. On desktop the model has margins on
+               both sides and the statements read beside it, so `sm:items-center`
+               restores the original placement untouched. */
+            statement.side === "right" ? "items-start pt-[15svh]" : "items-end pb-[18svh]",
           )}
         >
           <p

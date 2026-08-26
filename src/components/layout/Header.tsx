@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MenuOverlay } from "./MenuOverlay";
 import { MusicToggle } from "./MusicToggle";
-import { mailtoHref, site } from "@/data/site";
+import { site } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 const MENU_BUTTON_ID = "menu-trigger";
@@ -115,8 +115,14 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <MusicToggle className="hidden sm:flex" variant={variant} />
 
-            <a
-              href={mailtoHref}
+            {/* `/contact`, not the mailto it used to be. A `mailto:` does
+                nothing at all for a visitor with no desktop mail client
+                configured — which is most people on webmail — so the primary
+                CTA silently did nothing for them. The contact page carries a
+                working form *and* offers the mailto to anyone who prefers it,
+                so nobody loses a route. */}
+            <Link
+              href="/contact"
               className={cn(
                 "rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
                 light
@@ -125,7 +131,7 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
               )}
             >
               Let&apos;s talk
-            </a>
+            </Link>
 
             <button
               id={MENU_BUTTON_ID}

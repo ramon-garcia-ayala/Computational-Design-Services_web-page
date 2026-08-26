@@ -478,6 +478,20 @@ reuses what the first mount's cleanup destroyed. Let R3F own the lifecycle.
 the message list and the canvas both carry it. Lenis owns the wheel everywhere
 else, so without it reading a reply scrolls the page instead.
 
+**But the message list applies it only while it actually overflows.** Applied
+unconditionally it hands Lenis's wheel to the transcript whenever the pointer is
+over it, and on the home page this widget fills the middle of the Labs panel
+with an empty transcript: scrolling there did nothing through Lenis and fell
+back to a native jump, so that one panel lurched while the rest of the page
+glided. `ChatWidget` measures `scrollHeight > clientHeight` (a `ResizeObserver`
+on the list *and* its children, since a streaming reply grows the content
+without resizing the box) and sets the attribute from that.
+
+**The header's "Let's talk" goes to `/contact`, not to `mailtoHref`.** A
+`mailto:` does nothing at all for a visitor with no desktop mail client, which
+is most people on webmail — the primary CTA silently failed for them. The
+contact page carries a working form and still offers the mailto.
+
 **`ChatPlaceholder` needs a *definite* height at every breakpoint**, not a
 `min-h-*`. The message list is `flex-1 overflow-y-auto`, and in an auto-height
 column flex container that resolves to the content's own height: the list never
@@ -638,6 +652,23 @@ invalid-link screen to the visitor who just generated it.
   page gives a degenerate range that never activates. Pair `onToggle` with
   `onRefresh` so landing part-way down a page, where no toggle fires, still
   sets the state.
+
+## The home hero on a phone
+
+`HeroOverlay` centres the lockup and both statements from `sm` up, and moves
+them out of the centre below it. On a narrow screen the geodesic fills the
+middle third of the viewport, so centred type lands straight on the model:
+the lockup goes above it (`justify-start pt-[9svh]`), the right-hand statement
+above (`items-start pt-[15svh]`), the left-hand one below
+(`items-end pb-[18svh]`). Every one of those is reset at `sm:` — the desktop
+layout resolves to exactly what it was, which is the point.
+
+The mobile stack is also tighter (`mt-5`/`mt-4` against `mt-8`/`mt-6`): the
+block has to fit between the header and the top of the model, and those ~28px
+are the difference between clearing it and grazing it. **The margin is small
+(~34px on a 390x844 phone) and the model's position is measured off a
+screenshot rather than computed**, so anything that changes the hero copy
+length or the logo size needs re-checking on a real phone.
 
 ## prefers-reduced-motion
 
