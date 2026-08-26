@@ -168,7 +168,7 @@ export function HeroOverlay() {
           <span
             role="img"
             aria-label={hero.logoAlt}
-            className="block w-[200px] bg-lab-ink sm:w-[260px] lg:w-[450px]"
+            className="block w-[160px] bg-lab-ink sm:w-[208px] lg:w-[360px]"
             style={{
               aspectRatio: `${mask.width} / ${mask.height}`,
               WebkitMaskImage: `url('${mask.src}')`,
@@ -188,12 +188,12 @@ export function HeroOverlay() {
               geodesic, which is about a quarter of a phone screen; the ~28px
               this saves is what takes it from grazing the model to clearing
               it, without pushing the wordmark up against the header. */}
-          <h1 className="mt-5 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(3.2rem,2.8vw,2.5rem)] leading-[1.05] sm:mt-8">
+          <h1 className="mt-5 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.28rem,4.96vw,2.56rem)] leading-[1.05] sm:mt-8">
             {hero.headline}
           </h1>
 
           {/* §12.4: justified. */}
-          <p className="mt-4 max-w-lg text-justify text-sm leading-relaxed text-lab-ink-muted sm:mt-6 sm:text-base">
+          <p className="mt-4 max-w-lg text-justify text-[0.7rem] leading-relaxed text-lab-ink-muted sm:mt-6 sm:text-[0.8rem]">
             {hero.description}
           </p>
         </div>
