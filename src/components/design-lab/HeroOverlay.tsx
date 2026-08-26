@@ -188,7 +188,7 @@ export function HeroOverlay() {
               geodesic, which is about a quarter of a phone screen; the ~28px
               this saves is what takes it from grazing the model to clearing
               it, without pushing the wordmark up against the header. */}
-          <h1 className="mt-5 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.6rem,6vw,3.2rem)] leading-[1.05] sm:mt-8">
+          <h1 className="mt-5 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(3.2rem,2.8vw,2.5rem)] leading-[1.05] sm:mt-8">
             {hero.headline}
           </h1>
 
