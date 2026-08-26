@@ -30,6 +30,45 @@ export const site = {
   foundedYear: 2024,
 } as const;
 
+/**
+ * Search and social metadata, consumed by the root layout's `metadata` export.
+ *
+ * Separate from `tagline`/`subcopy` above, which are the *visible* hero copy:
+ * a <title> has to carry the discipline words someone would actually search
+ * for, while the hero can afford to be short. Keeping them apart is what lets
+ * either change without dragging the other with it.
+ *
+ * There is deliberately no `icons` entry. The icon set lives in `src/app/`
+ * under Next's file conventions, which emit the <link> tags themselves —
+ * declaring them here as well duplicates every tag. See `scripts/favicon.mjs`.
+ */
+export const seo = {
+  title: "R²XTECH — Computational Design & Automation for AEC",
+  description:
+    "R²XTECH is a computational studio for architecture, engineering, and construction — parametric design, automation, and AI-driven systems.",
+  ogTitle: "R²XTECH — Architecture, computed.",
+  ogDescription:
+    "A computational studio embedded in architecture, engineering, and construction. We build the parametric pipelines, model automations, and AI-driven systems.",
+  /**
+   * Built by `scripts/og-image.mjs` from the hero's own geodesic frame, at the
+   * 1200x630 every platform crops from.
+   */
+  ogImage: "/og.jpg",
+  ogImageAlt: "The R²XTECH geodesic form, lit from within.",
+  /* Near-zero weight with modern search engines, and harmless. Kept because it
+     costs nothing and a few smaller crawlers still read it. */
+  keywords: [
+    "computational design",
+    "parametric design",
+    "design automation",
+    "AI architecture",
+    "BIM automation",
+    "Grasshopper",
+    "Rhino",
+    "AEC consultancy",
+  ],
+} as const;
+
 /** Recipients of every mailto on the site. Both of them, always. */
 export const contactRecipients = [
   "gramonga4434@gmail.com",

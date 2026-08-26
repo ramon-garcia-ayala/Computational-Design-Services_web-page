@@ -23,6 +23,7 @@ node scripts/minitool-link.mjs <spec.ts|spec.json> [--plain] [--origin URL]
 node scripts/gif-to-video.mjs [--force]   # project GIFs -> mp4 + webm
 node scripts/project-media.mjs            # -> src/data/projects/media.ts
 node scripts/favicon.mjs                  # -> src/app/{favicon.ico,icon.png,apple-icon.png}
+node scripts/og-image.mjs                 # -> public/og.jpg (1200x630 social card)
 ```
 
 There are no tests, apart from `anim:test`. TypeScript errors surface on
@@ -737,6 +738,26 @@ file conventions write the `<link>` tags themselves — so **never also declare
 | `src/app/favicon.ico` | 16 / 32 / 48 | the address bar, and Google's crawler |
 | `src/app/icon.png` | 192 | modern browsers |
 | `src/app/apple-icon.png` | 180 | the iOS touch icon |
+
+**Search and social metadata lives in `seo` in `src/data/site.ts`**, consumed by
+the root layout's `metadata` export. It is separate from `tagline`/`subcopy`,
+which are the visible hero copy: a `<title>` has to carry the words someone
+would search for, while the hero can afford to be short.
+
+`metadataBase` is the production origin (`site.origin`). Without it Next
+resolves the Open Graph image against localhost and every shared link previews
+a dead image. The `title.template` is load-bearing too — child routes set a
+bare `title` and inherit the suffix, so `/projects` reads "Projects · R²XTECH"
+rather than repeating the full search title.
+
+`scripts/og-image.mjs` builds `public/og.jpg` from one frame of the hero's own
+geodesic sequence, so the card shows the object a visitor actually lands on.
+**The frame is cropped full-bleed, never composited onto a flat plate**: the
+sequence is rendered on a greige running ~#a7a5a3 to #c0bcb8, close to
+`--color-lab-bg` (#b8b4b1) but not equal to it and not even across its own
+width, so a resized frame dropped on a flat swatch of the token leaves a
+visible rectangle. `twitter.card` must be `summary_large_image` or X falls back
+to the small square crop and the 1200x630 never surfaces.
 
 The icons carry only the **`R²` glyph**, not the wordmark: the logo is a
 3103x611 lockup and at 16px the whole thing is an unreadable smear. The script

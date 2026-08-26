@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Sora, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
-import { site } from "@/data/site";
+import { seo, site } from "@/data/site";
 
 /* Fonts exposed as CSS variables and consumed from the @theme in globals.css */
 const sora = Sora({
@@ -34,12 +34,36 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
+  /* Absolute-URL base for everything below. Without it Next resolves the
+     Open Graph image against localhost and every shared link previews a dead
+     image. */
   metadataBase: new URL(site.origin),
   title: {
-    default: `${site.nameFlat} · ${site.tagline}`,
+    default: seo.title,
+    /* Kept: child routes set a bare `title` and inherit the suffix, so
+       /projects reads "Projects · R²XTECH" rather than repeating the whole
+       search title on every page. */
     template: `%s · ${site.nameFlat}`,
   },
-  description: site.subcopy,
+  description: seo.description,
+  keywords: [...seo.keywords],
+  openGraph: {
+    type: "website",
+    siteName: site.nameFlat,
+    url: site.origin,
+    title: seo.ogTitle,
+    description: seo.ogDescription,
+    images: [{ url: seo.ogImage, width: 1200, height: 630, alt: seo.ogImageAlt }],
+  },
+  /* X/Twitter reads Open Graph when its own tags are absent, but defaults to
+     the small square card — `summary_large_image` is what actually surfaces
+     the 1200x630 above. */
+  twitter: {
+    card: "summary_large_image",
+    title: seo.ogTitle,
+    description: seo.ogDescription,
+    images: [seo.ogImage],
+  },
 };
 
 /* Each route group provides its own chrome (header, footer, <main>): (site)
