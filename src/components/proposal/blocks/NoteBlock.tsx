@@ -12,19 +12,23 @@ export function NoteBlock({ block }: { block: NoteBlockData }) {
     <section id={block.id} className="border-t border-line py-14">
       <div className="shell">
         <Reveal>
+          {/* `border-accent/40` was low-contrast alpha on a border meant to
+              flag the note as worth noticing; `border-line` on the default
+              tone was the same decorative-divider token drawn as a card
+              outline. Both now use tokens built to stay visible. */}
           <div
             className={cn(
-              "flex max-w-3xl gap-4 rounded-lg border p-6 lg:p-8",
+              "flex max-w-3xl gap-4 rounded-surface border p-6 lg:p-8",
               block.tone === "flag"
-                ? "border-accent/40 bg-accent/5"
-                : "border-line bg-graphite",
+                ? "border-accent-ink bg-accent/5"
+                : "border-edge bg-graphite",
             )}
           >
             <Icon
               name={block.tone === "flag" ? "alert" : "route"}
               className={cn(
                 "mt-0.5 h-5 w-5 shrink-0",
-                block.tone === "flag" ? "text-accent" : "text-fg-muted",
+                block.tone === "flag" ? "text-accent-ink" : "text-fg-muted",
               )}
             />
             <div>

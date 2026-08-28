@@ -43,9 +43,9 @@ export function ParamPanel({
                       type="button"
                       aria-pressed={active}
                       onClick={() => onChange(def.key, option)}
-                      className={`rounded-full border px-3 py-1 font-mono text-xs tracking-wide uppercase transition-colors duration-200 ${
+                      className={`rounded-control border px-3 py-1 font-mono text-xs tracking-wide uppercase transition-colors duration-200 ${
                         active
-                          ? "border-accent bg-accent text-carbon"
+                          ? "border-accent-ink bg-accent text-on-accent"
                           : "border-edge text-fg-muted hover:border-accent-ink hover:text-accent-ink"
                       }`}
                     >

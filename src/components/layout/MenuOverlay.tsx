@@ -125,7 +125,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
                     data-menu-item
                     href={link.href}
                     onClick={onClose}
-                    className="block text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent sm:text-6xl lg:text-7xl"
+                    className="block text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent-ink sm:text-6xl lg:text-7xl"
                   >
                     {link.label}
                   </a>
@@ -134,7 +134,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
                     data-menu-item
                     href={link.href}
                     onClick={onClose}
-                    className="block text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent sm:text-6xl lg:text-7xl"
+                    className="block text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent-ink sm:text-6xl lg:text-7xl"
                   >
                     {link.label}
                   </Link>
@@ -159,7 +159,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
             >
               Newsletter
             </label>
-            <div className="flex items-center gap-2 border-b border-panel-line pb-2 focus-within:border-accent">
+            <div className="flex items-center gap-2 border-b border-panel-line pb-2 focus-within:border-accent-ink">
               <input
                 id="newsletter-email"
                 type="email"
@@ -169,7 +169,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
               />
               <button
                 type="submit"
-                className="shrink-0 font-mono text-[10px] whitespace-nowrap uppercase tracking-widest text-accent transition-opacity hover:opacity-70"
+                className="shrink-0 font-mono text-[10px] whitespace-nowrap uppercase tracking-widest text-accent-ink transition-opacity hover:opacity-70"
               >
                 Sign up
               </button>
@@ -182,7 +182,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
           <Link
             href={labsLink.href}
             onClick={onClose}
-            className="group flex items-center justify-between rounded-lg border border-panel-line bg-carbon/40 px-4 py-4 transition-colors hover:border-accent"
+            className="group flex items-center justify-between rounded-surface border border-panel-line bg-carbon/40 px-4 py-4 transition-colors hover:border-accent-ink"
           >
             <span>
               <span className="block text-lg font-semibold text-fg">
@@ -194,7 +194,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
             </span>
             <span
               aria-hidden="true"
-              className="font-mono text-accent transition-transform group-hover:translate-x-1"
+              className="font-mono text-accent-ink transition-transform group-hover:translate-x-1"
             >
               →
             </span>
@@ -207,7 +207,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
                   href={link.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors hover:text-accent"
+                  className="font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors hover:text-accent-ink"
                 >
                   {link.label}
                 </a>

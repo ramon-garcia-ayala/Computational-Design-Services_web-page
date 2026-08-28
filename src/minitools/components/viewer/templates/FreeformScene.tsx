@@ -8,8 +8,13 @@ import { ACCENT, FG_MUTED } from "../../../lib/palette";
 
 const DEGREES = Math.PI / 180;
 
+/* `solid` was `#9ccb4a` — an off-brand green with no relationship to any
+   site token, sitting between an accent-coloured `wire` and a grey `ghost`.
+   A muted, desaturated warm tone keeps the three materials visually
+   distinct from each other without introducing a colour the rest of the
+   site doesn't use. */
 const MATERIAL_COLORS = {
-  solid: "#9ccb4a",
+  solid: "#a8895c",
   wire: ACCENT,
   ghost: FG_MUTED,
 } as const;

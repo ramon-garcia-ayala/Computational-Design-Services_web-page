@@ -68,7 +68,7 @@ the page's own content wrapper sets pale on top of it.
 | `--color-graphite-hi` | `#1c2024` | Elevated surface | — |
 | `--color-line` | `#262b2e` | **Decorative dividers only** | 1.37:1 — too low for anything meaningful |
 | `--color-line-soft` | `#1a1e21` | Subtle dividers, background grid | — |
-| `--color-edge` | `#5a6368` | **Field borders, focus-adjacent UI** | 3.19:1 — clears WCAG 1.4.11 |
+| `--color-edge` | `#5e686d` | **Field borders, control boundaries, diagram structure** | 3.44:1 on carbon, 3.15:1 on `--color-graphite` — clears WCAG 1.4.11 against both, not just the page ground |
 | `--color-fg` | `#f2f4f0` | Primary text | 17.7:1 |
 | `--color-fg-muted` | `#8a918c` | Secondary text | 6.08:1 |
 | `--color-accent` | `#e8a94a` | **Fill only** — solid buttons, plates | 9.53:1 (as ink here too, but see §2.5) |
@@ -76,6 +76,12 @@ the page's own content wrapper sets pale on top of it.
 | `--color-accent-ink` | `#e8a94a` | Accent **as text/hairline/border** | same as accent on this ground |
 | `--color-on-accent` | `#2a2826` | Ink sitting ON a filled accent plate | 7.14:1 |
 | `--color-focus` | `#e8a94a` | Keyboard focus ring | 9.53:1 |
+| `--color-danger` | `#d25854` | Error text, invalid-field borders | 4.92:1 on carbon, 4.51:1 on graphite |
+
+`--color-edge` was `#5a6368` (3.19:1 on carbon) until a redesign pass found it
+dropped to 2.93:1 the moment it sat on `--color-graphite` instead of the page
+ground — a bordered control on a surface, which is most of them. The value
+above clears both by a real margin rather than passing one check by luck.
 
 ### 2.3 Warm ground (`[data-site-warm]`)
 
@@ -90,9 +96,20 @@ need it (amber still passes here).
 | `--color-line` | `#55504a` | |
 | `--color-line-soft` | `#494440` | |
 | `--color-fg` | `#f2f4f0` | 10.35:1 |
-| `--color-fg-muted` | `#a8a29a` | 4.53:1 |
+| `--color-fg-muted` | `#b4aea5` | 5.20:1 on carbon, 4.52:1 on graphite |
+| `--color-edge` | `#96918a` | 3.66:1 on carbon, 3.18:1 on graphite |
+| `--color-danger` | `#ff9686` | 5.43:1 on carbon, 4.71:1 on graphite |
 
 Accent on this ground: `#e8a94a` on `#3d3934` = **5.57:1** — safe as ink.
+
+`--color-fg-muted` was `#a8a29a` (4.53:1 on this scope's own carbon) until the
+same graphite check that caught `--color-edge` above caught it too: 3.93:1 on
+`--color-graphite`, failing AA the moment secondary text sat on a surface
+instead of the page. `--color-edge` didn't exist in this scope at all before
+that pass — it silently inherited the dark scope's value, which measured
+1.87:1 here. Every route under `[data-site-warm]` (`/projects`, `/services`,
+`/labs`, `/labs/tool`, every project page) was depending on a token that had
+never actually been tuned for this ground.
 
 ### 2.4 Pale ground (`[data-site-pale]`)
 
@@ -115,7 +132,13 @@ exists partly so nobody re-discovers that the hard way.**
 | `--color-fg-muted` | `#4a4642` | 4.54:1 |
 | `--color-accent-ink` | `#2a2826` | **The fg colour carries the accent's ink role here** — amber itself is never redefined |
 | `--color-focus` | `#2a2826` | 7.13:1 — see §2.6, this used to be the site's one real accessibility bug |
-| `--color-edge` | `#66615b` | 2.98:1 vs this ground (`#5a6368` only read 1.40:1 here) |
+| `--color-edge` | `#625d57` | 3.17:1 on carbon, 3.49:1 on graphite |
+| `--color-danger` | `#900e0e` | 4.52:1 on carbon, 4.99:1 on graphite — a dark red, not a bright one: this ground is light, so the readable direction inverts |
+
+`--color-edge` was `#66615b` here, at exactly **2.98:1** — under the 3:1 this
+token exists to clear, by a margin small enough to read as passing at a
+glance. The value above clears 3:1 against both carbon and graphite with room
+to spare.
 
 `--color-accent` itself stays `#e8a94a` on every ground — it still works
 as a **filled plate** (with `--color-on-accent` `#2a2826` on it, 7.14:1). The
@@ -133,6 +156,30 @@ rule this whole section encodes:
 | A solid filled button, a plate, a swatch | `bg-accent` + `text-on-accent` | — |
 | A field border, a toggle border, anything meaningful under WCAG 1.4.11 | `border-edge` | `border-line` |
 | A decorative divider, a background grid line | `border-line` | `border-edge` (over-strong) |
+| Error text, an invalid field's border | `text-danger` / `border-danger` | `text-red-400` or any other unscoped Tailwind colour |
+
+**"Meaningful" is broader than form fields.** The rule above reads narrowly —
+"field borders, toggle borders" — and that reading is exactly what let
+`border-line` (1.37:1) become the rail and dashed connector of the site's own
+hand-drawn pipeline diagram (`FlowDiagram.tsx`), the row rules of every data
+table, and the empty box of every checklist item: none of those are form
+fields, but every one of them is a line a reader has to actually see for the
+component to do its job. **If a line's absence would change what the reader
+understands, it's `edge`. If removing it changes nothing — a divider between
+unrelated sections, a background grid — it's `line`.** A `gap-px` card grid's
+divider colour (the classic case: `bg-line` showing through the gap) is
+"meaningful" by this test too, since it's the only thing separating one card
+from the next.
+
+**`--color-panel-ink-muted`** (dark scope only) is a third muted-text value,
+alongside `--color-fg-muted` and the pale/warm scopes' own. It exists because
+Home's panels sit on `--color-panel` (`#3d3934`) while still living in the
+*base dark scope*, not `[data-site-warm]` — so `--color-fg-muted` (tuned
+against carbon, 6.08:1) measures only 3.55:1 there. Use it for any muted text
+that sits directly on `bg-panel` without a warm/pale scope wrapping it —
+`Panels.tsx`'s captions and `LabFooter`'s column headings are the two current
+examples. Likewise `--color-lab-ink-muted` is the equivalent for text on the
+hero's own `--color-lab-bg` plate.
 
 ### 2.6 The one accessibility rule worth repeating
 
@@ -282,14 +329,50 @@ not "Our Amazing Services!!"
 
 ## 6 · Component patterns worth knowing before building a new one
 
-- **Buttons**: solid (`bg-accent text-on-accent`), outline (`border-line
-  text-fg hover:border-accent hover:text-accent`), ghost (text + underline on
-  hover). Defined once in `CTALink.tsx` — reuse it rather than hand-rolling a
-  new button.
-- **Cards / grids** (`cards`, `docs`, `timeline`, service grids): borderless,
-  drawn with `gap-px` over a `bg-line` container — the visible lines are the
-  background showing through the gaps. A half-empty last row renders as a
-  solid bar of border colour, so column count must divide item count exactly.
+### 6.1 Shape: exactly two radii
+
+```css
+--radius-surface: 0.25rem; /* container, card, field, diagram node */
+--radius-control: 9999px;  /* button, chip, toggle, pill marker */
+```
+
+Consumed as `rounded-surface` / `rounded-control`. Before these existed the
+site carried six radius values (`rounded-full`, `-lg`, `-xl`, `-md`, `-sm`,
+bare `rounded`) mixed within single components — `ContactForm` and
+`ChatWidget` each used three. The rule now has exactly two cases:
+
+| It's a… | Use |
+|---|---|
+| Container, card, panel, media frame, text **field** (including a textarea) | `rounded-surface` |
+| Button, chip, toggle, badge, a small circular marker | `rounded-control` |
+
+A text field is a surface, not a control, even though it's interactive — it
+holds content the way a card does, it doesn't trigger an action the way a
+button does. This is the one place the rule reads as unintuitive; it's also
+exactly the split that had drifted (`InquiryBand`'s pill-shaped inputs next to
+`ContactForm`'s rectangular ones, for the same kind of field).
+
+Tokens rather than reaching for Tailwind's own `rounded-sm`/`rounded-full`
+directly, so the rule stays greppable: any `rounded-*` in the codebase other
+than these two is a violation to fix, not a judgement call to make again.
+
+### 6.2 Buttons, cards, entrances, focus
+
+- **Buttons**: solid (`bg-accent text-on-accent`), outline (`border-edge
+  text-fg hover:border-accent-ink hover:text-accent-ink`), ghost (text +
+  underline on hover). Defined once in `CTALink.tsx` — reuse it rather than
+  hand-rolling a new button. Several components used to bypass it entirely
+  (`ContactForm`, `UnlockForm`, `ChatWidget`'s Build/Send, `Panels.tsx`'s
+  Closing CTA), which is exactly how `text-carbon` ended up standing in for
+  `text-on-accent` in five places and one widget ended up with a pill button
+  next to a rectangular one.
+- **Cards / grids** (`cards`, `docs`, `timeline`, `pricing`, service grids):
+  drawn with `gap-px` over a `bg-edge` container, with a matching `border-edge`
+  frame — the visible lines are the background showing through the gaps. This
+  was `bg-line` (1.37:1) with no frame at all on one page's variant; both
+  read as a single unbroken block instead of distinct cards. A half-empty
+  last row still renders as a solid bar of the divider colour, so column
+  count must divide item count exactly — see `blocks/cardGrid.ts`.
 - **Section entrances**: always through the `Reveal` component, never a bare
   scroll listener or ad-hoc GSAP tween.
 - **Focus states**: never removed. The global rule is
@@ -315,10 +398,30 @@ not "Our Amazing Services!!"
    line (proposals) — see §5.1.
 6. **Don't hardcode a hex value in a component.** Every colour used above has
    a token name. If a colour you need doesn't have one, that's a `globals.css`
-   change (and an update to this file), not a one-off literal.
+   change (and an update to this file), not a one-off literal. Where a
+   `bg-[radial-gradient(...)]` genuinely needs the accent at low opacity, use
+   `color-mix(in srgb, var(--color-accent) 6%, transparent)` inside the
+   arbitrary value, not a literal `rgba(232,169,74,0.06)` — ten of those had
+   drifted into the codebase as copies of the accent's hex.
+7. **Don't dilute an accent border with alpha instead of using its ink
+   token.** `border-accent/40` was tried more than once as "a softer accent
+   border" — on the pale ground it's still 1.00:1 regardless of alpha, since
+   alpha doesn't change relative luminance against an opaque background; the
+   border was simply gone. `border-accent-ink` at full opacity is the correct
+   softer read on every ground.
+8. **Don't add a third or fourth radius for "just this one marker."** A
+   checkbox, a legend swatch and a chip are all small square/round shapes
+   that drifted into `rounded-md`, `rounded-[3px]`, `rounded-[2px]` and
+   `rounded-sm` for what is the same conceptual object — see §6.1.
 
 ---
 
-*Last synced to code: Direction A · Instrument implementation, branch
-`design-corrections`. If `src/app/globals.css` or `src/data/site.ts` change
-after this, this file is stale until someone updates it in the same pass.*
+*Last synced to code: the contrast-and-shape redesign pass on branch
+`design-corrections` — `--color-edge` fixed in all three scopes,
+`--color-fg-muted` fixed in warm, `--color-danger` and `--color-lab-ink-muted`/
+`--color-panel-ink-muted` added, the `rounded-surface`/`rounded-control` shape
+system introduced, and the retired lime accent (`#c8f94e`) removed from
+`src/minitools/lib/palette.ts`, where it had survived independently of
+`globals.css` since the original brand consolidation. If `src/app/globals.css`
+or `src/data/site.ts` change after this, this file is stale until someone
+updates it in the same pass.*

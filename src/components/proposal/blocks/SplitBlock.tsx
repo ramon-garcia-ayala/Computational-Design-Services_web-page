@@ -24,12 +24,17 @@ export function SplitBlock({ block }: { block: SplitBlockData }) {
             <h3
               className={cn(
                 "font-mono text-[10px] uppercase tracking-widest",
-                column.tone === "solid" ? "text-accent" : "text-fg-muted",
+                column.tone === "solid" ? "text-accent-ink" : "text-fg-muted",
               )}
             >
               {column.title}
             </h3>
 
+            {/* The solid-vs-dashed rail *is* this block's entire vocabulary
+                (per its own docstring — built vs proposed). `border-line`
+                on the dashed side measured 1.38:1: the one visual distinction
+                this component exists to draw was nearly invisible on the
+                "proposed" half of every split. */}
             <ul className="mt-6">
               {column.items.map((item) => (
                 <li
@@ -37,8 +42,8 @@ export function SplitBlock({ block }: { block: SplitBlockData }) {
                   className={cn(
                     "py-4 pl-5 text-sm leading-relaxed",
                     column.tone === "solid"
-                      ? "border-l-2 border-accent text-fg"
-                      : "border-l-2 border-dashed border-line text-fg-muted",
+                      ? "border-l-2 border-accent-ink text-fg"
+                      : "border-l-2 border-dashed border-edge text-fg-muted",
                   )}
                 >
                   {item}

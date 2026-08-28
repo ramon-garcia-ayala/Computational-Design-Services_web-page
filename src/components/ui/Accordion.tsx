@@ -34,7 +34,7 @@ export function Accordion({ items }: { items: ExpertiseArea[] }) {
                   <span
                     className={cn(
                       "font-display text-lg font-semibold tracking-tight transition-colors",
-                      open ? "text-accent" : "text-fg",
+                      open ? "text-accent-ink" : "text-fg",
                     )}
                   >
                     {item.title}
@@ -42,7 +42,7 @@ export function Accordion({ items }: { items: ExpertiseArea[] }) {
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "shrink-0 font-mono text-accent transition-transform duration-300",
+                      "shrink-0 font-mono text-accent-ink transition-transform duration-300",
                       open && "rotate-45",
                     )}
                   >
@@ -64,7 +64,7 @@ export function Accordion({ items }: { items: ExpertiseArea[] }) {
                       key={capability}
                       className="flex gap-3 text-sm text-fg-muted"
                     >
-                      <span className="text-accent" aria-hidden="true">
+                      <span className="text-accent-ink" aria-hidden="true">
                         ·
                       </span>
                       {capability}
@@ -95,7 +95,7 @@ export function Accordion({ items }: { items: ExpertiseArea[] }) {
                 className={cn(
                   "border-l-2 py-4 pl-5 text-left font-display text-lg font-semibold tracking-tight transition-colors",
                   selected
-                    ? "border-accent text-accent"
+                    ? "border-accent-ink text-accent-ink"
                     : "border-line text-fg-muted hover:text-fg",
                 )}
               >
@@ -120,9 +120,9 @@ export function Accordion({ items }: { items: ExpertiseArea[] }) {
               {item.capabilities.map((capability) => (
                 <li
                   key={capability}
-                  className="flex gap-3 rounded-lg border border-line bg-graphite px-4 py-3 text-sm text-fg-muted"
+                  className="flex gap-3 rounded-surface border border-edge bg-graphite px-4 py-3 text-sm text-fg-muted"
                 >
-                  <span className="text-accent" aria-hidden="true">
+                  <span className="text-accent-ink" aria-hidden="true">
                     ·
                   </span>
                   {capability}

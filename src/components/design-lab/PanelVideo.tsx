@@ -41,18 +41,22 @@ const CONTAINED_FEATHER = {
  * on iOS, which otherwise takes any playing video fullscreen and throws the
  * visitor out of the page.
  *
- * **The files are not supplied yet (§13.8).** A missing `src` makes the
- * element request a path that 404s; it then renders nothing and the panel
- * simply shows its own plate. Nothing throws and no layout shifts, because
- * the element is absolutely positioned and never contributes height — so
- * dropping the real clips into `public/videos/panels/` is the only step left.
- * `onError` is handled explicitly so a missing file cannot leave a broken
- * poster frame behind.
+ * A missing `src` makes the element request a path that 404s; it then renders
+ * nothing and the panel simply shows its own plate. Nothing throws and no
+ * layout shifts, because the element is absolutely positioned and never
+ * contributes height. `onError` is handled explicitly so a missing file
+ * cannot leave a broken poster frame behind.
  *
  * It sits *under* the panel's content: the wrapper is `absolute inset-0` with
  * the content marked `relative` beside it, so no z-index bookkeeping is
  * needed. A scrim rides on top of the video so type stays legible whatever
- * the clip happens to be doing behind it.
+ * the clip happens to be doing behind it — **both variants get one now**. The
+ * contained clip originally shipped without any: it sits on the greige plate
+ * the Labs panel's own dark-ink heading and eyebrow render directly onto, with
+ * nothing between the text and full-opacity moving footage. The wash is
+ * `--color-lab-bg` rather than the full-bleed scrim's charcoal, so it settles
+ * the clip toward the plate's own tone instead of introducing a mismatched
+ * dark rectangle.
  *
  * With `prefers-reduced-motion` no video is mounted at all — a continuously
  * looping background is exactly what that preference is asking us not to do.
@@ -111,16 +115,16 @@ export function PanelVideo({
         }}
         className={cn(
           contained
-            ? "h-auto max-h-[88%] w-auto max-w-[94%] object-contain"
+            ? "h-auto max-h-[88%] w-auto max-w-[94%] object-contain opacity-70"
             : "h-full w-full object-cover opacity-45",
         )}
         style={contained ? CONTAINED_FEATHER : undefined}
       />
-      {/* Full-bleed clips keep a scrim so copy stays legible over them. A
-          contained clip does not: it sits on a plate that already matches its
-          own backdrop, and a scrim there is exactly the dark cast that had to
-          go. */}
-      {contained ? null : <div className="absolute inset-0 bg-panel/65" />}
+      {contained ? (
+        <div className="absolute inset-0 bg-lab-bg/35" />
+      ) : (
+        <div className="absolute inset-0 bg-panel/65" />
+      )}
     </div>
   );
 }

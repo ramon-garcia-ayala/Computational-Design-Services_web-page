@@ -4,7 +4,7 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import type { WfcSpec } from "../../../schema/spec";
 import { solveField } from "../../../lib/wfc";
-import { LINE, WFC_TILE_COLORS } from "../../../lib/palette";
+import { SCENE_GROUND, WFC_TILE_COLORS } from "../../../lib/palette";
 
 const FIT = 6;
 
@@ -59,10 +59,12 @@ export function WfcMesh({ spec }: { spec: WfcSpec }) {
           a field of towers and a flat lattice both sit in the middle of the
           frame instead of the tall one climbing out of the top of it. */}
       <group position={[0, -field.tallest / 2, 0]}>
+        {/* `SCENE_GROUND`, not the site's own `LINE` — see the comment at its
+            definition. Same ground-plate role as `LayoutMesh`'s slab. */}
         <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[field.size, field.size]} />
           <meshBasicMaterial
-            color={LINE}
+            color={SCENE_GROUND}
             transparent
             opacity={0.85}
             side={THREE.DoubleSide}

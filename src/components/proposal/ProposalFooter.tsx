@@ -11,7 +11,7 @@ export function ProposalFooter({ proposal }: { proposal: Proposal }) {
         <span>Prepared for review with {proposal.client}</span>
         <a
           href={mailtoHref}
-          className="text-fg transition-colors hover:text-accent"
+          className="text-fg transition-colors hover:text-accent-ink"
         >
           {site.contactLabel}
         </a>

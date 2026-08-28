@@ -74,6 +74,33 @@ Project utilities defined in `globals.css`: `.shell` (page container), `grid-bg`
 Note `.shell` is a plain class, not an `@utility`, so it takes no variants:
 `lg:shell` does nothing.
 
+**`--color-line` is decorative-only; `--color-edge` is for anything a reader
+has to actually see** — field borders, control boundaries, and just as much
+the structure of a hand-drawn diagram, a table's row rules, or a `gap-px`
+card grid's divider. `--color-line` measures 1.37:1 on the dark ground; it
+was also drawing `FlowDiagram`'s connector rail and a checklist's checkboxes
+before a contrast pass caught it, on the reasoning that "meaningful" isn't
+limited to form fields. If a line's absence would change what the reader
+understands, it's `edge`, not `line`. There is a **`--color-danger`** token
+too (scoped like `accent-ink`, since a bright red on `carbon` is invisible on
+`pale`) — never reach for an unscoped Tailwind colour like `text-red-400` for
+an error state.
+
+**Shape is exactly two radii, everywhere**: `rounded-surface` (containers,
+cards, panels, **and text fields** — a field holds content the way a card
+does, it isn't a control that triggers an action) and `rounded-control`
+(buttons, chips, toggles, badges, small circular markers). Any other
+`rounded-*` in the codebase is a regression, not a style choice — the site
+used to carry six different radii, several mixed within one component.
+
+**`scripts/contrast-check.mjs` gates the token layer.** It reads
+`globals.css` directly (not a copy of the values) and asserts every
+token/background pair the design system actually promises — 4.5:1 for text,
+3:1 for meaningful borders — across all three scopes plus Home's `lab-*`
+family. Run it (`node scripts/contrast-check.mjs`) after touching any colour
+token; every failure it would catch was, at one point, a real bug that shipped
+silently because nobody multiplied the numbers out.
+
 ## Architecture
 
 Multi-page App Router site, split into two route groups so the client-facing
@@ -489,8 +516,8 @@ else, so without it reading a reply scrolls the page instead.
 
 **But the message list applies it only while it actually overflows.** Applied
 unconditionally it hands Lenis's wheel to the transcript whenever the pointer is
-over it, and on the home page this widget fills the middle of the Labs panel
-with an empty transcript: scrolling there did nothing through Lenis and fell
+over it, and on the home page this widget fills the middle of the Playground
+panel with an empty transcript: scrolling there did nothing through Lenis and fell
 back to a native jump, so that one panel lurched while the rest of the page
 glided. `ChatWidget` measures `scrollHeight > clientHeight` (a `ResizeObserver`
 on the list *and* its children, since a streaming reply grows the content

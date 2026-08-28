@@ -31,7 +31,7 @@ export default function AboutPage() {
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-20">
         <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
         <div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_25%_35%,rgba(232,169,74,0.06),transparent_60%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_25%_35%,color-mix(in_srgb,var(--color-accent)_6%,transparent),transparent_60%)]"
           aria-hidden="true"
         />
         <div className="shell relative">

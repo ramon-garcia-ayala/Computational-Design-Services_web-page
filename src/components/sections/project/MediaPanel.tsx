@@ -74,7 +74,7 @@ export function MediaPanel({
     >
       <div
         className={cn(
-          "relative max-h-[62vh] w-full shrink-0 overflow-hidden rounded-lg border border-line bg-graphite",
+          "relative max-h-[62vh] w-full shrink-0 overflow-hidden rounded-surface border border-line bg-graphite",
           !reducedMotion && "lg:max-h-none lg:w-[var(--media-w)]",
         )}
         style={{ ...pinnedWidth, aspectRatio: `${asset.width} / ${asset.height}` }}

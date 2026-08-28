@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Icon } from "./icons";
 
 type Status = "idle" | "checking" | "invalid" | "unavailable";
@@ -68,7 +69,7 @@ export function UnlockForm({ slug }: { slug: string }) {
               setPassword(event.target.value);
               if (error) setStatus("idle");
             }}
-            className="w-full rounded-full border border-edge bg-graphite py-3 pr-5 pl-11 text-sm text-fg placeholder:text-fg-muted focus:border-accent-ink focus:outline-none"
+            className="w-full rounded-surface border border-edge bg-graphite py-3 pr-5 pl-11 text-sm text-fg placeholder:text-fg-muted focus:border-accent-ink focus:outline-none"
             placeholder="••••••••"
           />
         </div>
@@ -76,7 +77,7 @@ export function UnlockForm({ slug }: { slug: string }) {
         <button
           type="submit"
           disabled={status === "checking" || password.length === 0}
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-transparent bg-accent px-7 py-3 font-mono text-sm tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center justify-center gap-2 rounded-control border border-transparent bg-accent px-7 py-3 font-mono text-sm tracking-wide text-on-accent uppercase transition-colors duration-200 hover:bg-accent-dim disabled:cursor-not-allowed disabled:opacity-40"
         >
           {status === "checking" ? "Checking" : "Open"}
         </button>
@@ -85,7 +86,7 @@ export function UnlockForm({ slug }: { slug: string }) {
       <p
         id="proposal-password-error"
         role="status"
-        className="mt-4 min-h-5 text-sm text-fg-muted"
+        className={cn("mt-4 min-h-5 text-sm", error ? "text-danger" : "text-fg-muted")}
       >
         {error ? messages[status] : ""}
       </p>

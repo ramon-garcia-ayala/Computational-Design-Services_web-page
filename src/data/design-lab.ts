@@ -63,8 +63,9 @@ export const designLab = {
       id: "countries",
       value: "3",
       label: "Countries",
-      /* Revealed on hover in place of the label. Kept in the DOM either way,
-         so assistive tech gets the names without needing the pointer. */
+      /* Rendered under the label in `StatsBar`, not swapped in on hover —
+         a hover-only reveal on a non-focusable stat had no keyboard
+         equivalent. */
       detail: "Lebanon · Mexico · US",
     },
   ],
@@ -115,8 +116,13 @@ export const designLab = {
       ],
     },
 
-    labs: {
-      id: "labs",
+    /* Named `playground`, not `labs` — the chat widget this panel hosts has
+       nothing to do with the separate `/labs` route (a placeholder page for
+       future experiments). The two shared the `labs` key for a while, which
+       is exactly what let `/labs`'s own copy drift into describing this
+       panel's assistant as if it were the page's own content. */
+    playground: {
+      id: "playground",
       kicker: "Playground",
       title: "Try it yourself",
       /* Transcoded from the supplied .mov: the source is HEVC, which Chrome

@@ -51,16 +51,19 @@ export function ExploreMore({
     <div ref={rootRef} className="mt-[6svh] flex justify-center">
       <Link
         href={href}
-        className="group inline-flex flex-col items-center gap-3 rounded-full px-6 py-3 font-mono text-xs uppercase tracking-[0.25em] text-fg transition-colors duration-200 hover:text-accent sm:text-sm"
+        className="group inline-flex flex-col items-center gap-3 rounded-control px-6 py-3 font-mono text-xs uppercase tracking-[0.25em] text-fg transition-colors duration-200 hover:text-accent-ink sm:text-sm"
       >
-        <span className="border-b border-fg/30 pb-1 transition-colors duration-200 group-hover:border-accent">
+        {/* Was `border-fg/30` — a stacked alpha this faint on `--color-panel`
+            read as barely-there rather than deliberately subtle. A solid
+            muted token reads as an intentional underline instead. */}
+        <span className="border-b border-fg-muted pb-1 transition-colors duration-200 group-hover:border-accent-ink">
           {label}
         </span>
         <svg
           data-chevron
           aria-hidden="true"
           viewBox="0 0 24 14"
-          className="h-3.5 w-6 text-accent"
+          className="h-3.5 w-6 text-accent-ink"
         >
           <path
             d="M2 2l10 10L22 2"

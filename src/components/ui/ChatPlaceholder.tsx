@@ -21,14 +21,14 @@ export function ChatPlaceholder({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative flex w-full flex-col overflow-hidden rounded-xl border border-line bg-graphite/60 backdrop-blur-sm",
+        "relative flex w-full flex-col overflow-hidden rounded-surface border border-edge bg-graphite/60 backdrop-blur-sm",
         "h-[60svh] max-h-[440px] min-h-[300px]",
         "lg:aspect-[4/3] lg:h-auto lg:max-h-none lg:min-h-0",
         className,
       )}
       data-slot="chat"
     >
-      <div className="flex items-center justify-between border-b border-line px-4 py-3">
+      <div className="flex items-center justify-between border-b border-edge px-4 py-3">
         <span className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">
           {widgetCopy.heading}
         </span>

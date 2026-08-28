@@ -67,7 +67,7 @@ export function ProposalIndex({ entries }: { entries: IndexEntry[] }) {
                   className={cn(
                     "font-mono text-[10px] whitespace-nowrap uppercase tracking-widest transition-opacity duration-300",
                     active
-                      ? "text-accent opacity-100"
+                      ? "text-accent-ink opacity-100"
                       : "text-fg-muted opacity-0 group-hover:opacity-100",
                   )}
                 >

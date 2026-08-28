@@ -113,7 +113,7 @@ export function HorizontalScroll({ project }: { project: Project }) {
           >
             {entry.kind === "panel" ? (
               <>
-                <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
                   {entry.panel.kicker}
                 </p>
                 <h2 className="mt-6 max-w-xl text-h3 font-display font-semibold text-fg">

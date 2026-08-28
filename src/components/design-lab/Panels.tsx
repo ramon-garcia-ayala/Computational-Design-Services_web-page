@@ -1,4 +1,5 @@
 import { ChatPlaceholder } from "@/components/ui/ChatPlaceholder";
+import { CTALink } from "@/components/ui/CTALink";
 import { site } from "@/data/site";
 import { designLab } from "@/data/design-lab";
 import { cn } from "@/lib/utils";
@@ -6,7 +7,6 @@ import { ServiceMotif } from "./ServiceMotif";
 import { PanelVideo } from "./PanelVideo";
 import { ExploreMore } from "./ExploreMore";
 import Image from "next/image";
-import Link from "next/link";
 
 /**
  * The five panel bodies (spec §11.5–11.9, revised by §13.2–13.6).
@@ -40,7 +40,7 @@ function Eyebrow({
     <p
       className={cn(
         "font-mono text-xs uppercase tracking-[0.3em] sm:text-sm",
-        tone === "ink" ? "text-lab-ink" : "text-accent",
+        tone === "ink" ? "text-lab-ink" : "text-accent-ink",
       )}
     >
       {children}
@@ -72,14 +72,26 @@ export function ServicesPanel() {
                 edge: the SVG is a fixed 120px box, so in a wider column it
                 needs the flex centring or it reads as hanging off to one
                 side. Its links inherit `currentColor`. */}
-            <div className="flex justify-center text-accent/70">
+            <div className="flex justify-center text-accent-ink">
               <ServiceMotif kind={item.motif} />
             </div>
 
             <h3 className="mt-6 border-t border-panel-line pt-5 font-semibold leading-snug text-fg text-[clamp(1.15rem,1.5vw,1.5rem)]">
               {item.name}
             </h3>
-            <p className="mt-4 text-justify text-sm leading-relaxed text-fg/70 sm:text-base">
+            {/* Was `text-fg/70`: at rest, once the panel has scrolled fully
+                into place, this sits on `--color-panel`, and `--color-fg-muted`
+                (tuned for carbon at 6.08:1) drops to 3.55:1 there — the panel
+                is much lighter than carbon. `panel-ink-muted` is the token
+                built for this plate specifically.
+                Note: this panel also gets `blend` (`PanelSection`'s scroll-
+                scrubbed morph), so early in the scroll the plate is still
+                mostly the hero's greige showing through a translucent
+                charcoal — contrast is lower there than at rest. That is a
+                transient property of the scroll transform itself, not
+                something a static token can fix; this token corrects the
+                state the reader actually stops on. */}
+            <p className="mt-4 text-justify text-sm leading-relaxed text-panel-ink-muted sm:text-base">
               {item.body}
             </p>
           </li>
@@ -92,13 +104,13 @@ export function ServicesPanel() {
   );
 }
 
-export function LabsPanel() {
-  const { labs } = designLab.panels;
+export function PlaygroundPanel() {
+  const { playground } = designLab.panels;
 
   return (
     <>
       {/* §13.3: looping backdrop behind everything on this panel. */}
-      <PanelVideo src={labs.video} contained />
+      <PanelVideo src={playground.video} contained />
 
       {/* The heading sits high so the enlarged clip has the middle of the
           panel to itself. Type is dark here, not light: this panel's plate is
@@ -106,15 +118,20 @@ export function LabsPanel() {
           uses would be unreadable. */}
       <div className={`${SHELL} relative flex h-full flex-col justify-start pt-[4svh]`}>
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
-          <Eyebrow tone="ink">{labs.kicker}</Eyebrow>
+          <Eyebrow tone="ink">{playground.kicker}</Eyebrow>
           <h2 className="mt-3 text-h2 font-semibold text-lab-ink">
-            {labs.title}
+            {playground.title}
           </h2>
 
           {/* Translucent on its own shell rather than on the widget's inner
-              surfaces, so the clip shows through without costing the
-              transcript any legibility. */}
-          <ChatPlaceholder className="mt-8 max-w-3xl border-lab-ink/15 bg-carbon/55 backdrop-blur-md lg:aspect-[16/10]" />
+              surfaces, so the clip still shows through at the edges without
+              costing the transcript its legibility. Was `bg-carbon/55` with
+              `border-lab-ink/15`: at 55% the moving clip behind it competed
+              directly with the chat text, and a 15%-opacity dark border is
+              below anything WCAG 1.4.11 calls visible. 85% keeps the loop
+              readable around the frame while the plate itself carries the
+              conversation. */}
+          <ChatPlaceholder className="mt-8 max-w-3xl border-edge bg-carbon/85 backdrop-blur-md lg:aspect-[16/10]" />
         </div>
       </div>
     </>
@@ -130,9 +147,17 @@ export function FeaturedPanel() {
   return (
     <div className={`${SHELL} flex h-full flex-col justify-start pt-[11svh]`}>
       <Eyebrow>{featured.kicker}</Eyebrow>
-      <h2 className="mt-4 text-display font-semibold text-fg">
-        {featured.kicker}
-      </h2>
+      {/* `featured.title` is deliberately blank (§11 point 7 / §13.4 keep
+          "FEATURED WORK" as the kicker alone). Rendering it unconditionally
+          fell back to `featured.kicker` a second time — the label printed
+          twice, once as the eyebrow and once as this heading, both reading
+          "Featured work". Guarding it is what actually keeps the title
+          optional instead of just visually redundant. */}
+      {featured.title ? (
+        <h2 className="mt-4 text-display font-semibold text-fg">
+          {featured.title}
+        </h2>
+      ) : null}
 
       {/* Three columns at every width. The panel is a fixed 100svh with its
           overflow hidden, so a stacked mobile layout would simply be clipped
@@ -160,7 +185,7 @@ export function FeaturedPanel() {
                 <p className="font-semibold leading-snug text-fg text-[clamp(0.72rem,1.05vw,1.05rem)]">
                   {item.title}
                 </p>
-                <p className="mt-1 leading-snug text-fg/60 text-[clamp(0.6rem,0.82vw,0.9rem)]">
+                <p className="mt-1 leading-snug text-panel-ink-muted text-[clamp(0.6rem,0.82vw,0.9rem)]">
                   {item.caption}
                 </p>
               </figcaption>
@@ -216,7 +241,7 @@ export function AboutPanel() {
                     className="object-cover"
                   />
                 </div>
-                <figcaption className="mt-3 font-mono text-[11px] uppercase tracking-widest text-fg/60">
+                <figcaption className="mt-3 font-mono text-[11px] uppercase tracking-widest text-panel-ink-muted">
                   {founder.short}
                 </figcaption>
               </figure>
@@ -248,13 +273,14 @@ export function ClosingPanel() {
           {/* §11.9 names `/contact`; the route exists and owns a working
               form, so this — like every primary CTA on the site — points
               there instead of opening a mailto that silently does nothing
-              for a visitor on webmail. */}
-          <Link
-            href="/contact"
-            className="mt-12 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-mono text-xs uppercase tracking-widest text-carbon transition-colors duration-200 hover:bg-accent-dim sm:text-sm"
-          >
+              for a visitor on webmail. Routed through `CTALink`, the single
+              place CTA styling lives, rather than a hand-rolled button: this
+              was the one that used `text-carbon` where `--color-on-accent`
+              exists for exactly this role, and the divergence is exactly
+              what let the ink go stale here without breaking anywhere else. */}
+          <CTALink href="/contact" variant="solid" size="lg" className="mt-12">
             {site.contactLabel}
-          </Link>
+          </CTALink>
         </div>
       </div>
     </>

@@ -8,7 +8,7 @@ import {
   AboutPanel,
   ClosingPanel,
   FeaturedPanel,
-  LabsPanel,
+  PlaygroundPanel,
   ServicesPanel,
 } from "@/components/design-lab/Panels";
 import { LabFooter } from "@/components/design-lab/LabFooter";
@@ -63,11 +63,11 @@ export default function HomePage() {
         <ServicesPanel />
       </PanelSection>
 
-      {/* The Labs plate is the greige its clip is shot on, not the panel
-          charcoal: the two backdrops are the same studio plate, measured
-          #b4b0ad-#b6b2af against this token's #b8b4b1. */}
+      {/* The Playground plate is the greige its clip is shot on, not the
+          panel charcoal: the two backdrops are the same studio plate,
+          measured #b4b0ad-#b6b2af against this token's #b8b4b1. */}
       <PanelSection className="bg-lab-bg">
-        <LabsPanel />
+        <PlaygroundPanel />
       </PanelSection>
 
       <PanelSection>

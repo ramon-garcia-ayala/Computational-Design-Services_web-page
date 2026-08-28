@@ -44,18 +44,21 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
 
   return (
     <>
-      {/* `data-site-pale` when light: the header's `light` variant only ever
-          sits on the pale/greige plate (Home's hero, and the gradient band
-          every (site) route inherits from the layout above) — never inside
-          the `[data-site-pale]` div itself, since it renders one level above
-          it. Without this, its focus ring stayed hardwired to amber-on-
-          greige (1.00:1) even after /about and /contact were fixed, because
-          the header sits outside the div those pages wrap their content in.
-          Safe to stamp broadly: every light-branch class in this file and in
-          `MusicToggle` reads `lab-*` tokens, never the ones this scope
-          redefines. */}
+      {/* `data-site-pale-chrome`, not `data-site-pale`, when light: the
+          header's `light` variant sits on the pale/greige plate (Home's
+          hero, and the gradient band every (site) route inherits from the
+          layout above) and needs that scope's token values — `--color-focus`
+          for its keyboard focus ring, `--color-edge` for its control
+          borders. It used to stamp the plain `data-site-pale` attribute,
+          which also matches `html:has([data-site-pale])`'s background-color
+          rule — and since this header renders on *every* `(site)` route,
+          that repainted the whole page's `html`/`body` background pale
+          greige everywhere, not just on /about and /contact, where a page's
+          own content wrapper stamps the same attribute on purpose. The
+          `-chrome` variant reaches the identical token values (see
+          `globals.css`) without that side effect. */}
       <header
-        data-site-pale={light || undefined}
+        data-site-pale-chrome={light || undefined}
         className="font-display fixed inset-x-0 top-0 z-50"
       >
         {/* Legibility gradient: the header floats over the content, and without
@@ -134,14 +137,23 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
                 nothing for them. The contact page carries a working form
                 *and* offers the mailto to anyone who prefers it, so nobody
                 loses a route. Label matches every other primary CTA
-                site-wide — `site.contactLabel`, not its own wording. */}
+                site-wide — `site.contactLabel`, not its own wording.
+
+                Both branches used to end their hover in `text-accent`/
+                `border-accent`. On the light branch that measures 1.00:1
+                against this ground — identical luminance — so the link went
+                invisible on hover, on every route that mounts this header
+                except Home, where the greige never runs this far right. Rest
+                state and hover now both resolve through tokens this ground
+                actually clears: `border-edge`/`text-lab-ink` at rest,
+                `accent-ink` on the dark branch's hover. */}
             <Link
               href="/contact"
               className={cn(
                 "rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
                 light
-                  ? "border-lab-ink/25 text-lab-ink/80 hover:border-lab-ink hover:font-bold hover:text-lab-ink"
-                  : "border-line text-fg hover:border-accent hover:text-accent",
+                  ? "border-edge text-lab-ink hover:border-lab-ink hover:font-bold"
+                  : "border-edge text-fg hover:border-accent-ink hover:text-accent-ink",
               )}
             >
               {site.contactLabel}
@@ -156,8 +168,8 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
               className={cn(
                 "group flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
                 light
-                  ? "border-lab-ink/25 text-lab-ink/80 hover:border-lab-ink hover:font-bold hover:text-lab-ink"
-                  : "border-line text-fg hover:border-accent hover:text-accent",
+                  ? "border-edge text-lab-ink hover:border-lab-ink hover:font-bold"
+                  : "border-edge text-fg hover:border-accent-ink hover:text-accent-ink",
               )}
             >
               <span className="flex w-4 flex-col gap-[3px]" aria-hidden="true">

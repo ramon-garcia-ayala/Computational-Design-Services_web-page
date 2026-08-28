@@ -21,7 +21,7 @@ export default async function UnlockPage({ searchParams }: PageProps) {
     <section className="relative flex min-h-[100svh] items-center overflow-hidden py-20">
       <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(232,169,74,0.07),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,color-mix(in_srgb,var(--color-accent)_7%,transparent),transparent_60%)]"
         aria-hidden="true"
       />
 
@@ -29,12 +29,12 @@ export default async function UnlockPage({ searchParams }: PageProps) {
         <div className="max-w-xl">
           <Link
             href="/"
-            className="font-display text-lg font-semibold tracking-tight text-fg transition-colors hover:text-accent"
+            className="font-display text-lg font-semibold tracking-tight text-fg transition-colors hover:text-accent-ink"
           >
-            R<sup className="text-accent">2</sup>&#967;TECH
+            R<sup className="text-accent-ink">2</sup>&#967;TECH
           </Link>
 
-          <p className="mt-12 font-mono text-[10px] uppercase tracking-widest text-accent">
+          <p className="mt-12 font-mono text-[10px] uppercase tracking-widest text-accent-ink">
             Protected document
           </p>
 
@@ -57,7 +57,7 @@ export default async function UnlockPage({ searchParams }: PageProps) {
           )}
 
           {error === "config" ? (
-            <p className="mt-6 rounded-lg border border-line bg-graphite px-4 py-3 text-sm text-fg-muted">
+            <p className="mt-6 rounded-surface border border-edge bg-graphite px-4 py-3 text-sm text-fg-muted">
               Access is not configured on this deployment yet. Please contact us
               and we&apos;ll send the document another way.
             </p>
@@ -67,7 +67,7 @@ export default async function UnlockPage({ searchParams }: PageProps) {
             Lost the password?{" "}
             <a
               href={mailtoHref}
-              className="text-fg transition-colors hover:text-accent"
+              className="text-fg transition-colors hover:text-accent-ink"
             >
               {site.contactLabel}
             </a>

@@ -115,7 +115,11 @@ export function Preloader() {
 
       const solidify = (cell: HTMLElement) => {
         cell.textContent = "";
-        cell.style.background = "#ffffff";
+        // `var(--color-fg)`, not a hardcoded `#ffffff` — the token is
+        // #f2f4f0, near-white but not pure white, and reading the variable
+        // rather than duplicating its value is what keeps this in step with
+        // it if it ever changes.
+        cell.style.background = "var(--color-fg)";
       };
 
       /* Waiting for fonts is what keeps the reveal seamless: the hero's copy
@@ -238,7 +242,7 @@ export function Preloader() {
         data-preloader
         role="status"
         aria-label={preloader.label}
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a] px-6"
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-carbon px-6"
       >
         <div
           ref={gridRef}
@@ -251,7 +255,7 @@ export function Preloader() {
             fontFamily: "var(--font-jetbrains), ui-monospace, monospace",
             fontSize: "11px",
             lineHeight: 1,
-            color: "#ffffff",
+            color: "var(--color-fg)",
             WebkitMaskImage: `url('${mask.src}')`,
             maskImage: `url('${mask.src}')`,
             WebkitMaskSize: "100% 100%",

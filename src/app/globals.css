@@ -38,10 +38,21 @@
   --color-focus: #e8a94a;
   /* Borders that carry meaning: fields, controls, selected state. WCAG 1.4.11
      wants 3:1 for those, and `--color-line` is 1.37:1 — right for a decorative
-     divider, wrong for an input. Keep the two apart. */
-  --color-edge: #5a6368; /* 3.19:1 on carbon */
+     divider, wrong for an input. Keep the two apart.
+     Was `#5a6368`, 3.19:1 on carbon but only 2.93:1 on `--color-graphite` — a
+     bordered control drawn on a surface, not the page ground, fell under the
+     line it exists to clear. This value keeps ≥3.15:1 against both. */
+  --color-edge: #5e686d; /* 3.44:1 on carbon, 3.15:1 on graphite */
   --color-fg: #f2f4f0; /* primary text */
   --color-fg-muted: #8a918c; /* secondary text */
+  /* Error text and validation borders. Was `text-red-400` inline — the only
+     colour in the site's own UI that bypassed the token system, and on the
+     pale ground (`/contact`'s form) it measured ~1.3:1: every validation
+     message and the failure alert were unreadable. Scoped like `fg`/`accent-ink`
+     because a red tuned for this near-black ground goes invisible on the
+     lighter warm and pale grounds `[data-site-warm]`/`[data-site-pale]`
+     redefine below. */
+  --color-danger: #d25854; /* 4.92:1 on carbon, 4.51:1 on graphite */
 
   /* Type: geometric for headings, neutral for body, mono for figures.
      Space Grotesk, not Sora — its squared, monolinear letterforms are the
@@ -82,6 +93,15 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1440px;
 
+  /* Shape: exactly two radii, everywhere. Before this the site carried six
+     values (`rounded-full`, `-lg`, `-xl`, `-md`, `-sm`, bare `rounded`) mixed
+     within single components — `ContactForm` and `ChatWidget` each used three.
+     Tokens rather than the Tailwind scale directly so the rule stays
+     greppable: any `rounded-*` other than these two is a violation to fix,
+     not a judgement call to make again. */
+  --radius-surface: 0.25rem; /* container, card, field, diagram node */
+  --radius-control: 9999px; /* button, chip, toggle, pill marker */
+
   /* `/design-lab` only. Prefixed `lab-*` deliberately: an unprefixed
      `--color-accent` etc. would collide with the live site's tokens above,
      repainting every CTA and focus ring on the real site the moment this
@@ -89,9 +109,14 @@
   --color-lab-bg: #b8b4b1;
   /* Type over the greige plate. The site's `fg` is near-white and would be
      illegible there, so the hero overlay needs its own dark pair. Charcoal
-     is the spec's `--color-structure` value (§3). */
+     is the spec's `--color-structure` value (§3).
+     `-muted` was `#57534e`, 3.71:1 — the exact ratio `[data-site-pale]` names
+     below as the failure it fixed for `--color-fg-muted`, on the identical
+     ground (`--color-lab-bg` and pale's `--color-carbon` are both #b8b4b1),
+     but the `lab-*` pair never got the same treatment. This reuses that
+     already-verified value rather than deriving a third one. */
   --color-lab-ink: #2a2826;
-  --color-lab-ink-muted: #57534e;
+  --color-lab-ink-muted: #4a4642; /* 4.54:1 on lab-bg, was 3.71:1 */
 
   /* Panel plate (§13.2). Pure carbon read as flat black against the hero;
      this is a warm charcoal — clearly lighter than black, clearly darker
@@ -99,6 +124,13 @@
      page ending. Light type still passes on it comfortably. */
   --color-panel: #3d3934;
   --color-panel-line: #55504a;
+  /* Secondary ink on the panel plate. `--color-fg-muted` (#8a918c) is tuned
+     against carbon (6.08:1) and drops to 3.55:1 here — the panel is much
+     lighter than carbon, so the same grey that reads as "muted" on the page
+     ground fails outright on it. Every panel's captions and footnotes
+     (`text-fg/60`, `text-fg/70` in `Panels.tsx`) sit on this plate, not on
+     carbon, so they need their own ink rather than a dimmed `fg`. */
+  --color-panel-ink-muted: #ada79f; /* 4.80:1 on panel */
 }
 
 /* ---------------------------------------------------------------------------
@@ -160,7 +192,20 @@ html:has([data-design-lab]) body {
   --color-line: #55504a; /* borders */
   --color-line-soft: #494440; /* subtle borders, the background grid */
   --color-fg: #f2f4f0; /* primary text */
-  --color-fg-muted: #a8a29a; /* secondary text */
+  /* Was `#a8a29a`, 4.53:1 on this scope's own carbon but only 3.93:1 on its
+     `--color-graphite` — the same border-vs-surface gap `--color-edge` had,
+     just for text. This value clears 4.5:1 against both. */
+  --color-fg-muted: #b4aea5; /* 5.20:1 on carbon, 4.52:1 on graphite */
+  /* `--color-edge` has no dark-scope inheritance worth keeping: `#5e686d`
+     (this scope's inherited default) reads 1.87:1 here — the token built for
+     WCAG 1.4.11 failed it on the ground most of the site's routes actually
+     use. Every field, toggle and diagram border on `(site)` inherits from
+     this. */
+  --color-edge: #96918a; /* 3.66:1 on carbon, 3.18:1 on graphite */
+  /* See `--color-danger` in `@theme` — the dark-scope red is unreadable on
+     this ground's mid greys, so it gets its own value rather than a shared
+     one tuned for near-black. */
+  --color-danger: #ff9686; /* 5.43:1 on carbon, 4.71:1 on graphite */
 }
 
 html:has([data-site-warm]),
@@ -186,7 +231,20 @@ html:has([data-site-warm]) body {
    `outline`, so the focus ring stayed hardwired to amber and was invisible
    on every control on this ground.
 --------------------------------------------------------------------------- */
-[data-site-pale] {
+/* `[data-site-pale-chrome]` reaches the same token values without the
+   `html:has()` background side effect below. `Header`'s `light` variant
+   stamps only the chrome variant: it always sits on the pale greige top
+   band, on *every* `(site)` route, not only /about and /contact — so before
+   this split, `html:has([data-site-pale])` matched on every route the
+   Header rendered on, and its background-color rule (same specificity as
+   `[data-site-warm]`'s, later in the file, so it won every tie) painted the
+   entire page pale greige instead of warm charcoal. `/projects`, `/services`,
+   `/labs`, `/labs/tool` and every project page were rendering on the wrong
+   page ground, sitewide, for as long as the Header's `light` variant has
+   existed — a single fixed strip's chrome scope was repainting content it
+   never visually touches. */
+[data-site-pale],
+[data-site-pale-chrome] {
   --color-carbon: #b8b4b1; /* page ground — the hero's plate */
   --color-graphite: #c1bdba; /* surfaces */
   --color-graphite-hi: #c9c5c2; /* elevated surface */
@@ -196,7 +254,13 @@ html:has([data-site-warm]) body {
   --color-fg-muted: #4a4642; /* secondary text — 4.54:1, where #57534e was 3.71 */
   --color-accent-ink: #2a2826; /* 7.13:1 — the fg colour carries the accent's ink role here */
   --color-focus: #2a2826;
-  --color-edge: #66615b; /* 2.98:1 vs this ground, where #5a6368 read at 1.40:1 */
+  /* Was `#66615b`, 2.98:1 against carbon — under the 3:1 this token exists to
+     clear, by a margin small enough that it read as passing at a glance. This
+     value keeps ≥3.17:1 against both carbon and `--color-graphite`. */
+  --color-edge: #625d57; /* 3.17:1 on carbon, 3.49:1 on graphite */
+  /* See `--color-danger` in `@theme`. This ground is light, so the readable
+     direction inverts: a dark red, not a bright one. */
+  --color-danger: #900e0e; /* 4.52:1 on carbon, 4.99:1 on graphite */
 }
 
 html:has([data-site-pale]),

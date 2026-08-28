@@ -47,15 +47,22 @@ export function StatsBar() {
                 {stat.value}
               </p>
 
-              {/* Fixed-height slot so swapping the label for the country list
-                  cannot nudge the row. */}
-              <span className="relative mt-4 block h-4 w-full">
-                <span className="absolute inset-0 block font-mono text-[10px] uppercase tracking-[0.25em] text-lab-ink-muted transition-opacity duration-300 group-hover:opacity-0 sm:text-[11px]">
+              {/* Was a hover-only swap: the country list lived at `opacity-0`
+                  and only reached `opacity-100` on `group-hover`. Opacity
+                  doesn't remove content from the accessibility tree, so a
+                  screen reader always read both lines regardless of pointer
+                  input — but a sighted keyboard user, tabbing without one,
+                  had no way to trigger the reveal at all, on a non-focusable
+                  `<li>`. Showing both lines together removes the gap outright
+                  rather than bolting a synthetic focus target onto a static
+                  stat. */}
+              <span className="mt-4 flex flex-col items-center gap-0.5">
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-lab-ink-muted sm:text-[11px]">
                   {stat.label}
                 </span>
 
                 {"detail" in stat && stat.detail ? (
-                  <span className="absolute inset-0 block whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.18em] text-lab-ink opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:text-[11px]">
+                  <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.18em] text-lab-ink sm:text-[11px]">
                     {stat.detail}
                   </span>
                 ) : null}

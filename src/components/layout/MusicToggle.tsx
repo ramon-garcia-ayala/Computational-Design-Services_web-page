@@ -50,10 +50,10 @@ export function MusicToggle({
       aria-pressed={playing}
       aria-label={playing ? "Turn sound off" : "Turn sound on"}
       className={cn(
-        "group flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors",
+        "group flex items-center gap-2 rounded-control border px-3 py-1.5 transition-colors",
         light
-          ? "border-lab-ink/25 hover:border-lab-ink"
-          : "border-line hover:border-accent",
+          ? "border-edge hover:border-lab-ink"
+          : "border-edge hover:border-accent-ink",
         className,
       )}
     >
@@ -79,8 +79,8 @@ export function MusicToggle({
         className={cn(
           "font-mono text-[10px] uppercase tracking-widest transition-colors",
           light
-            ? "text-lab-ink/70 group-hover:font-bold group-hover:text-lab-ink"
-            : "text-fg-muted group-hover:text-accent",
+            ? "text-lab-ink-muted group-hover:font-bold group-hover:text-lab-ink"
+            : "text-fg-muted group-hover:text-accent-ink",
         )}
       >
         {playing ? "On" : "Off"}

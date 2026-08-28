@@ -11,9 +11,9 @@ export function ProposalHeader({ proposal }: { proposal: Proposal }) {
       <div className="shell flex h-14 items-center justify-between gap-4">
         <Link
           href="/"
-          className="font-display text-sm font-semibold tracking-tight text-fg transition-colors hover:text-accent"
+          className="font-display text-sm font-semibold tracking-tight text-fg transition-colors hover:text-accent-ink"
         >
-          R<sup className="text-accent">2</sup>&#967;TECH
+          R<sup className="text-accent-ink">2</sup>&#967;TECH
         </Link>
 
         <p className="hidden font-mono text-[10px] uppercase tracking-widest text-fg-muted lg:block">

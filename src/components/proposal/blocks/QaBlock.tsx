@@ -10,11 +10,16 @@ const priorityOrder: Record<Priority, number> = {
   Low: 3,
 };
 
+/* Medium and Low used to be byte-identical (`"border border-line
+   text-fg-muted"`) — the tally rendered two visually indistinguishable
+   pills for priorities the reader is meant to tell apart. Four levels now
+   step down in weight: a filled plate, an ink-bordered chip, an
+   edge-bordered chip, then bare text with no chip at all. */
 const priorityStyle: Record<Priority, string> = {
-  Blocking: "bg-accent text-carbon",
-  High: "border border-accent text-accent",
-  Medium: "border border-line text-fg-muted",
-  Low: "border border-line text-fg-muted",
+  Blocking: "bg-accent text-on-accent",
+  High: "border border-accent-ink text-accent-ink",
+  Medium: "border border-edge text-fg-muted",
+  Low: "border border-transparent text-fg-muted",
 };
 
 /**
@@ -51,7 +56,7 @@ export function QaBlock({ block }: { block: QaBlockData }) {
           <span
             key={entry.priority}
             className={cn(
-              "rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest",
+              "rounded-control px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest",
               priorityStyle[entry.priority],
             )}
           >
@@ -67,7 +72,7 @@ export function QaBlock({ block }: { block: QaBlockData }) {
         {groups.map((group) => (
           <Reveal key={group.id} stagger="[data-reveal]">
             <h3
-              className="reveal-init font-mono text-[10px] uppercase tracking-widest text-accent"
+              className="reveal-init font-mono text-[10px] uppercase tracking-widest text-accent-ink"
               data-reveal
             >
               {group.category} · {group.questions.length}
@@ -77,7 +82,7 @@ export function QaBlock({ block }: { block: QaBlockData }) {
               {group.questions.map((question) => (
                 <li
                   key={question.id}
-                  className="reveal-init grid gap-3 border-t border-line py-5 lg:grid-cols-[5rem_1fr] lg:gap-8"
+                  className="reveal-init grid gap-3 border-t border-edge py-5 lg:grid-cols-[5rem_1fr] lg:gap-8"
                   data-reveal
                 >
                   <div className="flex items-center gap-3 lg:flex-col lg:items-start lg:gap-2">
@@ -86,7 +91,7 @@ export function QaBlock({ block }: { block: QaBlockData }) {
                     </span>
                     <span
                       className={cn(
-                        "rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest",
+                        "rounded-control px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest",
                         priorityStyle[question.priority],
                       )}
                     >

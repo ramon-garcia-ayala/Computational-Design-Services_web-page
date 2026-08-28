@@ -25,7 +25,11 @@ export function TableBlock({ block }: { block: TableBlockData }) {
         <div className="-mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
           <table className="w-full min-w-[52rem] border-collapse text-left">
             <thead>
-              <tr className="border-b border-line">
+              {/* Both rules were on decorative-only tokens (`border-line`
+                  1.38:1, `border-line-soft` 1.17:1 below) — a table's row
+                  structure is the one thing here that has to be visible,
+                  not merely present. */}
+              <tr className="border-b border-edge">
                 {block.columns.map((column) => (
                   <th
                     key={column.key}
@@ -42,7 +46,7 @@ export function TableBlock({ block }: { block: TableBlockData }) {
               {block.rows.map((row, index) => (
                 <tr
                   key={block.columns[0] ? row[block.columns[0].key] : index}
-                  className="border-b border-line-soft align-top"
+                  className="border-b border-edge align-top"
                 >
                   {block.columns.map((column) => (
                     <td

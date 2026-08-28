@@ -20,10 +20,12 @@ export function StatsBlock({ block }: { block: StatsBlockData }) {
         as="ul"
         className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
       >
+        {/* Was `border-line` (1.38:1) — the rule separating one figure from
+            the next in the grid. */}
         {block.stats.map((stat) => (
           <li
             key={stat.label}
-            className="reveal-init border-t border-line pt-5"
+            className="reveal-init border-t border-edge pt-5"
             data-reveal
           >
             <p className="font-mono text-2xl font-medium tracking-tight text-fg tabular-nums sm:text-3xl">

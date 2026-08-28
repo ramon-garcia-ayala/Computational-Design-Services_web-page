@@ -32,7 +32,11 @@ const MAX_OPEN = 0.92;
 
 const dummy = new THREE.Object3D();
 const scratch = new THREE.Color();
-const CLOSED = new THREE.Color("#39424a");
+/* Was `#39424a` — a cool blue-grey with no relationship to any site token.
+   Warm-neutral instead, so a closed panel reads as this studio's material
+   rather than a generic BIM viewer's, the same reasoning `PROGRAM_COLORS`
+   documents for its own servant-space greys. */
+const CLOSED = new THREE.Color("#5f594f");
 const OPEN = new THREE.Color(ACCENT);
 
 /**

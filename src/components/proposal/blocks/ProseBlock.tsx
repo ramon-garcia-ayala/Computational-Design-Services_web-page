@@ -28,12 +28,13 @@ export function ProseBlock({ block }: { block: ProseBlockData }) {
         </Reveal>
       ) : null}
 
+      {/* Was `border-line bg-line` (1.38:1) — same invisible-divider grid. */}
       {block.checklist ? (
         <Reveal
           stagger="[data-reveal]"
           as="ul"
           className={cn(
-            "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
+            "mt-14 grid gap-px overflow-hidden rounded-surface border border-edge bg-edge",
             cardGrid(block.checklist.length),
           )}
         >
@@ -45,12 +46,12 @@ export function ProseBlock({ block }: { block: ProseBlockData }) {
             >
               <Icon
                 name="check"
-                className="mt-0.5 h-4 w-4 shrink-0 text-accent"
+                className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink"
               />
               {item.href ? (
                 <a
                   href={item.href}
-                  className="text-sm leading-relaxed text-fg-muted transition-colors hover:text-accent"
+                  className="text-sm leading-relaxed text-fg-muted transition-colors hover:text-accent-ink"
                 >
                   {item.label}
                 </a>
