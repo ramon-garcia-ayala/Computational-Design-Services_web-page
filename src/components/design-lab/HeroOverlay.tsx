@@ -128,7 +128,7 @@ export function HeroOverlay() {
   );
 
   return (
-    <div ref={rootRef} className="pointer-events-none absolute inset-0 font-lab">
+    <div ref={rootRef} className="pointer-events-none absolute inset-0 font-display">
       {/* The hero's bottom edge, dissolved into the page colour.
 
           The hard line that survived the panel-gradient work was never the
@@ -182,7 +182,12 @@ export function HeroOverlay() {
 
           {/* §12.3: one line at every width. The clamp floor is sized so the
               longest word run still fits a 375px viewport without wrapping,
-              which is what `whitespace-nowrap` would otherwise overflow. */}
+              which is what `whitespace-nowrap` would otherwise overflow.
+              Deliberately not on the shared `--text-*` scale: this value and
+              the mobile stack spacing below were tuned together against the
+              geodesic's measured position (~34px of clearance on a 390×844
+              phone, per the hero-on-mobile notes), so swapping in a generic
+              step is exactly the kind of change that grazes the model. */}
           {/* Tighter stack below `sm` (`mt-5`/`mt-4` against `mt-8`/`mt-6`).
               The block has to fit between the header and the top of the
               geodesic, which is about a quarter of a phone screen; the ~28px

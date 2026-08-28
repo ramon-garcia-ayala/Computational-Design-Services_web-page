@@ -282,7 +282,7 @@ export function ToolViewerPage() {
           <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
             {spec.template === "pitch" ? "Scoped for you" : "Generated tool"}
           </p>
-          <h1 className="mt-4 font-display text-3xl leading-tight text-fg sm:text-4xl lg:text-5xl">
+          <h1 className="mt-4 text-h2 font-display text-fg">
             {spec.meta.title}
           </h1>
           <p className="mt-4 text-base leading-relaxed text-fg-muted sm:text-lg">

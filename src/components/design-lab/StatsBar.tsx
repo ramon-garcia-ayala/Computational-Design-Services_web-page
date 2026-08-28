@@ -26,7 +26,7 @@ export function StatsBar() {
       aria-label="Studio at a glance"
       className="relative bg-lab-bg py-[11svh]"
     >
-      <div className="font-lab mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16">
+      <div className="font-display mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16">
         <ul className="grid grid-cols-2 gap-y-12 sm:grid-cols-4 sm:gap-y-0">
           {stats.map((stat) => (
             <li
@@ -35,8 +35,7 @@ export function StatsBar() {
             >
               <p
                 className={
-                  "font-semibold leading-none tracking-tight text-lab-ink " +
-                  "text-[clamp(2.1rem,4.6vw,3.6rem)] " +
+                  "text-h1 font-semibold text-lab-ink " +
                   /* The glow is a transition on `text-shadow`, so it needs a
                      transparent shadow at rest to interpolate *from* — going
                      straight from `none` snaps instead of easing. */

@@ -43,7 +43,7 @@ export default function ContactPage() {
 
         <div className="mt-16 grid gap-14 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <Reveal>
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent-ink">
               {contactCopy.formKicker}
             </p>
             <div className="mt-6">
@@ -59,7 +59,7 @@ export default function ContactPage() {
                 </p>
                 <a
                   href={mailtoHref}
-                  className="mt-4 inline-block border-b border-accent pb-1 font-display text-xl font-semibold text-accent transition-opacity hover:opacity-70 sm:text-2xl"
+                  className="mt-4 inline-block border-b border-accent-ink pb-1 font-display text-xl font-semibold text-accent-ink transition-opacity hover:opacity-70 sm:text-2xl"
                 >
                   {site.contactLabel}
                 </a>

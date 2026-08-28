@@ -46,7 +46,7 @@ export function ParamPanel({
                       className={`rounded-full border px-3 py-1 font-mono text-xs tracking-wide uppercase transition-colors duration-200 ${
                         active
                           ? "border-accent bg-accent text-carbon"
-                          : "border-line text-fg-muted hover:border-accent hover:text-accent"
+                          : "border-edge text-fg-muted hover:border-accent-ink hover:text-accent-ink"
                       }`}
                     >
                       {option}

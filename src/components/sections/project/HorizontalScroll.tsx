@@ -116,7 +116,7 @@ export function HorizontalScroll({ project }: { project: Project }) {
                 <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
                   {entry.panel.kicker}
                 </p>
-                <h2 className="mt-6 max-w-xl font-display text-2xl leading-tight font-semibold tracking-tight text-fg sm:text-3xl lg:text-4xl">
+                <h2 className="mt-6 max-w-xl text-h3 font-display font-semibold text-fg">
                   {entry.panel.title}
                 </h2>
                 <p className="text-justify hyphens-auto mt-6 max-w-xl text-base leading-relaxed text-fg-muted">

@@ -1,11 +1,12 @@
 import { ChatPlaceholder } from "@/components/ui/ChatPlaceholder";
-import { mailtoHref } from "@/data/site";
+import { site } from "@/data/site";
 import { designLab } from "@/data/design-lab";
 import { cn } from "@/lib/utils";
 import { ServiceMotif } from "./ServiceMotif";
 import { PanelVideo } from "./PanelVideo";
 import { ExploreMore } from "./ExploreMore";
 import Image from "next/image";
+import Link from "next/link";
 
 /**
  * The five panel bodies (spec §11.5–11.9, revised by §13.2–13.6).
@@ -16,7 +17,7 @@ import Image from "next/image";
  * these supply only what goes on it.
  */
 
-const SHELL = "font-lab mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16";
+const SHELL = "font-display mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16";
 
 /**
  * The category label above each panel.
@@ -60,7 +61,7 @@ export function ServicesPanel() {
 
       {/* §13.2: larger, and set tight under the label so the two read as one
           block rather than two stacked items. */}
-      <h2 className="mt-4 font-semibold leading-[1.02] tracking-tight text-fg text-[clamp(2.4rem,5.6vw,4.6rem)]">
+      <h2 className="mt-4 text-display font-semibold text-fg">
         {services.title}
       </h2>
 
@@ -106,7 +107,7 @@ export function LabsPanel() {
       <div className={`${SHELL} relative flex h-full flex-col justify-start pt-[4svh]`}>
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
           <Eyebrow tone="ink">{labs.kicker}</Eyebrow>
-          <h2 className="mt-3 font-semibold leading-tight tracking-tight text-lab-ink text-[clamp(2rem,4.4vw,3.6rem)]">
+          <h2 className="mt-3 text-h2 font-semibold text-lab-ink">
             {labs.title}
           </h2>
 
@@ -129,7 +130,7 @@ export function FeaturedPanel() {
   return (
     <div className={`${SHELL} flex h-full flex-col justify-start pt-[11svh]`}>
       <Eyebrow>{featured.kicker}</Eyebrow>
-      <h2 className="mt-4 font-semibold leading-[1.02] tracking-tight text-fg text-[clamp(2.4rem,5.6vw,4.6rem)]">
+      <h2 className="mt-4 text-display font-semibold text-fg">
         {featured.kicker}
       </h2>
 
@@ -178,7 +179,11 @@ export function AboutPanel() {
     <div className={`${SHELL} flex h-full flex-col justify-center`}>
       <Eyebrow>{about.kicker}</Eyebrow>
 
-      {/* §13.5: copy left and justified, photographs reserved on the right. */}
+      {/* §13.5: copy left and justified, photographs reserved on the right.
+          Kept off the shared `--text-*` scale on purpose: this is a
+          justified reading paragraph, not a heading, and its 1.45 line-height
+          is tuned for that — the scale's headings sit at 1.05–1.2, tight
+          enough to visibly loosen a paragraph of running text. */}
       <div className="mt-8 grid items-start gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-20">
         <p className="text-justify font-medium leading-[1.45] tracking-tight text-fg text-[clamp(1.25rem,2.2vw,2rem)]">
           {/* The wordmark sits in the sentence as ordinary body copy — same
@@ -237,17 +242,19 @@ export function ClosingPanel() {
       <div className={`${SHELL} relative flex h-full flex-col justify-center`}>
         <div className="max-w-4xl">
           <Eyebrow>{closing.kicker}</Eyebrow>
-          <p className="mt-6 font-semibold leading-[1.1] tracking-tight text-fg text-[clamp(2.2rem,5vw,4.2rem)]">
+          <p className="mt-6 text-h1 font-semibold text-fg">
             {closing.body}
           </p>
-          {/* §11.9 names `/contact`; that route does not exist, so this uses
-              the same mailto every other CTA on the site does. */}
-          <a
-            href={mailtoHref}
+          {/* §11.9 names `/contact`; the route exists and owns a working
+              form, so this — like every primary CTA on the site — points
+              there instead of opening a mailto that silently does nothing
+              for a visitor on webmail. */}
+          <Link
+            href="/contact"
             className="mt-12 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-mono text-xs uppercase tracking-widest text-carbon transition-colors duration-200 hover:bg-accent-dim sm:text-sm"
           >
-            {closing.cta}
-          </a>
+            {site.contactLabel}
+          </Link>
         </div>
       </div>
     </>

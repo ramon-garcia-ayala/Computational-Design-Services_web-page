@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTALink } from "@/components/ui/CTALink";
-import { mailtoHref } from "@/data/site";
+import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Labs",
@@ -35,8 +35,8 @@ export default function LabsPage() {
             <CTALink href="/projects" variant="outline" size="lg">
               See client work instead
             </CTALink>
-            <CTALink href={mailtoHref} variant="ghost" size="lg" external>
-              Tell us what to build
+            <CTALink href="/contact" variant="ghost" size="lg">
+              {site.contactLabel}
             </CTALink>
           </div>
         </Reveal>

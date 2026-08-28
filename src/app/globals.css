@@ -23,13 +23,56 @@
      one colour that must stay dark when the light theme below inverts
      everything else, because its background is amber either way. */
   --color-on-accent: #2a2826;
+  /* The accent in its *ink* role — type, an underline, a hairline. Amber on
+     every dark ground, so here it is simply the accent. It exists as its own
+     token because on a mid-luminance ground amber cannot be ink at any size:
+     #e8a94a on #b8b4b1 is 1.00:1, identical luminance. `[data-site-pale]`
+     redefines this one and leaves `--color-accent` alone, which is what lets
+     the accent stay amber as a filled plate (7.14:1 with on-accent on it)
+     while its ink role is carried by something legible. */
+  --color-accent-ink: #e8a94a;
+  /* The focus ring, split out of `--color-accent` for the same reason. An
+     `outline` cannot be reached by a class-level override, so while this was
+     hardwired to the accent the keyboard focus indicator on /about and
+     /contact was amber on greige — 1.00:1, invisible. */
+  --color-focus: #e8a94a;
+  /* Borders that carry meaning: fields, controls, selected state. WCAG 1.4.11
+     wants 3:1 for those, and `--color-line` is 1.37:1 — right for a decorative
+     divider, wrong for an input. Keep the two apart. */
+  --color-edge: #5a6368; /* 3.19:1 on carbon */
   --color-fg: #f2f4f0; /* primary text */
   --color-fg-muted: #8a918c; /* secondary text */
 
-  /* Type: geometric for headings, neutral for body, mono for figures */
-  --font-display: var(--font-sora);
+  /* Type: geometric for headings, neutral for body, mono for figures.
+     Space Grotesk, not Sora — its squared, monolinear letterforms are the
+     closest match to the logo, and it was already sitewide chrome (Header,
+     MenuOverlay, LabFooter all rendered it via the now-retired `font-lab`
+     token on every route). Repointing this one line finishes that
+     consolidation instead of running two display faces side by side. */
+  --font-display: var(--font-space);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains);
+
+  /* One fluid scale, used everywhere. Before this, Home's design-lab panels
+     scaled with inline `clamp()` arbitrary values while every other route
+     stepped at breakpoints (`text-4xl sm:text-6xl lg:text-7xl`) — the same
+     heading changed *behaviour*, not just size, depending on the route. Steps
+     are derived from the existing extremes on both sides so nothing jumps.
+     `HeroOverlay`'s own two clamps are deliberately not on this scale — see
+     the comment at their call site. */
+  --text-display: clamp(2.4rem, 5.6vw, 4.6rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.02em;
+  --text-h1: clamp(2.1rem, 4.8vw, 3.9rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h2: clamp(1.75rem, 3.4vw, 2.75rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h3: clamp(1.35rem, 2.2vw, 1.85rem);
+  --text-h3--line-height: 1.2;
+  --text-lead: clamp(1.15rem, 1.5vw, 1.5rem);
+  --text-lead--line-height: 1.55;
 
   /* The project's exact breakpoints: 640 / 1024 / 1440.
      `--breakpoint-*: initial` clears Tailwind's defaults (md, xl, 2xl) so that
@@ -56,14 +99,6 @@
      page ending. Light type still passes on it comfortably. */
   --color-panel: #3d3934;
   --color-panel-line: #55504a;
-
-  /* `/design-lab`'s one typeface (spec §12.1): geometric and technical, to
-     sit with the logo's squared, monolinear letterforms. `--font-space` is
-     supplied by next/font from the design-lab page itself, not from the root
-     layout, so the live site neither loads it nor changes typeface — §12 is
-     design-lab only. Anything using `font-lab` outside that page gets the
-     fallback, which is the intended failure. */
-  --font-lab: var(--font-space), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ---------------------------------------------------------------------------
@@ -143,9 +178,13 @@ html:has([data-site-warm]) body {
    1.00:1 against it — identical luminance, invisible — and darkening it far
    enough to pass (#6b4206) stops it being the brand colour at all. But amber
    is only illegible as *ink*: as a button's background with dark type on it,
-   it is perfectly readable and still amber. So the token keeps its value and
-   only its use as a text or border colour is redirected, which is what the
-   two overrides below do.
+   it is perfectly readable and still amber. So `--color-accent` keeps its
+   value, and only the three tokens that carry the accent's *ink* role —
+   `--color-accent-ink`, `--color-focus`, `--color-edge` — are redirected
+   below. This replaced an earlier version that remapped `.text-accent` and
+   `.border-accent` directly: a class-level override cannot reach an
+   `outline`, so the focus ring stayed hardwired to amber and was invisible
+   on every control on this ground.
 --------------------------------------------------------------------------- */
 [data-site-pale] {
   --color-carbon: #b8b4b1; /* page ground — the hero's plate */
@@ -155,13 +194,9 @@ html:has([data-site-warm]) body {
   --color-line-soft: #aaa6a2; /* subtle borders, the background grid */
   --color-fg: #2a2826; /* primary text — 7.13:1 */
   --color-fg-muted: #4a4642; /* secondary text — 4.54:1, where #57534e was 3.71 */
-}
-
-[data-site-pale] .text-accent {
-  color: var(--color-fg);
-}
-[data-site-pale] .border-accent {
-  border-color: var(--color-fg);
+  --color-accent-ink: #2a2826; /* 7.13:1 — the fg colour carries the accent's ink role here */
+  --color-focus: #2a2826;
+  --color-edge: #66615b; /* 2.98:1 vs this ground, where #5a6368 read at 1.40:1 */
 }
 
 html:has([data-site-pale]),
@@ -176,7 +211,7 @@ html:has([data-site-pale]) body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
 

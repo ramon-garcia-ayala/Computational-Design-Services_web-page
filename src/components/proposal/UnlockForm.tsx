@@ -68,7 +68,7 @@ export function UnlockForm({ slug }: { slug: string }) {
               setPassword(event.target.value);
               if (error) setStatus("idle");
             }}
-            className="w-full rounded-full border border-line bg-graphite py-3 pr-5 pl-11 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none"
+            className="w-full rounded-full border border-edge bg-graphite py-3 pr-5 pl-11 text-sm text-fg placeholder:text-fg-muted focus:border-accent-ink focus:outline-none"
             placeholder="••••••••"
           />
         </div>

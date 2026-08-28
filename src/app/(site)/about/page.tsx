@@ -51,7 +51,7 @@ export default function AboutPage() {
               </Reveal>
 
               <Reveal className="mt-16">
-                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-accent">
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-accent-ink">
                   {about.storyKicker}
                 </p>
                 {about.story.map((paragraph, i) => (
@@ -81,7 +81,7 @@ export default function AboutPage() {
       <section className="relative border-y border-line py-10 sm:py-12">
         <div className="shell">
           <Reveal>
-            <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent sm:text-sm">
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent-ink sm:text-sm">
               {about.facts}
             </p>
           </Reveal>
@@ -116,7 +116,7 @@ export default function AboutPage() {
                       <h3 className="font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
                         {founder.name}
                       </h3>
-                      <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
+                      <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-ink">
                         {founder.title}
                       </p>
                       <p className="text-justify hyphens-auto mt-5 text-sm leading-relaxed text-fg-muted sm:text-base">

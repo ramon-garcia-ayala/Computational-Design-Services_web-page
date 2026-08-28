@@ -50,8 +50,8 @@ directly:
 ```css
 @theme {
   --color-carbon: #0a0c0b;
-  --color-accent: #c8f94e;
-  --font-display: var(--font-sora);
+  --color-accent: #e8a94a;
+  --font-display: var(--font-space);
 }
 ```
 
@@ -60,6 +60,14 @@ Used as `bg-carbon`, `text-accent`, `font-display`.
 **Breakpoints**: the project has only `sm` (640), `lg` (1024) and `xl` (1440).
 Tailwind's defaults are cleared with `--breakpoint-*: initial`, so `md:` and
 `2xl:` **do not exist** — writing them produces no styles and fails silently.
+
+**Full colour/type/logo/voice reference: `design-concpet/brand-guidelines.md`**
+(human-readable, with the rationale for every rule) and
+`design-concpet/design-tokens.json` (machine-readable mirror, same values).
+Read one of those before adding a new colour, font, or CTA pattern — not just
+this section, which only covers the Tailwind mechanics. If a token in
+`globals.css` changes, update both of those files in the same commit; they are
+documentation, `globals.css` is the only source of truth.
 
 Project utilities defined in `globals.css`: `.shell` (page container), `grid-bg`
 (background grid) and `reveal-init` (initial state for anything GSAP animates).

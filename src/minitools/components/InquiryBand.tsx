@@ -110,7 +110,7 @@ export function InquiryBand({
 
           <h2
             id="inquiry-title"
-            className="mt-6 font-display text-4xl leading-[0.95] font-semibold tracking-tight text-fg sm:text-6xl lg:text-7xl"
+            className="mt-6 text-display font-display font-semibold text-fg"
           >
             {headline} <span className="text-accent">{headlineAccent}</span>
           </h2>

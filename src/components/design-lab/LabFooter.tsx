@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { labsLink, navLinks } from "@/data/nav";
-import { mailtoHref, site, socialLinks } from "@/data/site";
+import { site, socialLinks } from "@/data/site";
 import { designLab } from "@/data/design-lab";
 
 /**
@@ -31,7 +31,7 @@ export function LabFooter() {
     "font-mono text-[11px] uppercase tracking-[0.3em] text-fg-muted/70 sm:text-xs";
 
   return (
-    <footer data-dark-plate className="font-lab border-t border-line/60 bg-panel">
+    <footer data-dark-plate className="font-display border-t border-line/60 bg-panel">
       <div className="flex w-full flex-col gap-16 px-6 py-24 sm:px-10 lg:flex-row lg:justify-between lg:px-16 lg:py-28 xl:px-24">
         <div className="max-w-lg">
           {/* The real asset, filled through the mask so it reads light on
@@ -55,13 +55,15 @@ export function LabFooter() {
             {site.descriptor}
           </p>
 
-          {/* The warm accent, exactly as on the live footer (§11.10 / §6). */}
-          <a
-            href={mailtoHref}
+          {/* The warm accent, exactly as on the live footer (§11.10 / §6).
+              Points at /contact, not a mailto — see FinalCTA and the header
+              for the same call. */}
+          <Link
+            href="/contact"
             className="mt-10 inline-block border-b border-accent pb-1 text-base text-accent transition-opacity hover:opacity-70 sm:text-lg"
           >
             {site.contactLabel}
-          </a>
+          </Link>
         </div>
 
         <div className="flex gap-20 sm:gap-32 lg:gap-40">

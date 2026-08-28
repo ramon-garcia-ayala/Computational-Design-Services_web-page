@@ -82,7 +82,7 @@ export function ContactForm() {
     className: cn(
       "mt-2 w-full rounded-lg border bg-graphite/40 px-4 py-3 text-sm text-fg",
       "placeholder:text-fg-muted focus:outline-none",
-      errors[name] ? "border-red-400/70 focus:border-red-400" : "border-line focus:border-accent",
+      errors[name] ? "border-red-400/70 focus:border-red-400" : "border-edge focus:border-accent-ink",
     ),
   });
 
@@ -103,7 +103,7 @@ export function ContactForm() {
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="mt-6 font-mono text-[11px] uppercase tracking-widest text-accent transition-opacity hover:opacity-70"
+          className="mt-6 font-mono text-[11px] uppercase tracking-widest text-accent-ink transition-opacity hover:opacity-70"
         >
           {contactCopy.success.again}
         </button>

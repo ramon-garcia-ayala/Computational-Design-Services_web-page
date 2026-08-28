@@ -107,7 +107,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
       aria-hidden={!open}
       inert={!open ? true : undefined}
       className={cn(
-        "font-lab fixed inset-0 z-40 flex flex-col bg-panel transition-opacity duration-500",
+        "font-display fixed inset-0 z-40 flex flex-col bg-panel transition-opacity duration-500",
         open
           ? "pointer-events-auto opacity-100"
           : "pointer-events-none opacity-0",

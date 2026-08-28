@@ -185,10 +185,6 @@ export const designLab = {
       /* §13.6, same arrangement as the Labs loop. */
       video: "/videos/panels/closing-loop.mp4",
       body: "We're already thinking in code. Let's think about your project next.",
-      /* §11.9 specifies `/contact`, which does not exist yet; the mailto is
-         what every other CTA on the site uses. Swap to the route when it
-         exists. */
-      cta: "Contact us →",
     },
   },
 };

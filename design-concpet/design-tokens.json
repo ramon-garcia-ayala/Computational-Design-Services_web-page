@@ -1,0 +1,105 @@
+{
+  "$schema": "Machine-readable mirror of src/app/globals.css. Source of truth is the code — regenerate this file by hand whenever globals.css changes, in the same commit. See design-concpet/brand-guidelines.md for the human-readable version with rationale.",
+  "brand": {
+    "name": "R²χTECH",
+    "nameFlat": "R²XTECH",
+    "tagline": "We automate AEC. You ship faster.",
+    "positioningLine": "Architecture, computed.",
+    "descriptor": "Computational automation studio for architecture, engineering and construction.",
+    "contactLabel": "Get in touch",
+    "contactSubject": "Project inquiry",
+    "location": "Remote · Worldwide",
+    "primaryCtaDestination": "/contact"
+  },
+  "color": {
+    "dark": {
+      "carbon": "#0a0c0b",
+      "graphite": "#14171a",
+      "graphiteHi": "#1c2024",
+      "line": "#262b2e",
+      "lineSoft": "#1a1e21",
+      "edge": "#5a6368",
+      "fg": "#f2f4f0",
+      "fgMuted": "#8a918c",
+      "accent": "#e8a94a",
+      "accentDim": "#c8913a",
+      "accentInk": "#e8a94a",
+      "onAccent": "#2a2826",
+      "focus": "#e8a94a"
+    },
+    "warm": {
+      "_scope": "[data-site-warm]",
+      "_note": "Redefines carbon/graphite/line/fg only. Accent tokens inherit from dark scope unchanged.",
+      "carbon": "#3d3934",
+      "graphite": "#47423c",
+      "graphiteHi": "#514b44",
+      "line": "#55504a",
+      "lineSoft": "#494440",
+      "fg": "#f2f4f0",
+      "fgMuted": "#a8a29a"
+    },
+    "pale": {
+      "_scope": "[data-site-pale]",
+      "_note": "Redefines carbon/graphite/line/fg AND the three accent-ink-role tokens (accentInk, focus, edge). --color-accent itself is never redefined — it stays #e8a94a everywhere, used only as a filled plate on this ground.",
+      "carbon": "#b8b4b1",
+      "graphite": "#c1bdba",
+      "graphiteHi": "#c9c5c2",
+      "line": "#9c9793",
+      "lineSoft": "#aaa6a2",
+      "fg": "#2a2826",
+      "fgMuted": "#4a4642",
+      "accentInk": "#2a2826",
+      "focus": "#2a2826",
+      "edge": "#66615b"
+    },
+    "labOnly": {
+      "_note": "Used only inside the Home hero geodesic overlay, never elsewhere.",
+      "labBg": "#b8b4b1",
+      "labInk": "#2a2826",
+      "labInkMuted": "#57534e",
+      "panel": "#3d3934",
+      "panelLine": "#55504a"
+    },
+    "rules": [
+      "Amber text/border/hairline anywhere => use the accentInk token, never the literal accent hex.",
+      "Amber as a filled button/plate => use accent + onAccent, on any ground.",
+      "Amber is structurally illegible as ink on the pale ground (1.00:1) — this cannot be fixed by choosing a darker amber; see brand-guidelines.md §2.4.",
+      "Meaningful borders (fields, controls) => edge token, not line (line is 1.37:1, decorative only).",
+      "A component must carry data-site-pale if it visually sits on the pale ground, even if it renders outside the page's own [data-site-pale] wrapper div.",
+      "When toggling data-site-pale from a boolean prop, guard with `value || undefined` — a literal `data-site-pale=\"false\"` still matches the CSS attribute selector."
+    ]
+  },
+  "typography": {
+    "families": {
+      "display": { "token": "font-display", "family": "Space Grotesk", "weights": "500-700", "usage": "Headings, nav, buttons" },
+      "sans": { "token": "font-sans", "family": "Inter", "weights": "400-600", "usage": "Body and UI text (also the document default)" },
+      "mono": { "token": "font-mono", "family": "JetBrains Mono", "weights": "400-500", "usage": "Labels, eyebrows, data, figures" }
+    },
+    "scale": {
+      "display": { "fontSize": "clamp(2.4rem, 5.6vw, 4.6rem)", "lineHeight": 1.05, "letterSpacing": "-0.02em" },
+      "h1": { "fontSize": "clamp(2.1rem, 4.8vw, 3.9rem)", "lineHeight": 1.08, "letterSpacing": "-0.02em" },
+      "h2": { "fontSize": "clamp(1.75rem, 3.4vw, 2.75rem)", "lineHeight": 1.12, "letterSpacing": "-0.015em" },
+      "h3": { "fontSize": "clamp(1.35rem, 2.2vw, 1.85rem)", "lineHeight": 1.2 },
+      "lead": { "fontSize": "clamp(1.15rem, 1.5vw, 1.5rem)", "lineHeight": 1.55, "_note": "Defined, not yet used anywhere in the codebase." }
+    },
+    "exceptions": [
+      "HeroOverlay.tsx headline + scroll statements: bespoke clamp() values tuned against the geodesic model's measured mobile clearance. Do not migrate onto the shared scale.",
+      "Panels.tsx AboutPanel lead paragraph: bespoke clamp(1.25rem,2.2vw,2rem) at leading-1.45 — justified running prose, not a heading."
+    ]
+  },
+  "breakpoints": {
+    "sm": "640px",
+    "lg": "1024px",
+    "xl": "1440px",
+    "_note": "Tailwind's default md and 2xl are cleared (--breakpoint-*: initial) and do not exist."
+  },
+  "logo": {
+    "wordmarkSource": "public/logo/logo.png",
+    "wordmarkMask": "public/logo/logo-mask.png",
+    "nativeSize": { "width": 3103, "height": 611 },
+    "technique": "CSS mask-image, recoloured per scope via background-color — never rendered as a plain <img>.",
+    "lockups": ["horizontal wordmark (only one that exists)", "R² favicon glyph, auto-cropped by scripts/favicon.mjs"],
+    "clearSpaceDefault": "~1 cap-height (not yet formally specified in code)",
+    "minWidthDefault": "~96px (not yet formally specified in code)"
+  }
+}

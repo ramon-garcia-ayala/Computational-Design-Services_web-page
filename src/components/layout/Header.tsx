@@ -44,7 +44,20 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
 
   return (
     <>
-      <header className="font-lab fixed inset-x-0 top-0 z-50">
+      {/* `data-site-pale` when light: the header's `light` variant only ever
+          sits on the pale/greige plate (Home's hero, and the gradient band
+          every (site) route inherits from the layout above) — never inside
+          the `[data-site-pale]` div itself, since it renders one level above
+          it. Without this, its focus ring stayed hardwired to amber-on-
+          greige (1.00:1) even after /about and /contact were fixed, because
+          the header sits outside the div those pages wrap their content in.
+          Safe to stamp broadly: every light-branch class in this file and in
+          `MusicToggle` reads `lab-*` tokens, never the ones this scope
+          redefines. */}
+      <header
+        data-site-pale={light || undefined}
+        className="font-display fixed inset-x-0 top-0 z-50"
+      >
         {/* Legibility gradient: the header floats over the content, and without
             it the controls get lost as light sections scroll underneath. */}
         <div
@@ -115,12 +128,13 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <MusicToggle className="hidden sm:flex" variant={variant} />
 
-            {/* `/contact`, not the mailto it used to be. A `mailto:` does
-                nothing at all for a visitor with no desktop mail client
-                configured — which is most people on webmail — so the primary
-                CTA silently did nothing for them. The contact page carries a
-                working form *and* offers the mailto to anyone who prefers it,
-                so nobody loses a route. */}
+            {/* `/contact`, not a mailto. A `mailto:` does nothing at all for
+                a visitor with no desktop mail client configured — which is
+                most people on webmail — so the primary CTA silently did
+                nothing for them. The contact page carries a working form
+                *and* offers the mailto to anyone who prefers it, so nobody
+                loses a route. Label matches every other primary CTA
+                site-wide — `site.contactLabel`, not its own wording. */}
             <Link
               href="/contact"
               className={cn(
@@ -130,7 +144,7 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
                   : "border-line text-fg hover:border-accent hover:text-accent",
               )}
             >
-              Let&apos;s talk
+              {site.contactLabel}
             </Link>
 
             <button

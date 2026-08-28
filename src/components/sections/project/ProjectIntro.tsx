@@ -20,7 +20,7 @@ export function ProjectIntro({ project }: { project: Project }) {
             ← All projects
           </Link>
 
-          <h1 className="mt-8 max-w-4xl font-display text-4xl leading-[1.05] font-semibold tracking-tight text-fg sm:text-6xl lg:text-7xl">
+          <h1 className="mt-8 max-w-4xl text-display font-display font-semibold text-fg">
             {project.title}
           </h1>
 

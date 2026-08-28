@@ -537,7 +537,7 @@ export function ChatWidget() {
             }
           }}
           className={cn(
-            "max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-line bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none",
+            "max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-edge bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent-ink focus:outline-none",
             busy && "opacity-50",
           )}
         />
