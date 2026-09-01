@@ -125,23 +125,29 @@ export const designLab = {
      `to` lands before the final frame gets its own fade-out (the `to < 1`
      branch), and one that runs to 96 is simply carried into the first panel.
 
-     **These frames have to land inside the readable window, which is not
-     the whole runway.** The canvas stage is `sticky` inside a 140svh
-     wrapper, so it is pinned for only `140 - 100 = 40svh`; past that it
-     scrolls away with the document, and a statement centred in it crosses
-     the top of the viewport at `40 + 50 = 90svh` — progress 0.64. The
-     tween, though, is scrubbed across the wrapper's *full* 140svh
+     **Both statements have to open and close while the canvas is still
+     centred.** The stage is `sticky` and 100svh inside a 260svh wrapper, so
+     it holds still for `260 - 100 = 160svh` and only then scrolls away —
+     and the tween is scrubbed across the wrapper's *full* height
      (`end: "bottom top"`, deliberately, so the frames keep advancing while
-     the canvas leaves). Everything after progress ~0.64 therefore animates
-     off-screen.
+     the canvas leaves). Progress 0.615 is where the canvas releases;
+     anything after that animates on a model that is already moving off.
 
-     The second statement used to start at frame 60, which is progress 0.62
-     — it reached full opacity at 93svh, three svh *after* it had already
-     left the top of the screen, so it was never actually seen. It now
-     opens at 41 and is fully legible from 65svh, a 25svh read before the
-     handoff. Anything scheduled past frame ~57 is invisible by
-     construction; check the arithmetic, not the preview, when moving
-     these.
+     Laid out against that 160svh, in scroll rather than frames:
+
+       lockup out   0 ->  47svh
+       statement 1  52svh in, held 62 -> 94, gone by 104svh
+       statement 2  115svh in, held 125 -> 146, gone by 153svh
+       release      160svh  (7svh after the last word clears)
+
+     Frames 57-96 then play over the exit, 160 -> 260svh.
+
+     The runway is derived from these numbers, not the other way round — see
+     `FrameCanvas`. Move a frame here and the height there has to be
+     re-derived, or the second statement ends up finishing after the canvas
+     has let go, which is exactly what used to happen: at frame 60 on the old
+     140svh runway it reached full opacity three svh *after* leaving the top
+     of the screen, so it was never actually seen.
 
      The wording is the spec's own (§11.1). An intermediate version replaced
      both with benefit lines ("Hours back, every week." / "Tools your team
@@ -159,8 +165,8 @@ export const designLab = {
      that constant was re-measured with it. Changing this copy means
      re-measuring it again. */
   statements: [
-    { id: "complexity", text: "Complexity, computed.", from: 20, to: 37, side: "right" },
-    { id: "scales", text: "Design that scales itself.", from: 41, to: 96, side: "left" },
+    { id: "complexity", text: "Complexity, computed.", from: 20, to: 39, side: "right" },
+    { id: "scales", text: "Design that scales itself.", from: 43, to: 57, side: "left" },
   ],
 
   panels: {

@@ -90,16 +90,31 @@ const STACKED_BREAKPOINT = 640;
  * leaving the runway in place would strand the reader in two viewports of
  * empty scroll with nothing moving.
  *
- * The runway is 140svh, down from 400 by way of 240. All 96 frames still
- * play, and the canvas is untouched: the frame tween is spread over
- * whatever the wrapper is tall, so a shorter wrapper moves the frames
- * faster against the wheel. This is the same trade `PIN_RATIO` makes on the
- * project pages. `HeroOverlay`'s two statements no longer wait on each
- * other either — they used to run in sequence, one fading out by frame 45
- * and the other not fading in until 60, so a visitor had to scroll past 60%
- * of whatever this runway was tall before the second line even appeared.
- * Both are on screen by frame ~30 now, so the runway no longer has to stay
- * long enough to cover a wait that does not happen any more.
+ * **The runway is 260svh, and the number is set by how long the canvas has
+ * to stay centred — not by taste.** All 96 frames play across whatever the
+ * wrapper is tall, so the height is really a speed control: a shorter
+ * wrapper moves the frames faster against the wheel, the same trade
+ * `PIN_RATIO` makes on the project pages.
+ *
+ * What fixes the height is the sticky stage. It is `100svh` inside an
+ * `H`-tall wrapper, so it stays centred for exactly `H - 100svh` and then
+ * scrolls away with the document. Everything `HeroOverlay` wants a visitor
+ * to *read* has to finish inside that window, and both statements plus
+ * their fades need about 160svh of it:
+ *
+ *     lockup out 47svh · statement 1 held 31svh · statement 2 held 18svh
+ *
+ * `H - 100 = 160` is where 260 comes from. At the 140svh this was for a
+ * while, the window is 40svh — not enough to read one line, let alone two,
+ * and the second statement finished animating after it had already left the
+ * top of the screen, so it was never seen at all. 140 was set when the
+ * statements ran concurrently to the last frame and were carried into the
+ * panel rather than read in place; staging them again is what costs the
+ * scroll back. Frames 57-96 still play during the exit, which is what the
+ * `end` note below is about.
+ *
+ * If the statement timings in `data/design-lab.ts` change, re-derive this
+ * height from them rather than nudging it.
  *
  * **`end: "bottom top"`, not `"bottom bottom"`.** The two read as
  * interchangeable and are not: with a sticky child the same height as the
@@ -311,7 +326,7 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
     <div
       ref={wrapperRef}
       data-sequence-runway
-      className={cn(!reducedMotion && "h-[140svh]")}
+      className={cn(!reducedMotion && "h-[260svh]")}
     >
       <div
         ref={stageRef}
