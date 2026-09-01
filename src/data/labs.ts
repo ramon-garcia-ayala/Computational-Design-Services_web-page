@@ -1,17 +1,27 @@
 /**
  * Every word on `/labs`.
  *
- * This route is a placeholder for future experiments and prototypes — it is
- * not the Home page's chat assistant. An earlier version of this copy said
- * "the first one is already live" and pointed its main CTA at the home page,
- * treating the assistant as if it were the content of this page; it isn't,
- * and the two are unrelated. `metadata.description` already called this page
- * "Coming soon" while the visible copy contradicted it — this file is the
- * single place that copy lives now, so the two cannot drift apart again.
+ * This route used to be a "coming soon" placeholder, deliberately kept apart
+ * from the Home page's chat assistant — an earlier version of this copy
+ * conflated the two, describing the assistant as if it were this page's own
+ * content, and got pulled apart into the assistant staying on Home and this
+ * page staying empty. That split is now the other way round: the assistant
+ * ("Playground · Try it yourself") no longer lives on the landing page at
+ * all, and `/labs` — reachable only from the menu's "Labs" link, never from
+ * Home's own scroll — is the only place it lives. `playground` is the copy
+ * for that block specifically; `kicker`/`title`/`lead` are the page's own
+ * intro above it.
  */
 export const labsCopy = {
   kicker: "Labs",
-  title: "A playground for the things we build between projects",
-  lead: "Prototypes, geometry experiments and small open tools will land here as they're ready. Nothing is published yet.",
-  badge: "Coming soon",
+  title: "The studio's own playground",
+  lead: "Prototypes and small open tools land here as they're ready. The first one — a live parametric assistant — already has.",
+  playground: {
+    kicker: "Playground",
+    title: "Try it yourself",
+    /* Transcoded from the supplied .mov: the source is HEVC, which Chrome
+       and Firefox cannot decode at all, so the container was never the
+       problem — the codec was. See scripts note in the panels README. */
+    video: "/videos/panels/labs-loop.mp4",
+  },
 };

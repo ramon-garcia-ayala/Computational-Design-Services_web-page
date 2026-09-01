@@ -4,11 +4,7 @@ import { Preloader } from "@/components/ui/Preloader";
 import { FrameCanvas } from "@/components/design-lab/FrameCanvas";
 import { HeroOverlay } from "@/components/design-lab/HeroOverlay";
 import { PanelSection } from "@/components/design-lab/PanelSection";
-import {
-  ClosingPanel,
-  PlaygroundPanel,
-  ProblemPanel,
-} from "@/components/design-lab/Panels";
+import { ClosingPanel, ProblemPanel } from "@/components/design-lab/Panels";
 import { HomeDocument } from "@/components/design-lab/HomeDocument";
 import { LabFooter } from "@/components/design-lab/LabFooter";
 import { ScrollProgress } from "@/components/design-lab/ScrollProgress";
@@ -45,11 +41,13 @@ import { ScrollProgress } from "@/components/design-lab/ScrollProgress";
  *
  *   CINE      hero sequence · "the problem"
  *   DOCUMENT  proof · services · method · work · about
- *   CINE      playground · closing
+ *   CINE      closing
  *
- * The Playground is late on purpose. "Try it yourself" means more once the
- * reader knows what "it" is, and the assistant is the strongest proof on the
- * page — spending it before the services have been named wastes it.
+ * A third cine panel — Playground, the chat assistant, "try it yourself" —
+ * used to close the scroll here. It moved to `/labs`, reachable only from
+ * the menu, not from Home's own scroll: an assistant a visitor has to go
+ * looking for is a deliberate visit, not a scroll they happened to land on
+ * mid-sentence. See `src/data/labs.ts`.
  */
 export default function HomePage() {
   return (
@@ -86,25 +84,16 @@ export default function HomePage() {
           nothing can be clipped. */}
       <HomeDocument />
 
-      {/* The Playground plate is the greige its clip is shot on, not the
-          panel charcoal: the two backdrops are the same studio plate,
-          measured #b4b0ad-#b6b2af against this token's #b8b4b1.
-
-          `behind` is the document band's carbon, because that is what this
-          panel climbs over. Left unset the section is transparent and the
-          greige `html` shows through, so a slab of hero colour appeared under
-          the carbon band a beat before the panel covered it. */}
-      <PanelSection behind="bg-carbon" className="bg-lab-bg">
-        <PlaygroundPanel />
-      </PanelSection>
-
       {/* Shorter runway on the last panel: there is nothing after it to hold
           the reader for, and the footer follows immediately.
 
-          `behind` is the Playground's greige — a charcoal panel rising over a
-          pale plate is the strongest morph on the page, and it only reads
-          that way if the ground is the plate it is actually covering. */}
-      <PanelSection runway={130} behind="bg-lab-bg">
+          `behind` is the document band's carbon, because that is what this
+          panel now climbs over directly — Playground, which used to sit
+          between them, moved to `/labs`. Left unset the section is
+          transparent and the greige `html` shows through, so a slab of hero
+          colour appeared under the carbon band a beat before the panel
+          covered it. */}
+      <PanelSection runway={130} behind="bg-carbon">
         <ClosingPanel />
       </PanelSection>
 

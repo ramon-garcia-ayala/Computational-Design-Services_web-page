@@ -189,7 +189,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
                 {labsLink.label}
               </span>
               <span className="block text-xs text-fg-muted">
-                Experiments and open tools
+                {labsLink.description}
               </span>
             </span>
             <span

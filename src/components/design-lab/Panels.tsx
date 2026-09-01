@@ -1,24 +1,21 @@
-import { ChatPlaceholder } from "@/components/ui/ChatPlaceholder";
 import { CTALink } from "@/components/ui/CTALink";
 import { site } from "@/data/site";
 import { designLab } from "@/data/design-lab";
-import { cn } from "@/lib/utils";
 import { PanelVideo } from "./PanelVideo";
 
 /**
- * The three cine panel bodies.
+ * The two cine panel bodies.
  *
  * Server Components apart from the pieces that animate — the looping
- * backgrounds and the chat widget bring their own client boundaries.
- * `PanelSection` supplies the morph and the full-bleed plate; these supply
- * only what goes on it.
+ * backgrounds bring their own client boundaries. `PanelSection` supplies the
+ * morph and the full-bleed plate; these supply only what goes on it.
  *
- * There used to be five. Services, Featured work and About moved into the
- * document band (`HomeDocument`), because a panel is a fixed 100svh box with
- * its overflow hidden and all three had outgrown it — Featured lost its
- * heading and the top of every image off the top of the screen, at every
- * desktop height. What is left is the three that are genuinely one idea on
- * one screen.
+ * There used to be five, then three. Services, Featured work and About moved
+ * into the document band (`HomeDocument`) because a panel is a fixed 100svh
+ * box with its overflow hidden and all three had outgrown it. Playground —
+ * the chat assistant, "try it yourself" — moved out entirely, to `/labs`;
+ * see `src/data/labs.ts`. What is left is the two that are genuinely one
+ * idea on one screen and belong to Home specifically.
  *
  * Every body is `my-auto`, not centred by the plate. See the note on
  * `PanelSection`'s `justify-start`: auto margins centre when the content fits
@@ -47,25 +44,13 @@ const BODY_PAD = "py-20 sm:py-24";
  * The index numbers ("01", "02", …) are gone from every panel, so this is the
  * category alone. The rule that used to separate number from label went with
  * them: a lone hairline before a single word reads as debris.
+ *
+ * Amber only, now that both remaining panels sit on the dark plate — the
+ * `tone="ink"` variant existed for Playground's pale greige and left with it.
  */
-export function Eyebrow({
-  children,
-  /* Amber carries every panel's eyebrow except the Playground one, whose
-     plate is the pale greige the clip is shot on — amber on that is barely a
-     shade apart from its background. Dark ink is the only legible option
-     there. */
-  tone = "accent",
-}: {
-  children: React.ReactNode;
-  tone?: "accent" | "ink";
-}) {
+export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p
-      className={cn(
-        "font-mono text-xs uppercase tracking-[0.3em] sm:text-sm",
-        tone === "ink" ? "text-lab-ink" : "text-accent-ink",
-      )}
-    >
+    <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent-ink sm:text-sm">
       {children}
     </p>
   );
@@ -101,64 +86,14 @@ export function ProblemPanel() {
   );
 }
 
-export function PlaygroundPanel() {
-  const { playground } = designLab.panels;
-
-  return (
-    <>
-      {/* Looping backdrop behind everything on this panel. */}
-      <PanelVideo src={playground.video} contained />
-
-      {/* Type is dark here, not light: this panel's plate is the greige the
-          clip is shot on, so the light copy every other panel uses would be
-          unreadable.
-
-          Tighter than `BODY_PAD` on purpose, and the one panel that needs its
-          own figure. It carries a 432px widget, so at `BODY_PAD` the body
-          measures 729px against a 675px stage — it is the only body dense
-          enough for the padding to be what pushes it over. 633px at this
-          value, measured, with 42px to spare. */}
-      <div className={`${SHELL} relative my-auto py-10 sm:py-12`}>
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
-          <Eyebrow tone="ink">{playground.kicker}</Eyebrow>
-          <h2 className="mt-3 text-h2 font-semibold text-lab-ink">
-            {playground.title}
-          </h2>
-
-          {/* Translucent on its own shell rather than on the widget's inner
-              surfaces, so the clip still shows through at the edges without
-              costing the transcript its legibility. Was `bg-carbon/55` with
-              `border-lab-ink/15`: at 55% the moving clip behind it competed
-              directly with the chat text, and a 15%-opacity dark border is
-              below anything WCAG 1.4.11 calls visible. 85% keeps the loop
-              readable around the frame while the plate itself carries the
-              conversation.
-
-              `lg:aspect-[16/10]` was the shape that overflowed this panel:
-              heading plus a 16:10 widget in a 1440-wide column is taller than
-              100svh on any laptop, and the widget's own "Assistant / live"
-              header row was the part clipped off the top. 16/9 fits, and the
-              transcript is wider for it. */}
-          {/* Do not try to cap this with `lg:max-h-*`. `ChatPlaceholder`'s own
-              base classes carry `lg:max-h-none`, `cn()` does not dedupe it
-              against an arbitrary value in the same group, and Tailwind sorts
-              `none` last — so the cap lands in the class attribute, computes
-              to `max-height: none`, and changes nothing. Measured: the widget
-              stayed at exactly 432px with the cap applied. The panel's own
-              padding is the knob that works. */}
-          <ChatPlaceholder className="mt-6 max-w-3xl border-edge bg-carbon/85 backdrop-blur-md lg:aspect-[16/9]" />
-        </div>
-      </div>
-    </>
-  );
-}
-
 export function ClosingPanel() {
   const { closing } = designLab.panels;
 
   return (
     <>
-      {/* Looping backdrop, same arrangement as the Playground panel. */}
+      {/* Looping backdrop, full-bleed rather than `contained` — this panel
+          is dark type on dark plate, so the clip can run under it edge to
+          edge instead of sitting inside a framed, feathered rectangle. */}
       <PanelVideo src={closing.video} />
 
       {/* Heading and buttons share one left edge — all three sit in the same

@@ -9,7 +9,12 @@
  *
  *   CINE      hero sequence  ->  "the problem" panel
  *   DOCUMENT  proof strip · services · method · work · about
- *   CINE      playground panel  ->  closing panel
+ *   CINE      closing panel
+ *
+ * There used to be a Playground panel between the document band and Closing
+ * — the chat assistant, "try it yourself". It now lives at `/labs` instead,
+ * reachable only from the menu, not from Home's own scroll; see
+ * `src/data/labs.ts`.
  *
  * The cine panels are 100svh stages that morph up over what precedes them.
  * The document band is ordinary flow, and that is the point: a panel is a
@@ -313,24 +318,6 @@ export const designLab = {
       /* The same two people as `/about`, read from one place. Two copies
          would drift the moment a title changed on one page and not the other. */
       founders,
-    },
-
-    /* CINE. Named `playground`, not `labs` — the chat widget this panel hosts
-       has nothing to do with the separate `/labs` route (a placeholder page
-       for future experiments). The two shared the `labs` key for a while,
-       which is exactly what let `/labs`'s own copy drift into describing this
-       panel's assistant as if it were the page's own content.
-
-       It comes *after* the document band on purpose: "try it yourself" means
-       something once the reader knows what "it" is. */
-    playground: {
-      id: "playground",
-      kicker: "Playground",
-      title: "Try it yourself",
-      /* Transcoded from the supplied .mov: the source is HEVC, which Chrome
-         and Firefox cannot decode at all, so the container was never the
-         problem — the codec was. See scripts note in the panels README. */
-      video: "/videos/panels/labs-loop.mp4",
     },
 
     /* CINE. */

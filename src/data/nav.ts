@@ -27,5 +27,16 @@ export const navLinks: NavLink[] = [
   portalLink,
 ];
 
-/** Secondary highlighted link inside the overlay. */
-export const labsLink: NavLink = { label: "Labs", href: "/labs" };
+/**
+ * Secondary highlighted link inside the overlay.
+ *
+ * `description` is the card's second line, which used to be hardcoded in
+ * `MenuOverlay.tsx`. It says what it says because this card is now the only
+ * way in: the assistant moved off Home's scroll and onto `/labs`, so a
+ * visitor who is never told it is there will never find it.
+ */
+export const labsLink: NavLink & { description: string } = {
+  label: "Labs",
+  href: "/labs",
+  description: "Build a tool with the assistant",
+};
