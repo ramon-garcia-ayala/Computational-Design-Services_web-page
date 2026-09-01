@@ -23,8 +23,8 @@ import { ServiceMotif } from "./ServiceMotif";
  * "pure carbon read as flat black against the hero." A shared ground means
  * `fg-muted`/`line`/`ring-line` — all tuned against carbon — read wrong here
  * (a silent contrast failure, not a visual one); every one below is the
- * `panel-*` counterpart instead, the same substitution `ProofStrip` and
- * `Panels.tsx` already make.
+ * `panel-*` counterpart instead, the same substitution `Panels.tsx` already
+ * makes.
  *
  * All copy comes from `data/design-lab.ts`. Nothing is written here.
  */
@@ -48,53 +48,6 @@ function SectionHead({
         {kicker}
       </p>
       <h2 className="mt-4 text-display font-semibold text-fg">{title}</h2>
-    </Reveal>
-  );
-}
-
-/**
- * The four figures, in the gap between the hero and the first panel.
- *
- * They used to live at the head of the document band instead, so the panel
- * ("The problem") would rise directly out of the hero sequence with nothing
- * between. That left this strip stranded mid-document with a large blank
- * beat above it and nothing establishing the studio before the argument
- * started — this is the first hard evidence on the page that there is a
- * company behind the animation, so it belongs before the pitch, not after
- * it.
- *
- * It carries no background of its own — the page ground here is still the
- * hero's greige (`--color-lab-bg`) — so its ink is the `lab-ink` pair
- * `HeroOverlay` uses on the identical ground, not the light-on-dark tokens
- * (`fg`/`fg-muted`/`accent-ink`) the rest of the document band uses on
- * carbon and panel. Reusing those here would be close to invisible: `fg` is
- * near-white, and amber (`accent-ink`) measures 1.00:1 on this greige —
- * identical luminance, not just low contrast (see the `[data-site-pale]`
- * comment in `globals.css`). The divider is `border-lab-ink/15`, not
- * `border-edge`: it only separates four numbers that read fine without it,
- * so it stays in `--color-line`'s decorative register rather than reaching
- * for a token built to clear 3:1.
- */
-export function ProofStrip() {
-  const { stats } = designLab;
-
-  return (
-    <Reveal as="ul" stagger="[data-reveal]" className="mx-auto grid w-full max-w-[1440px] grid-cols-2 gap-8 border-y border-lab-ink/15 px-6 py-10 sm:grid-cols-4 sm:px-10 lg:px-16">
-      {stats.map((stat) => (
-        <li key={stat.id} data-reveal className="reveal-init">
-          <p className="font-display text-h3 font-semibold text-lab-ink">
-            {stat.value}
-          </p>
-          <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.25em] text-lab-ink-muted sm:text-[11px]">
-            {stat.label}
-          </p>
-          {"detail" in stat && stat.detail ? (
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-lab-ink sm:text-[11px]">
-              {stat.detail}
-            </p>
-          ) : null}
-        </li>
-      ))}
     </Reveal>
   );
 }
@@ -339,11 +292,11 @@ function About() {
 /**
  * The band, in reading order: what we build, what it produced, who we are.
  *
- * That order is the argument. `ProofStrip`, establishing there is a company,
- * now sits before the band entirely — between the hero and "The problem" —
- * so services say what is on offer once that is already settled; the work
- * shows it has been done; About says by whom. The ask comes after, on the
- * closing panel, once all three have been answered.
+ * That order is the argument. `StatsBar`, establishing there is a company,
+ * sits before the band entirely — between the hero and "The problem" — so
+ * services say what is on offer once that is already settled; the work shows
+ * it has been done; About says by whom. The ask comes after, on the closing
+ * panel, once all three have been answered.
  */
 export function HomeDocument() {
   return (

@@ -34,19 +34,27 @@ const MAX_DPR = 2;
  * symmetric — 0.1731 from the left at its worst, 0.1743 from the right —
  * which is what lets one constant and one scale cap protect both sides:
  * `HeroOverlay`'s two statements sit one on each side (`side: "right"` /
- * `"left"`), both run to the final frame rather than fading out, so the
- * text this plate has to clear the model of is effectively on screen for
- * the entire runway, on both flanks at once. `LOCKUP_SAFE_RIGHT`/
- * `LOCKUP_MARGIN` are the widest ink either side ever shows plus a
- * clearance — currently the "hours" statement's own `font-mono` at its
- * clamp ceiling, which measures wider per character than the headline and
- * so is the one that actually governs. `PLATE_FLOOR` stops the margin
- * chase from shrinking the object into insignificance on a viewport too
- * narrow to fit all three (model, left text, right text) at full size —
- * past that point some crowding is the lesser problem.
+ * `"left"`), and although they are staged rather than concurrent, the plate
+ * is sized once for the whole runway, so it has to clear whichever of them
+ * is widest. `LOCKUP_SAFE_RIGHT`/`LOCKUP_MARGIN` are that widest ink plus a
+ * clearance — the statements' own `font-mono` at its clamp ceiling, which
+ * measures wider per character than the headline and so is the one that
+ * actually governs. `PLATE_FLOOR` stops the margin chase from shrinking the
+ * object into insignificance on a viewport too narrow to fit all three
+ * (model, left text, right text) at full size — past that point some
+ * crowding is the lesser problem.
+ *
+ * **`LOCKUP_SAFE_RIGHT` is a measurement, not a taste call — re-measure it
+ * whenever the statement copy changes.** It was 440 when the longest line
+ * was "Hours back, every week.", which renders 370px at the 28px ceiling;
+ * the 70px on top is the `lg:px-16` gutter plus slack. "Design that scales
+ * itself." measures 419px in the same conditions, hence 490. Measure with
+ * the real font rather than a per-character estimate: JetBrains Mono at
+ * `tracking-tight` is -0.7px a character, which is 18px across a line this
+ * long.
  */
 const GEOMETRY_EDGE_FRAC = 0.173;
-const LOCKUP_SAFE_RIGHT = 440;
+const LOCKUP_SAFE_RIGHT = 490;
 const LOCKUP_MARGIN = 40;
 const PLATE_FLOOR = 0.45;
 /** Below this the lockup stacks above the model instead of beside it (see

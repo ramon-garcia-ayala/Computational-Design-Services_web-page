@@ -5,7 +5,8 @@ import { FrameCanvas } from "@/components/design-lab/FrameCanvas";
 import { HeroOverlay } from "@/components/design-lab/HeroOverlay";
 import { PanelSection } from "@/components/design-lab/PanelSection";
 import { ClosingPanel, ProblemPanel } from "@/components/design-lab/Panels";
-import { HomeDocument, ProofStrip } from "@/components/design-lab/HomeDocument";
+import { HomeDocument } from "@/components/design-lab/HomeDocument";
+import { StatsBar } from "@/components/design-lab/StatsBar";
 import { LabFooter } from "@/components/design-lab/LabFooter";
 import { ScrollProgress } from "@/components/design-lab/ScrollProgress";
 
@@ -68,22 +69,12 @@ export default function HomePage() {
         <HeroOverlay />
       </FrameCanvas>
 
-      {/* The four figures, in normal document flow between the hero and the
-          first panel — the gap the hero's own runway already reserves as it
-          hands off. Ordinary flow, not a panel: it only has to be legible
-          for one beat before the geodesic's sticky stage un-pins and this
-          scrolls past it, same as everything else below.
-
-          No background of its own: the page ground here is still
-          `--color-lab-bg`, the hero's own greige (`data-design-lab` paints
-          it at the document root), so an unset background reads as a
-          continuation of the hero rather than a plate dropped on top of it.
-          `ProofStrip`'s ink follows, using the same `lab-ink` pair
-          `HeroOverlay` uses on this exact ground rather than the light-on-dark
-          tokens the rest of the document band uses. */}
-      <div className="relative pt-16 sm:pt-20">
-        <ProofStrip />
-      </div>
+      {/* The four figures, in the ground the hero fades into and the first
+          panel rises out of. Sitting between the two rather than on either
+          means it needs no blending of its own, and its ink is the `lab-ink`
+          pair `HeroOverlay` already uses on this exact greige rather than
+          the light-on-dark tokens the document band uses further down. */}
+      <StatsBar />
 
       {/* The first panel is the only one that blends its leading edge: it is
           the one that meets the light hero, and every panel after it rises
@@ -92,8 +83,8 @@ export default function HomePage() {
         <ProblemPanel />
       </PanelSection>
 
-      {/* Ordinary scrolling flow, on carbon. Nothing here is pinned and
-          nothing can be clipped. */}
+      {/* Ordinary scrolling flow, on the panel charcoal. Nothing here is
+          pinned and nothing can be clipped. */}
       <HomeDocument />
 
       {/* Shorter runway on the last panel: there is nothing after it to hold

@@ -106,26 +106,33 @@ export const designLab = {
   /* `from`/`to` are 1-based frame numbers, matching how the spec and the
      filenames count. The component converts them to scroll progress, so the
      ranges stay readable against the spec rather than being pre-baked into
-     fractions nobody can check. Both now run to the last frame: they hand
-     off into the first panel together rather than one at a time, and
-     neither fades out before that happens.
+     fractions nobody can check.
 
-     They used to be staged one after the other with a wide gap between them
-     — "hours" faded out by frame 45, then a dead stretch with no text at
-     all until "handover" faded in at 60. A visitor had to scroll past 60%
-     of the runway before the second line even started appearing. The 10
-     frame gap here is enough to read as one arriving after the other rather
-     than both snapping in at once, without making a visitor wait for it.
+     Staged, not concurrent: the first fades out by frame 45 and the second
+     only arrives at 60, so one line is read, cleared, and answered by the
+     next. `HeroOverlay` already handles both halves of that — a statement
+     whose `to` lands before the final frame gets its own fade-out (the
+     `to < 1` branch), and one that runs to 96 is simply carried into the
+     first panel.
 
-     Both were atmosphere ("Complexity, computed." restated the headline one
-     word over; "Design that scales itself." is a claim with no referent).
-     They are the only words on screen for two full viewports, so they now say
-     something a buyer can act on. Kept under 25 characters — `HeroOverlay`
-     sets them `whitespace-nowrap` and the clamp floor is sized for that
-     length at 375px. */
+     The wording is the spec's own (§11.1). An intermediate version replaced
+     both with benefit lines ("Hours back, every week." / "Tools your team
+     keeps.") on the argument that these are the only words on screen for two
+     viewports and should sell rather than set a mood; the copy here is the
+     original brief restored.
+
+     **Length is a layout constraint, not a style preference.**
+     `HeroOverlay` sets these `whitespace-nowrap`, so they can never wrap:
+     the clamp floor has to fit the longest line at 375px, and
+     `FrameCanvas`'s `LOCKUP_SAFE_RIGHT` — the margin that keeps the
+     geodesic's mesh out from under this text on a laptop — is measured
+     against the longest line at the clamp *ceiling*. "Design that scales
+     itself." is 26 characters against the 23 of the line it replaced, so
+     that constant was re-measured with it. Changing this copy means
+     re-measuring it again. */
   statements: [
-    { id: "hours", text: "Hours back, every week.", from: 20, to: 96, side: "right" },
-    { id: "handover", text: "Tools your team keeps.", from: 30, to: 96, side: "left" },
+    { id: "complexity", text: "Complexity, computed.", from: 20, to: 45, side: "right" },
+    { id: "scales", text: "Design that scales itself.", from: 60, to: 96, side: "left" },
   ],
 
   panels: {
