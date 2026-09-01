@@ -46,7 +46,7 @@ export function ProjectCard({
         {/* The card is itself the `<Link>`, so it is already a natural focus
             target — `group-focus-visible` reaches this exactly the way
             `group-hover` does, at no extra cost, unlike a hover reveal on a
-            non-interactive element (see `StatsBar`). */}
+            non-interactive element. */}
         <span className="absolute bottom-4 left-4 font-mono text-[10px] uppercase tracking-widest text-accent-ink opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100">
           View case →
         </span>

@@ -108,7 +108,7 @@ proposals and the client portal don't inherit the site navigation:
 
 | Route | File |
 |---|---|
-| `/` | `src/app/(site)/page.tsx` |
+| `/` | `src/app/page.tsx` (app root, not in `(site)` — it mounts its own header and footer) |
 | `/about` | `src/app/(site)/about/page.tsx` |
 | `/projects` | `src/app/(site)/projects/page.tsx` |
 | `/projects/[slug]` | `src/app/(site)/projects/[slug]/page.tsx` (`generateStaticParams`) |
@@ -142,8 +142,8 @@ run `node scripts/project-media.mjs`. The grid, the static route, the
 horizontal-scroll detail page and the next-project navigation all come from it.
 
 `featured: true` surfaces a project on `/archive-home`, **not on `/`** — the
-live home page is the design-lab layout, whose `FeaturedPanel` reads its own
-hardcoded three items from `src/data/design-lab.ts`.
+live home page reads its own hardcoded three items from the `work` block in
+`src/data/design-lab.ts`.
 
 ## Project media
 
@@ -821,12 +821,60 @@ invalid-link screen to the visitor who just generated it.
   `onRefresh` so landing part-way down a page, where no toggle fires, still
   sets the state.
 
+## Home: cinema, document, cinema
+
+`src/app/page.tsx` is a sandwich, and the middle is the part that sells.
+
+```
+CINE      hero sequence (240svh scrub)  ->  "the problem" panel
+DOCUMENT  proof strip · services · method · work · about   (HomeDocument.tsx)
+CINE      playground panel  ->  closing panel
+```
+
+It used to be six panels end to end, and paid for that twice. Of six sections
+exactly one said what the studio does, in four single sentences — while the
+sharpest copy in the repo (`manifesto.lead` in `data/approach.ts`, the four
+`approachSteps`, the sixteen `expertiseAreas` capabilities) rendered only on
+`/archive-home` and `/about`. And the three panels that had outgrown a viewport
+were **clipped, not scrolled**.
+
+**A panel is a fixed 100svh box with `overflow-hidden`. Content taller than
+that disappears, and it disappears off the *top*.** `PanelSection`'s plate is
+`justify-start` and every body carries `my-auto` for exactly this reason: with
+`justify-center`, an oversized child overflows symmetrically and the stage eats
+its opening — the old Featured panel lost its heading and the top 40% of all
+three images at every desktop height, with no scrollbar and nothing to find.
+Auto margins centre when there is free space and resolve to zero when there is
+not, so overflow can only ever clip the *end*. Anything that has to be read
+goes in the document band; only content that is genuinely one idea on one
+screen belongs in a panel. **Measure a new panel body against the stage** —
+`PlaygroundPanel` is 633px against 675 and is the one that will break first.
+
+**`PanelSection`'s `behind` is the ground the panel rises over**, normally the
+plate of the section before it. The section itself fills the screen while the
+panel is still climbing, and `data-design-lab` paints `html` greige for the
+hero — so without it every dark panel rose over a slab of hero colour. Naming
+the previous plate hides the seam *and* keeps the morph legible; painting it
+the panel's own colour would hide the animation along with the join.
+
+**`site.descriptor` has to stay short.** The light header centres it
+absolutely, which puts it out of flow, so nothing but its own length keeps it
+clear of the control cluster — at 78 characters its tail sat behind the music
+toggle from `lg` up. There is a `max-w-[calc(100vw-44rem)] truncate` guard, but
+truncating a tagline is a failure mode, not a design.
+
+**Do not cap `ChatPlaceholder` with `lg:max-h-*`.** Its base classes carry
+`lg:max-h-none`, `cn()` does not dedupe that against an arbitrary value in the
+same group, and Tailwind sorts `none` last — the cap reaches the class
+attribute, computes to `max-height: none`, and silently does nothing. Size the
+panel's padding instead.
+
 ## The home hero on a phone
 
 `HeroOverlay` centres the lockup and both statements from `sm` up, and moves
 them out of the centre below it. On a narrow screen the geodesic fills the
 middle third of the viewport, so centred type lands straight on the model:
-the lockup goes above it (`justify-start pt-[9svh]`), the right-hand statement
+the lockup goes above it (`justify-start pt-[6svh]`), the right-hand statement
 above (`items-start pt-[15svh]`), the left-hand one below
 (`items-end pb-[18svh]`). Every one of those is reset at `sm:` — the desktop
 layout resolves to exactly what it was, which is the point.
@@ -837,6 +885,12 @@ are the difference between clearing it and grazing it. **The margin is small
 (~34px on a 390x844 phone) and the model's position is measured off a
 screenshot rather than computed**, so anything that changes the hero copy
 length or the logo size needs re-checking on a real phone.
+
+That margin is why the hero's two CTAs are not two CTAs on a phone. Side by
+side the labels run ~348px of pill against 327px of usable width at 375, so
+they wrap — and the second row is ~45px the stack does not have. The secondary
+is `hidden … sm:inline-flex`; the primary keeps `py-3` over its size's own
+`py-2.5`, because 41px is under the 44px a touch target has to clear.
 
 ## prefers-reduced-motion
 

@@ -14,8 +14,18 @@ export const site = {
   tagline: "We automate AEC. You ship faster.",
   subcopy:
     "We build custom automation tools and computational workflows for AEC firms, from parametric design pipelines to AI-driven systems.",
-  /** Short descriptor for the header and the metadata. */
-  descriptor: "Computational automation studio for architecture, engineering and construction.",
+  /**
+   * Short descriptor for the header and the two footers.
+   *
+   * It has to actually be short. The 78-character version this replaces was
+   * set `whitespace-nowrap` and absolutely centred in the header, so it took
+   * whatever width it needed and ran *underneath* the control cluster on the
+   * right — the tail of "construction" sat behind the music toggle at every
+   * width from 1024 up. Absolute centring is what makes the header's middle
+   * slot independent of the logo and the controls; the price is that this
+   * string is the only thing keeping it out of them.
+   */
+  descriptor: "Computational automation for AEC.",
   contactSubject: "Project inquiry",
   /** Visible text of any contact CTA. Never the address. */
   contactLabel: "Get in touch",

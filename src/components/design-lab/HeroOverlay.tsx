@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { designLab } from "@/data/design-lab";
+import { CTALink } from "@/components/ui/CTALink";
 import { cn } from "@/lib/utils";
 
 /** Fraction of the runway a statement takes to fade in or out (~4 frames). */
@@ -157,7 +158,14 @@ export function HeroOverlay() {
           the lockup goes there. Desktop has width to spare and is unchanged. */}
       <div
         data-lockup
-        className="absolute inset-0 flex flex-col justify-start pt-[9svh] px-6 sm:justify-center sm:pt-0 sm:px-10 lg:px-16"
+        /* `pt-[6svh]` below `sm`, was 9. The two buttons added ~45px to this
+           stack and the mobile hero has about 34px of clearance above the
+           geodesic — measured off a screenshot on a 390x844 phone, not
+           computed — so the block had to give the height back somewhere. It
+           comes out of the gap to the header, which had it to spare, rather
+           than out of the type. Everything here is still reset at `sm:`, so
+           the desktop layout resolves to exactly what it was. */
+        className="absolute inset-0 flex flex-col justify-start pt-[6svh] px-6 sm:justify-center sm:pt-0 sm:px-10 lg:px-16"
       >
         <div className="w-full max-w-3xl">
           {/* §12.2: the real logo asset, not type. Rendered as a mask filled
@@ -197,10 +205,59 @@ export function HeroOverlay() {
             {hero.headline}
           </h1>
 
-          {/* §12.4: justified. */}
-          <p className="mt-4 max-w-lg text-justify text-[0.7rem] leading-relaxed text-lab-ink-muted sm:mt-6 sm:text-[0.8rem]">
-            {hero.description}
+          {/* The outcome line, where a three-sentence justified paragraph used
+              to sit. Two reasons it went. It ran to `max-w-lg` at every width,
+              which on this plate reaches into the geodesic — the model owns
+              the middle of the frame, so the last third of every line was set
+              over mesh. And it was justified at 0.7rem across a narrow
+              measure, which opens rivers you can put a finger down. What is
+              left is one line that never reaches the model and says the thing
+              a buyer needs to hear. */}
+          <p className="mt-4 max-w-md text-[0.85rem] leading-snug font-medium text-lab-ink sm:mt-6 sm:text-[1.15rem]">
+            {hero.outcome}
           </p>
+
+          {/* The hero had nothing to click. Four screen-heights of the best
+              real estate on the site and no way to act on it — a visitor who
+              was sold by the first frame had to find the header.
+
+              `pointer-events-auto` is required: the overlay root is
+              `pointer-events-none` so that the sequence behind it stays
+              scrollable, and that inherits to every descendant. Without it
+              these render, highlight on hover and do nothing at all. */}
+          <div className="pointer-events-auto mt-5 flex flex-wrap items-center gap-3 sm:mt-8">
+            {/* `py-3` over the size's own `py-2.5`: 41px is under the 44px
+                minimum a touch target has to clear, and this is the one
+                control on the page a phone visitor is meant to hit. */}
+            <CTALink
+              href={hero.ctaPrimary.href}
+              variant="solid"
+              size="md"
+              className="py-3"
+            >
+              {hero.ctaPrimary.label}
+            </CTALink>
+            {/* `CTALink`'s `outline` resolves `text-fg` — near-white, and this
+                plate is greige. The ink and its border are overridden to the
+                pale scope's own pair rather than a new variant being added,
+                since this is the only place on the site where a CTA sits on
+                the hero plate.
+
+                Hidden below `sm`. Side by side the two labels are ~348px of
+                pill against 327px of usable width on a 375px screen, so they
+                wrap to a second row — and the second row is the ~45px the
+                mobile hero does not have. The anchor is a convenience for
+                someone browsing with a mouse; the primary is what converts,
+                and on a phone it gets the space to itself. */}
+            <CTALink
+              href={hero.ctaSecondary.href}
+              variant="outline"
+              size="md"
+              className="hidden border-edge text-lab-ink hover:border-lab-ink hover:text-lab-ink sm:inline-flex"
+            >
+              {hero.ctaSecondary.label}
+            </CTALink>
+          </div>
         </div>
       </div>
 

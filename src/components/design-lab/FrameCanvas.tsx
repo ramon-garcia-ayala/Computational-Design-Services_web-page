@@ -39,8 +39,16 @@ const MAX_DPR = 2;
  * thing to fight when content is added below this section later.
  *
  * Under reduced motion the tree itself changes rather than just the tween —
- * leaving the 400svh runway in place would strand the reader in three
- * viewports of empty scroll with nothing moving.
+ * leaving the runway in place would strand the reader in two viewports of
+ * empty scroll with nothing moving.
+ *
+ * The runway is 240svh, down from 400. All 96 frames still play, and the
+ * canvas is untouched: `end: "bottom bottom"` means the sequence is spread
+ * over whatever the wrapper is tall, so a shorter wrapper only moves the
+ * frames faster against the wheel. This is the same trade `PIN_RATIO` makes
+ * on the project pages. What it buys is the four screen-heights the hero used
+ * to spend delivering a headline and two short lines, which is the most
+ * expensive real estate on the site and was the least informative.
  */
 export function FrameCanvas({ children }: { children?: React.ReactNode }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -208,7 +216,7 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
     <div
       ref={wrapperRef}
       data-sequence-runway
-      className={cn(!reducedMotion && "h-[400svh]")}
+      className={cn(!reducedMotion && "h-[240svh]")}
     >
       <div
         ref={stageRef}

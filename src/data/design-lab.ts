@@ -1,9 +1,23 @@
 /**
- * Asset configuration and copy for the `/design-lab` prototype.
+ * Asset configuration and copy for the Home page.
  *
- * Isolated sandbox route: nothing here is imported by the live site, and the
- * route is not linked from it. Per repo convention the component holds no
- * copy and no asset paths of its own — they live here.
+ * The name is historical: this began as the `/design-lab` prototype route and
+ * was promoted to `/`. Per repo convention the components hold no copy and no
+ * asset paths of their own — they live here.
+ *
+ * Home is a sandwich: two cinema stretches around a document band.
+ *
+ *   CINE      hero sequence  ->  "the problem" panel
+ *   DOCUMENT  proof strip · services · method · work · about
+ *   CINE      playground panel  ->  closing panel
+ *
+ * The cine panels are 100svh stages that morph up over what precedes them.
+ * The document band is ordinary flow, and that is the point: a panel is a
+ * fixed viewport with its overflow hidden, so anything taller than the screen
+ * is *clipped*, not scrolled. Services with deliverables, a four-step method
+ * and three work cards do not fit that format — they used to be panels, and
+ * the top of each one was silently cut off. Content that has to be read lives
+ * in the band; content that has to land lives in a panel.
  */
 
 import { founders } from "./founders";
@@ -42,19 +56,33 @@ export const designLab = {
     height: 611,
   },
 
-  /* Spec §11.3 / §11.1. Shown over the sequence from the first frame. */
+  /* Shown over the sequence from the first frame.
+     Two lines and two buttons, where there used to be two lines and a
+     three-sentence justified paragraph. The paragraph ran under the geodesic
+     at every desktop width — the model occupies the middle of the plate and
+     the copy column reached into it — and it repeated, at length, what the
+     "problem" panel two screens later says better. What replaced it is the
+     brand guide's own outcome line: `headline` is the positioning line, this
+     is the one that speaks to a budget. */
   hero: {
     logoAlt: "R²χTECH",
     headline: "Architecture, computed.",
-    description:
-      "We are a computational studio embedded in architecture, engineering, and construction. We build the parametric pipelines, model automations, and AI-driven systems.",
+    outcome: "We automate AEC. You ship faster.",
+    /* The hero had no call to action at all: four screen-heights of the most
+       expensive real estate on the site, and nothing to click. */
+    ctaPrimary: { label: "Start a project", href: "/contact" },
+    ctaSecondary: { label: "See what we build", href: "#services" },
   },
 
-  /* The bar in the transition between the hero and the first panel.
-     Deliberately unrelated to `data/stats.ts` and `data/awards.ts`: those hold
+  /* Deliberately unrelated to `data/stats.ts` and `data/awards.ts`: those hold
      the original mockup's placeholder figures and are still wired to
      `/archive-home`. These are the real ones, and reusing that shape would
-     have tied the live page to numbers nobody has verified. */
+     have tied the live page to numbers nobody has verified.
+
+     They sit inside the document band now, not in the gap between the hero and
+     the first panel. In that gap they were readable for about one gesture
+     before the panel rose over them — proof that scrolls past unread is not
+     proof. */
   stats: [
     { id: "founded", value: "2026", label: "Founded" },
     { id: "market", value: "US", label: "First market" },
@@ -63,95 +91,162 @@ export const designLab = {
       id: "countries",
       value: "3",
       label: "Countries",
-      /* Rendered under the label in `StatsBar`, not swapped in on hover —
+      /* Rendered under the label in the proof strip, not swapped in on hover —
          a hover-only reveal on a non-focusable stat had no keyboard
          equivalent. */
       detail: "Lebanon · Mexico · US",
     },
   ],
 
-  /* Spec §11.1. `from`/`to` are 1-based frame numbers, matching how the spec
-     and the filenames count. The component converts them to scroll progress,
-     so the ranges stay readable against the spec rather than being pre-baked
-     into fractions nobody can check. Statement 2 deliberately runs to the
-     last frame: it is still on screen when the first panel rises over it. */
+  /* `from`/`to` are 1-based frame numbers, matching how the spec and the
+     filenames count. The component converts them to scroll progress, so the
+     ranges stay readable against the spec rather than being pre-baked into
+     fractions nobody can check. Statement 2 deliberately runs to the last
+     frame: it is still on screen when the first panel rises over it.
+
+     Both were atmosphere ("Complexity, computed." restated the headline one
+     word over; "Design that scales itself." is a claim with no referent).
+     They are the only words on screen for two full viewports, so they now say
+     something a buyer can act on. Kept under 25 characters — `HeroOverlay`
+     sets them `whitespace-nowrap` and the clamp floor is sized for that
+     length at 375px. */
   statements: [
-    { id: "complexity", text: "Complexity, computed.", from: 20, to: 45, side: "right" },
-    { id: "scales", text: "Design that scales itself.", from: 60, to: 96, side: "left" },
+    { id: "hours", text: "Hours back, every week.", from: 20, to: 45, side: "right" },
+    { id: "handover", text: "Tools your team keeps.", from: 60, to: 96, side: "left" },
   ],
 
-  /* Spec §11.5–11.9, in scroll order. `kind` picks the body component; the
-     copy for each lives with it here. */
-  /* No panel carries an index number any more (§13.1): the eyebrow is the
-     category alone. */
   panels: {
+    /* CINE. The manifesto that was stranded on `/archive-home`: the sharpest
+       sentence written for this studio, and the live landing page never
+       showed it. One panel, two blocks, nothing else — it is the turn from
+       atmosphere to argument. */
+    problem: {
+      id: "problem",
+      kicker: "The problem",
+      lead: "AEC teams lose their best hours to work that software should be doing.",
+      body: "We build the pipelines, automations and AI systems that take that work off your team — and hand them over documented, so they keep running without us.",
+    },
+
+    /* DOCUMENT. Four rows, not four cards. The one-sentence card was the
+       whole of what this page said about the service on offer; the
+       deliverables under each row are lifted from `data/expertise.ts`, cut to
+       a phrase each so four services fit one screen of reading rather than
+       four screens of prose. */
     services: {
       id: "services",
       kicker: "Services",
       title: "What we build",
-      /* `motif` picks the animated figure above each card (§13.2). They are
+      /* `motif` picks the animated figure beside each row. They are
          behaviours, not decorations: the motion is meant to say what the
-         service does, so a card keeps the one that matches it. */
+         service does, so a row keeps the one that matches it. */
       items: [
         {
           name: "Computational Design",
           motif: "network" as const,
-          body: "Parametric modeling and generative workflows that turn design intent into explorable, optimizable systems.",
+          body: "Design logic encoded once, reused across every revision.",
+          deliverables: [
+            "Grasshopper and Dynamo, built for handover",
+            "Rhino.Compute geometry services",
+            "Option studies and browser configurators",
+            "Fabrication and CNC-ready export",
+          ],
         },
         {
           name: "Design Automation",
           motif: "pipeline" as const,
-          body: "Custom tools and scripts that eliminate repetitive work across your studio's modeling, documentation, and delivery pipeline.",
+          body: "Model work that runs on its own, overnight and unattended.",
+          deliverables: [
+            "Revit and IFC tooling via API",
+            "Automated model quality audits",
+            "Parameter and classification management",
+            "Drawing and schedule generation",
+          ],
         },
         {
           name: "AI-Driven Design Tools",
           motif: "inference" as const,
-          body: "AI-assisted generation, analysis, and decision-making built directly into your design process, from massing studies to facade systems.",
+          body: "AI where it earns its place: document-heavy, judgement-light, reviewed by a human.",
+          deliverables: [
+            "Document and drawing extraction",
+            "Retrieval over standards and archives",
+            "Takeoff, compliance and review agents",
+            "Evaluation harnesses, so quality stays measurable",
+          ],
         },
         {
           name: "Custom Software & Plugins",
           motif: "assembly" as const,
-          body: "Bespoke Grasshopper, Revit, and Rhino tooling built for your specific studio workflow, not off-the-shelf.",
+          body: "Bespoke tooling, and the connective work that moves data between your systems.",
+          deliverables: [
+            "Custom connectors and ETL",
+            "Project dashboards and reporting",
+            "Common data environment integration",
+            "Cost, programme and model data joined",
+          ],
         },
       ],
     },
 
-    /* Named `playground`, not `labs` — the chat widget this panel hosts has
-       nothing to do with the separate `/labs` route (a placeholder page for
-       future experiments). The two shared the `labs` key for a while, which
-       is exactly what let `/labs`'s own copy drift into describing this
-       panel's assistant as if it were the page's own content. */
-    playground: {
-      id: "playground",
-      kicker: "Playground",
-      title: "Try it yourself",
-      /* Transcoded from the supplied .mov: the source is HEVC, which Chrome
-         and Firefox cannot decode at all, so the container was never the
-         problem — the codec was. See scripts note in the panels README. */
-      video: "/videos/panels/labs-loop.mp4",
+    /* DOCUMENT. The four steps from `data/approach.ts`, cut to one line each.
+       The titles are duplicated from there rather than imported: `/about`
+       needs the full paragraph and this needs a clause, and reading one from
+       the other would mean rendering a paragraph here or shipping a stub
+       there. If a step is renamed, both change. */
+    method: {
+      id: "method",
+      kicker: "How we work",
+      title: "Four steps, no surprises",
+      steps: [
+        {
+          id: "map",
+          number: "01",
+          title: "Map the bottleneck",
+          body: "We trace where the hours actually go before choosing any tool.",
+        },
+        {
+          id: "prototype",
+          number: "02",
+          title: "Prototype in days",
+          body: "A rough working version inside the first sprint. Arguing with something real is faster.",
+        },
+        {
+          id: "build",
+          number: "03",
+          title: "Build for handover",
+          body: "Documented, versioned, testable — so your team extends it without us.",
+        },
+        {
+          id: "measure",
+          number: "04",
+          title: "Measure and iterate",
+          body: "If a workflow is not measurably faster, it is not finished.",
+        },
+      ],
     },
 
-    /* Spec §11.7: present but intentionally blank. Kept in the scroll order
-       so the rhythm of the page is the real one while the content is decided. */
-    featured: {
-      id: "featured",
-      kicker: "Featured work",
-      title: "",
-      /* A showcase strip, deliberately not the `/projects` system: no routes,
-         no detail pages, no entries in `data/projects.ts`. Three images and a
-         line each, nothing clickable.
+    /* DOCUMENT. Was `featured` — three images with a caption, no result and
+       no context, in a panel that clipped the top 40% of every one of them.
 
-         `animated` marks the one that must bypass Next's image optimiser —
-         it re-encodes a GIF to a still by default, which would silently drop
-         all 99 frames and leave a frozen first frame that still looks like a
-         working image. */
+       These are research projects, not client engagements, and the page says
+       so: every card carries its `context` and the line under it is a
+       *finding*, never a business metric. `result` is quoted from the
+       project's own write-up in `data/projects.ts` where one exists —
+       inventing "saved 40% of hours" for an IAAC thesis would be a lie on a
+       page whose entire job is to be believed. */
+    work: {
+      id: "work",
+      kicker: "Selected work",
+      title: "What it produced",
       items: [
         {
           id: "spatial-flow",
           src: "/projects/spatial-flow.gif",
           animated: true,
           title: "Spatial Flow",
-          caption: "AI-driven layout optimization for industrial environments.",
+          context: "IAAC · Barcelona",
+          /* `projects.ts`, panel `outcome`, verbatim intent. */
+          result:
+            "Several defensible layouts, and the reasoning behind each — a comparison, not a verdict.",
           alt: "Generated industrial layouts cycling through machine, workstation and circulation arrangements as the agent searches for a better configuration.",
         },
         {
@@ -159,20 +254,33 @@ export const designLab = {
           src: "/projects/hyper-building-automation.jpg",
           animated: false,
           title: "Hyper Building Automation",
-          caption: "Automated data workflow linking structural and façade teams.",
+          /* This one is not in `projects.ts` — it is a loose file in
+             `public/projects/`, so there is no write-up to quote and no
+             verified context string. The line below is its existing caption,
+             which describes what the pipeline does rather than what it
+             showed. It needs a real finding in the studio's own words before
+             this section is published. */
+          context: "Studio pipeline",
+          result:
+            "An automated data workflow linking the structural and façade teams off one published model version.",
           alt: "An automated pipeline extracting and distributing data from published 3D model versions across structural and façade teams.",
         },
         {
           id: "la-cite-radieuse",
           src: "/projects/la-cite-radieuse-topology.png",
           animated: false,
-          title: "La Cité Radieuse — Topology",
-          caption: "Spatial-graph analysis of circulation and connectivity.",
+          title: "La Cité Radieuse",
+          context: "IAAC · Barcelona",
+          /* `projects.ts`, panel `prediction`, verbatim intent. */
+          result:
+            "Where the models predict a room's function, the plan's logic is legible in its topology alone.",
           alt: "Floor plans of the Unité d'Habitation converted into spatial graphs, showing circulation and connectivity between apartments and rooms.",
         },
       ],
     },
 
+    /* DOCUMENT. Moved out of the cine stretch: it is information, not
+       spectacle, and it was the panel most likely to overflow its viewport. */
     about: {
       id: "about",
       kicker: "About",
@@ -185,12 +293,33 @@ export const designLab = {
       founders,
     },
 
+    /* CINE. Named `playground`, not `labs` — the chat widget this panel hosts
+       has nothing to do with the separate `/labs` route (a placeholder page
+       for future experiments). The two shared the `labs` key for a while,
+       which is exactly what let `/labs`'s own copy drift into describing this
+       panel's assistant as if it were the page's own content.
+
+       It comes *after* the document band on purpose: "try it yourself" means
+       something once the reader knows what "it" is. */
+    playground: {
+      id: "playground",
+      kicker: "Playground",
+      title: "Try it yourself",
+      /* Transcoded from the supplied .mov: the source is HEVC, which Chrome
+         and Firefox cannot decode at all, so the container was never the
+         problem — the codec was. See scripts note in the panels README. */
+      video: "/videos/panels/labs-loop.mp4",
+    },
+
+    /* CINE. */
     closing: {
       id: "closing",
       kicker: "Next",
-      /* §13.6, same arrangement as the Labs loop. */
       video: "/videos/panels/closing-loop.mp4",
       body: "We're already thinking in code. Let's think about your project next.",
+      /* A second, lower-friction way in beside the primary CTA. Someone not
+         ready to write an email will still open a page. */
+      secondary: { label: "See the work", href: "/projects" },
     },
   },
 };

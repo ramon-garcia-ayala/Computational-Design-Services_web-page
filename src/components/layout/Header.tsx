@@ -117,12 +117,22 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
           {/* Centred on the viewport, not merely between its neighbours: as a
               flex child its position would shift with the width of the logo
               and the control cluster, which are not the same size. Absolute
-              centring makes it independent of both. One line, never wrapped. */}
+              centring makes it independent of both. One line, never wrapped.
+
+              `max-w` is the guard that centring costs. An absolutely
+              positioned element is out of flow, so nothing stops it growing
+              under the controls — which is exactly what the old 78-character
+              descriptor did, hiding its own tail behind the music toggle from
+              `lg` up. The controls cluster measures ~30rem at its widest and
+              the logo ~10rem; reserving 44rem leaves the descriptor the
+              middle and truncates rather than overlapping if the copy ever
+              grows again. `site.descriptor` is short enough that the ellipsis
+              never appears — this is the belt to its braces. */}
           <p
             className={cn(
               "hidden text-center text-xs leading-tight lg:block",
               light
-                ? "absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-lab-ink-muted"
+                ? "absolute left-1/2 max-w-[calc(100vw-44rem)] -translate-x-1/2 truncate text-lab-ink-muted"
                 : "max-w-xs text-fg-muted",
             )}
           >

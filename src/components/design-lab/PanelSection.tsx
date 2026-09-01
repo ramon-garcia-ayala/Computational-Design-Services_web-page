@@ -16,6 +16,25 @@ type PanelSectionProps = {
    * Panel-on-panel is carbon over carbon, where there is no seam to hide.
    */
   blend?: boolean;
+  /**
+   * Background class for the *ground the panel rises over* — normally the
+   * plate of whatever section precedes this one.
+   *
+   * The section itself is what fills the screen while the panel is still
+   * below it climbing, and it was transparent. `data-design-lab` paints the
+   * document root greige for the hero, so every panel after the first rose
+   * over a band of hero colour that had no business being there: a slab of
+   * greige between two dark sections, wiped away by the panel a moment later.
+   *
+   * Naming the previous plate here makes the join invisible *and* keeps the
+   * morph readable — the panel arrives in a colour that contrasts with what
+   * it is covering, which is the entire effect. Painting it the panel's own
+   * colour would hide the seam and the animation with it.
+   *
+   * A `blend` panel takes none: it is the one that has to let the hero
+   * sequence show through as it climbs.
+   */
+  behind?: string;
   className?: string;
 };
 
@@ -52,6 +71,7 @@ export function PanelSection({
      beat to read on without the scroll feeling stuck. */
   runway = 115,
   blend = false,
+  behind,
   className,
 }: PanelSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -115,14 +135,33 @@ export function PanelSection({
   return (
     <section
       ref={sectionRef}
-      className="relative"
+      className={cn("relative", !blend && behind)}
       style={{ height: `${runway}svh` }}
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div
           ref={panelRef}
+          /* `justify-start`, and the body centres itself with `my-auto`.
+             This is not a style preference, it is the fix for content
+             disappearing off the top of the screen.
+
+             With `justify-center`, a child taller than the 100svh stage
+             overflows it *symmetrically* — half above, half below — and the
+             stage's `overflow-hidden` then eats the top half. There is no
+             scrollbar and no error: the section heading and the top of the
+             first row are simply gone, and the panel looks like it starts
+             mid-sentence. That is what happened to the old Featured panel
+             (its "Featured work" kicker and the top 40% of all three images
+             were unreachable at every desktop height) and to the Playground
+             widget's own header row.
+
+             Auto margins on a flex item distribute *free* space. When there
+             is none, they resolve to zero and the item aligns to the start,
+             so overflow can only ever go downward — clipping the end of the
+             content rather than its beginning. Same centring when it fits,
+             a recoverable failure when it does not. */
           className={cn(
-            "absolute inset-0 flex flex-col justify-center will-change-transform",
+            "absolute inset-0 flex flex-col justify-start will-change-transform",
             !blend && "bg-panel",
             className,
           )}
