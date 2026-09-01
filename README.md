@@ -170,9 +170,19 @@ and then every route 404s.
 ## Contact
 
 Every mailto on the site goes to the studio address (`info@r-xtech.com`), and
-that address is never rendered as visible text — CTAs read "Get in touch". Clicking still opens a
-prefilled mail client, and the addresses aren't sitting in the page for spam
-harvesters. Edit `contactRecipients` in `src/data/site.ts`.
+that address is never rendered as visible text — CTAs read "Get in touch".
+Clicking still opens a prefilled mail client, and the address isn't sitting in
+the page for spam harvesters. Edit `contactRecipients` in `src/data/site.ts`.
+
+**Production needs `RESEND_API_KEY`** (see `.env.example`) for the contact form
+to send at all; without it the route answers 503 and the form says so rather
+than dropping a submission silently.
+
+**`CONTACT_FROM` is still on Resend's sandbox sender.** Until `r-xtech.com` is
+verified in Resend and that variable is set, both the contact form *and* the
+portal's magic link go out as `onboarding@resend.dev` — the wrong domain on
+every mail a client gets, and a good share of them land in spam. The steps are
+in `.env.example`; it is a launch blocker, not a nice-to-have.
 
 ## Known placeholders
 

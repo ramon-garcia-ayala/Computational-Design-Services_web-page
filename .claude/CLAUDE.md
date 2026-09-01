@@ -1016,6 +1016,16 @@ variables — two separate secrets, so rotating one never invalidates the other'
 sessions. Environment variables do not apply to deployments that already exist,
 so after changing one, redeploy.
 
+**`CONTACT_FROM` governs two senders, and is still unset.** Both
+`/api/contact` and `/api/portal/request-link` read
+`process.env.CONTACT_FROM ?? "onboarding@resend.dev"`, so a wrong value there
+breaks portal sign-in as well as the contact form. It stays on Resend's
+sandbox sender until `r-xtech.com` is verified in Resend (DKIM/SPF on the
+domain's DNS zone) — see `.env.example` for the sequence. Point it at a
+send-only mailbox rather than the inbox that receives: the contact route
+already sets `replyTo` to the visitor, so nothing needs to arrive at the
+sending address.
+
 **Local builds can fail with `EPERM` on `.next/types`** while VS Code is open —
 its TypeScript server holds the directory, and `tsconfig.json` includes it. Close
 the editor, or verify with a build from a clean clone instead.
