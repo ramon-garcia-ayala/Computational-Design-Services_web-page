@@ -5,7 +5,7 @@ import { FrameCanvas } from "@/components/design-lab/FrameCanvas";
 import { HeroOverlay } from "@/components/design-lab/HeroOverlay";
 import { PanelSection } from "@/components/design-lab/PanelSection";
 import { ClosingPanel, ProblemPanel } from "@/components/design-lab/Panels";
-import { HomeDocument } from "@/components/design-lab/HomeDocument";
+import { HomeDocument, ProofStrip } from "@/components/design-lab/HomeDocument";
 import { LabFooter } from "@/components/design-lab/LabFooter";
 import { ScrollProgress } from "@/components/design-lab/ScrollProgress";
 
@@ -39,8 +39,8 @@ import { ScrollProgress } from "@/components/design-lab/ScrollProgress";
  * So the panels keep the beats they are good at and get out of the way of the
  * argument:
  *
- *   CINE      hero sequence · "the problem"
- *   DOCUMENT  proof · services · method · work · about
+ *   CINE      hero sequence · proof · "the problem"
+ *   DOCUMENT  services · work · about
  *   CINE      closing
  *
  * A third cine panel — Playground, the chat assistant, "try it yourself" —
@@ -68,14 +68,26 @@ export default function HomePage() {
         <HeroOverlay />
       </FrameCanvas>
 
+      {/* The four figures, in normal document flow between the hero and the
+          first panel — the gap the hero's own runway already reserves as it
+          hands off. Ordinary flow, not a panel: it only has to be legible
+          for one beat before the geodesic's sticky stage un-pins and this
+          scrolls past it, same as everything else below.
+
+          No background of its own: the page ground here is still
+          `--color-lab-bg`, the hero's own greige (`data-design-lab` paints
+          it at the document root), so an unset background reads as a
+          continuation of the hero rather than a plate dropped on top of it.
+          `ProofStrip`'s ink follows, using the same `lab-ink` pair
+          `HeroOverlay` uses on this exact ground rather than the light-on-dark
+          tokens the rest of the document band uses. */}
+      <div className="relative pt-16 sm:pt-20">
+        <ProofStrip />
+      </div>
+
       {/* The first panel is the only one that blends its leading edge: it is
           the one that meets the light hero, and every panel after it rises
-          over a plate of its own, where there is no seam to soften.
-
-          It rises directly out of the sequence now — the stats strip that
-          used to sit in this gap was legible for about one gesture before the
-          panel covered it, and it does more work at the head of the document
-          band. */}
+          over a plate of its own, where there is no seam to soften. */}
       <PanelSection blend>
         <ProblemPanel />
       </PanelSection>

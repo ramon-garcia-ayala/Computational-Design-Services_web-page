@@ -7,8 +7,8 @@
  *
  * Home is a sandwich: two cinema stretches around a document band.
  *
- *   CINE      hero sequence  ->  "the problem" panel
- *   DOCUMENT  proof strip · services · method · work · about
+ *   CINE      hero sequence · proof strip  ->  "the problem" panel
+ *   DOCUMENT  services · work · about
  *   CINE      closing panel
  *
  * There used to be a Playground panel between the document band and Closing
@@ -19,10 +19,10 @@
  * The cine panels are 100svh stages that morph up over what precedes them.
  * The document band is ordinary flow, and that is the point: a panel is a
  * fixed viewport with its overflow hidden, so anything taller than the screen
- * is *clipped*, not scrolled. Services with deliverables, a four-step method
- * and three work cards do not fit that format — they used to be panels, and
- * the top of each one was silently cut off. Content that has to be read lives
- * in the band; content that has to land lives in a panel.
+ * is *clipped*, not scrolled. Services with deliverables and three work cards
+ * do not fit that format — they used to be panels, and the top of each one
+ * was silently cut off. Content that has to be read lives in the band;
+ * content that has to land lives in a panel.
  */
 
 import { founders } from "./founders";
@@ -210,43 +210,6 @@ export const designLab = {
             "Common data environment integration",
             "Cost, programme and model data joined",
           ],
-        },
-      ],
-    },
-
-    /* DOCUMENT. The four steps from `data/approach.ts`, cut to one line each.
-       The titles are duplicated from there rather than imported: `/about`
-       needs the full paragraph and this needs a clause, and reading one from
-       the other would mean rendering a paragraph here or shipping a stub
-       there. If a step is renamed, both change. */
-    method: {
-      id: "method",
-      kicker: "How we work",
-      title: "Four steps, no surprises",
-      steps: [
-        {
-          id: "map",
-          number: "01",
-          title: "Map the bottleneck",
-          body: "We trace where the hours actually go before choosing any tool.",
-        },
-        {
-          id: "prototype",
-          number: "02",
-          title: "Prototype in days",
-          body: "A rough working version inside the first sprint. Arguing with something real is faster.",
-        },
-        {
-          id: "build",
-          number: "03",
-          title: "Build for handover",
-          body: "Documented, versioned, testable — so your team extends it without us.",
-        },
-        {
-          id: "measure",
-          number: "04",
-          title: "Measure and iterate",
-          body: "If a workflow is not measurably faster, it is not finished.",
         },
       ],
     },
