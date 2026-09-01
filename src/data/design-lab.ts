@@ -127,18 +127,28 @@ export const designLab = {
       body: "We build the pipelines, automations and AI systems that take that work off your team — and hand them over documented, so they keep running without us.",
     },
 
-    /* DOCUMENT. Four rows, not four cards. The one-sentence card was the
-       whole of what this page said about the service on offer; the
-       deliverables under each row are lifted from `data/expertise.ts`, cut to
-       a phrase each so four services fit one screen of reading rather than
-       four screens of prose. */
+    /* DOCUMENT. Four cards, motif first.
+
+       **`body` is still here, and Home no longer renders it.** That is not an
+       oversight: `/services` reads these same four items and merges them with
+       `data/capabilities.ts` into one ten-card grid, where every card needs a
+       sentence — deleting the field breaks that page, and giving that page its
+       own copy would hand the site two answers to the same question.
+
+       Home drops it because on Home it is the second of two registers saying
+       the same thing: a sentence, and under it four deliverables saying it
+       concretely. The sentence was also what forced the layout — a paragraph
+       needs a prose measure, which is what turned four services into four
+       full-width rows running to roughly three screens, with the figure that
+       is supposed to say what each service does sitting at 120x60 underneath
+       the words. */
     services: {
       id: "services",
       kicker: "Services",
       title: "What we build",
-      /* `motif` picks the animated figure beside each row. They are
+      /* `motif` picks the animated figure at the top of each card. They are
          behaviours, not decorations: the motion is meant to say what the
-         service does, so a row keeps the one that matches it. */
+         service does, so a card keeps the one that matches it. */
       items: [
         {
           name: "Computational Design",
@@ -170,7 +180,11 @@ export const designLab = {
             "Document and drawing extraction",
             "Retrieval over standards and archives",
             "Takeoff, compliance and review agents",
-            "Evaluation harnesses, so quality stays measurable",
+            /* Was "Evaluation harnesses, so quality stays measurable" — the
+               longest line in the set by eight characters, and in a 300px
+               column that is what decides whether a card runs to three rows
+               of text or four. */
+            "Evaluation harnesses for measurable quality",
           ],
         },
         {

@@ -78,17 +78,27 @@ function ProofStrip() {
 }
 
 /**
- * Four rows, not four cards.
+ * Four cards, motif first.
  *
- * A 4-across grid of one-sentence cards was the entire account of what this
- * studio sells, and a grid is what forces that: four equal columns leave no
- * room for the deliverables, so the deliverables were left out and the
- * sentence had to carry the sale on its own. Rows give the right-hand two
- * thirds to a list, which is the part a buyer actually scans for the thing
- * they need.
+ * This was four full-width rows, and before that four one-sentence cards.
+ * The rows existed to fit a prose sentence *and* four deliverables side by
+ * side, which is a prose measure plus a list measure — the section ran to
+ * roughly three screens for four services, and the figure that is supposed to
+ * say what each one does sat at 120x60px underneath the words.
  *
- * The deliverables are lifted from `data/expertise.ts` — they were already
- * written, and rendered only on `/about`.
+ * Not rendering the sentence removes the only thing that needed the width.
+ * What is left fits four across: the motif at full column width, the name,
+ * and the deliverables in one column. Same information minus one redundant
+ * register, in about a third of the height.
+ *
+ * `item.body` is deliberately unread here and deliberately still in the data —
+ * `/services` merges these four items with `data/capabilities.ts` into a
+ * ten-card grid where every card carries a sentence. See the note at the
+ * `services` block in `data/design-lab.ts` before removing the field.
+ *
+ * The motif leads because it is the only part of this section that moves, and
+ * a 300px figure reads as a diagram where a 120px one read as an ornament.
+ * Everything inside it is authored in viewBox units, so it scales whole.
  */
 function Services() {
   const { services } = designLab.panels;
@@ -101,48 +111,57 @@ function Services() {
       <div className={SHELL}>
         <SectionHead kicker={services.kicker} title={services.title} />
 
-        <ul className="mt-14 lg:mt-20">
+        {/* Four columns divide four items exactly at every breakpoint here
+            (1, 2, then 4), so no row is ever left half empty. */}
+        <Reveal
+          as="ul"
+          stagger="[data-reveal]"
+          className="mt-14 grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4"
+        >
           {services.items.map((item) => (
-            <Reveal as="li" key={item.name} className="block border-t border-line py-12 first:border-t-0 first:pt-0 lg:py-16">
-              <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.9fr)] lg:gap-16">
-                {/* Name above figure, not below it. The motif is a fixed
-                    120px box, so putting it first pushed the service name
-                    ~85px down the column while the sentence it belongs to
-                    started at the top of the next one — two halves of the
-                    same row on two different baselines. The name leads, the
-                    figure supports it. */}
-                <div>
-                  <h3 className="text-h3 font-semibold text-fg">{item.name}</h3>
-                  {/* The figure is a fixed 120px box and its links inherit
-                      `currentColor`. */}
-                  <div className="mt-6 text-accent-ink" aria-hidden="true">
-                    <ServiceMotif kind={item.motif} />
-                  </div>
-                </div>
-
-                <div>
-                  <p className="max-w-2xl text-lead text-fg-muted">
-                    {item.body}
-                  </p>
-
-                  <ul className="mt-8 grid gap-x-10 gap-y-4 sm:grid-cols-2">
-                    {item.deliverables.map((line) => (
-                      <li key={line} className="flex gap-3 text-sm leading-relaxed text-fg">
-                        {/* A list marker, so it is decorative and hidden from
-                            assistive tech — the words carry the content. */}
-                        <span
-                          aria-hidden="true"
-                          className="mt-[0.7em] h-px w-3 shrink-0 bg-accent-ink"
-                        />
-                        <span>{line}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <li key={item.name} data-reveal className="reveal-init">
+              {/* `w-full h-auto` overrides the motif's default 120x60 box; the
+                  `2 / 1` is its own viewBox ratio, restated so the row height
+                  is reserved before the SVG paints and the grid does not
+                  reflow under the reveal. */}
+              <div
+                className="text-accent-ink"
+                style={{ aspectRatio: "2 / 1" }}
+              >
+                <ServiceMotif kind={item.motif} className="h-full w-full" />
               </div>
-            </Reveal>
+
+              {/* `lg:min-h-[2.4em]` reserves two lines of the heading's own
+                  size (line-height 1.2, so 2.4em is exactly two rows).
+                  In a ~300px column three of the four names wrap and
+                  "Design Automation" does not, which started its deliverables
+                  38px above the other three and made the row read as ragged
+                  rather than as a set. Only from `lg`: at `sm` the columns are
+                  twice as wide, every name fits one line, and reserving the
+                  second would just open a hole. */}
+              <h3 className="mt-6 border-t border-line pt-5 text-h3 font-semibold text-fg lg:min-h-[2.4em]">
+                {item.name}
+              </h3>
+
+              <ul className="mt-5 space-y-3">
+                {item.deliverables.map((line) => (
+                  <li
+                    key={line}
+                    className="flex gap-3 text-sm leading-snug text-fg-muted"
+                  >
+                    {/* A list marker, so it is decorative and hidden from
+                        assistive tech — the words carry the content. */}
+                    <span
+                      aria-hidden="true"
+                      className="mt-[0.62em] h-px w-2.5 shrink-0 bg-accent-ink"
+                    />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
           ))}
-        </ul>
+        </Reveal>
       </div>
     </section>
   );
