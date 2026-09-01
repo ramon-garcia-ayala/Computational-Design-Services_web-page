@@ -6,11 +6,14 @@ export type NavLink = {
 };
 
 /**
- * The client portal's entry point. Declared first so both `navLinks` below
- * and `Header.tsx`'s own header pill read the same object — one label,
- * defined once, never re-typed at either call site.
+ * The client portal's entry point, read by `Header.tsx`'s own pill — one
+ * label, defined once, never re-typed at the call site.
+ *
+ * "Login", not "Client access": the pill it labels is now icon-sized, and at
+ * `text-[10px]` the longer phrase was most of the header's right edge for a
+ * control that is deliberately the secondary one there.
  */
-export const portalLink: NavLink = { label: "Client access", href: "/portal" };
+export const portalLink: NavLink = { label: "Login", href: "/portal" };
 
 /**
  * Main navigation of the fullscreen overlay menu.

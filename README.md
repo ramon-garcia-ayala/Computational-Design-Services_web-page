@@ -180,8 +180,6 @@ harvesters. Edit `contactRecipients` in `src/data/site.ts`.
 - Logos in `clients.ts` render as a grey block until the `logo` field points at
   an SVG in `/public`.
 - The newsletter form in the menu is UI only, with no backend.
-- The music button's audio track is disabled (`AUDIO_SRC = null` in
-  `src/components/layout/MusicToggle.tsx`).
 
 ## Documentation
 

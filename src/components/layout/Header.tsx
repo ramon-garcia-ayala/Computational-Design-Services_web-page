@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MenuOverlay } from "./MenuOverlay";
-import { MusicToggle } from "./MusicToggle";
 import { portalLink } from "@/data/nav";
 import { site } from "@/data/site";
 import { cn } from "@/lib/utils";
@@ -19,7 +18,11 @@ const LOGO = { src: "/logo/logo-mask.png", width: 3103, height: 611 };
 
 /**
  * Fixed header: logo on the left, descriptor in the middle, controls on the
- * right (music, "let's talk" and the fullscreen menu trigger).
+ * right (the portal pill, "get in touch" and the fullscreen menu trigger).
+ *
+ * A sound on/off toggle used to open that cluster. It was a switch with no
+ * track behind it — `AUDIO_SRC` was never set — so it animated three bars
+ * and did nothing else, which is a control that lies about being one.
  *
  * The menu state lives here because the trigger and the overlay have to share
  * it and hand focus back to each other.
@@ -122,8 +125,8 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
               `max-w` is the guard that centring costs. An absolutely
               positioned element is out of flow, so nothing stops it growing
               under the controls — which is exactly what the old 78-character
-              descriptor did, hiding its own tail behind the music toggle from
-              `lg` up. The controls cluster measures ~30rem at its widest and
+              descriptor did, hiding its own tail behind the control cluster
+              from `lg` up. The cluster measures ~30rem at its widest and
               the logo ~10rem; reserving 44rem leaves the descriptor the
               middle and truncates rather than overlapping if the copy ever
               grows again. `site.descriptor` is short enough that the ellipsis
@@ -140,25 +143,53 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
           </p>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            <MusicToggle className="hidden sm:flex" variant={variant} />
-
             {/* Discreet on purpose: visible from `sm` up, never competing
                 with the primary "Get in touch" CTA. It is not in `navLinks`
                 either — a returning client's bookmark, not a route the menu
                 needs to surface — so below `sm` it drops out entirely rather
                 than moving into the overlay. `rounded-control` here, not the
-                `rounded-full` literal its siblings still carry: same value
-                today, but this one is the token. */}
+                `rounded-full` literal its sibling still carries: same value
+                today, but this one is the token.
+
+                It keeps the compact geometry the sound toggle used to sit at
+                — `px-3 py-1.5`, `gap-2`, a 12px mark and `text-[10px]`, with
+                no `sm:` step up — rather than the contact CTA's larger pill.
+                That is the whole point of the pair: one primary action at
+                full size, and this one visibly secondary beside it. The mark
+                follows the site's line-icon convention (24 viewBox, 1.5
+                stroke, `currentColor`, no fill), so it inherits the label's
+                colour on both grounds and introduces no palette of its
+                own. */}
             <Link
               href={portalLink.href}
               className={cn(
-                "hidden rounded-control border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:inline-flex sm:px-4 sm:text-xs",
+                "group hidden items-center gap-2 rounded-control border px-3 py-1.5 transition-colors sm:inline-flex",
                 light
-                  ? "border-edge text-lab-ink hover:border-lab-ink hover:font-bold"
+                  ? "border-edge text-lab-ink hover:border-lab-ink"
                   : "border-edge text-fg hover:border-accent-ink hover:text-accent-ink",
               )}
             >
-              {portalLink.label}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-3 w-3"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+              </svg>
+              <span
+                className={cn(
+                  "font-mono text-[10px] uppercase tracking-widest transition-colors",
+                  light && "group-hover:font-bold",
+                )}
+              >
+                {portalLink.label}
+              </span>
             </Link>
 
             {/* `/contact`, not a mailto. A `mailto:` does nothing at all for

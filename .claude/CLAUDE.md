@@ -859,8 +859,8 @@ the panel's own colour would hide the animation along with the join.
 
 **`site.descriptor` has to stay short.** The light header centres it
 absolutely, which puts it out of flow, so nothing but its own length keeps it
-clear of the control cluster — at 78 characters its tail sat behind the music
-toggle from `lg` up. There is a `max-w-[calc(100vw-44rem)] truncate` guard, but
+clear of the control cluster — at 78 characters its tail sat behind that
+cluster from `lg` up. There is a `max-w-[calc(100vw-44rem)] truncate` guard, but
 truncating a tagline is a failure mode, not a design.
 
 **Do not cap `ChatPlaceholder` with `lg:max-h-*`.** Its base classes carry
