@@ -224,15 +224,33 @@ route.
 
 | Token | `font-size` | `line-height` | `letter-spacing` | Use for |
 |---|---|---|---|---|
-| `text-display` | `clamp(2.4rem, 5.6vw, 4.6rem)` | 1.05 | -0.02em | The largest heading on a panel/page (Services, Featured, project H1) |
-| `text-h1` | `clamp(2.1rem, 4.8vw, 3.9rem)` | 1.08 | -0.02em | Stat figures, closing-panel body, FinalCTA heading |
-| `text-h2` | `clamp(1.75rem, 3.4vw, 2.75rem)` | 1.12 | -0.015em | `SectionHeading`, sub-panel headings |
-| `text-h3` | `clamp(1.35rem, 2.2vw, 1.85rem)` | 1.2 | *(none set)* | Card-level headings inside a horizontal-scroll panel |
-| `text-lead` | `clamp(1.15rem, 1.5vw, 1.5rem)` | 1.55 | *(none set)* | Reserved — defined, not yet consumed anywhere in the codebase |
+| `text-display` | `clamp(2.4rem, 3.8vw, 4.6rem)` | 1.05 | -0.02em | The largest heading on a panel/page (Services, Featured, project H1) |
+| `text-h1` | `clamp(2.1rem, 3.25vw, 3.9rem)` | 1.08 | -0.02em | Stat figures, closing-panel body, FinalCTA heading |
+| `text-h2` | `clamp(1.75rem, 2.3vw, 2.75rem)` | 1.12 | -0.015em | `SectionHeading`, sub-panel headings |
+| `text-h3` | `clamp(1.35rem, 1.55vw, 1.85rem)` | 1.2 | *(none set)* | Card-level headings inside a horizontal-scroll panel |
+| `text-lead` | `clamp(1.15rem, 1.25vw, 1.5rem)` | 1.55 | *(none set)* | Reserved — defined, not yet consumed anywhere in the codebase |
 
 Usage: `className="text-display font-display font-semibold text-fg"` — the
 token supplies size/line-height/letter-spacing; add `font-display` and a
 weight utility on top.
+
+**The `vw` coefficient is the load-bearing number, not the max.** A `clamp()`
+stops growing at `max ÷ coefficient`, and that width is where the design
+stops adapting. The first version of this scale ended every ramp at ~1300px
+(display `4.6rem/5.6vw` = 1314px, h1 1300, h2 1294, h3 1345) — which is not
+"desktop", it is precisely where a 14" laptop lands: 1920 physical at
+Windows' 150% scaling is **1280 CSS px**, a 14" MacBook Pro is 1512, older
+panels are 1366. Every laptop was therefore served the *full 32"-monitor
+maximum* on a canvas 30–50% narrower, and the whole page read as cramped,
+while the 32" itself looked correct — there the same maximum finally had the
+width it was drawn for. The coefficients now end each ramp at ~1920px, so
+the laptop band (1024–1440) sits mid-ramp and scales with its actual canvas.
+
+If you change a `max` here, recompute the coefficient as `max ÷ 1920` rather
+than keeping the old one — otherwise the ramp end silently walks back toward
+laptop territory and the same regression returns. `HeroOverlay`'s measured
+lockup clamp already ends at 1896px (`2.56rem/2.16vw`), which is where the
+~1920 figure comes from.
 
 **Two deliberate exceptions, both documented at their call site — don't
 "fix" them into the scale:**

@@ -70,19 +70,38 @@
      heading changed *behaviour*, not just size, depending on the route. Steps
      are derived from the existing extremes on both sides so nothing jumps.
      `HeroOverlay`'s own two clamps are deliberately not on this scale — see
-     the comment at their call site. */
-  --text-display: clamp(2.4rem, 5.6vw, 4.6rem);
+     the comment at their call site.
+
+     **The vw coefficient decides where the ramp ends, and that is the whole
+     laptop story.** A `clamp()` stops growing at `max / coefficient`. The
+     first version of this scale ended its ramp at ~1300px on every heading
+     (display 4.6rem/5.6vw = 1314px, h1 1300, h2 1294, h3 1345) — which is
+     not "desktop", it is exactly where a 14" laptop lands: 1920 physical at
+     Windows' 150% scaling is 1280 CSS px, a 14" MacBook Pro is 1512, older
+     panels are 1366. So a laptop was being served the *full 32"-monitor
+     maximum* type on a canvas 30-50% narrower, and everything read as
+     cramped — while the 32" itself looked right, because there the same
+     maximum finally had the width it was drawn for.
+
+     The coefficients below end the ramp at ~1920px instead, so the laptop
+     band (1024-1440) sits mid-ramp and scales with its actual canvas.
+     `min` and `max` are deliberately untouched: the max is what the 32"
+     already renders and the min is what phones already render, so both ends
+     are byte-for-byte what they were and only the middle moves. ~1920 is
+     also the figure `HeroOverlay`'s own measured lockup clamp already ends
+     on (2.56rem/2.16vw = 1896px), so the hero and the scale now agree. */
+  --text-display: clamp(2.4rem, 3.8vw, 4.6rem);
   --text-display--line-height: 1.05;
   --text-display--letter-spacing: -0.02em;
-  --text-h1: clamp(2.1rem, 4.8vw, 3.9rem);
+  --text-h1: clamp(2.1rem, 3.25vw, 3.9rem);
   --text-h1--line-height: 1.08;
   --text-h1--letter-spacing: -0.02em;
-  --text-h2: clamp(1.75rem, 3.4vw, 2.75rem);
+  --text-h2: clamp(1.75rem, 2.3vw, 2.75rem);
   --text-h2--line-height: 1.12;
   --text-h2--letter-spacing: -0.015em;
-  --text-h3: clamp(1.35rem, 2.2vw, 1.85rem);
+  --text-h3: clamp(1.35rem, 1.55vw, 1.85rem);
   --text-h3--line-height: 1.2;
-  --text-lead: clamp(1.15rem, 1.5vw, 1.5rem);
+  --text-lead: clamp(1.15rem, 1.25vw, 1.5rem);
   --text-lead--line-height: 1.55;
 
   /* The project's exact breakpoints: 640 / 1024 / 1440.
