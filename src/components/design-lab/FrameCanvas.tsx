@@ -14,30 +14,39 @@ const PLATE_HEIGHT = 0.8;
 const MAX_DPR = 2;
 
 /**
- * Keeps the geodesic's own mesh clear of the hero lockup on a laptop-width
- * viewport, where `PLATE_WIDTH`/`PLATE_HEIGHT` alone are not enough.
+ * Keeps the geodesic's own mesh clear of the hero text flanking it on a
+ * laptop-width viewport, where `PLATE_WIDTH`/`PLATE_HEIGHT` alone are not
+ * enough.
  *
  * The plate above fits the frame to a *fraction* of the stage, so its edges
- * move in step with the viewport — but the lockup next to it (`HeroOverlay`)
- * is set in CSS px that stay put once the viewport clears `sm`. On a wide
- * desktop screen there is room to spare between the two; on a laptop panel
- * (1280–1440 CSS px is a common native width, not just a narrow browser
- * window) the fixed-size text is a much bigger fraction of a much smaller
- * screen, and the object's own mesh — not just its plate — ends up under
- * "Architecture, computed.". Measured on a 1366×768 viewport, not eyeballed.
+ * move in step with the viewport — but the text beside it (`HeroOverlay`'s
+ * lockup, then its two statements once the lockup fades) is set in CSS px
+ * that stay put once the viewport clears `sm`. On a wide desktop screen
+ * there is room to spare on both sides; on a laptop panel (1280–1440 CSS px
+ * is a common native width, not just a narrow browser window) the
+ * fixed-size text is a much bigger fraction of a much smaller screen, and
+ * the object's own mesh — not just its plate — ends up under it. Measured
+ * on a 1366×768 viewport, not eyeballed.
  *
- * `GEOMETRY_LEFT_FRAC` is the closest the mesh ever gets to the frame's own
- * left edge (as a fraction of the frame's width) while the lockup is still
- * on screen — sampled across frames 1–20, the window before `LOCKUP_OUT`
- * fades it out. `LOCKUP_SAFE_RIGHT`/`LOCKUP_MARGIN` are the headline's own
- * widest ink plus a clearance, matching the `sm:` clamp added to the h1 in
- * `HeroOverlay` (that clamp does its share of the work; this is the rest).
- * `PLATE_FLOOR` stops the margin chase from shrinking the object into
- * insignificance on a viewport too narrow to fit both at full size — past
- * that point some crowding is the lesser problem.
+ * `GEOMETRY_EDGE_FRAC` is the closest the mesh ever gets to either of the
+ * frame's own edges (as a fraction of the frame's width), sampled every 4th
+ * frame across the whole sequence. It happens to be almost exactly
+ * symmetric — 0.1731 from the left at its worst, 0.1743 from the right —
+ * which is what lets one constant and one scale cap protect both sides:
+ * `HeroOverlay`'s two statements sit one on each side (`side: "right"` /
+ * `"left"`), both run to the final frame rather than fading out, so the
+ * text this plate has to clear the model of is effectively on screen for
+ * the entire runway, on both flanks at once. `LOCKUP_SAFE_RIGHT`/
+ * `LOCKUP_MARGIN` are the widest ink either side ever shows plus a
+ * clearance — currently the "hours" statement's own `font-mono` at its
+ * clamp ceiling, which measures wider per character than the headline and
+ * so is the one that actually governs. `PLATE_FLOOR` stops the margin
+ * chase from shrinking the object into insignificance on a viewport too
+ * narrow to fit all three (model, left text, right text) at full size —
+ * past that point some crowding is the lesser problem.
  */
-const GEOMETRY_LEFT_FRAC = 0.173;
-const LOCKUP_SAFE_RIGHT = 425;
+const GEOMETRY_EDGE_FRAC = 0.173;
+const LOCKUP_SAFE_RIGHT = 440;
 const LOCKUP_MARGIN = 40;
 const PLATE_FLOOR = 0.45;
 /** Below this the lockup stacks above the model instead of beside it (see
@@ -73,13 +82,37 @@ const STACKED_BREAKPOINT = 640;
  * leaving the runway in place would strand the reader in two viewports of
  * empty scroll with nothing moving.
  *
- * The runway is 240svh, down from 400. All 96 frames still play, and the
- * canvas is untouched: `end: "bottom bottom"` means the sequence is spread
- * over whatever the wrapper is tall, so a shorter wrapper only moves the
- * frames faster against the wheel. This is the same trade `PIN_RATIO` makes
- * on the project pages. What it buys is the four screen-heights the hero used
- * to spend delivering a headline and two short lines, which is the most
- * expensive real estate on the site and was the least informative.
+ * The runway is 140svh, down from 400 by way of 240. All 96 frames still
+ * play, and the canvas is untouched: the frame tween is spread over
+ * whatever the wrapper is tall, so a shorter wrapper moves the frames
+ * faster against the wheel. This is the same trade `PIN_RATIO` makes on the
+ * project pages. `HeroOverlay`'s two statements no longer wait on each
+ * other either — they used to run in sequence, one fading out by frame 45
+ * and the other not fading in until 60, so a visitor had to scroll past 60%
+ * of whatever this runway was tall before the second line even appeared.
+ * Both are on screen by frame ~30 now, so the runway no longer has to stay
+ * long enough to cover a wait that does not happen any more.
+ *
+ * **`end: "bottom top"`, not `"bottom bottom"`.** The two read as
+ * interchangeable and are not: with a sticky child the same height as the
+ * viewport, `"top top"`→`"bottom bottom"` only spans `H - V` of scroll (V
+ * = one viewport height) — the exact window the child stays natively
+ * pinned for — while `"top top"`→`"bottom top"` spans the wrapper's full
+ * `H`. This file used the shorter one, so the 96-frame tween finished the
+ * instant the canvas *un-pinned*, not the instant it actually left the
+ * screen. Everything after that — a full extra viewport height of scroll,
+ * during which the canvas keeps scrolling normally rather than staying
+ * pinned, and during which the first panel is simultaneously rising to
+ * cover it — showed the same last frame, static, the entire time: the
+ * geodesic looked frozen for the last leg of its own reveal, which is
+ * exactly what it looked like to a visitor scrolling through it. `"bottom
+ * top"` keeps the tween running for that whole extra viewport height too,
+ * so the last frame lands exactly when the canvas is gone — covered or
+ * scrolled past, whichever comes first — never before.
+ *
+ * `HeroOverlay`'s own runway-driven timeline has to use the identical
+ * `end`, or its statements would fade on a different scroll-to-progress
+ * scale than the frames they are timed against.
  */
 export function FrameCanvas({ children }: { children?: React.ReactNode }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -134,9 +167,13 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
         );
 
         if (cssWidth >= STACKED_BREAKPOINT) {
-          const safeLeft = (LOCKUP_SAFE_RIGHT + LOCKUP_MARGIN) * dpr;
+          // One cap protects both flanks: the plate is centred, so shrinking
+          // it for the safe inset on one side pulls the opposite edge back
+          // by very nearly the same amount, and `GEOMETRY_EDGE_FRAC` is the
+          // worst case measured on either side.
+          const safeInset = (LOCKUP_SAFE_RIGHT + LOCKUP_MARGIN) * dpr;
           const marginScale =
-            (cw / 2 - safeLeft) / (width * (0.5 - GEOMETRY_LEFT_FRAC));
+            (cw / 2 - safeInset) / (width * (0.5 - GEOMETRY_EDGE_FRAC));
           const floorScale = (cw * PLATE_FLOOR) / width;
           scale = Math.min(scale, Math.max(marginScale, floorScale));
         }
@@ -230,7 +267,11 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
           scrollTrigger: {
             trigger: wrapper,
             start: "top top",
-            end: "bottom bottom",
+            // Not "bottom bottom" — see the file doc comment. This spans the
+            // wrapper's full height rather than stopping the instant the
+            // canvas un-pins, so the last frame lands when it actually
+            // leaves the screen instead of a viewport-height early.
+            end: "bottom top",
             // A touch of lag rather than `true`: under Lenis the catch-up is
             // what reads as smooth instead of mechanically locked to the wheel.
             scrub: 0.5,
@@ -262,7 +303,7 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
     <div
       ref={wrapperRef}
       data-sequence-runway
-      className={cn(!reducedMotion && "h-[240svh]")}
+      className={cn(!reducedMotion && "h-[140svh]")}
     >
       <div
         ref={stageRef}

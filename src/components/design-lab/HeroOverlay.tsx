@@ -70,9 +70,14 @@ export function HeroOverlay() {
         scrollTrigger: {
           trigger: runway,
           // Identical to the canvas tween's window, which is what keeps the
-          // frame maths honest.
+          // frame maths honest. `end: "bottom top"` specifically — see
+          // `FrameCanvas`'s doc comment — spans the runway's full height
+          // rather than stopping the instant the canvas un-pins, which
+          // both used to do; drifting apart here would fade a statement on
+          // a different scroll-to-progress scale than the frame it is
+          // supposed to land on.
           start: "top top",
-          end: "bottom bottom",
+          end: "bottom top",
           scrub: 0.5,
           invalidateOnRefresh: true,
         },
@@ -96,6 +101,10 @@ export function HeroOverlay() {
         const to = toProgress(statement.to);
         const offset = statement.side === "right" ? 32 : -32;
 
+        /* Slides in from its own edge — "hours" from further right, then
+           "handover" from further left ten frames later — so the two read
+           as arriving from opposite sides even though they land in the
+           same beat. */
         tl.fromTo(
           target,
           { opacity: 0, x: offset },
@@ -275,10 +284,12 @@ export function HeroOverlay() {
         </div>
       </div>
 
-      {/* §12.7: vertically centred, statement 1 right, statement 2 left. The
-          flex wrapper does the centring so GSAP owns `x` alone — animating a
-          transform on an element that also carries a `-translate-y-1/2` would
-          have GSAP overwrite the centring on its first tick. */}
+      {/* Vertically centred, statement 1 right, statement 2 left — reading
+          on the same row rather than one above the other, so the model sits
+          between two lines that answer each other. The flex wrapper does
+          the centring so GSAP owns `x` alone — animating a transform on an
+          element that also carries a `-translate-y-1/2` would have GSAP
+          overwrite the centring on its first tick. */}
       {statements.map((statement) => (
         <div
           key={statement.id}
@@ -290,19 +301,20 @@ export function HeroOverlay() {
                second below. Left centred they land on top of it, which is what
                the phone screenshots showed. On desktop the model has margins on
                both sides and the statements read beside it, so `sm:items-center`
-               restores the original placement untouched. */
+               keeps them aligned on one row. */
             statement.side === "right" ? "items-start pt-[15svh]" : "items-end pb-[18svh]",
           )}
         >
           <p
             data-statement={statement.id}
             className={cn(
-              /* One line, never two. The `max-w` that used to sit here is
-                 what forced the wrap, so it is gone rather than widened; the
-                 clamp floor is what keeps the longer of the two statements
-                 ("Design that scales itself.", 25 characters) inside a 375px
-                 viewport once wrapping is off the table. */
-              "whitespace-nowrap font-semibold leading-tight tracking-tight text-lab-ink opacity-0 text-[clamp(1.05rem,2.9vw,2.5rem)]",
+              /* Monospace, not the headline's `font-display` — a
+                 deliberate step down in register: these are asides after
+                 the main claim, not a second headline, and the mono family
+                 is already how the site marks supporting text (`Eyebrow`).
+                 One line, never two: the clamp floor fits the longer line
+                 at 375px so `whitespace-nowrap` never has to wrap it. */
+              "whitespace-nowrap font-mono font-medium tracking-tight text-lab-ink opacity-0 text-[clamp(1rem,2.4vw,1.75rem)]",
               statement.side === "right" ? "text-right" : "text-left",
             )}
           >

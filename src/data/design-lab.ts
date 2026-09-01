@@ -101,8 +101,16 @@ export const designLab = {
   /* `from`/`to` are 1-based frame numbers, matching how the spec and the
      filenames count. The component converts them to scroll progress, so the
      ranges stay readable against the spec rather than being pre-baked into
-     fractions nobody can check. Statement 2 deliberately runs to the last
-     frame: it is still on screen when the first panel rises over it.
+     fractions nobody can check. Both now run to the last frame: they hand
+     off into the first panel together rather than one at a time, and
+     neither fades out before that happens.
+
+     They used to be staged one after the other with a wide gap between them
+     — "hours" faded out by frame 45, then a dead stretch with no text at
+     all until "handover" faded in at 60. A visitor had to scroll past 60%
+     of the runway before the second line even started appearing. The 10
+     frame gap here is enough to read as one arriving after the other rather
+     than both snapping in at once, without making a visitor wait for it.
 
      Both were atmosphere ("Complexity, computed." restated the headline one
      word over; "Design that scales itself." is a claim with no referent).
@@ -111,8 +119,8 @@ export const designLab = {
      sets them `whitespace-nowrap` and the clamp floor is sized for that
      length at 375px. */
   statements: [
-    { id: "hours", text: "Hours back, every week.", from: 20, to: 45, side: "right" },
-    { id: "handover", text: "Tools your team keeps.", from: 60, to: 96, side: "left" },
+    { id: "hours", text: "Hours back, every week.", from: 20, to: 96, side: "right" },
+    { id: "handover", text: "Tools your team keeps.", from: 30, to: 96, side: "left" },
   ],
 
   panels: {
