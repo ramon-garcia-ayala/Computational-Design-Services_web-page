@@ -21,7 +21,13 @@ import { hashPassword, safeEqual } from "@/lib/proposal-auth";
  */
 export type PortalCredentials = { salt: string; hash: string; slug: string };
 
-export const portalAccess: PortalCredentials[] = [];
+export const portalAccess: PortalCredentials[] = [
+  {
+    slug: "ecogen",
+    salt: "2393bc624880962d",
+    hash: "e11d9a79199613374bc80c89e0d7df4fc1cfe1e6253e5764866005fcdf296d42",
+  },
+];
 
 /**
  * Normalises an email the same way the generator script does — trim and
