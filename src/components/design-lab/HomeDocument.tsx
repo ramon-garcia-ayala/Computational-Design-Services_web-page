@@ -7,17 +7,24 @@ import { ServiceMotif } from "./ServiceMotif";
 /**
  * The document band: everything between the two cine stretches.
  *
- * This is ordinary scrolling flow on carbon, and that is the whole design
- * decision. The rest of Home is a panel machine — 100svh stages with their
- * overflow hidden, one idea per screen — which is right for a statement and
- * actively hostile to an explanation: Services, Featured work and About were
- * all panels, and all three had grown taller than the stage, so their
- * headings and the top of their content were clipped off the screen with no
+ * This is ordinary scrolling flow, and that is the whole design decision.
+ * The rest of Home is a panel machine — 100svh stages with their overflow
+ * hidden, one idea per screen — which is right for a statement and actively
+ * hostile to an explanation: Services, Featured work and About were all
+ * panels, and all three had grown taller than the stage, so their headings
+ * and the top of their content were clipped off the screen with no
  * scrollbar and no way to reach them. Three of the four sections here would
  * not fit a panel at any desktop height.
  *
- * The band is carbon while the panels are `--color-panel` charcoal, so the
- * switch between reading and watching is visible without a label.
+ * The band is `--color-panel`'s warm charcoal, same as every panel in the
+ * cine stretches — it used to be pure `carbon` (`#0a0c0b`), which is flat
+ * black against the rest of the page's warm tones for the same reason the
+ * `--color-panel` comment in `globals.css` gives for the panels themselves:
+ * "pure carbon read as flat black against the hero." A shared ground means
+ * `fg-muted`/`line`/`ring-line` — all tuned against carbon — read wrong here
+ * (a silent contrast failure, not a visual one); every one below is the
+ * `panel-*` counterpart instead, the same substitution `ProofStrip` and
+ * `Panels.tsx` already make.
  *
  * All copy comes from `data/design-lab.ts`. Nothing is written here.
  */
@@ -121,8 +128,12 @@ function Services() {
   return (
     /* The anchor the hero's secondary CTA points at. Jumps go through Lenis
        (`SmoothScroll`'s `anchors` option) — a native hash jump moves the
-       document without Lenis knowing, and every reveal below stops firing. */
-    <section id={services.id} className={SECTION}>
+       document without Lenis knowing, and every reveal below stops firing.
+
+       `border-t`, like `Work` and `About` below it: the band's first section
+       still wants the same thin rule marking where it starts, now that it
+       is not also the seam between two different background colours. */
+    <section id={services.id} className={`${SECTION} border-t border-panel-line`}>
       <div className={SHELL}>
         <SectionHead kicker={services.kicker} title={services.title} />
 
@@ -154,7 +165,7 @@ function Services() {
                   rather than as a set. Only from `lg`: at `sm` the columns are
                   twice as wide, every name fits one line, and reserving the
                   second would just open a hole. */}
-              <h3 className="mt-6 border-t border-line pt-5 text-h3 font-semibold text-fg lg:min-h-[2.4em]">
+              <h3 className="mt-6 border-t border-panel-line pt-5 text-h3 font-semibold text-fg lg:min-h-[2.4em]">
                 {item.name}
               </h3>
 
@@ -162,7 +173,7 @@ function Services() {
                 {item.deliverables.map((line) => (
                   <li
                     key={line}
-                    className="flex gap-3 text-sm leading-snug text-fg-muted"
+                    className="flex gap-3 text-sm leading-snug text-panel-ink-muted"
                   >
                     {/* A list marker, so it is decorative and hidden from
                         assistive tech — the words carry the content. */}
@@ -196,7 +207,7 @@ function Work() {
   const { work } = designLab.panels;
 
   return (
-    <section id={work.id} className={`${SECTION} border-t border-line`}>
+    <section id={work.id} className={`${SECTION} border-t border-panel-line`}>
       <div className={SHELL}>
         <SectionHead kicker={work.kicker} title={work.title} />
 
@@ -210,7 +221,7 @@ function Work() {
                     founder portraits. `rounded-surface`, not the `rounded-sm`
                     this carried before: the site has exactly two radii and
                     that was neither of them. */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-surface bg-graphite ring-1 ring-line grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0">
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-surface bg-graphite ring-1 ring-panel-line grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0">
                   <Image
                     src={item.src}
                     alt={item.alt}
@@ -224,13 +235,13 @@ function Work() {
                   />
                 </div>
                 <figcaption className="mt-5">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-fg-muted sm:text-[11px]">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-panel-ink-muted sm:text-[11px]">
                     {item.context}
                   </p>
                   <h3 className="mt-3 text-h3 font-semibold text-fg">
                     {item.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-fg-muted">
+                  <p className="mt-3 text-sm leading-relaxed text-panel-ink-muted">
                     {item.result}
                   </p>
                 </figcaption>
@@ -260,7 +271,7 @@ function About() {
   const { about } = designLab.panels;
 
   return (
-    <section id={about.id} className={`${SECTION} border-t border-line`}>
+    <section id={about.id} className={`${SECTION} border-t border-panel-line`}>
       <div className={SHELL}>
         <div className="grid items-start gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-20">
           <Reveal>
@@ -301,7 +312,7 @@ function About() {
                 <figure className="group">
                   {/* Square, because the sources are 400x400 — a portrait
                       crop of a square headshot cuts through the face. */}
-                  <div className="relative aspect-square w-full overflow-hidden rounded-surface ring-1 ring-line grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-surface ring-1 ring-panel-line grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0">
                     <Image
                       src={founder.photo}
                       alt={founder.name}
@@ -336,7 +347,7 @@ function About() {
  */
 export function HomeDocument() {
   return (
-    <div className="relative bg-carbon">
+    <div className="relative bg-panel">
       <Services />
       <Work />
       <About />

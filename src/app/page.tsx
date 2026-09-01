@@ -99,13 +99,14 @@ export default function HomePage() {
       {/* Shorter runway on the last panel: there is nothing after it to hold
           the reader for, and the footer follows immediately.
 
-          `behind` is the document band's carbon, because that is what this
-          panel now climbs over directly — Playground, which used to sit
-          between them, moved to `/labs`. Left unset the section is
-          transparent and the greige `html` shows through, so a slab of hero
-          colour appeared under the carbon band a beat before the panel
-          covered it. */}
-      <PanelSection runway={130} behind="bg-carbon">
+          `behind` is the document band's own `bg-panel` — its ground, and
+          also what this panel itself renders as (`PanelSection`'s default,
+          unblended fill) — because that is what this panel now climbs over
+          directly — Playground, which used to sit between them, moved to
+          `/labs`. Left unset the section is transparent and the greige
+          `html` shows through, so a slab of hero colour appeared under the
+          band a beat before the panel covered it. */}
+      <PanelSection runway={130} behind="bg-panel">
         <ClosingPanel />
       </PanelSection>
 
