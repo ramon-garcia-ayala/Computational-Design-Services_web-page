@@ -942,10 +942,11 @@ panels stack vertically and no ScrollTrigger is created.
 
 ## Contact links
 
-Every mailto goes to both partners at once, built by `contactHref()` in
-`src/data/site.ts`. **Never render the address as visible text** — CTAs use
-`site.contactLabel` ("Get in touch"). This keeps the addresses out of the page
-for spam harvesters.
+Every mailto goes to the studio address (`info@r-xtech.com`), built by
+`contactHref()` in `src/data/site.ts` — one shared inbox rather than the two
+partners' personal ones, so a send survives either of them being away.
+**Never render the address as visible text** — CTAs use `site.contactLabel`
+("Get in touch"). This keeps the address out of the page for spam harvesters.
 
 ## Icons
 

@@ -169,8 +169,8 @@ and then every route 404s.
 
 ## Contact
 
-Every mailto on the site goes to both partners at once, and the address is never
-rendered as visible text — CTAs read "Get in touch". Clicking still opens a
+Every mailto on the site goes to the studio address (`info@r-xtech.com`), and
+that address is never rendered as visible text — CTAs read "Get in touch". Clicking still opens a
 prefilled mail client, and the addresses aren't sitting in the page for spam
 harvesters. Edit `contactRecipients` in `src/data/site.ts`.
 
