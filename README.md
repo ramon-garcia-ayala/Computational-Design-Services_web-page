@@ -50,6 +50,7 @@ No component carries copy or figures inside it. Everything lives in `src/data/`:
 | `expertise.ts` | expertise areas (accordion / tabs) |
 | `awards.ts` | recognitions and studio metrics |
 | `proposals/` | client proposals — see below |
+| `portal/` | client portal — see below |
 
 The assistant and the tools it generates keep their own copy in
 `src/minitools/data/copy.ts`, next to the rest of that module.
@@ -96,6 +97,42 @@ it fails safe.
 Currently live: the August 2026 Ecogen Discovery report is protected; the two
 June 2026 commercial proposals are open, and they show pricing, so their URLs are
 effectively public.
+
+## Client portal
+
+A per-client project panel at `/portal`, reached from the "Client access"
+link in the header and the menu. Timeline, KPIs, scope, an outstanding-items
+list, documents and budget, all in one place — so a client can check status
+without a call.
+
+**Sign-in is a magic link, not a password.** A client enters their email at
+`/portal`, gets a 15-minute link mailed to them (via the same Resend
+integration `/contact` already uses), and redeeming it issues a 30-day
+session cookie. There is no separate password to lose or share. Client
+emails are never stored in the repo — only a salted hash, generated with:
+
+```bash
+node scripts/portal-email.mjs "client@example.com" ecogen
+```
+
+paste the result into `src/data/portal/access.ts`.
+
+**Each client is a folder**, same shape as a proposal:
+
+```
+src/data/portal/ecogen/index.ts   →  the "ecogen" client's data
+private/portal/ecogen/            →  that client's private documents
+```
+
+`private/portal/` sits outside `public/`, so its files are reachable only
+through `/api/portal/file/[...path]`, which checks the session cookie first.
+A client's own proposal is not duplicated into the portal — a `documents`
+entry just links to the existing `/<proposal-slug>` page.
+
+**Production needs `PORTAL_SECRET`** (see `.env.example`), separate from
+`PROPOSAL_SECRET` so rotating one never invalidates the other's sessions.
+Without it, the portal stays closed to everyone — fails safe, same as the
+proposal system.
 
 ## The assistant and its mini tools
 

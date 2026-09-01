@@ -103,8 +103,8 @@ silently because nobody multiplied the numbers out.
 
 ## Architecture
 
-Multi-page App Router site, split into two route groups so the client-facing
-proposals don't inherit the site navigation:
+Multi-page App Router site, split into three route groups so the client-facing
+proposals and the client portal don't inherit the site navigation:
 
 | Route | File |
 |---|---|
@@ -116,14 +116,22 @@ proposals don't inherit the site navigation:
 | `/labs/tool` | `src/app/(site)/labs/tool/page.tsx` (a generated mini tool) |
 | `/<proposal-slug>` | `src/app/(proposal)/[proposal]/page.tsx` (`generateStaticParams`) |
 | `/unlock` | `src/app/(proposal)/unlock/page.tsx` |
+| `/portal` | `src/app/(portal)/portal/page.tsx` (sign-in) |
+| `/portal/enter` | `src/app/(portal)/portal/enter/route.ts` (redeems the magic link) |
+| `/portal/dashboard` | `src/app/(portal)/portal/dashboard/page.tsx` (`force-dynamic`) |
 | `/api/proposal-unlock` | `src/app/api/proposal-unlock/route.ts` (checks the password) |
+| `/api/portal/request-link` | `src/app/api/portal/request-link/route.ts` (mails the magic link) |
+| `/api/portal/logout` | `src/app/api/portal/logout/route.ts` |
+| `/api/portal/file/[...path]` | `src/app/api/portal/file/[...path]/route.ts` (private documents) |
+| `/api/contact` | `src/app/api/contact/route.ts` (the contact form) |
 | `/api/minitools-chat` | `src/app/api/minitools-chat/route.ts` (the hero assistant) |
 
-Everything is static except those two route handlers and `src/proxy.ts`.
+Everything else is static; these route handlers, `/portal/dashboard` and
+`src/proxy.ts` are the dynamic surface.
 
 The root layout holds only what must never be duplicated: `<html>`, the fonts and
 the single Lenis instance. `(site)/layout.tsx` adds the header and footer;
-`(proposal)/layout.tsx` deliberately does not.
+`(proposal)/layout.tsx` and `(portal)/layout.tsx` deliberately do not.
 
 **The data layer** (`src/data/`) holds all copy and all figures. Never hardcode
 text in a component. See the table in `README.md`.
@@ -292,6 +300,130 @@ It is a Server Component with no animation of its own. An earlier version
 hand-rolled per-stage ScrollTriggers, which silently never ran and left the
 whole diagram blank — entrances go through `Reveal`, as everywhere else on the
 site, and a block component has no business owning scroll animation.
+
+## Client portal
+
+A per-client project panel at `/portal` → `/portal/dashboard`: timeline,
+KPIs, scope, an outstanding-items list, documents and budget, all reading
+from `src/data/portal/<slug>/index.ts` — same shape and same discipline as a
+proposal (one folder per client, all copy in the data layer, nothing
+hardcoded in a component).
+
+**Sign-in is a magic link, never a password.** WCAG 2.2's Accessible
+Authentication is the actual reason, not a stylistic preference: a magic
+link has no cognitive-test step to fail. The client emails Resend already
+proved out for `/contact` sends a 15-minute link; redeeming it at
+`/portal/enter` issues a 30-day session cookie, both through
+`src/lib/portal-auth.ts`.
+
+**Client emails are never stored in the repo, only a salted hash** — the
+same reasoning `data/proposals/access.ts` applies to passwords. It works
+because the link is mailed to the address the visitor just typed; the system
+never needs to remember it to prove who they are. Generate an entry with
+`node scripts/portal-email.mjs "client@example.com" <slug>`. Unlike a
+proposal's single `slug → credentials` lookup, `resolvePortalSlug` in
+`src/data/portal/access.ts` scans every entry, hashing the incoming email
+against each one's own salt — a per-entry salt (rather than one shared salt
+the whole list could be hashed against) is what keeps a leaked repo from
+becoming a rainbow table against common addresses. The list is a studio's
+active clients, not its history, so the scan is cheap.
+
+**Two token kinds share one signature format but are never interchangeable.**
+`signMagicToken`/`signSessionToken` in `portal-auth.ts` both produce
+`<expiry>.<hmac>`, but the message each signs is prefixed with its own kind
+(`"magic|"` / `"session|"`) before the client slug. That prefix is domain
+separation — it is what stops a 15-minute magic link from ever verifying as
+a 30-day session, or vice versa, even if one leaks into the wrong place.
+Reuses `hmac`/`safeEqual` from `proposal-auth.ts` rather than
+reimplementing them, and `getPortalSecret()` follows `getSecret()`'s exact
+shape (validated length, `null` not a throw, a fixed `development` fallback)
+— but `PORTAL_SECRET` is its own env var, deliberately separate from
+`PROPOSAL_SECRET`, so rotating one never invalidates the other's sessions.
+
+**No single-use enforcement on the magic link.** Without a shared store,
+anyone holding the link can redeem it within its 15-minute window — the
+short expiry and the fact that it only ever reaches the recipient's inbox
+are the whole mitigation. If that ever needs closing, the fix is a shared KV
+recording consumed `jti`s, not a redesign.
+
+**`src/proxy.ts` gates `/portal/dashboard*`, and the dashboard page
+re-verifies the session itself anyway.** Belt-and-braces, the same
+discipline every secret accessor in this codebase already applies: a page
+this sensitive should not depend solely on the proxy having run. The
+dashboard reads its cookies directly and redirects to `/portal` on its own
+if the session token doesn't verify — `export const dynamic =
+"force-dynamic"`, since the content is per-session and must never be cached.
+
+**Which project shows lives in the URL** (`?project=<id>`), not client
+state: `ProjectSwitcher` is a server component rendering plain links, so
+switching needs no JavaScript. It renders nothing for a single-project
+client — a switcher with one option is decoration, not a control.
+
+**Documents are either a private file or a link, and the type says which —
+never a truthy check on which field is set.** `PortalDocument`'s
+discriminant is a real `source: "file" | "link"` field.
+`Base & {file: string}` vs. `Base & {href: string}` looked equivalent and
+is not: TypeScript's narrowing does not reliably follow a presence check
+through an intersection type, so `if (doc.file)` left `doc.href` typed
+`string | undefined` at every use site. Costs one extra field, buys back
+every use site typed correctly.
+
+**Private documents live in `private/portal/<slug>/`, outside `public/` on
+purpose.** A budget or a deliverable is not something to hand out to anyone
+with the URL, which is what anything under `public/` effectively is.
+`/api/portal/file/[...path]/route.ts` is the only way in: it verifies the
+session, then rejects any request whose first path segment isn't that
+session's own slug — a client cannot reach another client's folder by
+editing the URL — and re-checks the resolved path's prefix after
+`path.join` rather than scanning the input for a literal `..`, since that is
+what actually closes path traversal. **`next.config.ts`'s
+`outputFileTracingIncludes` has to list `private/portal/**/*`** or the
+directory never reaches the deployed function's bundle: the route works in
+`next dev` (reads straight off disk) and then 404s in production, a gap
+that only shows up after deploy.
+
+**KPIs render as a bullet-bar row, never a gauge, and the state is always
+printed as a word.** With three or more KPIs on one screen a gauge grid
+reads worse than a row of bars, and colour alone is never enough — every
+`KpiBar` prints `value · target N` before the bar, and every state (`state:
+"on-track" | "at-risk" | "off-track"`) goes through `StatusChip`, whose
+label is never optional. The bar itself scales `value` and `target` against
+whichever is larger, with a tick at the target — the same geometry whether
+the metric is "higher is better" or not, so the chip carries the actual
+verdict, never the bar's colour alone.
+
+**One status vocabulary for the whole panel** (`StatusChip.tsx`), extended
+from the `"done" | "active" | "next"` a proposal's `TimelineBlock` and
+`QaBlock` already use: a filled accent plate for "happening now", an
+`accent-ink` outline for "done", a dashed `edge` outline for "not yet", plus
+`danger` for the two states a proposal never needed. To-dos render the same
+static distinction — a checked box is a status indicator, not a control;
+marking one done needs a database and is explicitly out of scope for this
+version.
+
+**The panel is denser than a proposal, on purpose.** `PortalSection.tsx` is
+`BlockShell`'s sibling, trimmed from `py-20 sm:py-28 lg:py-32` /
+`p-8 lg:p-10` to `py-14 sm:py-16 lg:py-20` / `p-6 lg:p-8`. A proposal is read
+once, start to finish; this panel gets checked back into for one line of
+status, and the proposal's rhythm turned that into a multi-screen scroll at
+seven sections. The file's own comment says so, so it isn't "corrected" back
+to match later.
+
+**No new colour tokens.** Every portal component builds from the existing
+vocabulary (`fg`, `fg-muted`, `carbon`, `graphite`, `graphite-hi`, `edge`,
+`line`, `accent`, `accent-dim`, `accent-ink`, `on-accent`, `focus`,
+`danger`), which `scripts/contrast-check.mjs` already covers in all three
+scopes — including `accent-ink` on `graphite`, added to `SCOPED_CHECKS`
+because the panel puts accent-coloured text inside `bg-graphite` cards
+throughout, a pair the script didn't measure before. `(portal)/layout.tsx`
+carries neither `data-site-warm` nor `data-site-pale`: the panel stays on
+the default carbon ground, same as a client's own proposal, deliberately
+distinct from the marketing site's warm mood.
+
+**Print uses its own chrome attribute.** `[data-portal-chrome]` sits beside
+`[data-proposal-chrome]` in the same `@media print` rule in `globals.css` —
+kept as two attributes rather than one shared name so the two chrome scopes
+stay independently toggleable even though they hide for the same reason.
 
 ## Concept animations
 
@@ -824,9 +956,10 @@ it does not fail the build — the deployment reports READY and then every route
 a real Next.js build records `lambdaRuntimeStats` and `bundler`, and a broken one
 records neither.
 
-`PROPOSAL_SECRET` is set in the project's environment variables. Environment
-variables do not apply to deployments that already exist, so after changing one,
-redeploy.
+`PROPOSAL_SECRET` and `PORTAL_SECRET` are both set in the project's environment
+variables — two separate secrets, so rotating one never invalidates the other's
+sessions. Environment variables do not apply to deployments that already exist,
+so after changing one, redeploy.
 
 **Local builds can fail with `EPERM` on `.next/types`** while VS Code is open —
 its TypeScript server holds the directory, and `tsconfig.json` includes it. Close

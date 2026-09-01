@@ -97,6 +97,12 @@ const css = stripComments(readFileSync(CSS_PATH, "utf8"));
 
 const theme = colorTokens(blockBody(css, "@theme"));
 const warm = colorTokens(blockBody(css, "[data-site-warm]"));
+/* Finds the first literal occurrence of "[data-site-pale]", which today is
+   the opening of the combined selector `[data-site-pale],
+   [data-site-pale-chrome] { ... }` — so this happens to read the right
+   block, but only because the two selectors share one rule. If they are ever
+   split into separate rules, this starts reading the wrong block silently:
+   keep them combined, or update this lookup alongside the split. */
 const pale = colorTokens(blockBody(css, "[data-site-pale]"));
 
 /* `pale` nests inside `warm` on /about and /contact, but it redefines every
@@ -127,6 +133,7 @@ const SCOPED_CHECKS = [
   ["fg-muted", "graphite", AA_TEXT, "secondary text on a surface"],
   ["fg", "graphite-hi", AA_TEXT, "primary text on an elevated surface"],
   ["accent-ink", "carbon", AA_TEXT, "accent in its ink role"],
+  ["accent-ink", "graphite", AA_TEXT, "accent in its ink role, on a surface"],
   ["on-accent", "accent", AA_TEXT, "ink on a filled accent plate"],
   ["focus", "carbon", NON_TEXT, "keyboard focus ring"],
   ["edge", "carbon", NON_TEXT, "meaningful border (fields, controls)"],

@@ -383,8 +383,12 @@ html.lenis body {
     transform: none !important;
   }
 
-  /* Sticky header and side index: noise on paper. */
-  [data-proposal-chrome] {
+  /* Sticky header and side index: noise on paper. `data-portal-chrome` is
+     the client portal's own attribute, kept separate from
+     `data-proposal-chrome` rather than reused — the two chrome scopes stay
+     independently toggleable even though they hide for the same reason. */
+  [data-proposal-chrome],
+  [data-portal-chrome] {
     display: none !important;
   }
 

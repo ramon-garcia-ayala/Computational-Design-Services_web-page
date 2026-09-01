@@ -48,7 +48,8 @@ export function safeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
-async function hmac(message: string, secret: string): Promise<string> {
+/** Exported for `portal-auth.ts`, which signs its own token kinds with it. */
+export async function hmac(message: string, secret: string): Promise<string> {
   const key = await crypto.subtle.importKey(
     "raw",
     encoder.encode(secret),

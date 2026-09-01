@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MenuOverlay } from "./MenuOverlay";
 import { MusicToggle } from "./MusicToggle";
+import { portalLink } from "@/data/nav";
 import { site } from "@/data/site";
 import { cn } from "@/lib/utils";
 
@@ -130,6 +131,25 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <MusicToggle className="hidden sm:flex" variant={variant} />
+
+            {/* Discreet on purpose: visible from `sm` up, never competing
+                with the primary "Get in touch" CTA. Below `sm` the header is
+                already at capacity (logo, contact pill, menu trigger), so
+                the portal stays reachable through the menu instead — see
+                the trailing entry in `navLinks`. `rounded-control` here,
+                not the `rounded-full` literal its siblings still carry:
+                same value today, but this one is the token. */}
+            <Link
+              href={portalLink.href}
+              className={cn(
+                "hidden rounded-control border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:inline-flex sm:px-4 sm:text-xs",
+                light
+                  ? "border-edge text-lab-ink hover:border-lab-ink hover:font-bold"
+                  : "border-edge text-fg hover:border-accent-ink hover:text-accent-ink",
+              )}
+            >
+              {portalLink.label}
+            </Link>
 
             {/* `/contact`, not a mailto. A `mailto:` does nothing at all for
                 a visitor with no desktop mail client configured — which is
