@@ -120,12 +120,28 @@ export const designLab = {
      ranges stay readable against the spec rather than being pre-baked into
      fractions nobody can check.
 
-     Staged, not concurrent: the first fades out by frame 45 and the second
-     only arrives at 60, so one line is read, cleared, and answered by the
-     next. `HeroOverlay` already handles both halves of that — a statement
-     whose `to` lands before the final frame gets its own fade-out (the
-     `to < 1` branch), and one that runs to 96 is simply carried into the
-     first panel.
+     Staged, not concurrent: the first fades out and the second answers it.
+     `HeroOverlay` already handles both halves of that — a statement whose
+     `to` lands before the final frame gets its own fade-out (the `to < 1`
+     branch), and one that runs to 96 is simply carried into the first panel.
+
+     **These frames have to land inside the readable window, which is not
+     the whole runway.** The canvas stage is `sticky` inside a 140svh
+     wrapper, so it is pinned for only `140 - 100 = 40svh`; past that it
+     scrolls away with the document, and a statement centred in it crosses
+     the top of the viewport at `40 + 50 = 90svh` — progress 0.64. The
+     tween, though, is scrubbed across the wrapper's *full* 140svh
+     (`end: "bottom top"`, deliberately, so the frames keep advancing while
+     the canvas leaves). Everything after progress ~0.64 therefore animates
+     off-screen.
+
+     The second statement used to start at frame 60, which is progress 0.62
+     — it reached full opacity at 93svh, three svh *after* it had already
+     left the top of the screen, so it was never actually seen. It now
+     opens at 41 and is fully legible from 65svh, a 25svh read before the
+     handoff. Anything scheduled past frame ~57 is invisible by
+     construction; check the arithmetic, not the preview, when moving
+     these.
 
      The wording is the spec's own (§11.1). An intermediate version replaced
      both with benefit lines ("Hours back, every week." / "Tools your team
@@ -143,8 +159,8 @@ export const designLab = {
      that constant was re-measured with it. Changing this copy means
      re-measuring it again. */
   statements: [
-    { id: "complexity", text: "Complexity, computed.", from: 20, to: 45, side: "right" },
-    { id: "scales", text: "Design that scales itself.", from: 60, to: 96, side: "left" },
+    { id: "complexity", text: "Complexity, computed.", from: 20, to: 37, side: "right" },
+    { id: "scales", text: "Design that scales itself.", from: 41, to: 96, side: "left" },
   ],
 
   panels: {
