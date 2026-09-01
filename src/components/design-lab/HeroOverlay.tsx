@@ -201,7 +201,21 @@ export function HeroOverlay() {
               geodesic, which is about a quarter of a phone screen; the ~28px
               this saves is what takes it from grazing the model to clearing
               it, without pushing the wordmark up against the header. */}
-          <h1 className="mt-5 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.28rem,4.96vw,2.56rem)] leading-[1.05] sm:mt-8">
+          {/* The base clamp maxes out at 2.56rem once the viewport clears
+              ~825px and then sits there all the way to 4K — fine on a phone,
+              where it was tuned, but on a laptop panel (1280–1440 CSS px is
+              the common "small screen" range, not just a resize-the-window
+              exercise) the geodesic is *also* still close: `FrameCanvas`
+              fits it to a fraction of the same viewport, so a headline held
+              at its widest right where the model is at its narrowest is what
+              put "computed." under the mesh — measured, not eyeballed, on a
+              1366×768 laptop viewport. `sm:` scales the headline down again
+              and holds it at a flat 2rem from 640 to ~1483px — the exact
+              band where the model has the least room — before it grows back
+              toward the same 2.56rem ceiling on genuinely wide screens.
+              Below `sm` this rule does not apply and the base clamp (tuned
+              on a real phone, see above) is untouched. */}
+          <h1 className="mt-5 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.28rem,4.96vw,2.56rem)] leading-[1.05] sm:mt-8 sm:text-[clamp(2rem,2.16vw,2.56rem)]">
             {hero.headline}
           </h1>
 

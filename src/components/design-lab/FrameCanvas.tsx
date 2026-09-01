@@ -14,6 +14,37 @@ const PLATE_HEIGHT = 0.8;
 const MAX_DPR = 2;
 
 /**
+ * Keeps the geodesic's own mesh clear of the hero lockup on a laptop-width
+ * viewport, where `PLATE_WIDTH`/`PLATE_HEIGHT` alone are not enough.
+ *
+ * The plate above fits the frame to a *fraction* of the stage, so its edges
+ * move in step with the viewport — but the lockup next to it (`HeroOverlay`)
+ * is set in CSS px that stay put once the viewport clears `sm`. On a wide
+ * desktop screen there is room to spare between the two; on a laptop panel
+ * (1280–1440 CSS px is a common native width, not just a narrow browser
+ * window) the fixed-size text is a much bigger fraction of a much smaller
+ * screen, and the object's own mesh — not just its plate — ends up under
+ * "Architecture, computed.". Measured on a 1366×768 viewport, not eyeballed.
+ *
+ * `GEOMETRY_LEFT_FRAC` is the closest the mesh ever gets to the frame's own
+ * left edge (as a fraction of the frame's width) while the lockup is still
+ * on screen — sampled across frames 1–20, the window before `LOCKUP_OUT`
+ * fades it out. `LOCKUP_SAFE_RIGHT`/`LOCKUP_MARGIN` are the headline's own
+ * widest ink plus a clearance, matching the `sm:` clamp added to the h1 in
+ * `HeroOverlay` (that clamp does its share of the work; this is the rest).
+ * `PLATE_FLOOR` stops the margin chase from shrinking the object into
+ * insignificance on a viewport too narrow to fit both at full size — past
+ * that point some crowding is the lesser problem.
+ */
+const GEOMETRY_LEFT_FRAC = 0.173;
+const LOCKUP_SAFE_RIGHT = 425;
+const LOCKUP_MARGIN = 40;
+const PLATE_FLOOR = 0.45;
+/** Below this the lockup stacks above the model instead of beside it (see
+    `HeroOverlay`), so the horizontal margin no longer applies. */
+const STACKED_BREAKPOINT = 640;
+
+/**
  * The geodesic sequence, scrubbed frame by frame against scroll position.
  *
  * Smoothness is decided by the preload, not by the tween: an image that has
@@ -74,10 +105,15 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
       // when the same frame has to be redrawn at new dimensions.
       let current = 0;
       let painted = -1;
+      // CSS px, not the backing store's device px — `render` needs this to
+      // read `LOCKUP_SAFE_RIGHT` (set in CSS px, same as the hero text) and
+      // to know whether the lockup is even beside the model right now.
+      let cssWidth = 0;
 
       const sizeCanvas = () => {
         const rect = stage.getBoundingClientRect();
         const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+        cssWidth = rect.width;
         const w = Math.round(rect.width * dpr);
         const h = Math.round(rect.height * dpr);
         if (canvas.width === w && canvas.height === h) return false;
@@ -90,11 +126,21 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
       const render = (image: HTMLImageElement) => {
         const cw = canvas.width;
         const ch = canvas.height;
+        const dpr = cssWidth > 0 ? cw / cssWidth : 1;
 
-        const scale = Math.min(
+        let scale = Math.min(
           (cw * PLATE_WIDTH) / width,
           (ch * PLATE_HEIGHT) / height,
         );
+
+        if (cssWidth >= STACKED_BREAKPOINT) {
+          const safeLeft = (LOCKUP_SAFE_RIGHT + LOCKUP_MARGIN) * dpr;
+          const marginScale =
+            (cw / 2 - safeLeft) / (width * (0.5 - GEOMETRY_LEFT_FRAC));
+          const floorScale = (cw * PLATE_FLOOR) / width;
+          scale = Math.min(scale, Math.max(marginScale, floorScale));
+        }
+
         const dw = Math.round(width * scale);
         const dh = Math.round(height * scale);
         const dx = Math.round((cw - dw) / 2);
