@@ -218,7 +218,7 @@ track faster than the wheel and buys it back.
 `data-lenis-prevent`, or scrolling a long caption scrolls the page instead.
 
 `public/projects/` also holds three loose files (`spatial-flow.gif`,
-`hyper-building-automation.jpg`, `la-cite-radieuse-topology.png`) read by
+`hyper-building-automation.gif`, `la-cite-radieuse-topology.png`) read by
 `src/data/design-lab.ts`. They are not part of this system — **do not move
 them.**
 

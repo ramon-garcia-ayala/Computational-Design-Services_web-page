@@ -62,16 +62,28 @@ export const designLab = {
   },
 
   /* Shown over the sequence from the first frame.
-     Two lines and two buttons, where there used to be two lines and a
-     three-sentence justified paragraph. The paragraph ran under the geodesic
-     at every desktop width — the model occupies the middle of the plate and
-     the copy column reached into it — and it repeated, at length, what the
-     "problem" panel two screens later says better. What replaced it is the
-     brand guide's own outcome line: `headline` is the positioning line, this
-     is the one that speaks to a budget. */
+     `headline` is the positioning line; below it sits one of two copy
+     blocks, and which one depends on the width.
+
+     `description` is the spec's own paragraph (§11.1) and is what shows from
+     `sm` up. It was cut once because it ran under the geodesic — it was set
+     to `max-w-lg` (32rem) at every width, and the model owns the middle of
+     the plate, so the last third of every line was over mesh. That was a
+     sizing bug rather than a copy problem: the space between the column and
+     the mesh is 24.2rem at 1280px and 29.1rem at 1920, so 32rem overflowed
+     at *every* width up to 2560. `HeroOverlay` now caps the measure against
+     that gap instead, and the paragraph is back.
+
+     `outcome` is the short line that replaced it, kept for below `sm`. On a
+     phone the lockup has to fit between the header and the top of the model
+     — roughly 34px of margin on a 390x844 — and three sentences do not,
+     whatever they are set at. One line does. Same reason the secondary CTA
+     is desktop-only. */
   hero: {
     logoAlt: "R²χTECH",
     headline: "Architecture, computed.",
+    description:
+      "We are a computational studio embedded in architecture, engineering, and construction. We build the parametric pipelines, model automations, and AI-driven systems.",
     outcome: "We automate AEC. You ship faster.",
     /* The hero had no call to action at all: four screen-heights of the most
        expensive real estate on the site, and nothing to click. */
@@ -248,7 +260,7 @@ export const designLab = {
         },
         {
           id: "hyper-building-automation",
-          src: "/projects/hyper-building-automation.jpg",
+          src: "/projects/hyper-building-automation.gif",
           animated: false,
           title: "Hyper Building Automation",
           /* This one is not in `projects.ts` — it is a loose file in

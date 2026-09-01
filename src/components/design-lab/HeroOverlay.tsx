@@ -228,16 +228,39 @@ export function HeroOverlay() {
             {hero.headline}
           </h1>
 
-          {/* The outcome line, where a three-sentence justified paragraph used
-              to sit. Two reasons it went. It ran to `max-w-lg` at every width,
-              which on this plate reaches into the geodesic — the model owns
-              the middle of the frame, so the last third of every line was set
-              over mesh. And it was justified at 0.7rem across a narrow
-              measure, which opens rivers you can put a finger down. What is
-              left is one line that never reaches the model and says the thing
-              a buyer needs to hear. */}
-          <p className="mt-4 max-w-md text-[0.85rem] leading-snug font-medium text-lab-ink sm:mt-6 sm:text-[1.15rem]">
+          {/* Below `sm` only: one line, because three sentences do not fit
+              between the header and the top of the model on a phone (~34px
+              of margin on a 390x844 — see the mobile notes above). */}
+          <p className="mt-4 max-w-md text-[0.85rem] leading-snug font-medium text-lab-ink sm:hidden">
             {hero.outcome}
+          </p>
+
+          {/* The spec's paragraph (§12.4), from `sm` up.
+
+              **`max-w` is measured against the model, not chosen.** This is
+              the one thing that has to be right: the geodesic owns the middle
+              of the plate, and `FrameCanvas` fits it to a fraction of the
+              viewport, so the gap between this column and the nearest mesh
+              is a function of width — 11.6rem at 640, 18.6rem at 1024,
+              24.2rem at 1280, 27.8rem at 1440, 29.1rem at 1920 (the model
+              grows too, so the gap stops opening), 34.1rem at 2560. The
+              original set this to a flat `max-w-lg`, which is 32rem and
+              therefore overflowed into the mesh at every width up to 2560 —
+              that, not the copy, is why it was cut.
+
+              `min(28rem,28vw)` stays under every one of those figures with
+              room to spare, and it tracks the viewport rather than stepping
+              at breakpoints, which is what the gap itself does. Re-derive it
+              with the numbers above if `PLATE_WIDTH`, `GEOMETRY_EDGE_FRAC`
+              or `LOCKUP_SAFE_RIGHT` ever move.
+
+              Ragged right, not justified. The original was justified and it
+              is the one part of it not restored: at this measure — narrower
+              now than the one that was rejected — justification opens rivers
+              you can put a finger down, which is the same call `Panels.tsx`
+              makes for the About lead, for the same reason. */}
+          <p className="mt-4 hidden max-w-[min(28rem,28vw)] text-[0.8rem] leading-relaxed text-lab-ink-muted sm:mt-6 sm:block">
+            {hero.description}
           </p>
 
           {/* The hero had nothing to click. Four screen-heights of the best
@@ -251,12 +274,26 @@ export function HeroOverlay() {
           <div className="pointer-events-auto mt-5 flex flex-wrap items-center gap-3 sm:mt-8">
             {/* `py-3` over the size's own `py-2.5`: 41px is under the 44px
                 minimum a touch target has to clear, and this is the one
-                control on the page a phone visitor is meant to hit. */}
+                control on the page a phone visitor is meant to hit.
+
+                Ink, not the amber `solid` plate. Amber is the accent for a
+                dark ground; filling a button with it on this pale greige
+                makes the loudest object on the hero a colour swatch rather
+                than the model, and the two CTAs stop reading as primary and
+                secondary — they read as two different kinds of thing. Ink
+                against greige is the strongest contrast this plate has
+                (7.13:1, the same pair as the headline), so it is still
+                unmistakably the primary. Overridden here rather than added
+                to `CTALink` as a variant, exactly like the `outline`
+                override below it: `lab-*` is Home's palette, and a shared
+                component has no business carrying it. Hover deepens to
+                `carbon` rather than lightening, so the plate never washes
+                out toward the background it sits on. */}
             <CTALink
               href={hero.ctaPrimary.href}
               variant="solid"
               size="md"
-              className="py-3"
+              className="border-lab-ink bg-lab-ink py-3 text-lab-bg hover:border-carbon hover:bg-carbon"
             >
               {hero.ctaPrimary.label}
             </CTALink>
