@@ -693,7 +693,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 <aside class="notes-drawer" id="notesDrawer" aria-hidden="true">
   <button class="notes-close" id="notesClose" aria-label="Close notes">✕</button>
   <h2>Design notes</h2>
-  <p class="sub">Eight decisions, numbered to the markers on the page. Click one to jump there.</p>
+  <p class="sub">Nine notes, numbered to the markers on the page. Click one to jump there.</p>
   <div id="notesList"></div>
 </aside>
 
@@ -914,7 +914,8 @@ var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     { n: "5", tag: "⑤", title: "Proof, framed as research — not client wins", body: "The nine projects are IAAC research, not client engagements — CLAUDE.md is explicit that Project has no client field because inventing one \"would be a lie on a page whose entire job is to be believed.\" So every card's finding is a research result, sourced from projects.ts where it exists. Two gaps to flag: la-cite-radieuse's finding is quoted from its own outcome track, but Hyper Building Automation isn't in projects.ts at all — the finding line here is a placeholder and needs a real sentence from you before this ships." },
     { n: "6", tag: "⑥", title: "About: moved out of the cine format", body: "Same copy, same founder portraits, same greyscale-to-colour hover. It was a pinned panel; now it's a normal document section, because a paragraph and two headshots don't need a screen held hostage to read them." },
     { n: "7", tag: "⑦", title: "Playground moves later on purpose", body: "\"Try it yourself\" means more once the visitor has seen what \"it\" is. The chat widget itself is the strongest proof on the page — it should follow the explanation, not precede it." },
-    { n: "8", tag: "⑧", title: "Closing: unchanged", body: "Copy, clip and the /contact CTA are exactly as they are today. Nothing here needed fixing." }
+    { n: "8", tag: "⑧", title: "Closing: unchanged", body: "Copy, clip and the /contact CTA are exactly as they are today. Nothing here needed fixing." },
+    { n: "9", tag: "⑨", title: "What this prototype is not", body: "Two fidelity gaps, both deliberate. The hero ships 25 of the 96 geodesic frames so the file stays under a megabyte — production keeps all 96, and the scrub is otherwise the real one. And the two panel loops load by relative path, so they play when you open this file from the repo but not from a shared link, where each panel falls back to its plate colour — which is exactly what PanelVideo.tsx already does when a clip fails. Everything else here is the real mechanism: real GSAP, real ScrollTrigger, tokens copied straight out of globals.css." }
   ];
   var list = document.getElementById("notesList");
   NOTES.forEach(function(note){
