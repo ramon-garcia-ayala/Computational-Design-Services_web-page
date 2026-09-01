@@ -143,12 +143,12 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
             <MusicToggle className="hidden sm:flex" variant={variant} />
 
             {/* Discreet on purpose: visible from `sm` up, never competing
-                with the primary "Get in touch" CTA. Below `sm` the header is
-                already at capacity (logo, contact pill, menu trigger), so
-                the portal stays reachable through the menu instead — see
-                the trailing entry in `navLinks`. `rounded-control` here,
-                not the `rounded-full` literal its siblings still carry:
-                same value today, but this one is the token. */}
+                with the primary "Get in touch" CTA. It is not in `navLinks`
+                either — a returning client's bookmark, not a route the menu
+                needs to surface — so below `sm` it drops out entirely rather
+                than moving into the overlay. `rounded-control` here, not the
+                `rounded-full` literal its siblings still carry: same value
+                today, but this one is the token. */}
             <Link
               href={portalLink.href}
               className={cn(

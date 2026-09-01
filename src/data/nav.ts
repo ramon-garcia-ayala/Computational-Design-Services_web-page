@@ -12,19 +12,22 @@ export type NavLink = {
  */
 export const portalLink: NavLink = { label: "Client access", href: "/portal" };
 
-/** Main navigation of the fullscreen overlay menu. */
+/**
+ * Main navigation of the fullscreen overlay menu.
+ *
+ * `portalLink` is deliberately absent: it stays a header-only pill
+ * (`Header.tsx`, `sm` up), not a menu entry. It used to also close this list
+ * — the reasoning was that the header at 375px has no room for it, so the
+ * menu was the only way to reach the portal below `sm` — but the client
+ * portal is a returning-client bookmark, not a route a first-time visitor
+ * needs surfaced in the primary nav.
+ */
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
   { label: "About us", href: "/about" },
   { label: "Projects", href: "/projects" },
   { label: "Contact", href: "/contact" },
-  /* Reading here, not just in `Header.tsx`'s own pill: the header at 375px
-     already carries the logo, the contact pill and the menu trigger, so a
-     third pill crowds it. `Header.tsx` shows `portalLink` separately from
-     `sm` up; this entry is what keeps the portal reachable below that
-     breakpoint, through the menu instead. */
-  portalLink,
 ];
 
 /**
