@@ -5,6 +5,7 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { designLab } from "@/data/design-lab";
 import { CTALink } from "@/components/ui/CTALink";
+import { ScrollCue } from "@/components/ui/ScrollCue";
 import { cn } from "@/lib/utils";
 
 /** Fraction of the runway a statement takes to fade in or out (~4 frames). */
@@ -157,6 +158,37 @@ export function HeroOverlay() {
             "linear-gradient(to bottom, rgb(184 180 177 / 0) 0%, rgb(184 180 177 / 0.6) 55%, var(--color-lab-bg) 100%)",
         }}
       />
+
+      {/* Scroll cue, centred under the model.
+
+          It lives in the overlay rather than being fixed to the viewport,
+          and that is the whole behaviour: the overlay sits inside the
+          canvas's `sticky` stage, so the cue holds its place for as long as
+          the model is centred and then travels up and out with it, clearing
+          the top at ~250svh — just before the runway ends and the stats bar
+          takes over. A `fixed` cue would instead follow the reader down the
+          whole page, still saying "scroll" long after they had.
+
+          After the bottom gradient in the DOM, so it paints over it rather
+          than being dissolved by it — it sits inside that 22svh band.
+
+          Positioned the way the statements above are — a full-inset flex box
+          with padding, not `bottom-[7svh]`. That is not a style preference:
+          the arbitrary `bottom-*` produced no rule at all here (the class
+          reached the DOM and Tailwind emitted nothing for it), so the cue
+          fell back to its static position and sat at the *top* of the hero,
+          behind the header. `pb-[7svh]` is the same utility family as the
+          `pb-[18svh]` the second statement already uses and which is known
+          to compile.
+
+          The 7svh clears that statement's own 18svh on a phone, where the
+          two are the only things in the lower half; from `sm` up the
+          statements are centred beside the model and there is nothing down
+          here at all. No `pointer-events-auto`: this is a hint, not a
+          control, so the sequence behind it stays scrollable. */}
+      <div className="absolute inset-0 flex items-end justify-center pb-[7svh]">
+        <ScrollCue variant="lab" />
+      </div>
       {/* Opening lockup, present from the first frame and faded out by ~18.
 
           Centred from `sm` up, but held near the top below it. On a phone the
