@@ -3,99 +3,122 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Site-wide crosshair cursor: a full-height vertical rule and a full-width
- * horizontal one, crossing at the pointer, with a coordinate readout beside
- * the intersection. A drafting reticle rather than an arrow — the same
- * instrument register as `grid-bg` and the proposal `FlowDiagram`s, on the
- * one element that is present no matter which page or panel is on screen.
+ * Site-wide crosshair cursor: a small four-armed reticle with a gap at its
+ * centre, and the pointer's viewport coordinates set beside it. A drafting
+ * mark rather than an arrow — the same instrument register as `grid-bg` and
+ * the proposal `FlowDiagram`s, on the one element present no matter which
+ * page or panel is on screen.
+ *
+ * **The centre is a gap, not a crossing.** The arms stop 4px short of the
+ * point on every side, so the pixel actually being pointed at is never
+ * covered by the thing pointing at it. It is also what keeps a 20px mark
+ * reading as an instrument instead of a plus sign.
+ *
+ * **White with `mix-blend-mode: difference` is the colour rule**, not a
+ * stand-in for one. Difference inverts whatever is behind it, so the mark
+ * is white over the near-black panels and black over the greige hero and
+ * the pale pages, per pixel — an arm crossing an edge inverts on each side
+ * of it. Any fixed token would be right on one ground and invisible on
+ * another; this is the same device `ScrollProgress` and `BackToTop` use.
+ *
+ * **There is exactly one element, and it carries the blend, the transform
+ * and the `fixed` together.** That is not tidiness, it is the only
+ * arrangement that inverts. `mix-blend-mode` blends an element against the
+ * backdrop of its nearest ancestor *stacking context*, and `position:
+ * fixed` creates one unconditionally — so with the mark inside a fixed
+ * wrapper, whether the blend sat on the arms or on an inner transformed
+ * group, it resolved against that wrapper's own empty backdrop and the
+ * reticle came out plain white on the greige, inverting nothing. Blending
+ * the fixed element itself resolves against the page behind it.
+ *
+ * Keeping it one small element rather than a `fixed inset-0` layer (which
+ * does work) is the cheap version: a viewport-sized blended layer makes
+ * the compositor re-blend the whole screen on every frame the pointer
+ * moves, over an R3F canvas and a scroll-driven frame sequence. The
+ * blended group here is only the pixels the reticle paints.
  *
  * **Fine pointers only.** `matchMedia("(pointer: fine)")` gates the whole
- * thing at mount: a touch screen has no hovering pointer to attach a
- * crosshair to, and there is nothing to replace there in the first place. A
- * device that changes pointer type mid-session (a laptop with a mouse
- * unplugged) is re-checked on the query's own `change` event.
+ * thing: a touch screen has no hovering pointer to attach a crosshair to,
+ * and nothing to replace. The query's own `change` event re-checks it, so
+ * unplugging a mouse mid-session hands the real cursor back.
  *
- * **Every element writes through refs, never React state.** `mousemove`
+ * **Everything writes through refs, never React state.** `pointermove`
  * fires far faster than a component should re-render for, and a `setState`
- * per pixel would fight the browser for the same frame this is meant to
- * track smoothly. Position lands directly on `style.transform` and the
- * label's `textContent`, the same imperative-DOM discipline the rest of the
- * site reserves for GSAP.
- *
- * **White with `mix-blend-mode: difference`**, the exact device
- * `ScrollProgress` and `BackToTop` already use for a fixed element that has
- * to stay legible over a page running from pale greige to near-black panels
- * without tracking which one is currently underneath.
+ * per pixel would fight the browser for the frame this exists to track.
+ * One transform on the wrapper carries the mark and the readout together;
+ * only the label's own offset and text are written separately.
  *
  * **No `prefers-reduced-motion` branch.** Like `ScrollProgress`, this
- * reports a value — here, pointer position — rather than animating for its
- * own sake; it moves exactly as far and as fast as the hand already did.
- * There is nothing here for that preference to object to.
+ * reports a value — pointer position — rather than animating for its own
+ * sake, and moves exactly as far and as fast as the hand already did.
  *
- * **The native cursor is hidden globally, not just under this mark.**
- * `document.documentElement` gets a `custom-cursor` class on mount, and
- * `globals.css` turns that into `cursor: none !important` — a crosshair
- * that only replaced the system arrow's dead centre while a differently
- * shaped native cursor kept showing beside it would read as two cursors
- * fighting, not one redesigned. The class comes off on unmount and while
- * the pointer is outside the viewport, so a hover into a chrome-less iframe
- * or a window switch never leaves the visitor without any cursor at all.
+ * **Hiding the native cursor and drawing this one are a single state**, and
+ * the invariant is that there is never a moment with neither. The
+ * `custom-cursor` class on `<html>` (which `globals.css` turns into
+ * `cursor: none !important`) goes on with the first pointer event — not at
+ * mount, which left a page loaded without the mouse moving showing no
+ * cursor at all — and comes off whenever the mark hides: pointer out of the
+ * viewport, window unfocused, pointer type no longer fine, unmount. Hiding
+ * the mark while leaving the class on stranded the pointer invisible over a
+ * page it was still sitting on, every time focus moved to devtools.
  */
+
+/** Arm length, the gap from centre to where each arm starts, in px. */
+const ARM = 6;
+const GAP = 4;
+
 export function CustomCursor() {
-  const vLineRef = useRef<HTMLDivElement>(null);
-  const hLineRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLDivElement>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
+  const markRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const query = window.matchMedia("(pointer: fine)");
-    if (!query.matches) return;
 
     const html = document.documentElement;
-    const vLine = vLineRef.current;
-    const hLine = hLineRef.current;
+    const mark = markRef.current;
     const label = labelRef.current;
-    const root = rootRef.current;
-    if (!vLine || !hLine || !label || !root) return;
+    if (!mark || !label) return;
 
-    html.classList.add("custom-cursor");
+    let active = false;
 
     const show = () => {
-      root.style.opacity = "1";
+      if (active || !query.matches) return;
+      active = true;
+      html.classList.add("custom-cursor");
+      mark.style.opacity = "1";
     };
+
     const hide = () => {
-      root.style.opacity = "0";
+      if (!active) return;
+      active = false;
+      html.classList.remove("custom-cursor");
+      mark.style.opacity = "0";
     };
 
     const onMove = (event: PointerEvent) => {
       const { clientX: x, clientY: y } = event;
-      vLine.style.transform = `translateX(${x}px)`;
-      hLine.style.transform = `translateY(${y}px)`;
-      /* Offset clear of the lines themselves, and flipped past the halfway
-         point of each axis so the readout never runs off the edge of the
-         screen it is closest to — it sits above/left of the crosshair once
-         the pointer passes into the right or bottom half of the viewport. */
+
+      // One write moves the reticle and the readout together.
+      mark.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+
+      /* The readout flips to the inside once the pointer passes the middle
+         of an axis, so it is never the thing that runs off the edge the
+         pointer is heading for. */
       const flipX = x > window.innerWidth / 2;
       const flipY = y > window.innerHeight / 2;
-      label.style.transform =
-        `translate(${x}px, ${y}px) ` +
-        `translate(${flipX ? "-100%" : "14px"}, ${flipY ? "-100%" : "14px"})`;
-      label.textContent =
-        `X ${String(Math.round(x)).padStart(4, "0")} · ` +
-        `Y ${String(Math.round(y)).padStart(4, "0")}`;
+      label.style.transform = `translate(${flipX ? "-100%" : "0"}, ${flipY ? "-100%" : "0"})`;
+      label.style.left = flipX ? `${-GAP - ARM}px` : `${GAP + ARM}px`;
+      label.style.top = flipY ? `${-GAP - ARM}px` : `${GAP + ARM}px`;
+
+      label.textContent = `${Math.round(x)},${Math.round(y)}`;
       show();
     };
 
-    // A device that is only sometimes a mouse (a convertible, an external
-    // mouse unplugged mid-session) re-evaluates rather than sticking with
-    // whatever was true on mount.
     const onPointerTypeChange = () => {
-      if (query.matches) {
-        html.classList.add("custom-cursor");
-      } else {
-        html.classList.remove("custom-cursor");
-        hide();
-      }
+      // Only ever hands the cursor back here. Taking it away again is
+      // `show`'s job, on the next pointer event, so the mark still never
+      // appears before it knows where to draw itself.
+      if (!query.matches) hide();
     };
 
     window.addEventListener("pointermove", onMove);
@@ -104,7 +127,7 @@ export function CustomCursor() {
     query.addEventListener("change", onPointerTypeChange);
 
     return () => {
-      html.classList.remove("custom-cursor");
+      hide();
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("mouseleave", hide);
       window.removeEventListener("blur", hide);
@@ -112,23 +135,32 @@ export function CustomCursor() {
     };
   }, []);
 
+  /* Each arm is its own 1px element rather than one bordered box, so the
+     centre stays genuinely empty rather than covered by a transparent-but-
+     present box. */
+  const arm = "absolute bg-white";
+
   return (
     <div
-      ref={rootRef}
+      ref={markRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[110] opacity-0 transition-opacity duration-150 ease-out"
+      className="pointer-events-none fixed top-0 left-0 z-[110] opacity-0 mix-blend-difference transition-opacity duration-100 ease-out will-change-transform"
     >
-      <div
-        ref={vLineRef}
-        className="absolute top-0 left-0 h-full w-px bg-white mix-blend-difference"
+      {/* left, right, top, bottom — each starting GAP from the point */}
+      <span
+        className={arm}
+        style={{ height: 1, width: ARM, left: -(GAP + ARM), top: 0 }}
       />
-      <div
-        ref={hLineRef}
-        className="absolute top-0 left-0 h-px w-full bg-white mix-blend-difference"
+      <span className={arm} style={{ height: 1, width: ARM, left: GAP, top: 0 }} />
+      <span
+        className={arm}
+        style={{ width: 1, height: ARM, top: -(GAP + ARM), left: 0 }}
       />
-      <div
+      <span className={arm} style={{ width: 1, height: ARM, top: GAP, left: 0 }} />
+
+      <span
         ref={labelRef}
-        className="absolute top-0 left-0 font-mono text-[10px] whitespace-nowrap text-white uppercase tracking-widest mix-blend-difference"
+        className="absolute font-mono text-[9px] leading-none tracking-tight whitespace-nowrap text-white tabular-nums sm:text-[10px]"
       />
     </div>
   );
