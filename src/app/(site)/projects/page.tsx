@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { BackToTop } from "@/components/ui/BackToTop";
-import { Reveal } from "@/components/ui/Reveal";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ProjectsGrid } from "@/components/sections/projects/ProjectsGrid";
+import { ProjectIndex } from "@/components/sections/projects/ProjectIndex";
 import { FinalCTA } from "@/components/sections/shared/FinalCTA";
+import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -13,24 +12,17 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <>
-      <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-20">
-        <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
-        <div className="shell relative">
-          <Reveal>
-            <SectionHeading
-              as="h1"
-              kicker="Projects"
-              title="Tools that stayed in production"
-              lead="Each case follows the same arc: the bottleneck, the system we built, and what changed once it shipped."
-            />
-          </Reveal>
-        </div>
-      </section>
+    <div data-site-pale>
+      {/* The page opens straight onto the index — no kicker, no headline, no
+          lead. The `h1` stays in the document rather than being deleted with
+          them: a page whose main content has no heading has no accessible
+          name, and the crawler that reads this route would find the first
+          project title as the page's own. It is drawn nowhere. */}
+      <h1 className="sr-only">Projects</h1>
 
-      <ProjectsGrid />
+      <ProjectIndex projects={projects} />
       <FinalCTA />
       <BackToTop />
-    </>
+    </div>
   );
 }
