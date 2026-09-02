@@ -338,6 +338,23 @@ html.lenis body {
 }
 
 /* ---------------------------------------------------------------------------
+   Custom cursor
+   The class is added by `CustomCursor.tsx` on mount and only ever on a device
+   that reports `(pointer: fine)` — a touch screen has no hovering pointer, so
+   it never gets this and keeps its native behaviour untouched. Nothing here
+   applies before hydration either, so a visitor with JS off keeps a real
+   cursor rather than losing one to a crosshair that will never be drawn.
+
+   `!important` because every `cursor-*` utility Tailwind emits is a single
+   class, the same specificity as the rule below: without it the winner would
+   be decided by stylesheet order, i.e. differently on different pages.
+--------------------------------------------------------------------------- */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+
+/* ---------------------------------------------------------------------------
    Project utilities
 --------------------------------------------------------------------------- */
 

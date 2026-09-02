@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 import { seo, site } from "@/data/site";
 
 /* Fonts exposed as CSS variables and consumed from the @theme in globals.css.
@@ -95,6 +96,11 @@ export default function RootLayout({
             Skip to content
           </a>
           {children}
+          {/* Site-wide, so it belongs with the other things that must exist
+              exactly once: every route group renders through this layout, and
+              a cursor that stopped at a route boundary would be worse than
+              none. It draws nothing until a fine pointer moves. */}
+          <CustomCursor />
         </SmoothScroll>
       </body>
     </html>
