@@ -1077,6 +1077,36 @@ OneDrive-synced folder whose file locks are the same ones behind the `EPERM`
 above. Restarting `npm run dev` clears it; deleting `.next` is not needed and
 does not address it.
 
+## Opening the dev server from a phone
+
+`next dev` refuses `/_next/*` to every origin but localhost, and **the refusal
+is silent exactly where it hurts**: the document still returns 200 and the HTML
+still renders, but `/_next/webpack-hmr` is blocked, the dev runtime never
+finishes hydrating, and *no client effect on the page ever runs*. What that
+looks like is not an error:
+
+- **Home is a black screen.** `Preloader` is server-rendered as a
+  full-viewport `bg-carbon` plate at `z-[100]`, and the only thing that ever
+  takes it away is its own `useGSAP` callback. No hydration, no callback, no
+  removal — the page sits behind it for good. (Its `<noscript>` escape hatch
+  does not fire either: scripting is enabled, it just never completed.)
+- **Every other route shows its chrome and no content.** `Reveal` holds
+  everything at `reveal-init`'s `opacity: 0` until GSAP settles it, so headers,
+  buttons and backgrounds paint and the words and images do not.
+
+Both read as rendering faults and are neither. The one clue is a warning in the
+dev server's own log — `⚠ Blocked cross-origin request to Next.js dev resource
+… from "192.168.x.x"` — which never reaches the browser console, so debugging
+this from the device tells you nothing.
+
+`next.config.ts` sets `allowedDevOrigins` and defaults it to the private IPv4
+ranges, so a phone on the same Wi-Fi works with no configuration; `DEV_ORIGINS`
+overrides the list. It is dev-only and `next build` ignores it.
+
+Worth knowing because **testing the mobile layout on a real device is the only
+way to check it**, and this failure makes the first attempt look like the site
+itself is broken.
+
 ## GIF recording (visual verification)
 
 1. Have the server running (`npm run dev`).
