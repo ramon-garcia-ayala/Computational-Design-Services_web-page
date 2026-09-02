@@ -18,7 +18,29 @@ import { getPortalClient } from "@/data/portal";
  * redirect (never a client navigation) for the same reason `UnlockForm`
  * forces `window.location.assign`: the cookie has to exist before the proxy
  * evaluates the next request, and a redirect response is a fresh request.
+ *
+ * **The `Location` is relative, and that is load-bearing.** This used to build
+ * it with `NextResponse.redirect(new URL(path, request.url))`, the idiom the
+ * docs lead with — and `request.url` in a route handler does not carry the
+ * `Host` the client actually asked for. Reached over a LAN address it emitted
+ * `Location: http://localhost:3000/portal/dashboard`, so redeeming the link on
+ * a phone sent the phone to *itself* and died on `ERR_CONNECTION_REFUSED`;
+ * started with `-H 0.0.0.0` it emitted `http://0.0.0.0:3000/…`, which fails the
+ * same way. A relative `Location` is resolved by the browser against whatever
+ * origin it used, so the link works from a LAN IP, a preview deployment and
+ * the production domain without any of them being named here. It is also what
+ * `src/proxy.ts` already emits — Next normalises same-origin middleware
+ * redirects to relative — so this brings the two halves of the same sign-in
+ * flow into agreement rather than inventing a convention.
  */
+
+/**
+ * Same-origin redirect carrying cookies. `NextResponse.redirect` rejects a
+ * relative URL, so the response is constructed directly.
+ */
+function redirectTo(path: string): NextResponse {
+  return new NextResponse(null, { status: 307, headers: { Location: path } });
+}
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get("token") ?? undefined;
   const slug = request.nextUrl.searchParams.get("slug") ?? "";
@@ -26,18 +48,16 @@ export async function GET(request: NextRequest) {
   const secret = getPortalSecret();
   const client = slug ? getPortalClient(slug) : undefined;
 
-  const invalid = new URL("/portal?error=invalid_link", request.url);
-
   if (!secret || !client) {
-    return NextResponse.redirect(invalid);
+    return redirectTo("/portal?error=invalid_link");
   }
 
   const valid = await verifyMagicToken(token, slug, secret);
   if (!valid) {
-    return NextResponse.redirect(invalid);
+    return redirectTo("/portal?error=invalid_link");
   }
 
-  const response = NextResponse.redirect(new URL("/portal/dashboard", request.url));
+  const response = redirectTo("/portal/dashboard");
 
   const cookieOptions = {
     httpOnly: true,
