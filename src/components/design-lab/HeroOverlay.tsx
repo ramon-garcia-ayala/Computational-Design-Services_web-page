@@ -181,12 +181,17 @@ export function HeroOverlay() {
           `pb-[18svh]` the second statement already uses and which is known
           to compile.
 
-          The 7svh clears that statement's own 18svh on a phone, where the
-          two are the only things in the lower half; from `sm` up the
-          statements are centred beside the model and there is nothing down
-          here at all. No `pointer-events-auto`: this is a hint, not a
-          control, so the sequence behind it stays scrollable. */}
-      <div className="absolute inset-0 flex items-end justify-center pb-[7svh]">
+          Below `sm` the cue sits almost on the screen's own bottom edge
+          (`pb-[1.5svh]`) rather than the old `7svh` of clearance: the CTA
+          row above it moved down by the same distance the copy above it
+          moved down (see the lockup's own `pb` below), which frees the
+          room the cue used to need. It still lands under the second
+          statement's `pb-[18svh]`, so nothing overlaps. From `sm` up
+          nothing changed: the statements are centred beside the model and
+          there is nothing down here at all. No `pointer-events-auto`: this
+          is a hint, not a control, so the sequence behind it stays
+          scrollable. */}
+      <div className="absolute inset-0 flex items-end justify-center pb-[1.5svh] sm:pb-[7svh]">
         <ScrollCue variant="lab" />
       </div>
       {/* Opening lockup, present from the first frame and faded out by ~18.
@@ -219,17 +224,29 @@ export function HeroOverlay() {
            computed to 38px and put the hero's wordmark *underneath the
            header*. A percentage of the viewport cannot clear a constant.
            `pb` does track `svh`, because what it clears is `ScrollCue`'s own
-           `pb-[7svh]`: `calc(7svh + 5rem)` holds a steady 40px between the
-           button and the cue at every height, where a fixed value drifted. */
-        className="absolute inset-0 flex flex-col justify-between px-6 pt-[5.5rem] pb-[calc(7svh+5rem)] sm:justify-center sm:px-10 sm:pt-0 sm:pb-0 lg:px-16"
+           bottom padding. It was `calc(7svh + 5rem)`; trimmed by 4.5svh to
+           `calc(2.5svh + 5rem)`, which puts the button that much closer to
+           the screen's bottom edge without crowding the cue below it (still
+           a roughly 48px gap at a 390×844 phone, comfortably clear of both).
+           Independent of the headline block's own `mt` below — the two were
+           tuned together once, but nothing wires them to move in lockstep. */
+        className="absolute inset-0 flex flex-col justify-between px-6 pt-[5.5rem] pb-[calc(2.5svh+5rem)] sm:justify-center sm:px-10 sm:pt-0 sm:pb-0 lg:px-16"
       >
         {/* `text-center` below `sm` only. Stacked over a model that owns the
             middle of the screen, a left-aligned line and a left-aligned pill
             at opposite ends of the viewport read as two loose fragments; on
             the centre line they read as one column with the geodesic inside
             it. Everything is reset at `sm:`, where the desktop layout is a
-            left column beside the model and centring would be wrong. */}
-        <div className="w-full max-w-3xl text-center sm:text-left">
+            left column beside the model and centring would be wrong.
+
+            `mt-[2.5svh]` below `sm` nudges the headline and its outcome
+            line down off the header — trimmed from an earlier `4.5svh` that
+            had them sitting a touch low, closer to the model's own space.
+            The CTA row below is unaffected: it is positioned off the
+            lockup's own `pb`, not off this block, so raising the copy does
+            not also raise the button. Reset at `sm:`, where the block is
+            vertically centred instead. */}
+        <div className="mt-[2.5svh] w-full max-w-3xl text-center sm:mt-0 sm:text-left">
           {/* §12.2: the real logo asset, not type. Rendered as a mask filled
               with `currentColor` rather than an <img>, because the file's ink
               is near-black — fine on this greige plate, invisible on the dark

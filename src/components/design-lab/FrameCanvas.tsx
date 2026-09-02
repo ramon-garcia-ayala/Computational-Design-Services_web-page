@@ -11,6 +11,28 @@ const PLATE_WIDTH = 0.86;
 const PLATE_HEIGHT = 0.8;
 
 /**
+ * Below `STACKED_BREAKPOINT` the lockup and statements stack above/below the
+ * model instead of flanking it (see `HeroOverlay`), so `LOCKUP_SAFE_RIGHT`'s
+ * side clearance no longer applies and the plate is free to fill more of the
+ * stage. The desktop fractions above were sized to leave room for the
+ * flanking copy; on a phone that copy is gone from beside the model, and the
+ * fit left the geodesic noticeably smaller than the screen it owns.
+ *
+ * **`MOBILE_PLATE_WIDTH` is past 1 on purpose.** The frame is 1664x1248 (4:3
+ * landscape) against a phone's narrow, tall stage, so width is always the
+ * binding term in the `Math.min` below — at 1.0 the object already touched
+ * both edges with nothing left to grow into. Past 1 the fitted width exceeds
+ * the canvas and `dx` goes negative, which is fine: `drawImage` simply clips
+ * the overhang at the canvas bounds rather than needing a separate crop path.
+ * 1.15 crops roughly 3.5% off each side of the source frame — negligible on
+ * an abstract mesh — for a visibly larger object. `MOBILE_PLATE_HEIGHT` stays
+ * unused in the common case (height is never the binding term on a portrait
+ * phone) and only guards an unusually short/wide mobile viewport.
+ */
+const MOBILE_PLATE_WIDTH = 1.15;
+const MOBILE_PLATE_HEIGHT = 0.94;
+
+/**
  * Quiet time after the last scrub update before the frames snap to a single
  * crisp one. Long enough not to fire between two turns of a wheel, short
  * enough that a stop resolves before the eye settles on it.
@@ -341,9 +363,11 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
         const ch = canvas.height;
         const dpr = cssWidth > 0 ? cw / cssWidth : 1;
 
+        const plateWidth = cssWidth < STACKED_BREAKPOINT ? MOBILE_PLATE_WIDTH : PLATE_WIDTH;
+        const plateHeight = cssWidth < STACKED_BREAKPOINT ? MOBILE_PLATE_HEIGHT : PLATE_HEIGHT;
         let scale = Math.min(
-          (cw * PLATE_WIDTH) / width,
-          (ch * PLATE_HEIGHT) / height,
+          (cw * plateWidth) / width,
+          (ch * plateHeight) / height,
         );
 
         if (cssWidth >= STACKED_BREAKPOINT) {
