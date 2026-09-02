@@ -115,8 +115,25 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
     >
       <div className="grid-bg absolute inset-0 opacity-20" aria-hidden="true" />
 
-      <div className="shell relative flex min-h-0 flex-1 flex-col justify-center gap-12 pt-24 pb-12 lg:flex-row lg:items-end lg:justify-between lg:gap-16 lg:pb-20">
-        <nav aria-labelledby={labelledBy} className="flex-1">
+      {/* `justify-start` with `my-auto` on the children, not `justify-center`
+          — the same fix `PanelSection` documents at length, for the same
+          failure. With `justify-center`, content taller than the box overflows
+          it *symmetrically* and the top half goes out of reach: at 320x568 the
+          menu's first link, "Home", was drawn underneath the header, and there
+          was no way to get to it. Auto margins distribute *free* space, so
+          they centre when it fits and collapse to zero when it does not, which
+          sends the overflow downward — and `overflow-y-auto` then makes it
+          reachable rather than merely clipped somewhere less bad.
+
+          `pt-20` rather than `pt-24`: the header is a fixed 64px, so 80 clears
+          it at every height and returns 16px to a column that was running out.
+
+          The nav loses `flex-1` below `lg`. It was there for the desktop row,
+          where it pushes the aside to the far edge; stacked, all it did was
+          grow the nav to fill the leftover height and strand the newsletter
+          160px below the last link. */}
+      <div className="shell relative flex min-h-0 flex-1 flex-col justify-start gap-10 overflow-y-auto pt-20 pb-12 lg:flex-row lg:items-end lg:justify-between lg:gap-16 lg:overflow-visible lg:pt-24 lg:pb-20">
+        <nav aria-labelledby={labelledBy} className="my-auto lg:my-0 lg:flex-1">
           <ul className="flex flex-col gap-1 sm:gap-2">
             {navLinks.map((link) => (
               <li key={link.label} className="overflow-hidden">
@@ -125,7 +142,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
                     data-menu-item
                     href={link.href}
                     onClick={onClose}
-                    className="block text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent-ink sm:text-6xl lg:text-7xl"
+                    className="block text-[clamp(1.65rem,4.6svh,2.25rem)] leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent-ink sm:text-6xl lg:text-7xl"
                   >
                     {link.label}
                   </a>
@@ -134,7 +151,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
                     data-menu-item
                     href={link.href}
                     onClick={onClose}
-                    className="block text-4xl leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent-ink sm:text-6xl lg:text-7xl"
+                    className="block text-[clamp(1.65rem,4.6svh,2.25rem)] leading-[1.1] font-semibold tracking-tight text-fg transition-colors hover:text-accent-ink sm:text-6xl lg:text-7xl"
                   >
                     {link.label}
                   </Link>
@@ -146,7 +163,7 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
 
         <div
           data-menu-aside
-          className="flex w-full flex-col gap-8 lg:max-w-sm lg:pb-4"
+          className="my-auto flex w-full flex-col gap-6 lg:my-0 lg:max-w-sm lg:gap-8 lg:pb-4"
         >
           {/* Newsletter: UI only at this phase, no backend wired up. */}
           <form

@@ -85,13 +85,18 @@ export function ProblemPanel() {
           the display size would change what the panel says. */}
       <div className="max-w-4xl">
         <Eyebrow>{problem.kicker}</Eyebrow>
-        <p className="mt-4 text-display font-semibold text-fg sm:mt-6">
+        {/* A step down on a short viewport. `text-display` tops out by width
+            (`clamp(2.4rem, 3.8vw, 4.6rem)`) and a phone is always at its
+            floor, so on a 568px-tall screen the panel was spending 38px lines
+            on a stage with 23px of slack left. A `max-height` query is the
+            only thing that can see the constraint that actually binds here. */}
+        <p className="mt-4 text-display font-semibold text-fg [@media(max-height:700px)]:text-h2 sm:mt-6">
           {problem.lead}
         </p>
         {/* `panel-ink-muted`, not `fg-muted`: this plate is `--color-panel`,
             which is much lighter than carbon, and the muted grey tuned for
             carbon drops to 3.55:1 here. */}
-        <p className="mt-5 max-w-2xl text-lead text-panel-ink-muted sm:mt-8">
+        <p className="mt-5 max-w-2xl text-lead text-panel-ink-muted [@media(max-height:700px)]:text-base sm:mt-8">
           {problem.body}
         </p>
       </div>
@@ -120,7 +125,9 @@ export function ClosingPanel() {
       <div className={`${SHELL} ${BODY_PAD} relative my-auto`}>
         <div className="max-w-4xl">
           <Eyebrow>{closing.kicker}</Eyebrow>
-          <p className="mt-4 text-h1 font-semibold text-fg sm:mt-6">{closing.body}</p>
+          <p className="mt-4 text-h1 font-semibold text-fg [@media(max-height:700px)]:text-h2 sm:mt-6">
+            {closing.body}
+          </p>
 
           {/* `/contact`, not a mailto: a `mailto:` does nothing at all for a
               visitor on webmail, so the primary CTA silently failed for most

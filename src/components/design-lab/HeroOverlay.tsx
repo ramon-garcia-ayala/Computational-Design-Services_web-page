@@ -223,7 +223,13 @@ export function HeroOverlay() {
            button and the cue at every height, where a fixed value drifted. */
         className="absolute inset-0 flex flex-col justify-between px-6 pt-[5.5rem] pb-[calc(7svh+5rem)] sm:justify-center sm:px-10 sm:pt-0 sm:pb-0 lg:px-16"
       >
-        <div className="w-full max-w-3xl">
+        {/* `text-center` below `sm` only. Stacked over a model that owns the
+            middle of the screen, a left-aligned line and a left-aligned pill
+            at opposite ends of the viewport read as two loose fragments; on
+            the centre line they read as one column with the geodesic inside
+            it. Everything is reset at `sm:`, where the desktop layout is a
+            left column beside the model and centring would be wrong. */}
+        <div className="w-full max-w-3xl text-center sm:text-left">
           {/* §12.2: the real logo asset, not type. Rendered as a mask filled
               with `currentColor` rather than an <img>, because the file's ink
               is near-black — fine on this greige plate, invisible on the dark
@@ -287,7 +293,7 @@ export function HeroOverlay() {
           {/* Below `sm` only: one line, because three sentences do not fit
               between the header and the top of the model on a phone (~34px
               of margin on a 390x844 — see the mobile notes above). */}
-          <p className="mt-4 max-w-md text-[0.85rem] leading-snug font-medium text-lab-ink sm:hidden">
+          <p className="mx-auto mt-4 max-w-md text-[0.85rem] leading-snug font-medium text-lab-ink sm:mx-0 sm:hidden">
             {hero.outcome}
           </p>
 
@@ -329,7 +335,7 @@ export function HeroOverlay() {
               `pointer-events-none` so that the sequence behind it stays
               scrollable, and that inherits to every descendant. Without it
               these render, highlight on hover and do nothing at all. */}
-        <div className="pointer-events-auto flex w-full max-w-3xl flex-wrap items-center gap-3 sm:mt-8">
+        <div className="pointer-events-auto flex w-full max-w-3xl flex-wrap items-center justify-center gap-3 sm:mt-8 sm:justify-start">
             {/* `py-3` over the size's own `py-2.5`: 41px is under the 44px
                 minimum a touch target has to clear, and this is the one
                 control on the page a phone visitor is meant to hit.

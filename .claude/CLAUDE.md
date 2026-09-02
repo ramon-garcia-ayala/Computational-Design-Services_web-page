@@ -879,7 +879,27 @@ three images at every desktop height, with no scrollbar and nothing to find.
 Auto margins centre when there is free space and resolve to zero when there is
 not, so overflow can only ever clip the *end*. Anything that has to be read
 goes in the document band; only content that is genuinely one idea on one
-screen belongs in a panel. **Measure a new panel body against the stage** —
+screen belongs in a panel. **`justify-center` on a box that can overflow clips the *top*, and that trap
+is not limited to panels.** `MenuOverlay` had the identical bug: its column was
+`justify-center` with a fixed `pt`, so at 320x568 the content outgrew the
+viewport and the first nav link, "Home", was drawn underneath the header with
+no way to reach it. The fix is the same one `PanelSection` uses — `justify-start`
+with `my-auto` on the children, which centres while it fits and collapses to
+top-aligned when it does not — plus `overflow-y-auto`, so the part that no
+longer fits is scrollable rather than merely clipped somewhere less visible.
+Any full-viewport overlay added later inherits this problem by default.
+
+**Type that has to fit a height should be sized by height.** The site's scale
+is width-driven (`clamp(2.4rem, 3.8vw, 4.6rem)`), and a phone sits at its floor
+at every viewport height — so a 568px screen and a 932px screen get the same
+38px display line inside stages that differ by 364px. Where the constraint is
+vertical, say so: the menu's nav uses `clamp(1.65rem, 4.6svh, 2.25rem)`, and
+the two panel bodies step down under `[@media(max-height:700px)]`. That took
+the shortest viewport's panel slack from 23px to 191px. Do not reach for this
+by default — the shared scale is still the rule — only where a measurement
+shows the height is what binds.
+
+**Measure a new panel body against the stage** —
 `PlaygroundPanel` is 633px against 675 and is the one that will break first.
 
 **`PanelSection`'s `behind` is the ground the panel rises over**, normally the
