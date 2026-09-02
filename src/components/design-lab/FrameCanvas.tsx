@@ -136,6 +136,42 @@ const STACKED_BREAKPOINT = 640;
  * `HeroOverlay`'s own runway-driven timeline has to use the identical
  * `end`, or its statements would fade on a different scroll-to-progress
  * scale than the frames they are timed against.
+ *
+ * ## The breathing scale
+ *
+ * `herobreath` gives the object a slow 8s swell so it is not dead still
+ * while the page is not being scrolled. **It is a CSS transform on the
+ * canvas element, deliberately not a change to `render`'s own `scale`.**
+ * The two are orthogonal by construction: the scroll scrub decides *which
+ * frame is painted*, this decides *how the painted result is displayed*, so
+ * they cannot contend for the same value and the swell never restarts,
+ * stutters or gets cut when a scroll begins or ends. Driving it through
+ * `render` instead would mean a full-viewport `drawImage` plus four gutter
+ * blits every animation frame, and would fight the `painted` cache that
+ * exists to stop exactly that.
+ *
+ * **The swell only ever goes up, never below 1.** The canvas is
+ * `inset-0` and its gutters are filled with the frame's own edge pixels; at
+ * any scale under 1 those edges pull inward and expose the greige `html`
+ * behind, which is a slightly different colour from the frame's own
+ * gradient — the precise seam the edge-extension above exists to make
+ * impossible. Scaling up only ever crops.
+ *
+ * **1.2% is a ceiling set by the hero text, not a taste call.** The scale
+ * multiplies every distance from the canvas centre, the mesh's included.
+ * At its worst the mesh sits at `LOCKUP_SAFE_RIGHT + LOCKUP_MARGIN` = 530
+ * CSS px from centre, so 1.012 carries it 6.4px further out — 6.4px off a
+ * 40px clearance. Raising the amplitude spends the rest of that margin and
+ * puts the mesh back under the statements on a laptop panel, which is the
+ * whole thing `GEOMETRY_EDGE_FRAC` above was measured to prevent.
+ *
+ * No reduced-motion branch here, and the `100%` keyframe is why: it is the
+ * rest state, `scale(1)`, not the top of the swell. `globals.css` collapses
+ * every animation to `0.01ms` with one iteration under that preference, so
+ * the object settles at its true size rather than parked mid-breath. Same
+ * discipline as `ScrollCue`. Applying the class conditionally instead would
+ * hit the hydration trap in CLAUDE.md — the hook reads `false` on the first
+ * render — and flash the animation on before removing it.
  */
 export function FrameCanvas({ children }: { children?: React.ReactNode }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -339,8 +375,15 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
           ref={canvasRef}
           role="img"
           aria-label="Geodesic field study"
-          className="absolute inset-0 h-full w-full"
+          className="absolute inset-0 h-full w-full animate-[herobreath_8s_ease-in-out_infinite]"
         />
+        <style>{`
+          @keyframes herobreath {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.012); }
+            100% { transform: scale(1); }
+          }
+        `}</style>
         {/* Anything that has to sit over the sequence and stay with it while
             it is pinned — the hero lockup and the scroll statements. */}
         {children}
