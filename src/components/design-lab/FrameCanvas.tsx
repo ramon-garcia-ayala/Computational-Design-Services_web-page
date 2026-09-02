@@ -10,6 +10,12 @@ import { cn } from "@/lib/utils";
 const PLATE_WIDTH = 0.86;
 const PLATE_HEIGHT = 0.8;
 
+/**
+ * How far the object closes on the viewer across the whole runway, on top of
+ * whatever frame is painted. See "The scroll dolly" in the doc comment below.
+ */
+const DOLLY = 0.05;
+
 /** Retina is worth paying for on a still plate; beyond 2x is not. */
 const MAX_DPR = 2;
 
@@ -137,6 +143,36 @@ const STACKED_BREAKPOINT = 640;
  * `end`, or its statements would fade on a different scroll-to-progress
  * scale than the frames they are timed against.
  *
+ * ## The scroll dolly
+ *
+ * `DOLLY` closes the object on the viewer by 5% across the runway, scrubbed
+ * on the *same* `onUpdate` as the frames, off the same progress value — so
+ * it cannot drift out of step with the frame it belongs to, and it needs no
+ * second ScrollTrigger to keep in sync.
+ *
+ * **It exists because the honest lever was blocked.** To make the scroll
+ * read as more motion the frames would have to advance further per wheel
+ * turn, and the only control for that is the runway height, which is not
+ * free: it is derived from the 160svh the two statements need to be read in
+ * (see below), and shortening it is the exact regression that once left the
+ * second statement finishing after it had already left the screen. Making
+ * the frames finish early instead just trades that for a static tail, which
+ * is the other documented bug. So the extra motion is added alongside the
+ * sequence rather than taken out of its timing.
+ *
+ * **It is on its own element, not the canvas.** The breath below is an
+ * infinite CSS animation on `transform`; a scrubbed GSAP write to the same
+ * property on the same element would clobber it every tick. Nested
+ * elements multiply instead, which is also what makes the two independently
+ * adjustable.
+ *
+ * Worst case for the hero text is the two together. The statements are on
+ * screen over roughly progress 0.2–0.6, where the dolly is 1.01–1.03; with
+ * the breath at its 1.04 peak that is 1.07, putting the mesh's half-extent
+ * at ~227px against the statements' 230px at 1440 — still clear. The
+ * product only exceeds the clearance in the last stretch of the runway,
+ * after both statements have gone.
+ *
  * ## The breathing scale
  *
  * `herobreath` gives the object a slow 8s swell so it is not dead still
@@ -188,16 +224,18 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dollyRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
   const { count, width, height } = designLab.sequence;
 
   useGSAP(
     () => {
       const canvas = canvasRef.current;
+      const dolly = dollyRef.current;
       const ctx = canvas?.getContext("2d");
       const stage = stageRef.current;
       const wrapper = wrapperRef.current;
-      if (!canvas || !ctx || !stage || !wrapper) return;
+      if (!canvas || !ctx || !stage || !wrapper || !dolly) return;
 
       let cancelled = false;
       let tween: gsap.core.Tween | null = null;
@@ -333,7 +371,13 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
         tween = gsap.to(state, {
           frame: count - 1,
           ease: "none",
-          onUpdate: () => paint(state.frame),
+          onUpdate: () => {
+            paint(state.frame);
+            /* Same tick, same progress value, so the dolly can never drift
+               out of step with the frame it belongs to. */
+            const progress = state.frame / (count - 1);
+            dolly.style.transform = `scale(${1 + DOLLY * progress})`;
+          },
           scrollTrigger: {
             trigger: wrapper,
             start: "top top",
@@ -382,12 +426,19 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
           reducedMotion ? "h-[100svh]" : "sticky top-0 h-[100svh]",
         )}
       >
-        <canvas
-          ref={canvasRef}
-          role="img"
-          aria-label="Geodesic field study"
-          className="absolute inset-0 h-full w-full animate-[herobreath_8s_ease-in-out_infinite]"
-        />
+        {/* The dolly and the breath are on two different elements on
+            purpose: both are transforms, and one element cannot hold a
+            scrubbed GSAP value and an infinite CSS animation of the same
+            property without one clobbering the other. Nested, they simply
+            multiply. */}
+        <div ref={dollyRef} className="absolute inset-0 will-change-transform">
+          <canvas
+            ref={canvasRef}
+            role="img"
+            aria-label="Geodesic field study"
+            className="absolute inset-0 h-full w-full animate-[herobreath_8s_ease-in-out_infinite]"
+          />
+        </div>
         <style>{`
           @keyframes herobreath {
             0%   { transform: scale(1); }
