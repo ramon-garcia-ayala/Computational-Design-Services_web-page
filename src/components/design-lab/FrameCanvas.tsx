@@ -11,6 +11,13 @@ const PLATE_WIDTH = 0.86;
 const PLATE_HEIGHT = 0.8;
 
 /**
+ * Quiet time after the last scrub update before the frames snap to a single
+ * crisp one. Long enough not to fire between two turns of a wheel, short
+ * enough that a stop resolves before the eye settles on it.
+ */
+const SETTLE_MS = 180;
+
+/**
  * How far the object closes on the viewer across the whole runway, on top of
  * whatever frame is painted. See "The scroll dolly" in the doc comment below.
  */
@@ -166,6 +173,27 @@ const STACKED_BREAKPOINT = 640;
  *
  * The cost is a second canvas's worth of GPU memory, which is the trade
  * being made deliberately.
+ *
+ * **A fade caught halfway is two frames at once, so it never survives a
+ * stop.** That is right while the object is turning and just a soft image
+ * once it is not, so `settle` snaps to the nearer frame and hides the other
+ * layer outright. The snap is at most half a frame of rotation, so it reads
+ * as the image resolving rather than as a jump.
+ *
+ * **It is armed two ways, and the timer is the one that actually
+ * guarantees it.** `onScrubComplete` is the natural hook and fires sooner,
+ * but it only fires while the trigger is doing the scrubbing: scroll up
+ * past `start` and the trigger stops driving the tween wherever it had got
+ * to, no completion is ever reported, and the hero sits at the top of the
+ * page as a permanent ghosted double image. Measured — frame 0 at 1.0 with
+ * frame 1 still at 0.77 on top, three seconds after coming to rest at
+ * scroll 0. So every update also pushes out a `SETTLE_MS` deadline, which
+ * lands whenever the updates stop for any reason, in range or out of it.
+ *
+ * Neither is a scroll listener, deliberately. `scrub: 0.5` means the last
+ * wheel event is still half a second of easing away from the frame that
+ * will actually be on screen, so snapping on the wheel would resolve to a
+ * frame the sequence then keeps moving past.
  *
  * ## The scroll dolly
  *
@@ -385,8 +413,14 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
            which is why the fade is nearly free. */
         if (base === painted && !force) {
           const top = slots.find((s) => s.index === next);
-          if (top) top.canvas.style.opacity = `${mix}`;
-          return;
+          if (top) {
+            top.canvas.style.opacity = `${mix}`;
+            return;
+          }
+          /* No layer holds the frame we are fading toward — `settle` below
+             may have just snapped onto one and left the other holding
+             something stale. Fall through and set the pair up rather than
+             returning, or the fade would sit dead until `base` moved on. */
         }
 
         // `base` is drawn first and told to keep `next`, so an advance of one
@@ -413,6 +447,31 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
 
         painted = base;
       };
+
+      /* Resolve to a single, un-blended frame. A cross-fade caught halfway
+         is two frames at once, which is a legitimate thing to see while the
+         object is in motion and just a soft image once it is not. */
+      let settleTimer = 0;
+
+      /* Every update pushes the deadline out, so this lands once the scrub
+         has stopped moving rather than once the wheel has. */
+      const scheduleSettle = () => {
+        clearTimeout(settleTimer);
+        settleTimer = window.setTimeout(settle, SETTLE_MS);
+      };
+
+      function settle() {
+        clearTimeout(settleTimer);
+        const nearest = Math.min(count - 1, Math.max(0, Math.round(current)));
+        const slot = claim(nearest, nearest);
+        if (!slot) return;
+        slot.canvas.style.opacity = "1";
+        slot.canvas.style.zIndex = "1";
+        const other = slots.find((s) => s !== slot);
+        if (other) other.canvas.style.opacity = "0";
+        current = nearest;
+        painted = nearest;
+      }
 
       const load = async (index: number) => {
         const image = new Image();
@@ -459,6 +518,7 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
           ease: "none",
           onUpdate: () => {
             paint(state.frame);
+            scheduleSettle();
             /* Same tick, same progress value, so the dolly can never drift
                out of step with the frame it belongs to. */
             const progress = state.frame / (count - 1);
@@ -475,6 +535,11 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
             // A touch of lag rather than `true`: under Lenis the catch-up is
             // what reads as smooth instead of mechanically locked to the wheel.
             scrub: 0.5,
+            /* Fires when the scrub has finished catching up, which is the
+               real "the reader has stopped" — not the last wheel event, which
+               is still half a second of easing away from the frame that will
+               actually be on screen. */
+            onScrubComplete: settle,
           },
         });
 
@@ -485,6 +550,7 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
 
       return () => {
         cancelled = true;
+        clearTimeout(settleTimer);
         observer.disconnect();
         // Created inside a promise, so it is outside the gsap context's
         // automatic collection and has to be killed by hand.
