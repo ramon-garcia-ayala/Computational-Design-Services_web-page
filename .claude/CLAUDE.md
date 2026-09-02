@@ -1077,6 +1077,36 @@ OneDrive-synced folder whose file locks are the same ones behind the `EPERM`
 above. Restarting `npm run dev` clears it; deleting `.next` is not needed and
 does not address it.
 
+## Landing on Home with an anchor races the preloader
+
+`/#services` (and `#work`, `#about`) do not reliably land where they should on
+Home, and the error varies with viewport height rather than being a constant
+offset — measured at 320x568, 360x640, 390x844 and 430x932, the section kicker
+came to rest anywhere from 101px *above* the header's bottom edge to 61px
+below it, on the same build.
+
+Two things fight over the scroll position at mount. `SmoothScroll` jumps to the
+target, and `Preloader` holds `html { overflow: hidden }` and calls
+`window.scrollTo(0, 0)` for its own ~2.75s sequence. Whoever finishes last
+wins, and that depends on how long the glyph scramble takes.
+
+Half of it is fixed: `SmoothScroll` now calls `ScrollTrigger.refresh()`
+*before* the jump rather than after, since Home pins two `PanelSection`
+runways above the document band and a pin's spacer height is decided by that
+refresh — jumping first measured the target against a layout that then moved
+underneath it. That alone took 390x844 from -76px to +44px.
+
+The rest is the preloader, and it is deliberately left alone: the real fix is
+to defer the anchor jump until the overlay has finished, which means those two
+components knowing about each other. **Do not tune `scroll-mt` against these
+numbers** — they are a race, not a measurement, and a value fitted to one
+viewport makes another worse. `HomeDocument`'s `scroll-mt` is the header's own
+height plus a little, chosen from the header and nothing else.
+
+In practice this is narrow: below `sm` nothing links to those anchors — the
+hero's secondary CTA is the only thing that does and it is `hidden sm:*`, and
+`navLinks` point at real routes.
+
 ## Opening the dev server from a phone
 
 `next dev` refuses `/_next/*` to every origin but localhost, and **the refusal

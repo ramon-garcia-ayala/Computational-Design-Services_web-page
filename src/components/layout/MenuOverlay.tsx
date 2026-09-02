@@ -169,7 +169,11 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
               />
               <button
                 type="submit"
-                className="shrink-0 font-mono text-[10px] whitespace-nowrap uppercase tracking-widest text-accent-ink transition-opacity hover:opacity-70"
+                /* 15px tall as bare text. `min-h-11` with the negative
+                    margin keeps it on the field's own baseline while giving
+                    it a real box — it sits beside a text input, so it is the
+                    one control here a thumb has to find precisely. */
+                className="-my-3 inline-flex min-h-11 shrink-0 items-center font-mono text-[10px] whitespace-nowrap uppercase tracking-widest text-accent-ink transition-opacity hover:opacity-70"
               >
                 Sign up
               </button>
@@ -200,14 +204,17 @@ export function MenuOverlay({ open, onClose, labelledBy }: MenuOverlayProps) {
             </span>
           </Link>
 
-          <ul className="flex flex-wrap gap-x-5 gap-y-2">
+          {/* `gap-x-2` with the padding inside each link instead of between
+              them: these were 13px tall and 20px apart, which is two targets
+              under the floor separated by a gap that did not help. */}
+          <ul className="flex flex-wrap gap-x-2 gap-y-1">
             {socialLinks.map((link) => (
               <li key={link.label}>
                 <a
                   href={link.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors hover:text-accent-ink"
+                  className="-mx-2 inline-flex min-h-9 items-center px-2 font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors hover:text-accent-ink"
                 >
                   {link.label}
                 </a>

@@ -84,14 +84,33 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
             what every live page uses. */}
         <div
           className={cn(
-            "relative flex items-center justify-between gap-4 py-5",
-            light ? "px-6 sm:px-8 lg:px-10" : "shell",
+            /* `py-2.5` below `sm`. The pills now set their own 44px height,
+               so the row's padding no longer has to make it: at `py-5` the
+               two together stood the header at 84px and left the hero's
+               headline 4px of clearance under it. 44 + 20 puts the row back
+               at 64 and the gap at 24. */
+            "relative flex items-center justify-between gap-3 py-2.5 sm:gap-4 sm:py-5",
+            /* `px-4` below `sm`. At `px-6` the row needed 392px of a 360px
+               screen and the Menu pill's right edge landed at x=368 —
+               8px off the side of the phone, clipped with no scrollbar to
+               reveal it. */
+            light ? "px-4 sm:px-8 lg:px-10" : "shell",
           )}
         >
           <Link
             href="/"
+            /* `min-w-0` and shrinkable, where this was `shrink-0`. The
+                control cluster stays `shrink-0`, so at any width narrower
+                than the row wants, the *wordmark* gives and the buttons
+                stay on screen. A clipped logo is legible; a clipped button
+                is unreachable, and there is no width at which the old
+                arrangement chose correctly between them. */
             className={cn(
-              "shrink-0 opacity-100 transition-opacity hover:opacity-70",
+              /* `min-h-11` for the same reason as the pills beside it: the
+                 mask is 23px tall, so the link's box was a pixel under
+                 WCAG 2.2's 24px floor and nowhere near a thumb. It costs
+                 the row nothing — the controls already stand 44. */
+              "inline-flex min-h-11 min-w-0 items-center opacity-100 transition-opacity hover:opacity-70",
             )}
             aria-label={`${site.nameFlat} home`}
           >
@@ -102,7 +121,11 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
                 the rest of the site sits on. */}
             <span
               className={cn(
-                "block w-[132px] sm:w-[150px]",
+                /* 116 below `sm`, was 132: the 16px is what buys the row
+                    its clearance at 360 without touching the controls.
+                    `max-w-full` is what lets the shrink above actually
+                    resize the mask rather than overflow its box. */
+                "block w-[116px] max-w-full sm:w-[150px]",
                 light ? "bg-lab-ink" : "bg-fg",
               )}
               style={{
@@ -211,7 +234,12 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
             <Link
               href="/contact"
               className={cn(
-                "rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
+                /* `min-h-11` is 44px. These stood 29px tall — the two
+                    controls a phone visitor actually has on the hero.
+                    `rounded-control`, not `rounded-full`: same 9999px, but
+                    the site has exactly two radius tokens and any other
+                    `rounded-*` is a regression by the shape rule. */
+                "inline-flex min-h-11 items-center rounded-control border px-3 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
                 light
                   ? "border-edge text-lab-ink hover:border-lab-ink hover:font-bold"
                   : "border-edge text-fg hover:border-accent-ink hover:text-accent-ink",
@@ -227,7 +255,7 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
               aria-expanded={menuOpen}
               aria-controls="menu-overlay"
               className={cn(
-                "group flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
+                "group flex min-h-11 items-center gap-2 rounded-control border px-3 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
                 light
                   ? "border-edge text-lab-ink hover:border-lab-ink hover:font-bold"
                   : "border-edge text-fg hover:border-accent-ink hover:text-accent-ink",

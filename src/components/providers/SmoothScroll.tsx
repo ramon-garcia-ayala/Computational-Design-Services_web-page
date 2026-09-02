@@ -65,8 +65,26 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
       if (target) {
         window.scrollTo(0, 0);
-        lenis.scrollTo(target as HTMLElement, { immediate: true });
+
+        /* Refresh *before* the jump, not after.
+           
+           Home pins two `PanelSection` runways above the document band, and a
+           pin's spacer height is decided by `ScrollTrigger.refresh()`. Jumping
+           first measured the target against the pre-refresh layout and then
+           moved the ground under it: landing on `/#services` put the section's
+           kicker as much as 76px above the header's own bottom edge — behind
+           the chrome — and the error varied with viewport height, which is
+           what a stale measurement looks like rather than a wrong offset.
+           Refreshing at scroll 0 settles every pin first, so the jump reads
+           the layout it actually lands in.
+
+           The second `scrollTo` is not belt-and-braces: `refresh()` can itself
+           restore a scroll position, so the jump has to be the last thing that
+           happens. `scroll-margin-top` on the target is honoured by Lenis's
+           own `scrollTo`, which is what keeps the landing clear of the fixed
+           header. */
         ScrollTrigger.refresh();
+        lenis.scrollTo(target as HTMLElement, { immediate: true });
       }
     }
 

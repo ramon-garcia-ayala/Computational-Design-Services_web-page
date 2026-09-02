@@ -199,14 +199,29 @@ export function HeroOverlay() {
           the lockup goes there. Desktop has width to spare and is unchanged. */}
       <div
         data-lockup
-        /* `pt-[6svh]` below `sm`, was 9. The two buttons added ~45px to this
-           stack and the mobile hero has about 34px of clearance above the
-           geodesic — measured off a screenshot on a 390x844 phone, not
-           computed — so the block had to give the height back somewhere. It
-           comes out of the gap to the header, which had it to spare, rather
-           than out of the type. Everything here is still reset at `sm:`, so
-           the desktop layout resolves to exactly what it was. */
-        className="absolute inset-0 flex flex-col justify-start pt-[6svh] px-6 sm:justify-center sm:pt-0 sm:px-10 lg:px-16"
+        /* ## Below `sm`: the claim at the top, the CTA at the bottom
+           
+           This was one top-aligned stack — wordmark, headline, line, button —
+           all inside the first 220px, with the lower half of the screen given
+           to nothing. Splitting it puts the primary CTA in the thumb zone and
+           lets the geodesic have the middle to itself, which is the only band
+           it was ever competing for.
+
+           `justify-between` with two direct children does that; from `sm` up
+           `justify-center` centres the pair and the CTA's own `sm:mt-8`
+           supplies the gap, which resolves to exactly the stack this used to
+           be. That is why the CTA row moved out of the text block and became a
+           sibling: one node, two layouts, no duplicated link.
+
+           **`pt` is a fixed length, not `svh`.** It was `pt-[6svh]`, and the
+           thing it has to clear — the header — is a fixed 66px at every
+           height. At 844 that read 51px and merely looked tight; at 640 it
+           computed to 38px and put the hero's wordmark *underneath the
+           header*. A percentage of the viewport cannot clear a constant.
+           `pb` does track `svh`, because what it clears is `ScrollCue`'s own
+           `pb-[7svh]`: `calc(7svh + 5rem)` holds a steady 40px between the
+           button and the cue at every height, where a fixed value drifted. */
+        className="absolute inset-0 flex flex-col justify-between px-6 pt-[5.5rem] pb-[calc(7svh+5rem)] sm:justify-center sm:px-10 sm:pt-0 sm:pb-0 lg:px-16"
       >
         <div className="w-full max-w-3xl">
           {/* §12.2: the real logo asset, not type. Rendered as a mask filled
@@ -214,10 +229,16 @@ export function HeroOverlay() {
               is near-black — fine on this greige plate, invisible on the dark
               panels and footer that reuse the same asset. A mask takes the
               colour of whatever context it lands in. */}
+          {/* `hidden sm:block`. Below `sm` this sat 4px under the header's
+              own lockup, at almost the same size — the page opened on the
+              wordmark printed twice, which reads as a rendering fault rather
+              than as branding. The header carries it on a phone; this is the
+              hero's version, for the widths where the two are nowhere near
+              each other. Dropping it also returns ~52px to the stack. */}
           <span
             role="img"
             aria-label={hero.logoAlt}
-            className="block w-[160px] bg-lab-ink sm:w-[208px] lg:w-[360px]"
+            className="hidden w-[160px] bg-lab-ink sm:block sm:w-[208px] lg:w-[360px]"
             style={{
               aspectRatio: `${mask.width} / ${mask.height}`,
               WebkitMaskImage: `url('${mask.src}')`,
@@ -256,7 +277,10 @@ export function HeroOverlay() {
               toward the same 2.56rem ceiling on genuinely wide screens.
               Below `sm` this rule does not apply and the base clamp (tuned
               on a real phone, see above) is untouched. */}
-          <h1 className="mt-5 font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.28rem,4.96vw,2.56rem)] leading-[1.05] sm:mt-8 sm:text-[clamp(2rem,2.16vw,2.56rem)]">
+          {/* `mt-0` below `sm`: the wordmark that this was spaced from is
+              no longer rendered there, and a top margin against nothing is
+              just the block sitting lower than its own padding says. */}
+          <h1 className="font-semibold tracking-tight whitespace-nowrap text-lab-ink text-[clamp(1.28rem,4.96vw,2.56rem)] leading-[1.05] sm:mt-8 sm:text-[clamp(2rem,2.16vw,2.56rem)]">
             {hero.headline}
           </h1>
 
@@ -294,6 +318,8 @@ export function HeroOverlay() {
           <p className="mt-4 hidden max-w-[min(28rem,28vw)] text-[0.8rem] leading-relaxed text-lab-ink-muted sm:mt-6 sm:block">
             {hero.description}
           </p>
+        </div>
+
 
           {/* The hero had nothing to click. Four screen-heights of the best
               real estate on the site and no way to act on it — a visitor who
@@ -303,7 +329,7 @@ export function HeroOverlay() {
               `pointer-events-none` so that the sequence behind it stays
               scrollable, and that inherits to every descendant. Without it
               these render, highlight on hover and do nothing at all. */}
-          <div className="pointer-events-auto mt-5 flex flex-wrap items-center gap-3 sm:mt-8">
+        <div className="pointer-events-auto flex w-full max-w-3xl flex-wrap items-center gap-3 sm:mt-8">
             {/* `py-3` over the size's own `py-2.5`: 41px is under the 44px
                 minimum a touch target has to clear, and this is the one
                 control on the page a phone visitor is meant to hit.
@@ -350,7 +376,6 @@ export function HeroOverlay() {
               {hero.ctaSecondary.label}
             </CTALink>
           </div>
-        </div>
       </div>
 
       {/* Vertically centred, statement 1 right, statement 2 left — reading

@@ -35,8 +35,15 @@ const SHELL = "font-display mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16
  * the animated tree it just makes the centred block taller, and every body
  * still clears the stage with room to spare (measured at 1440x675: the
  * longest is 618px against 675).
+ *
+ * `py-12` below `sm`, not `py-20`. A panel is a fixed 100svh box with its
+ * overflow hidden, so the figure that matters is the body against the stage
+ * on the *shortest* phone: at 360x640 these measured 576 and 525 against
+ * 640, which is 90% full and one line of copy away from clipping — and what
+ * a clipped panel loses is its end, silently. Halving the padding on the
+ * width where the stage is smallest buys back 64px at both panels.
  */
-const BODY_PAD = "py-20 sm:py-24";
+const BODY_PAD = "py-10 sm:py-24";
 
 /**
  * The category label above each panel.
@@ -70,15 +77,21 @@ export function ProblemPanel() {
 
   return (
     <div className={`${SHELL} ${BODY_PAD} my-auto`}>
+      {/* `mt-4`/`mt-5` below `sm`. Measured at 320x568 — the shortest
+          viewport still in use — this body ran 581px against a 568px stage
+          and lost its last 13px off the bottom, silently, because the stage
+          is `overflow-hidden` and there is no scrollbar to show for it. The
+          margins are where the height was, not the type: cutting the copy or
+          the display size would change what the panel says. */}
       <div className="max-w-4xl">
         <Eyebrow>{problem.kicker}</Eyebrow>
-        <p className="mt-6 text-display font-semibold text-fg">
+        <p className="mt-4 text-display font-semibold text-fg sm:mt-6">
           {problem.lead}
         </p>
         {/* `panel-ink-muted`, not `fg-muted`: this plate is `--color-panel`,
             which is much lighter than carbon, and the muted grey tuned for
             carbon drops to 3.55:1 here. */}
-        <p className="mt-8 max-w-2xl text-lead text-panel-ink-muted">
+        <p className="mt-5 max-w-2xl text-lead text-panel-ink-muted sm:mt-8">
           {problem.body}
         </p>
       </div>
@@ -107,7 +120,7 @@ export function ClosingPanel() {
       <div className={`${SHELL} ${BODY_PAD} relative my-auto`}>
         <div className="max-w-4xl">
           <Eyebrow>{closing.kicker}</Eyebrow>
-          <p className="mt-6 text-h1 font-semibold text-fg">{closing.body}</p>
+          <p className="mt-4 text-h1 font-semibold text-fg sm:mt-6">{closing.body}</p>
 
           {/* `/contact`, not a mailto: a `mailto:` does nothing at all for a
               visitor on webmail, so the primary CTA silently failed for most
@@ -118,11 +131,28 @@ export function ClosingPanel() {
               the whole commitment or nothing; the reader who is interested
               but not ready to write an email now has somewhere to go that
               is not the back button. */}
-          <div className="mt-12 flex flex-wrap items-center gap-4">
-            <CTALink href="/contact" variant="solid" size="lg">
+          {/* Stacked and full width below `sm`, side by side above it. At
+              178px each plus a 16px gap they needed 372px inside a 342px
+              column on a 390px phone, so `flex-wrap` broke them onto two
+              rows anyway — but as two left-aligned pills with a ragged right
+              edge rather than as a deliberate stack. Full width makes the
+              wrap intentional, and turns the primary into a 58px target
+              running the whole column. */}
+          <div className="mt-10 flex flex-col items-stretch gap-3 sm:mt-12 sm:flex-row sm:items-center sm:gap-4">
+            <CTALink
+              href="/contact"
+              variant="solid"
+              size="lg"
+              className="w-full sm:w-auto"
+            >
               {site.contactLabel}
             </CTALink>
-            <CTALink href={closing.secondary.href} variant="outline" size="lg">
+            <CTALink
+              href={closing.secondary.href}
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto"
+            >
               {closing.secondary.label}
             </CTALink>
           </div>

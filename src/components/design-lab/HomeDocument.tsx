@@ -30,7 +30,26 @@ import { ServiceMotif } from "./ServiceMotif";
  */
 
 const SHELL = "mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16";
-const SECTION = "py-20 sm:py-24 lg:py-28";
+/* `py-14` below `sm`. This band is ordinary scrolling flow so nothing here
+   can clip, but three sections at `py-20` spend 160px of an 844px phone on
+   every seam — a third of a screen, twice, between blocks that are already
+   separated by a full-bleed rule.
+
+   `scroll-mt` because all three are anchor targets — the hero's secondary CTA
+   points at `#services` and the menu links at the rest — and an anchor lands
+   a section's top edge at the top of the viewport, which is behind the fixed
+   header. On a phone that put "What we build" and "…at the center" underneath
+   the chrome, so the jump appeared to land mid-sentence. Lenis reads the
+   computed `scroll-margin-top` in its own `scrollTo`, so this one property
+   covers the smooth path, the native path under reduced motion, and a URL
+   that simply arrives with the hash.
+
+   The value is the fixed header plus a little (64px mobile / 84px above `sm`),
+   not a number tuned against measurements: landing on Home *with* a hash also
+   races `Preloader`, which locks scroll and calls `window.scrollTo(0, 0)` for
+   its own ~2.75s, so where the jump finally settles varies with viewport
+   height in a way no offset can correct. See the note in CLAUDE.md. */
+const SECTION = "py-14 sm:py-24 lg:py-28 scroll-mt-20 sm:scroll-mt-24";
 
 /** Section label + heading, in one place so all four sections agree. */
 function SectionHead({

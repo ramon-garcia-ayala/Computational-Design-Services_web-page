@@ -24,8 +24,15 @@ export function LabFooter() {
   const year = new Date().getFullYear();
   const { mask } = designLab;
 
+  /* `min-h-9` (36px) and an `inline-flex` box. As bare text these links
+     stood 20px tall — under WCAG 2.2's 24px pointer-target floor and a poor
+     thumb target stacked in a column. The list gap drops from `gap-4` to
+     `gap-1` to pay for it, so the column ends up only ~28px taller while
+     every target nearly doubles. 36 rather than 44: the 24px figure is the
+     web criterion, 44 is the iOS *guideline*, and a marketing footer's link
+     list is not a primary control surface. */
   const linkClass =
-    "text-base text-fg-muted transition-colors hover:text-fg sm:text-lg";
+    "inline-flex min-h-9 items-center text-base text-fg-muted transition-colors hover:text-fg sm:text-lg";
 
   /* Was `text-fg-muted/70` — `--color-fg-muted` is tuned against carbon
      (6.08:1) and this footer's plate is `--color-panel`, much lighter than
@@ -38,7 +45,10 @@ export function LabFooter() {
 
   return (
     <footer className="font-display border-t border-line bg-panel">
-      <div className="flex w-full flex-col gap-16 px-6 py-24 sm:px-10 lg:flex-row lg:justify-between lg:px-16 lg:py-28 xl:px-24">
+      {/* Trimmed below `sm`: this footer measured 823px on a 390px phone —
+          a full screen of it — mostly in padding and column gaps sized for
+          the two-column desktop layout it collapses out of. */}
+      <div className="flex w-full flex-col gap-12 px-6 py-16 sm:gap-16 sm:px-10 sm:py-24 lg:flex-row lg:justify-between lg:px-16 lg:py-28 xl:px-24">
         <div className="max-w-lg">
           {/* The real asset, filled through the mask so it reads light on
               this dark plate — the source ink is near-black. */}
@@ -72,10 +82,10 @@ export function LabFooter() {
           </Link>
         </div>
 
-        <div className="flex gap-20 sm:gap-32 lg:gap-40">
+        <div className="flex gap-12 sm:gap-32 lg:gap-40">
           <nav aria-label="Footer">
             <p className={headingClass}>Site</p>
-            <ul className="mt-8 flex flex-col gap-4">
+            <ul className="mt-6 flex flex-col gap-1 sm:mt-8">
               {[...navLinks, labsLink].map((link) => (
                 <li key={link.label}>
                   {link.external ? (
@@ -94,7 +104,7 @@ export function LabFooter() {
 
           <div>
             <p className={headingClass}>Elsewhere</p>
-            <ul className="mt-8 flex flex-col gap-4">
+            <ul className="mt-6 flex flex-col gap-1 sm:mt-8">
               {socialLinks.map((link) => (
                 <li key={link.label}>
                   <a
@@ -118,7 +128,7 @@ export function LabFooter() {
           the inset. The border is on the full-width wrapper now and the
           padding moved to the row inside it. */}
       <div className="w-full border-t border-line">
-        <div className="flex flex-col gap-2 px-6 py-10 sm:flex-row sm:gap-10 sm:px-10 lg:px-16 xl:px-24">
+        <div className="flex flex-col gap-2 px-6 py-8 sm:flex-row sm:gap-10 sm:px-10 sm:py-10 lg:px-16 xl:px-24">
           {/* Both items grouped on the left: the location used to be pushed
               opposite the copyright, which read as two unrelated notes rather
               than one colophon. */}
