@@ -59,9 +59,16 @@ export function PortalLoginForm() {
 
   if (status === "sent") {
     return (
-      <div role="status" className="mt-10 rounded-surface border border-edge bg-graphite/30 p-8">
-        <p className="font-display text-xl font-semibold text-fg">{portalCopy.login.sent.title}</p>
-        <p className="mt-3 text-sm leading-relaxed text-fg-muted">{portalCopy.login.sent.body}</p>
+      <div
+        role="status"
+        className="mt-10 max-w-xl rounded-surface border border-edge bg-graphite/30 p-8"
+      >
+        <p className="font-display text-h3 font-semibold text-fg">
+          {portalCopy.login.sent.title}
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-fg-muted">
+          {portalCopy.login.sent.body}
+        </p>
       </div>
     );
   }
@@ -69,10 +76,15 @@ export function PortalLoginForm() {
   const error = fieldError ?? (status === "unavailable" ? portalCopy.login.errors.unavailable : null);
 
   return (
-    <form onSubmit={onSubmit} className="mt-10" noValidate>
+    /* `aria-busy` while the request is in flight: the label swap on the
+       button is a visual cue only, and the guidance for async work is
+       explicit that a busy state has to be exposed, not just drawn. The
+       input stays `readOnly` rather than `disabled` for the reason
+       `ChatWidget` documents — disabling the focused element blurs it. */
+    <form onSubmit={onSubmit} className="mt-10 max-w-xl" noValidate aria-busy={status === "sending"}>
       <label
         htmlFor={`${id}-email`}
-        className="font-mono text-[10px] uppercase tracking-widest text-fg-muted"
+        className="font-mono text-[11px] uppercase tracking-widest text-fg-muted"
       >
         {portalCopy.login.fields.email}
       </label>
@@ -90,6 +102,7 @@ export function PortalLoginForm() {
             autoComplete="email"
             autoFocus
             required
+            readOnly={status === "sending"}
             aria-invalid={Boolean(error)}
             aria-describedby={`${id}-status`}
             onChange={(event) => {

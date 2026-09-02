@@ -18,6 +18,7 @@ import { TodoSection } from "@/components/portal/TodoSection";
 import { DocumentsSection } from "@/components/portal/DocumentsSection";
 import { BudgetSection } from "@/components/portal/BudgetSection";
 import { UpdatesSection } from "@/components/portal/UpdatesSection";
+import { PortalColophon } from "@/components/portal/PortalColophon";
 import { portalCopy } from "@/data/portal/copy";
 import { site } from "@/data/site";
 
@@ -80,6 +81,13 @@ export default async function PortalDashboardPage({ searchParams }: PageProps) {
       <DocumentsSection documents={project.documents} slug={client.slug} />
       <BudgetSection budget={project.budget} />
       <UpdatesSection updates={project.updates ?? []} />
+
+      {/* The panel used to stop dead after Updates — which for a project with
+          no log yet is one dashed empty-state box followed by bare ground to
+          the bottom of the viewport. This is `LabFooter`'s closing rule and
+          nothing more; see the component for why it is not the footer
+          itself. */}
+      <PortalColophon />
 
       <p className="sr-only">
         Private project panel prepared by {site.nameFlat} for {client.name}.

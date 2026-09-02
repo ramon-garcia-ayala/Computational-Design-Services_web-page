@@ -415,10 +415,42 @@ vocabulary (`fg`, `fg-muted`, `carbon`, `graphite`, `graphite-hi`, `edge`,
 `danger`), which `scripts/contrast-check.mjs` already covers in all three
 scopes — including `accent-ink` on `graphite`, added to `SCOPED_CHECKS`
 because the panel puts accent-coloured text inside `bg-graphite` cards
-throughout, a pair the script didn't measure before. `(portal)/layout.tsx`
-carries neither `data-site-warm` nor `data-site-pale`: the panel stays on
-the default carbon ground, same as a client's own proposal, deliberately
-distinct from the marketing site's warm mood.
+throughout, a pair the script didn't measure before.
+
+**Both client-facing route groups carry `data-site-warm`.** `(portal)` and
+`(proposal)` stamp it on their `<main>`, so the panel and the document render
+on the same warm charcoal as every `(site)` route. They used to sit on the
+default carbon on the stated reasoning that the panel should be
+"deliberately distinct from the marketing site's warm mood" — and what that
+produced was a surface that looked like a different product from the site the
+client had just come through. What the old decision was actually protecting is
+that a client's proposal and their panel read as one family, and that survives
+intact because *both* groups carry the attribute; changing only one would put
+the same client's proposal and dashboard on different grounds.
+
+Nothing was repainted to do it. The scope redefines what `--color-carbon`,
+`--color-line`, `--color-fg-muted`, `--color-edge` and `--color-danger` *mean*,
+so `bg-carbon` / `border-line` / `text-fg-muted` keep their names throughout
+both route groups and come out warm — the mechanism `globals.css` documents at
+`[data-site-warm]`, and the reason this is two attributes rather than a sweep
+through forty components. `contrast-check.mjs` already measures every one of
+those pairs in this scope.
+
+**The scrollspy rail has no margin to live in, so its label is
+hover/focus-only.** `PortalIndex` and `ProposalIndex` both claimed in their own
+comments that `.shell`'s `lg`-and-up 3rem padding was margin enough for the
+active entry's label. Measured at 1440px: the margin is 48px, the label runs to
+x=123, and the content column starts at x=48 — so `01 · OVERVIEW` was drawn
+across the hero's lead paragraph on the panel and across the headline on every
+proposal. It is not a tuning problem. `.shell` is capped at `max-width: 1440px`,
+so at and below that width there is no margin at all. The rail is therefore a
+column of ticks, and the label appears only for the entry being pointed at or
+tabbed to, on its own plate because it still lands on top of content. The
+`group-focus-visible` half is the accessibility bug that was hiding underneath:
+every label was `opacity-0` for keyboard users, so tabbing the rail moved a
+focus ring through seven links with nothing readable beside any of them. **The
+two components are deliberate duplicates** — they differ only in their chrome
+attribute — so a fix to one belongs in both.
 
 **Print uses its own chrome attribute.** `[data-portal-chrome]` sits beside
 `[data-proposal-chrome]` in the same `@media print` rule in `globals.css` —

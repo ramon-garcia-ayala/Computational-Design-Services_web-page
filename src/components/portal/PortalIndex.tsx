@@ -7,11 +7,32 @@ export type PortalIndexEntry = { id: string; label: string };
 
 /**
  * Left-margin scrollspy rail, same mechanism as `ProposalIndex` — a single
- * `IntersectionObserver`, `.shell`'s `lg`-and-up 3rem padding as the margin it
- * lives in. A distinct component (rather than reusing `ProposalIndex`
- * directly) because it carries `data-portal-chrome`, not
- * `data-proposal-chrome` — the two chrome scopes must stay independently
- * toggleable in print.
+ * `IntersectionObserver`, and the ticks live in the page margin. A distinct
+ * component (rather than reusing `ProposalIndex` directly) because it carries
+ * `data-portal-chrome`, not `data-proposal-chrome` — the two chrome scopes
+ * must stay independently toggleable in print.
+ *
+ * ## The label cannot live in the margin, so it no longer tries
+ *
+ * The previous version printed the active entry's label permanently, on the
+ * stated reasoning that `.shell`'s `lg`-and-up 3rem padding was the margin it
+ * sat in. Measured, that margin is 48px and the label needs 130 — so at
+ * 1440px the label ran to x=123 while the content column started at x=48, and
+ * "01 · OVERVIEW" was drawn straight across the hero's own lead paragraph. It
+ * could not be fixed by widening the padding either: `.shell` is capped at
+ * `max-width: 1440px`, so below that width there is no margin at all, and the
+ * overlap is structural rather than a tuning problem.
+ *
+ * So the rail is now what it can afford to be at this width — a column of
+ * ticks, the same thing `ScrollProgress` is on the home page — and the label
+ * appears only for the entry the reader is pointing at or has tabbed to. Over
+ * content it carries its own plate, in the site's chip idiom, because a label
+ * revealed on demand still lands on top of whatever is underneath it.
+ *
+ * `group-focus-visible` is not decoration: the label was `opacity-0` for
+ * everyone before, keyboard users included, so tabbing into the rail moved
+ * focus through seven links that announced themselves to a screen reader and
+ * showed a focus ring around nothing legible.
  */
 export function PortalIndex({ entries }: { entries: PortalIndexEntry[] }) {
   const [activeId, setActiveId] = useState(entries[0]?.id ?? "");
@@ -50,17 +71,33 @@ export function PortalIndex({ entries }: { entries: PortalIndexEntry[] }) {
 
           return (
             <li key={entry.id}>
-              <a href={`#${entry.id}`} aria-current={active ? "true" : undefined} className="group flex h-6 items-center gap-2">
+              <a
+                href={`#${entry.id}`}
+                aria-current={active ? "true" : undefined}
+                className="group relative flex h-6 items-center gap-2"
+              >
                 <span
+                  aria-hidden="true"
                   className={cn(
                     "h-px transition-all duration-300",
-                    active ? "w-6 bg-accent" : "w-3 bg-line group-hover:w-5 group-hover:bg-fg-muted",
+                    active
+                      ? "w-6 bg-accent"
+                      : "w-3 bg-line group-hover:w-5 group-hover:bg-fg-muted",
                   )}
                 />
+
+                {/* Absolutely positioned so revealing it never reflows the
+                    rail, and plated so it stays readable over the content
+                    column it necessarily covers. */}
                 <span
                   className={cn(
-                    "font-mono text-[10px] whitespace-nowrap uppercase tracking-widest transition-opacity duration-300",
-                    active ? "text-accent-ink opacity-100" : "text-fg-muted opacity-0 group-hover:opacity-100",
+                    "pointer-events-none absolute left-8 rounded-control border px-2.5 py-1",
+                    "font-mono text-[10px] whitespace-nowrap uppercase tracking-widest",
+                    "opacity-0 transition-opacity duration-200",
+                    "group-hover:opacity-100 group-focus-visible:opacity-100",
+                    active
+                      ? "border-accent-ink bg-carbon text-accent-ink"
+                      : "border-line bg-carbon text-fg-muted",
                   )}
                 >
                   {String(index + 1).padStart(2, "0")} · {entry.label}

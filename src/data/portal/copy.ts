@@ -22,6 +22,32 @@ export const portalCopy = {
       unavailable: "Sign-in is temporarily unavailable. Please contact us directly.",
     },
     backToSite: "Back to the site",
+
+    /* The sign-in page's second column.
+     *
+     * It exists because the page is one short form, and a form alone left
+     * two thirds of a 1440px screen empty — the layout read as unfinished
+     * rather than as focused. What fills it has to earn the space, so it is
+     * the one thing a visitor at this screen actually wants to know and
+     * cannot see: what is behind the link they are about to request. The
+     * five entries are the panel's own sections, named in the client's
+     * terms rather than the section headings' — this is the promise, the
+     * headings are the delivery.
+     *
+     * Keep it at five. The column is set beside a form, not under a
+     * heading, and a sixth line pushes it past the form's own height at
+     * `lg`, which is what makes the split read as two columns of one idea
+     * instead of a list with a form next to it. */
+    inside: {
+      kicker: "Inside the panel",
+      items: [
+        "Where the project stands, phase by phase",
+        "The numbers we are held to, against their targets",
+        "What is still waiting on you, and what is waiting on us",
+        "Every document and deliverable, in one place",
+        "The budget, and what has been billed so far",
+      ],
+    },
   },
 
   enter: {
