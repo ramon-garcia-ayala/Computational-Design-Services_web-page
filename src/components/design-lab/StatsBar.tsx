@@ -31,7 +31,19 @@ export function StatsBar() {
   return (
     <section
       aria-label="Studio at a glance"
-      className="relative bg-lab-bg py-[7svh]"
+      /* Full-bleed rules on the section itself, which is how every separator
+         in the document band below is drawn (`border-t border-panel-line` on
+         `Services`, `Work` and `About`) — the band's own hairlines run edge
+         to edge rather than stopping at the content column, and a bar that
+         framed itself to `max-w-[1440px]` would be the one place on the page
+         that did not.
+
+         `lab-line`, not `line`: this section sits on the greige plate, where
+         the unscoped `--color-line` is still carbon's #262b2e and would draw
+         a hard black bar at roughly 8:1 instead of a hairline. The `lab-*`
+         counterpart measures 1.40:1, the same whisper the rest of the site's
+         decorative rules carry on their own ground. */
+      className="relative border-y border-lab-line bg-lab-bg py-[7svh]"
     >
       <div className="font-display mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16">
         <ul className="grid grid-cols-2 gap-y-12 sm:grid-cols-4 sm:gap-y-0">

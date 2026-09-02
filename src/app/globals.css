@@ -136,6 +136,18 @@
      already-verified value rather than deriving a third one. */
   --color-lab-ink: #2a2826;
   --color-lab-ink-muted: #4a4642; /* 4.54:1 on lab-bg, was 3.71:1 */
+  /* Decorative hairline on the greige, the counterpart of `--color-line` on
+     carbon — a rule that gives a section an edge without being read as
+     content. It is not derived: `[data-site-pale]` below already sets
+     `--color-line` for a ground of exactly this colour (its `--color-carbon`
+     and `--color-lab-bg` are both #b8b4b1), so this is that same verified
+     value, the way `-ink-muted` above borrows pale's `--color-fg-muted`.
+     1.40:1 on lab-bg, within a hair of the 1.37:1 `--color-line` measures on
+     carbon — the whole point being that a decorative rule reads the same
+     weight on both grounds. Anything a reader has to actually see still
+     takes `--color-edge`, which is what the header pills and the hero's
+     secondary CTA use on this plate. */
+  --color-lab-line: #9c9793;
 
   /* Panel plate (§13.2). Pure carbon read as flat black against the hero;
      this is a warm charcoal — clearly lighter than black, clearly darker

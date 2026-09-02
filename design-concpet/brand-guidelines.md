@@ -181,6 +181,16 @@ that sits directly on `bg-panel` without a warm/pale scope wrapping it —
 examples. Likewise `--color-lab-ink-muted` is the equivalent for text on the
 hero's own `--color-lab-bg` plate.
 
+**`--color-lab-line`** is the `lab-*` family's decorative hairline — the
+counterpart of `--color-line` for anything drawn on `--color-lab-bg`, such as
+`StatsBar`'s top and bottom rules. Not a fourth value invented for the
+purpose: `[data-site-pale]`'s `--color-line` is already the verified rule for
+this exact greige (`--color-carbon` and `--color-lab-bg` are both `#b8b4b1`
+there), so `lab-line` just reuses it — 1.40:1 on `lab-bg`, matching the
+1.37:1 `--color-line` measures on carbon. As with `--color-line` itself, this
+is for a rule whose absence would not change what the reader understands;
+anything load-bearing on this plate still takes `--color-edge`.
+
 ### 2.6 The one accessibility rule worth repeating
 
 A component that visually sits on the pale plate **must** carry
