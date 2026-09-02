@@ -271,13 +271,38 @@ export function Preloader() {
         <div
           ref={gridRef}
           aria-hidden="true"
-          className="w-full opacity-0 transition-opacity duration-150"
+          /* `max-w-[220px]` below `sm`, `mask.maxWidth` from `sm` up. At 342px
+             (a 390px phone minus the root's `px-6`) the flat `mask.maxWidth`
+             read nearly edge to edge — almost the loudest thing on the screen
+             the site opens on. A breakpoint rather than a `vw`-scaled `clamp`
+             is deliberate: a `vw` term shrinking continuously from 0 would
+             also pull in the tablet/desktop sizing this was never asked to
+             touch, where the mark sitting inside `mask.maxWidth`'s 600px cap
+             is already right. The desktop value still comes from
+             `mask.maxWidth` alone (via the CSS variable below), so there is
+             one source of truth for it, not two.
+
+             **`text-[7px]` below `sm` is not a style choice, it is what keeps
+             the mid-scramble frames from reading as a stretched blur.** Font
+             size was a flat 11px, sized against the `narrow` grid's cell
+             width at the *old* unclamped mobile box (~342px / 52 columns ≈
+             6.6px a cell — already an overflowing glyph, at roughly the same
+             ratio the desktop grid runs at). Capping the box to 220px shrank
+             that cell to ~4.2px without shrinking the glyph, so every
+             scrambling character now spilled across two or three rows above
+             and below its own cell — solid stretched-looking type while
+             cells were still resolving, cropping back to the correct
+             letterforms only once each cell stopped drawing text and
+             switched to its solid fill. `7px` restores roughly the original
+             glyph-to-cell ratio at the smaller box; `sm:text-[11px]` is the
+             untouched desktop value. Re-derive if either the mobile cap or
+             the grid density in `data/preloader.ts` changes. */
+          className="w-full max-w-[220px] text-[7px] opacity-0 transition-opacity duration-150 sm:max-w-[var(--preloader-max-w)] sm:text-[11px]"
           style={{
             display: "grid",
-            maxWidth: `${mask.maxWidth}px`,
+            "--preloader-max-w": `${mask.maxWidth}px`,
             aspectRatio: `${mask.width} / ${mask.height}`,
             fontFamily: "var(--font-jetbrains), ui-monospace, monospace",
-            fontSize: "11px",
             lineHeight: 1,
             color: "var(--color-fg)",
             WebkitMaskImage: `url('${mask.src}')`,
@@ -286,7 +311,7 @@ export function Preloader() {
             maskSize: "100% 100%",
             WebkitMaskRepeat: "no-repeat",
             maskRepeat: "no-repeat",
-          }}
+          } as React.CSSProperties}
         />
       </div>
     </>
