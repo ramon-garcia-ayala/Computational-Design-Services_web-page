@@ -29,6 +29,21 @@ import { cn } from "@/lib/utils";
  * `SectionHeading` is untouched — it is shared with `(site)` and the
  * proposals, and rewriting it to suit this page would have repainted every
  * route that uses it.
+ *
+ * ## `scroll-mt` is what makes the index usable
+ *
+ * Every entry in `PortalIndex` is an anchor to one of these, and an anchor
+ * lands the section's top edge at the top of the viewport — under whatever
+ * chrome is pinned there. Below `lg` that is 120px of it: the 56px header plus
+ * the 64px sticky section strip. So the jump has to be offset by exactly that,
+ * and above `lg`, where the strip is replaced by the margin rail, by the
+ * header alone.
+ *
+ * Lenis honours `scroll-margin-top` — it reads the computed value in its own
+ * `scrollTo` — so one CSS property covers the smooth path, the native path
+ * under reduced motion, and a URL that simply arrives with a hash. This is
+ * worth knowing before reaching for an `offset` on Lenis's `anchors` option,
+ * which would apply the same number to every anchor on the site.
  */
 export function PortalSection({
   id,
@@ -56,7 +71,16 @@ export function PortalSection({
          `Services`, `Work` and `About` mark their seams in the document
          band. `.shell` sits inside the border, so the line runs edge to
          edge. */
-      className={cn("relative border-t border-line py-14 sm:py-16 lg:py-20", className)}
+      className={cn(
+        "relative border-t border-line",
+        /* `py-12` at base rather than the `py-14` this carried: with seven
+           sections a phone was spending 112px of an 844px screen on every
+           seam, and the density this shell exists for is the argument
+           against that, not for it. `sm` up is unchanged. */
+        "py-12 sm:py-16 lg:py-20",
+        "scroll-mt-[7.5rem] lg:scroll-mt-24",
+        className,
+      )}
     >
       <div className="shell relative">
         {title ? (

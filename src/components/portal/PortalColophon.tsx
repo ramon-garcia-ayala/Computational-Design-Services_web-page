@@ -24,6 +24,11 @@ import { portalCopy } from "@/data/portal/copy";
 export function PortalColophon() {
   const year = new Date().getFullYear();
   const line = "font-mono text-[11px] uppercase tracking-[0.3em] text-fg-muted sm:text-xs";
+  /* The one link down here. As bare text it was a ~15px tap target stacked
+     8px under another line of the same size, which on a phone is a coin
+     toss between them. `min-h-11` and the negative inline margin give it a
+     44px box without moving the text off the colophon's own baseline. */
+  const link = `${line} -mx-2 inline-flex min-h-11 items-center px-2 transition-colors hover:text-accent-ink`;
 
   return (
     <footer data-portal-chrome className="border-t border-line">
@@ -33,10 +38,7 @@ export function PortalColophon() {
         </p>
         <p className={line}>{site.location}</p>
 
-        <Link
-          href="/"
-          className={`${line} transition-colors hover:text-accent-ink sm:ml-auto`}
-        >
+        <Link href="/" className={`${link} sm:ml-auto`}>
           {portalCopy.login.backToSite}
         </Link>
       </div>

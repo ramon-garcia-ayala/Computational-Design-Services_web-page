@@ -2,6 +2,19 @@ import { StatusChip } from "./StatusChip";
 import type { PortalKpi } from "@/data/portal/types";
 import { portalCopy } from "@/data/portal/copy";
 
+/**
+ * A unit is authored in the plural (`"days"`, `"steps"`) because that is how
+ * it reads for every value but one, and the one it does not is printed as
+ * often as any other: `Estimate cycle time` renders `3 days · target 1 days`.
+ * Trimming a trailing `s` at exactly 1 is the whole rule — English-only, which
+ * this site is, and applied at the point of display so the data stays in one
+ * form rather than carrying two spellings of every unit.
+ */
+function withUnit(value: number, unit: string): string {
+  const singular = value === 1 && unit.endsWith("s") ? unit.slice(0, -1) : unit;
+  return `${value} ${singular}`;
+}
+
 function formatValue(value: number, format: PortalKpi["format"], unit?: string): string {
   switch (format) {
     case "percent":
@@ -9,9 +22,9 @@ function formatValue(value: number, format: PortalKpi["format"], unit?: string):
     case "currency":
       return `${unit ?? "$"}${value.toLocaleString()}`;
     case "duration":
-      return `${value} ${unit ?? ""}`.trim();
+      return unit ? withUnit(value, unit) : String(value);
     default:
-      return unit ? `${value} ${unit}` : String(value);
+      return unit ? withUnit(value, unit) : String(value);
   }
 }
 

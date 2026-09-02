@@ -28,7 +28,9 @@ export function ProjectSwitcher({
             href={`/portal/dashboard?project=${encodeURIComponent(project.id)}`}
             aria-current={active ? "true" : undefined}
             className={cn(
-              "rounded-control border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
+              /* 44px, matching `SignOutButton` beside it — these two sit 12px
+                 apart in the header and were both ~25px tall. */
+              "inline-flex min-h-11 items-center rounded-control border px-4 font-mono text-[11px] uppercase tracking-widest transition-colors sm:text-xs",
               active
                 ? "border-accent-ink text-accent-ink"
                 : "border-edge text-fg-muted hover:border-accent-ink hover:text-accent-ink",

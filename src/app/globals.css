@@ -384,6 +384,18 @@ html.custom-cursor * {
   background-size: 64px 64px;
 }
 
+/* A strip that scrolls sideways and does not draw a bar for it.
+   The overflow itself is the affordance — a chip clipped at the edge says
+   there is more — and the 6px bar the site sets globally is styled for the
+   vertical case, where it sits in the gutter rather than across content.
+   Used by the panel's mobile section rail. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Initial state of the elements GSAP animates.
    Avoids the flash of already-visible content before the tween runs. */
 @utility reveal-init {

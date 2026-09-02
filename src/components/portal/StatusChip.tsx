@@ -44,7 +44,12 @@ export function StatusChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-control px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest",
+        /* `text-[11px]` rather than 10: this chip is the *only* place a
+           state is stated in words, which is the whole reason its label is
+           never optional, and 10px mono uppercase is where that stops being
+           readable at arm's length on a phone. It is static text, not a
+           control, so it carries no target-size requirement. */
+        "inline-flex items-center rounded-control px-2.5 py-1 font-mono text-[11px] uppercase tracking-widest",
         styles[status],
         className,
       )}

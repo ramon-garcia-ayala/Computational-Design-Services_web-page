@@ -60,7 +60,12 @@ export default async function PortalLoginPage({ searchParams }: PageProps) {
               its heading broke to three lines while the list beside it ran
               short. The `lg:gap-20` matches the document band's own two-column
               About section. */}
-          <div className="mt-14 grid gap-14 lg:mt-20 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
+          {/* `gap-10` at base: stacked on a phone the two columns are one
+              reading order, and 56px between the submit button and the next
+              heading opened a hole big enough to read as the end of the page.
+              `lg:gap-20` is the two-column measure and matches the document
+              band's own About split. */}
+          <div className="mt-12 grid gap-10 sm:mt-14 lg:mt-20 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
             <div>
               {/* The landing's kicker idiom — `tracking-[0.3em]`, sized
                   `text-xs sm:text-sm`, in the accent's ink role. The panel

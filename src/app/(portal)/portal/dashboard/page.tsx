@@ -71,8 +71,15 @@ export default async function PortalDashboardPage({ searchParams }: PageProps) {
   return (
     <>
       <PortalHeader client={client} activeProject={project} />
-      <PortalIndex entries={entries} />
       <PortalHero project={project} />
+
+      {/* After the hero, not before it. Above `lg` this is a fixed rail and
+          its DOM position is irrelevant; below `lg` it is a sticky strip, and
+          `position: sticky` pins as soon as an element's flow position would
+          pass its `top` — mounted at the top of the document it would stick
+          immediately, behind the fixed header, and reserve a band above the
+          hero for nothing. Here it arrives with the sections it indexes. */}
+      <PortalIndex entries={entries} />
 
       <KpiSection kpis={project.kpis} />
       <TimelineSection phases={project.timeline} />
