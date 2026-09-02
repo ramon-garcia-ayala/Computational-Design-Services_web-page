@@ -42,8 +42,14 @@ export function StatsBar() {
          the unscoped `--color-line` is still carbon's #262b2e and would draw
          a hard black bar at roughly 8:1 instead of a hairline. The `lab-*`
          counterpart measures 1.40:1, the same whisper the rest of the site's
-         decorative rules carry on their own ground. */
-      className="relative border-y border-lab-line bg-lab-bg py-[7svh]"
+         decorative rules carry on their own ground.
+
+         `border-t` only, not `border-y`: the rule marks the seam with the
+         hero above, where the plate is otherwise unbroken. Below, `Panels`'
+         rising panel already draws that edge itself — a second static rule
+         there would be announcing a boundary the animation is about to
+         redraw. */
+      className="relative border-t border-lab-line bg-lab-bg py-[7svh]"
     >
       <div className="font-display mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16">
         <ul className="grid grid-cols-2 gap-y-12 sm:grid-cols-4 sm:gap-y-0">
