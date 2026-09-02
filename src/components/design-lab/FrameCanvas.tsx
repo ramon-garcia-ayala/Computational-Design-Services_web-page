@@ -143,6 +143,30 @@ const STACKED_BREAKPOINT = 640;
  * `end`, or its statements would fade on a different scroll-to-progress
  * scale than the frames they are timed against.
  *
+ * ## Two layers, so the frames cross-fade instead of stepping
+ *
+ * 96 frames across a 260svh runway is about 18px of scroll per frame, and
+ * `paint` used to round to the nearest one — so the sequence advanced in
+ * visible steps however smooth the scrub value was underneath.
+ *
+ * The fix is two stacked canvases holding adjacent frames, with the upper
+ * one's **opacity** set to the fractional part of the position. **The blend
+ * is the compositor's, not the canvas's**, and that is the whole reason
+ * this is affordable: alpha-compositing two frames inside 2D context would
+ * mean a second full-viewport `drawImage` plus its eight gutter blits on
+ * every scrub tick — 60-120 times a second while scrolling, against the
+ * roughly 96 redraws the whole runway costs now. Here a redraw still only
+ * happens when the *pair* changes; sliding between two frames writes one
+ * `style.opacity` and the GPU blends two textures it already holds.
+ *
+ * `claim` is what keeps it at one redraw per frame rather than two: the
+ * base frame is claimed first and told to keep the frame it is fading
+ * toward, so advancing by one step reuses the layer that already holds it
+ * and only the vacated layer is repainted.
+ *
+ * The cost is a second canvas's worth of GPU memory, which is the trade
+ * being made deliberately.
+ *
  * ## The scroll dolly
  *
  * `DOLLY` closes the object on the viewer by 5% across the runway, scrubbed
@@ -223,27 +247,39 @@ const STACKED_BREAKPOINT = 640;
 export function FrameCanvas({ children }: { children?: React.ReactNode }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasARef = useRef<HTMLCanvasElement>(null);
+  const canvasBRef = useRef<HTMLCanvasElement>(null);
   const dollyRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
   const { count, width, height } = designLab.sequence;
 
   useGSAP(
     () => {
-      const canvas = canvasRef.current;
+      const canvasA = canvasARef.current;
+      const canvasB = canvasBRef.current;
       const dolly = dollyRef.current;
-      const ctx = canvas?.getContext("2d");
+      const ctxA = canvasA?.getContext("2d");
+      const ctxB = canvasB?.getContext("2d");
       const stage = stageRef.current;
       const wrapper = wrapperRef.current;
-      if (!canvas || !ctx || !stage || !wrapper || !dolly) return;
+      if (!canvasA || !canvasB || !ctxA || !ctxB || !stage || !wrapper || !dolly)
+        return;
+
+      /* Two layers holding adjacent frames. `index` is the frame each one
+         currently carries, `-1` for "nothing drawn yet". */
+      const slots = [
+        { canvas: canvasA, ctx: ctxA, index: -1 },
+        { canvas: canvasB, ctx: ctxB, index: -1 },
+      ];
 
       let cancelled = false;
       let tween: gsap.core.Tween | null = null;
       const images: HTMLImageElement[] = [];
 
-      // `current` is the frame the scroll position asks for; `painted` is the
-      // one on screen at the canvas's present size. They differ on a resize,
-      // when the same frame has to be redrawn at new dimensions.
+      // `current` is the fractional frame position the scroll asks for —
+      // fractional, so a resize repaint restores the same blend rather than
+      // snapping to the base frame. `painted` is the base frame the layers
+      // are currently set up for.
       let current = 0;
       let painted = -1;
       // CSS px, not the backing store's device px — `render` needs this to
@@ -257,14 +293,22 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
         cssWidth = rect.width;
         const w = Math.round(rect.width * dpr);
         const h = Math.round(rect.height * dpr);
-        if (canvas.width === w && canvas.height === h) return false;
-        // Assigning either dimension clears the canvas, so the caller repaints.
-        canvas.width = w;
-        canvas.height = h;
+        if (canvasA.width === w && canvasA.height === h) return false;
+        // Assigning either dimension clears the canvas, so the caller
+        // repaints — and both layers have to be invalidated, not just sized.
+        for (const slot of slots) {
+          slot.canvas.width = w;
+          slot.canvas.height = h;
+          slot.index = -1;
+        }
         return true;
       };
 
-      const render = (image: HTMLImageElement) => {
+      const render = (
+        ctx: CanvasRenderingContext2D,
+        canvas: HTMLCanvasElement,
+        image: HTMLImageElement,
+      ) => {
         const cw = canvas.width;
         const ch = canvas.height;
         const dpr = cssWidth > 0 ? cw / cssWidth : 1;
@@ -316,16 +360,58 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
         }
       };
 
-      const paint = (value: number, force = false) => {
-        const index = Math.min(count - 1, Math.max(0, Math.round(value)));
-        current = index;
-        // Scrub ticks far more often than the rounded frame changes, and
-        // re-blitting a full-viewport canvas for the same bitmap is not cheap.
-        if (index === painted && !force) return;
+      /** Draws `index` into whichever layer is not already holding `keep`. */
+      const claim = (index: number, keep: number) => {
+        let slot = slots.find((s) => s.index === index);
+        if (slot) return slot;
+        slot = slots.find((s) => s.index !== keep) ?? slots[0];
         const image = images[index];
-        if (!image?.complete) return;
-        render(image);
-        painted = index;
+        if (!image?.complete) return null;
+        render(slot.ctx, slot.canvas, image);
+        slot.index = index;
+        return slot;
+      };
+
+      const paint = (value: number, force = false) => {
+        const clamped = Math.min(count - 1, Math.max(0, value));
+        const base = Math.floor(clamped);
+        const next = Math.min(count - 1, base + 1);
+        const mix = next === base ? 0 : clamped - base;
+
+        current = clamped;
+
+        /* Only the *pair* of frames on screen decides whether a redraw is
+           needed. Sliding within one pair moves nothing but an opacity,
+           which is why the fade is nearly free. */
+        if (base === painted && !force) {
+          const top = slots.find((s) => s.index === next);
+          if (top) top.canvas.style.opacity = `${mix}`;
+          return;
+        }
+
+        // `base` is drawn first and told to keep `next`, so an advance of one
+        // frame reuses the layer that already holds it and redraws only one.
+        const baseSlot = claim(base, next);
+        if (!baseSlot) return;
+        const nextSlot = claim(next, base);
+
+        baseSlot.canvas.style.opacity = "1";
+        baseSlot.canvas.style.zIndex = "0";
+
+        if (nextSlot && nextSlot !== baseSlot) {
+          nextSlot.canvas.style.zIndex = "1";
+          nextSlot.canvas.style.opacity = `${mix}`;
+        } else {
+          /* No distinct frame to fade toward — the last frame, or one whose
+             successor has not decoded yet. The other layer still holds an
+             older frame at whatever opacity and z-index the previous pair
+             left it, so it has to be put away explicitly: without this the
+             sequence ends showing frame 94 stacked over 95. */
+          const other = slots.find((slot) => slot !== baseSlot);
+          if (other) other.canvas.style.opacity = "0";
+        }
+
+        painted = base;
       };
 
       const load = async (index: number) => {
@@ -432,12 +518,25 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
             property without one clobbering the other. Nested, they simply
             multiply. */}
         <div ref={dollyRef} className="absolute inset-0 will-change-transform">
-          <canvas
-            ref={canvasRef}
+          {/* The breath moves to this wrapper now that there are two
+              canvases: both layers have to swell as one object, and an
+              animation per canvas would be two clocks for one form. */}
+          <div
             role="img"
             aria-label="Geodesic field study"
-            className="absolute inset-0 h-full w-full animate-[herobreath_8s_ease-in-out_infinite]"
-          />
+            className="absolute inset-0 animate-[herobreath_8s_ease-in-out_infinite]"
+          >
+            <canvas
+              ref={canvasARef}
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full"
+            />
+            <canvas
+              ref={canvasBRef}
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full opacity-0"
+            />
+          </div>
         </div>
         <style>{`
           @keyframes herobreath {
