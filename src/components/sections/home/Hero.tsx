@@ -46,7 +46,11 @@ export function Hero() {
             </CTALink>
           </div>
 
-          <ScrollCue className="mt-14 hidden sm:flex" />
+          {/* `mt-10`, not the `mt-14` this carried while `ScrollCue` was a
+              horizontal row. Stacking the label over the chevron made the cue
+              about 20px taller, which pushed the chevron off the bottom of
+              this hero at 675px — the label was left pointing at nothing. */}
+          <ScrollCue className="mt-10 hidden sm:flex" />
         </div>
 
         {/* Right column: the chat slot with the decorative scene behind it */}
