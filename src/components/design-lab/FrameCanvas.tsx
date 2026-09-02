@@ -157,13 +157,24 @@ const STACKED_BREAKPOINT = 640;
  * gradient — the precise seam the edge-extension above exists to make
  * impossible. Scaling up only ever crops.
  *
- * **1.2% is a ceiling set by the hero text, not a taste call.** The scale
- * multiplies every distance from the canvas centre, the mesh's included.
- * At its worst the mesh sits at `LOCKUP_SAFE_RIGHT + LOCKUP_MARGIN` = 530
- * CSS px from centre, so 1.012 carries it 6.4px further out — 6.4px off a
- * 40px clearance. Raising the amplitude spends the rest of that margin and
- * puts the mesh back under the statements on a laptop panel, which is the
- * whole thing `GEOMETRY_EDGE_FRAC` above was measured to prevent.
+ * **The amplitude is bounded by the hero text, and the budget is smaller
+ * than `LOCKUP_MARGIN` suggests.** The scale multiplies the mesh's own
+ * half-extent, which is `width * (0.5 - GEOMETRY_EDGE_FRAC) * scale` — not
+ * the 530px safe inset, which is a distance from the *screen edge*. Worked
+ * out at the sizes that matter, with the statements' ink reaching
+ * `LOCKUP_SAFE_RIGHT` from centre:
+ *
+ *     1440x731   mesh half 211.9   text at 230.0   clear +18.1   0 at 1.085
+ *     1366x768   mesh half 201.0   text at 193.0   clear  -8.0   0 at 0.960
+ *     1920x1000  mesh half 348.8   text at 470.0   clear +121    0 at 1.347
+ *
+ * So 4% is comfortable on a wide screen and spends half the remaining
+ * clearance at 1440. **At 1366 and below the mesh already crosses the
+ * statements' ink at rest** — that is `PLATE_FLOOR` doing its documented
+ * job of refusing to shrink the object into insignificance, and the swell
+ * makes an existing overlap about 8px worse rather than creating one. Past
+ * ~8% the object starts touching the text at 1440 too, which is where this
+ * stops being a free knob.
  *
  * No reduced-motion branch here, and the `100%` keyframe is why: it is the
  * rest state, `scale(1)`, not the top of the swell. `globals.css` collapses
@@ -380,7 +391,7 @@ export function FrameCanvas({ children }: { children?: React.ReactNode }) {
         <style>{`
           @keyframes herobreath {
             0%   { transform: scale(1); }
-            50%  { transform: scale(1.012); }
+            50%  { transform: scale(1.04); }
             100% { transform: scale(1); }
           }
         `}</style>
