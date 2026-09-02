@@ -1030,6 +1030,21 @@ sending address.
 its TypeScript server holds the directory, and `tsconfig.json` includes it. Close
 the editor, or verify with a build from a clean clone instead.
 
+**`Jest worker encountered 2 child process exceptions, exceeding retry limit`
+on a dynamic route in `next dev` means restart the server, not that the page is
+broken.** `getStaticPathsWorker` is the *only* jest-worker `next dev` runs, and
+it exists to evaluate `generateStaticParams` in a forked child — which is why
+this hits `/projects/[slug]` and the proposal routes while `/projects` beside
+them still answers 200. The fork is per dynamic route, the pool is
+`numWorkers: 1, maxRetries: 1`, and Next never recovers a worker that failed to
+start: once the child cannot spawn, every later request for that route reports
+the retry limit, so the error long outlives whatever caused it. What stops the
+spawn is host resource pressure — a dev server left running through a long
+animation session climbs past a gigabyte, and this repo lives inside a
+OneDrive-synced folder whose file locks are the same ones behind the `EPERM`
+above. Restarting `npm run dev` clears it; deleting `.next` is not needed and
+does not address it.
+
 ## GIF recording (visual verification)
 
 1. Have the server running (`npm run dev`).
