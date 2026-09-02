@@ -93,8 +93,13 @@ export function ClosingPanel() {
     <>
       {/* Looping backdrop, full-bleed rather than `contained` — this panel
           is dark type on dark plate, so the clip can run under it edge to
-          edge instead of sitting inside a framed, feathered rectangle. */}
-      <PanelVideo src={closing.video} />
+          edge instead of sitting inside a framed, feathered rectangle.
+
+          `boomerang` because this clip's last frame does not meet its first:
+          on a plain loop the panel's only motion ended in a jump cut, which
+          is the one thing a background loop must not do. Playing it back out
+          the way it came in removes the seam without touching the file. */}
+      <PanelVideo src={closing.video} boomerang />
 
       {/* Heading and buttons share one left edge — all three sit in the same
           flow column, rather than the button being centred under a wider

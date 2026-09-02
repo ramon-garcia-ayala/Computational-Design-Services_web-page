@@ -69,9 +69,26 @@ export function PanelVideo({
    * `object-cover` cropped it to the panel and made it read as wallpaper.
    */
   contained = false,
+  /**
+   * Play the clip out and then back in, instead of cutting to the first
+   * frame. For a loop whose last frame does not meet its first, the cut is
+   * the only thing on the panel that moves discontinuously, and the eye
+   * finds it every time round.
+   *
+   * There is no `playbackRate = -1` to reach for — the spec allows a
+   * negative rate and no browser implements one — so the return leg is
+   * driven by hand, off `requestAnimationFrame`, walking `currentTime` back
+   * in wall-clock time so it takes exactly as long as the way out.
+   *
+   * The alternative was baking the reversed tail into the file and keeping
+   * the native `loop`, which costs nothing at runtime. It also doubles the
+   * asset, and this one is already 9.4 MB behind a 65% scrim.
+   */
+  boomerang = false,
 }: {
   src: string;
   contained?: boolean;
+  boomerang?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const reducedMotion = useReducedMotion();
@@ -90,6 +107,61 @@ export function PanelVideo({
     if (attempt) attempt.catch(() => {});
   }, [reducedMotion, src]);
 
+  /* The return leg. `loop` is off for a boomerang, which is the only reason
+     `ended` fires at all — a looping element seeks to zero and keeps going
+     without ever ending. */
+  useEffect(() => {
+    if (reducedMotion || !boomerang) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    let frame = 0;
+    let previous = 0;
+
+    const rewind = (now: number) => {
+      if (!previous) previous = now;
+
+      /* Skip the write while a seek is still outstanding rather than
+         queueing another: stepping backwards decodes from the nearest
+         keyframe every time, and this clip only completes about 11 of those
+         a second against a 121Hz frame callback, so queueing them turns the
+         rewind into a stall.
+
+         `previous` therefore only advances on a frame that actually wrote.
+         Resetting it on a skipped frame throws that frame's slice of time
+         away, and with nine in ten frames skipped the return leg ran at a
+         tenth of real speed — measured at 0.096x before this line moved. */
+      if (!video.seeking) {
+        const elapsed = (now - previous) / 1000;
+        previous = now;
+        const next = video.currentTime - elapsed;
+        if (next <= 0) {
+          video.currentTime = 0;
+          previous = 0;
+          frame = 0;
+          const attempt = video.play();
+          if (attempt) attempt.catch(() => {});
+          return;
+        }
+        video.currentTime = next;
+      }
+
+      frame = requestAnimationFrame(rewind);
+    };
+
+    const onEnded = () => {
+      video.pause();
+      previous = 0;
+      frame = requestAnimationFrame(rewind);
+    };
+
+    video.addEventListener("ended", onEnded);
+    return () => {
+      video.removeEventListener("ended", onEnded);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [reducedMotion, boomerang, src]);
+
   if (reducedMotion) return null;
 
   return (
@@ -104,7 +176,7 @@ export function PanelVideo({
         ref={videoRef}
         src={src}
         autoPlay
-        loop
+        loop={!boomerang}
         muted
         playsInline
         preload="auto"
