@@ -1077,35 +1077,51 @@ OneDrive-synced folder whose file locks are the same ones behind the `EPERM`
 above. Restarting `npm run dev` clears it; deleting `.next` is not needed and
 does not address it.
 
-## Landing on Home with an anchor races the preloader
+## An anchor jump waits for the page to stop moving
 
-`/#services` (and `#work`, `#about`) do not reliably land where they should on
-Home, and the error varies with viewport height rather than being a constant
-offset — measured at 320x568, 360x640, 390x844 and 430x932, the section kicker
-came to rest anywhere from 101px *above* the header's bottom edge to 61px
-below it, on the same build.
+Landing on a URL with a hash used to put the target anywhere: measured across
+four viewport heights on one build, the section `/#services` points at came to
+rest from 101px *above* the header's bottom edge to 61px below it. It reads as
+a wrong offset and is not one — nothing about `scroll-margin-top` can correct a
+jump that was measured against a layout which then moved. **Do not tune
+`scroll-mt` against numbers like these**; fitting one viewport makes another
+worse, which is exactly what happened when it was tried.
 
-Two things fight over the scroll position at mount. `SmoothScroll` jumps to the
-target, and `Preloader` holds `html { overflow: hidden }` and calls
-`window.scrollTo(0, 0)` for its own ~2.75s sequence. Whoever finishes last
-wins, and that depends on how long the glyph scramble takes.
+Three things moved the page after the jump, and all three are now waited on:
 
-Half of it is fixed: `SmoothScroll` now calls `ScrollTrigger.refresh()`
-*before* the jump rather than after, since Home pins two `PanelSection`
-runways above the document band and a pin's spacer height is decided by that
-refresh — jumping first measured the target against a layout that then moved
-underneath it. That alone took 390x844 from -76px to +44px.
+- **Pins.** Home pins two `PanelSection` runways above the document band, and a
+  pin's spacer height is only decided by `ScrollTrigger.refresh()`. That
+  refresh now runs *before* the jump rather than after.
+- **The preloader.** It holds `html { overflow: hidden }` and calls
+  `window.scrollTo(0, 0)` for its own ~2.75s. The reset is skipped outright
+  when the URL carries a hash — a restored offset is an accident of reloading,
+  a fragment is a destination — which is also what keeps a deep link working on
+  the reduced-motion path, where Lenis never exists and the browser's own
+  fragment scroll is all there is.
+- **Fonts.** The deciding one. `Preloader` waits on `document.fonts.ready`
+  before it fades, and the display face swapping in reflows every heading below
+  the fold.
 
-The rest is the preloader, and it is deliberately left alone: the real fix is
-to defer the anchor jump until the overlay has finished, which means those two
-components knowing about each other. **Do not tune `scroll-mt` against these
-numbers** — they are a race, not a measurement, and a value fitted to one
-viewport makes another worse. `HomeDocument`'s `scroll-mt` is the header's own
-height plus a little, chosen from the header and nothing else.
+`src/lib/scroll-gate.ts` is the latch: anything that will change layout during
+startup takes a hold, `SmoothScroll` waits for the last release before it
+jumps. It is a module, not a context — the two parties are a provider in the
+root layout and a component deep inside a route, the same gap `lib/lenis.ts`
+already bridges the same way. On every route that mounts no preloader the gate
+is already open and costs one microtask.
 
-In practice this is narrow: below `sm` nothing links to those anchors — the
-hero's secondary CTA is the only thing that does and it is `hidden sm:*`, and
-`navLinks` point at real routes.
+Verified on screen at 320x568, 390x844 and 430x932, three runs each: the
+kicker lands 73px below the header every time, on all three of Home's anchors.
+
+**Measure anchors in a *visible* iframe.** Chrome throttles `requestAnimationFrame`
+in an offscreen one, the preloader's scramble is a rAF loop, and its sequence
+then takes long enough that a probe times out mid-jump and reports a number
+that looks like a layout bug. Some of the original variance was this, not the
+race.
+
+`BlockShell` and `PortalSection` carry `scroll-mt` for the same reason from the
+other direction — no preloader is involved there, only a fixed header. Before
+it, the three sections a proposal's rail jumps to landed 31px, 92px and 64px
+above the viewport top.
 
 ## Opening the dev server from a phone
 

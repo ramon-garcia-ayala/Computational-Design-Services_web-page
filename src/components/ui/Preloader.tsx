@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { preloader } from "@/data/preloader";
+import { holdScrollGate } from "@/lib/scroll-gate";
 
 /**
  * Module scope, so it survives client-side navigation and is reset only by a
@@ -59,15 +60,38 @@ export function Preloader() {
      has nothing to move either and no second instance is involved.
      `scrollTo` covers a reload part-way down the page, where the browser
      restores the old offset and the hero would otherwise be revealed already
-     scrolled past. */
+     scrolled past.
+     
+     Two things guard the case where the URL carries a hash:
+     
+     - **The reset is skipped.** A restored offset is an accident of reloading;
+       a fragment is a destination the visitor asked for, and sending it to the
+       top is not "covering" it, it is discarding it. This is what keeps a deep
+       link working on the reduced-motion path, where Lenis is never
+       instantiated and the browser's own fragment scroll is all there is.
+     - **The gate is held for the whole sequence.** `SmoothScroll` waits on it
+       before jumping. The lock alone would be reason enough, but the deciding
+       one is that this component waits on `document.fonts.ready` before it
+       fades: the display face swapping in reflows every heading below the
+       fold, so a jump measured before the swap is pointing at an element that
+       has since moved. Releasing only once the overlay is gone means the jump
+       reads a layout that has stopped changing.
+     
+     The hold is released from this effect's cleanup, which covers all three
+     ways the overlay can end — finishing, unmounting, and the reduced-motion
+     re-run — so the gate cannot be left latched shut with nothing to open it. */
   useEffect(() => {
     if (!shouldPlay || finished) return;
+
+    const release = holdScrollGate();
     const html = document.documentElement;
     const previous = html.style.overflow;
     html.style.overflow = "hidden";
-    window.scrollTo(0, 0);
+    if (window.location.hash.length <= 1) window.scrollTo(0, 0);
+
     return () => {
       html.style.overflow = previous;
+      release();
     };
   }, [shouldPlay, finished]);
 
