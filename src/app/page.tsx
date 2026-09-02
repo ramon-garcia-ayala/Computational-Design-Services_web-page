@@ -79,7 +79,15 @@ export default function HomePage() {
       {/* The first panel is the only one that blends its leading edge: it is
           the one that meets the light hero, and every panel after it rises
           over a plate of its own, where there is no seam to soften. */}
-      <PanelSection blend>
+      {/* `approach={3}` is what closes the gap the stats used to leave under
+          them. At the default the panel's edge only crosses into the screen
+          once the section is halfway up, so a half-viewport of bare greige
+          sat between the last figure and anything at all — 413px of an
+          675px screen. Spreading the climb over three viewports brings the
+          edge in at three quarters and cuts that to ~170px, and it buys the
+          space back out of the trigger rather than out of the page: no
+          section changes height, so the scroll is the length it always was. */}
+      <PanelSection blend approach={3}>
         <ProblemPanel />
       </PanelSection>
 

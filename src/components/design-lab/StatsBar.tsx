@@ -31,7 +31,7 @@ export function StatsBar() {
   return (
     <section
       aria-label="Studio at a glance"
-      className="relative bg-lab-bg py-[11svh]"
+      className="relative bg-lab-bg py-[7svh]"
     >
       <div className="font-display mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16">
         <ul className="grid grid-cols-2 gap-y-12 sm:grid-cols-4 sm:gap-y-0">

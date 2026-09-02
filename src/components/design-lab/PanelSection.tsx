@@ -17,6 +17,27 @@ type PanelSectionProps = {
    */
   blend?: boolean;
   /**
+   * How many viewports of scroll the climb is spread over, counted back from
+   * the moment the section's top reaches the top of the screen.
+   *
+   * At the default `1` the panel closes on the viewport at exactly twice the
+   * scroll speed — its leading edge sits at `2 × sectionTop`, so it does not
+   * cross into the screen until the section is halfway up, and the first half
+   * of the approach is a full half-viewport of untouched ground. Measured at
+   * 675px: section top 473 put the panel's edge at 935, and the gap under the
+   * stats peaked at 413px, over 60% of the screen.
+   *
+   * Raising it flattens that ratio to `1 + 1/n`, so the edge appears earlier
+   * and the empty stretch is `V / (n + 1)` instead of `V / 2`. It costs no
+   * scroll: only the trigger's `start` moves, the section's own height and
+   * the hold at the end are untouched.
+   *
+   * Only the panel that rises over the pale hero ground needs it. Panel over
+   * panel is charcoal on charcoal, where the gap is the panel's own colour
+   * and there is nothing to see.
+   */
+  approach?: number;
+  /**
    * Background class for the *ground the panel rises over* — normally the
    * plate of whatever section precedes this one.
    *
@@ -70,6 +91,7 @@ export function PanelSection({
      covering — two or three gestures to clear one panel. 115 keeps a short
      beat to read on without the scroll feeling stuck. */
   runway = 115,
+  approach = 1,
   blend = false,
   behind,
   className,
@@ -104,7 +126,12 @@ export function PanelSection({
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top bottom",
+            /* The extra viewports are added *below* the fold, so the panel
+               is already part-way up by the time the stage carrying it
+               reaches the screen. Percentages on the scroller side of a
+               `start` string are read against the viewport, which is what
+               keeps this in the same `svh` currency as the runway. */
+            start: `top bottom+=${(approach - 1) * 100}%`,
             end: "top top",
             scrub: 0.6,
             // The runway is sized in `svh`, so a mobile URL bar collapsing
@@ -121,7 +148,7 @@ export function PanelSection({
         tween.kill();
       };
     },
-    { scope: sectionRef, dependencies: [reducedMotion] },
+    { scope: sectionRef, dependencies: [reducedMotion, approach] },
   );
 
   if (reducedMotion) {
