@@ -903,5 +903,420 @@ export const projectMedia: Record<string, ProjectMedia> = {
         "height": 1402
       }
     ]
+  },
+  "hyper-builder-vertical-community-generator": {
+    "cover": {
+      "src": "/projects/projects-tabs/hyper-builder-vertical-community-generator/cover.png",
+      "width": 1920,
+      "height": 662
+    },
+    "assets": [
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/hyper-builder-vertical-community-generator/01.png",
+        "width": 3203,
+        "height": 732
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/02.mp4",
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/02.webm"
+        ],
+        "poster": "/projects/projects-tabs/hyper-builder-vertical-community-generator/02-poster.jpg",
+        "width": 1492,
+        "height": 760,
+        "caption": "Viewport workflow and results in action"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/hyper-builder-vertical-community-generator/03.png",
+        "width": 1920,
+        "height": 662,
+        "caption": "Key components of the web app"
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/04.mp4",
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/04.webm"
+        ],
+        "poster": "/projects/projects-tabs/hyper-builder-vertical-community-generator/04-poster.jpg",
+        "width": 1156,
+        "height": 810
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/05.mp4",
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/05.webm"
+        ],
+        "poster": "/projects/projects-tabs/hyper-builder-vertical-community-generator/05-poster.jpg",
+        "width": 346,
+        "height": 390
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/06.mp4",
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/06.webm"
+        ],
+        "poster": "/projects/projects-tabs/hyper-builder-vertical-community-generator/06-poster.jpg",
+        "width": 330,
+        "height": 432
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/07.mp4",
+          "/projects/projects-tabs/hyper-builder-vertical-community-generator/07.webm"
+        ],
+        "poster": "/projects/projects-tabs/hyper-builder-vertical-community-generator/07-poster.jpg",
+        "width": 394,
+        "height": 190
+      }
+    ]
+  },
+  "geometry-of-intelligence-hb01": {
+    "cover": {
+      "src": "/projects/projects-tabs/geometry-of-intelligence-hb01/cover.png",
+      "width": 2240,
+      "height": 1260
+    },
+    "assets": [
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geometry-of-intelligence-hb01/01.jpg",
+        "width": 2560,
+        "height": 1070
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geometry-of-intelligence-hb01/02.jpg",
+        "width": 1410,
+        "height": 1283
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geometry-of-intelligence-hb01/03.jpg",
+        "width": 2867,
+        "height": 1432
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geometry-of-intelligence-hb01/04.jpg",
+        "width": 2872,
+        "height": 1154
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geometry-of-intelligence-hb01/05.jpg",
+        "width": 2560,
+        "height": 1467
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geometry-of-intelligence-hb01/06.jpg",
+        "width": 2560,
+        "height": 1339
+      }
+    ]
+  },
+  "automated-metadata-extraction-hb01": {
+    "cover": {
+      "src": "/projects/projects-tabs/automated-metadata-extraction-hb01/cover.png",
+      "width": 2240,
+      "height": 1260
+    },
+    "assets": [
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/automated-metadata-extraction-hb01/01.png",
+        "width": 1646,
+        "height": 910,
+        "caption": "Cross-functional stakeholders of the project"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/automated-metadata-extraction-hb01/02.png",
+        "width": 2452,
+        "height": 866
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/automated-metadata-extraction-hb01/03.png",
+        "width": 1733,
+        "height": 1203
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/automated-metadata-extraction-hb01/06.mp4"
+        ],
+        "poster": "/projects/projects-tabs/automated-metadata-extraction-hb01/06-poster.jpg",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/automated-metadata-extraction-hb01/04.png",
+        "width": 1650,
+        "height": 811,
+        "caption": "A series of tables generated by the automation, one per geometry imported into Speckle."
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/automated-metadata-extraction-hb01/05.png",
+        "width": 1345,
+        "height": 887,
+        "caption": "Validation tables check for errors and for changes against the previous version: every status marks where data matches, is missing, or has been modified."
+      }
+    ]
+  },
+  "geomorphing-terrascape-chihuahua": {
+    "cover": {
+      "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/cover.png",
+      "width": 2048,
+      "height": 1150
+    },
+    "assets": [
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/01.png",
+        "width": 2048,
+        "height": 1250,
+        "caption": "Communal public space"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/02.png",
+        "width": 1918,
+        "height": 567,
+        "caption": "Architectural design principles and chosen typology"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/03.png",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/04.png",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/05.png",
+        "width": 1757,
+        "height": 873
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/geomorphing-terrascape-chihuahua/13.mp4"
+        ],
+        "poster": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/13-poster.jpg",
+        "width": 1920,
+        "height": 1080,
+        "caption": "Terrain-to-grid workflow: TSP path optimisation projected onto the module grid"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/06.png",
+        "width": 1918,
+        "height": 1078,
+        "caption": "Monoceros wave function collapse solver: rule-based architectural aggregation"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/07.png",
+        "width": 695,
+        "height": 1071
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/08.png",
+        "width": 1205,
+        "height": 927
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/09.png",
+        "width": 1868,
+        "height": 592,
+        "caption": "Environmental resilience strategies"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/10.png",
+        "width": 1918,
+        "height": 1078,
+        "caption": "Color-coded isometric view"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/11.png",
+        "width": 1918,
+        "height": 1078,
+        "caption": "Ambient isometric view"
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/geomorphing-terrascape-chihuahua/14.mp4"
+        ],
+        "poster": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/14-poster.jpg",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/geomorphing-terrascape-chihuahua/15.mp4"
+        ],
+        "poster": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/15-poster.jpg",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/geomorphing-terrascape-chihuahua/12.png",
+        "width": 2048,
+        "height": 1150,
+        "caption": "Aerial view of the aggregation"
+      }
+    ]
+  },
+  "materia-assente": {
+    "cover": {
+      "src": "/projects/projects-tabs/materia-assente/cover.png",
+      "width": 1539,
+      "height": 928
+    },
+    "assets": [
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/materia-assente/01.png",
+        "width": 443,
+        "height": 438
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/materia-assente/02.png",
+        "width": 960,
+        "height": 351
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/materia-assente/03.png",
+        "width": 694,
+        "height": 430
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/materia-assente/04.png",
+        "width": 661,
+        "height": 376
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/materia-assente/05.mp4",
+          "/projects/projects-tabs/materia-assente/05.webm"
+        ],
+        "poster": "/projects/projects-tabs/materia-assente/05-poster.jpg",
+        "width": 1920,
+        "height": 1080,
+        "caption": "Displacement colour map, exaggerated by a scale factor of 10, showing where the forces concentrate."
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/materia-assente/06.mp4",
+          "/projects/projects-tabs/materia-assente/06.webm"
+        ],
+        "poster": "/projects/projects-tabs/materia-assente/06-poster.jpg",
+        "width": 1920,
+        "height": 1080,
+        "caption": "Galapagos minimising displacement by scaling the internal voids."
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/materia-assente/07.png",
+        "width": 1539,
+        "height": 928
+      }
+    ]
+  },
+  "pneumatical-incrustation": {
+    "cover": {
+      "src": "/projects/projects-tabs/pneumatical-incrustation/cover.png",
+      "width": 2356,
+      "height": 1181
+    },
+    "assets": [
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/pneumatical-incrustation/01.png",
+        "width": 512,
+        "height": 249
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/pneumatical-incrustation/02.jpg",
+        "width": 2560,
+        "height": 1440,
+        "caption": "Interior of the Bab El-Louk market, filled with the pneumatical incrustations that form the stores"
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/pneumatical-incrustation/03.jpg",
+        "width": 2560,
+        "height": 1440
+      },
+      {
+        "kind": "video",
+        "sources": [
+          "/projects/projects-tabs/pneumatical-incrustation/04.mp4",
+          "/projects/projects-tabs/pneumatical-incrustation/04.webm"
+        ],
+        "poster": "/projects/projects-tabs/pneumatical-incrustation/04-poster.jpg",
+        "width": 1760,
+        "height": 864,
+        "caption": "The form-finding sequence: framework, inverse extrusion, membrane, inflation, trimming, panelisation."
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/pneumatical-incrustation/05.jpg",
+        "width": 2560,
+        "height": 1440
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/pneumatical-incrustation/06.jpg",
+        "width": 3000,
+        "height": 1688
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/pneumatical-incrustation/07.jpg",
+        "width": 3000,
+        "height": 1688
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/pneumatical-incrustation/08.jpg",
+        "width": 3000,
+        "height": 1688
+      },
+      {
+        "kind": "image",
+        "src": "/projects/projects-tabs/pneumatical-incrustation/09.png",
+        "width": 2560,
+        "height": 1440
+      }
+    ]
   }
 };
