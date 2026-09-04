@@ -174,19 +174,22 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
                 `rounded-full` literal its sibling still carries: same value
                 today, but this one is the token.
 
-                It keeps the compact geometry the sound toggle used to sit at
-                — `px-3 py-1.5`, `gap-2`, a 12px mark and `text-[10px]`, with
-                no `sm:` step up — rather than the contact CTA's larger pill.
-                That is the whole point of the pair: one primary action at
-                full size, and this one visibly secondary beside it. The mark
-                follows the site's line-icon convention (24 viewBox, 1.5
-                stroke, `currentColor`, no fill), so it inherits the label's
-                colour on both grounds and introduces no palette of its
-                own. */}
+                It used to keep the sound toggle's compact geometry — `py-1.5`,
+                a 12px mark and `text-[10px]` with no `sm:` step — so that it
+                read as visibly secondary beside the contact CTA. It now
+                matches its neighbours' height and type instead: at 29px
+                against their 44 it did not read as *secondary*, it read as
+                *unfinished*, a control someone had forgotten to size. It stays
+                the lesser of the three the way the rest of the site marks
+                hierarchy — by its ink and its position in the cluster, not by
+                being smaller than the things beside it. The mark follows the
+                site's line-icon convention (24 viewBox, 1.5 stroke,
+                `currentColor`, no fill), so it inherits the label's colour on
+                both grounds and introduces no palette of its own. */}
             <Link
               href={portalLink.href}
               className={cn(
-                "group hidden items-center gap-2 rounded-control border px-3 py-1.5 transition-colors sm:inline-flex",
+                "group hidden min-h-11 items-center gap-2 rounded-control border px-3 transition-colors sm:inline-flex sm:px-4",
                 light
                   ? "border-edge text-lab-ink hover:border-lab-ink"
                   : "border-edge text-fg hover:border-accent-ink hover:text-accent-ink",
@@ -199,7 +202,7 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
                 strokeWidth={1.5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="h-3 w-3"
+                className="h-3 w-3 sm:h-3.5 sm:w-3.5"
                 aria-hidden="true"
               >
                 <circle cx="12" cy="8" r="4" />
@@ -207,7 +210,7 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
               </svg>
               <span
                 className={cn(
-                  "font-mono text-[10px] uppercase tracking-widest transition-colors",
+                  "font-mono text-[10px] uppercase tracking-widest transition-colors sm:text-xs",
                   light && "group-hover:font-bold",
                 )}
               >
@@ -234,12 +237,18 @@ export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
             <Link
               href="/contact"
               className={cn(
-                /* `min-h-11` is 44px. These stood 29px tall — the two
-                    controls a phone visitor actually has on the hero.
+                /* `min-h-11` is 44px, the touch-target floor.
                     `rounded-control`, not `rounded-full`: same 9999px, but
                     the site has exactly two radius tokens and any other
-                    `rounded-*` is a regression by the shape rule. */
-                "inline-flex min-h-11 items-center rounded-control border px-3 font-mono text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:text-xs",
+                    `rounded-*` is a regression by the shape rule.
+
+                    Hidden below `sm`, like the portal pill beside it, so a
+                    phone's header is the wordmark and the menu and nothing
+                    else. `/contact` does not become unreachable: it is the
+                    last entry in `navLinks`, so the overlay still carries
+                    it — which is exactly the test the portal pill fails and
+                    the reason that one stays header-only. */
+                "hidden min-h-11 items-center rounded-control border px-3 font-mono text-[10px] uppercase tracking-widest transition-colors sm:inline-flex sm:px-4 sm:text-xs",
                 light
                   ? "border-edge text-lab-ink hover:border-lab-ink hover:font-bold"
                   : "border-edge text-fg hover:border-accent-ink hover:text-accent-ink",
