@@ -15,7 +15,7 @@ export function Stats() {
       <div className="shell">
         <h2
           id="stats-heading"
-          className="font-mono text-[10px] uppercase tracking-widest text-accent"
+          className="font-mono text-[10px] uppercase tracking-widest text-accent-ink"
         >
           By the numbers
         </h2>

@@ -55,7 +55,7 @@ export default function ServicesPage() {
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-24">
         <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
         <div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(232,169,74,0.06),transparent_60%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,color-mix(in_srgb,var(--color-accent)_6%,transparent),transparent_60%)]"
           aria-hidden="true"
         />
         <div className="shell relative">
@@ -83,14 +83,21 @@ export default function ServicesPage() {
       <section className="relative pb-20 sm:pb-28">
         <div className="shell">
           <Reveal stagger="[data-service]">
-            <ul className={`grid gap-px bg-line ${cardGrid(offers.length, 3)}`}>
+            {/* Was a bare `bg-line` (1.38:1 dark / ~1.4:1 warm) with no outer
+                frame — the one grid on the site that both drew its dividers
+                below the visible threshold and skipped the border every
+                other `gap-px` grid carries. Brought in line with the rest:
+                `edge` for the divider, and the frame that was missing. */}
+            <ul
+              className={`grid gap-px overflow-hidden rounded-surface border border-edge bg-edge ${cardGrid(offers.length, 3)}`}
+            >
               {offers.map((offer) => (
                 <li
                   key={offer.id}
                   data-service
                   className="reveal-init flex flex-col bg-carbon p-8 sm:p-10"
                 >
-                  <div className="flex justify-center text-accent">
+                  <div className="flex justify-center text-accent-ink">
                     <ServiceMotif kind={offer.motif} />
                   </div>
                   <h2 className="mt-8 font-display text-xl font-semibold leading-snug text-fg sm:text-2xl">

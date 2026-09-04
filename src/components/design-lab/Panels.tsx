@@ -1,223 +1,104 @@
-import { ChatPlaceholder } from "@/components/ui/ChatPlaceholder";
-import { mailtoHref } from "@/data/site";
+import { CTALink } from "@/components/ui/CTALink";
+import { site } from "@/data/site";
 import { designLab } from "@/data/design-lab";
-import { cn } from "@/lib/utils";
-import { ServiceMotif } from "./ServiceMotif";
 import { PanelVideo } from "./PanelVideo";
-import { ExploreMore } from "./ExploreMore";
-import Image from "next/image";
 
 /**
- * The five panel bodies (spec §11.5–11.9, revised by §13.2–13.6).
+ * The two cine panel bodies.
  *
- * Server Components apart from the pieces that animate — the service motifs,
- * the looping backgrounds and the chat widget bring their own client
- * boundaries. `PanelSection` supplies the morph and the full-bleed plate;
- * these supply only what goes on it.
+ * Server Components apart from the pieces that animate — the looping
+ * backgrounds bring their own client boundaries. `PanelSection` supplies the
+ * morph and the full-bleed plate; these supply only what goes on it.
+ *
+ * There used to be five, then three. Services, Featured work and About moved
+ * into the document band (`HomeDocument`) because a panel is a fixed 100svh
+ * box with its overflow hidden and all three had outgrown it. Playground —
+ * the chat assistant, "try it yourself" — moved out entirely, to `/labs`;
+ * see `src/data/labs.ts`. What is left is the two that are genuinely one
+ * idea on one screen and belong to Home specifically.
+ *
+ * Every body is `my-auto`, not centred by the plate. See the note on
+ * `PanelSection`'s `justify-start`: auto margins centre when the content fits
+ * and fall back to top-aligned when it does not, so overflow can only ever
+ * clip the end of a panel, never its opening.
  */
 
-const SHELL = "font-lab mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16";
+const SHELL = "font-display mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16";
+
+/**
+ * Vertical padding on a panel body.
+ *
+ * Under `prefers-reduced-motion` `PanelSection` drops the runway and the
+ * sticky stage entirely and renders a plain `<section>`, so the 100svh box
+ * that used to supply this panel's breathing room is gone — without a `py` of
+ * its own the copy would sit flush against the section above and below. In
+ * the animated tree it just makes the centred block taller, and every body
+ * still clears the stage with room to spare (measured at 1440x675: the
+ * longest is 618px against 675).
+ *
+ * `py-12` below `sm`, not `py-20`. A panel is a fixed 100svh box with its
+ * overflow hidden, so the figure that matters is the body against the stage
+ * on the *shortest* phone: at 360x640 these measured 576 and 525 against
+ * 640, which is 90% full and one line of copy away from clipping — and what
+ * a clipped panel loses is its end, silently. Halving the padding on the
+ * width where the stage is smallest buys back 64px at both panels.
+ */
+const BODY_PAD = "py-10 sm:py-24";
 
 /**
  * The category label above each panel.
  *
- * §13.1 removed the index numbers ("01", "02", …) from every panel, so this
- * is the category alone. The rule that used to separate number from label
- * went with them: a lone hairline before a single word reads as debris.
+ * The index numbers ("01", "02", …) are gone from every panel, so this is the
+ * category alone. The rule that used to separate number from label went with
+ * them: a lone hairline before a single word reads as debris.
+ *
+ * Amber only, now that both remaining panels sit on the dark plate — the
+ * `tone="ink"` variant existed for Playground's pale greige and left with it.
  */
-function Eyebrow({
-  children,
-  /* Amber carries every panel's eyebrow except the Labs one, whose plate is
-     the pale greige the clip is shot on — amber on that is barely a shade
-     apart from its background. Dark ink is the only legible option there. */
-  tone = "accent",
-}: {
-  children: React.ReactNode;
-  tone?: "accent" | "ink";
-}) {
+export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p
-      className={cn(
-        "font-mono text-xs uppercase tracking-[0.3em] sm:text-sm",
-        tone === "ink" ? "text-lab-ink" : "text-accent",
-      )}
-    >
+    <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent-ink sm:text-sm">
       {children}
     </p>
   );
 }
 
-export function ServicesPanel() {
-  const { services } = designLab.panels;
+/**
+ * The turn from atmosphere to argument, and the first thing the reader meets
+ * after the sequence.
+ *
+ * The sentence in it was written for this studio and then stranded: it lived
+ * in `data/approach.ts` and rendered only on `/archive-home`, which nothing
+ * links to. The landing page's own account of the work was four one-sentence
+ * cards. This is the sharper half of what already existed.
+ */
+export function ProblemPanel() {
+  const { problem } = designLab.panels;
 
   return (
-    /* §13.2: heading toward the top rather than centred, so the four cards
-       get the room they need at their new size. `justify-start` with a
-       generous top pad beats vertical centring here — centring would push the
-       cards further down as the copy grows. */
-    <div className={`${SHELL} flex h-full flex-col justify-start pt-[14svh] pb-[8svh]`}>
-      <Eyebrow>{services.kicker}</Eyebrow>
-
-      {/* §13.2: larger, and set tight under the label so the two read as one
-          block rather than two stacked items. */}
-      <h2 className="mt-4 font-semibold leading-[1.02] tracking-tight text-fg text-[clamp(2.4rem,5.6vw,4.6rem)]">
-        {services.title}
-      </h2>
-
-      <ul className="mt-[7svh] grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-        {services.items.map((item) => (
-          <li key={item.name} className="flex flex-col">
-            {/* The figure is centred over the card, not aligned to its left
-                edge: the SVG is a fixed 120px box, so in a wider column it
-                needs the flex centring or it reads as hanging off to one
-                side. Its links inherit `currentColor`. */}
-            <div className="flex justify-center text-accent/70">
-              <ServiceMotif kind={item.motif} />
-            </div>
-
-            <h3 className="mt-6 border-t border-panel-line pt-5 font-semibold leading-snug text-fg text-[clamp(1.15rem,1.5vw,1.5rem)]">
-              {item.name}
-            </h3>
-            <p className="mt-4 text-justify text-sm leading-relaxed text-fg/70 sm:text-base">
-              {item.body}
-            </p>
-          </li>
-        ))}
-      </ul>
-
-      {/* The way out of this panel and into the full Services page. */}
-      <ExploreMore />
-    </div>
-  );
-}
-
-export function LabsPanel() {
-  const { labs } = designLab.panels;
-
-  return (
-    <>
-      {/* §13.3: looping backdrop behind everything on this panel. */}
-      <PanelVideo src={labs.video} contained />
-
-      {/* The heading sits high so the enlarged clip has the middle of the
-          panel to itself. Type is dark here, not light: this panel's plate is
-          the greige the clip is shot on, so the light copy every other panel
-          uses would be unreadable. */}
-      <div className={`${SHELL} relative flex h-full flex-col justify-start pt-[4svh]`}>
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
-          <Eyebrow tone="ink">{labs.kicker}</Eyebrow>
-          <h2 className="mt-3 font-semibold leading-tight tracking-tight text-lab-ink text-[clamp(2rem,4.4vw,3.6rem)]">
-            {labs.title}
-          </h2>
-
-          {/* Translucent on its own shell rather than on the widget's inner
-              surfaces, so the clip shows through without costing the
-              transcript any legibility. */}
-          <ChatPlaceholder className="mt-8 max-w-3xl border-lab-ink/15 bg-carbon/55 backdrop-blur-md lg:aspect-[16/10]" />
-        </div>
-      </div>
-    </>
-  );
-}
-
-export function FeaturedPanel() {
-  const { featured } = designLab.panels;
-
-  /* A showcase strip, not the `/projects` system: three images, a line each,
-     nothing clickable and nothing wired to a route. §13.4 keeps the label at
-     the top-left and enlarged. */
-  return (
-    <div className={`${SHELL} flex h-full flex-col justify-start pt-[11svh]`}>
-      <Eyebrow>{featured.kicker}</Eyebrow>
-      <h2 className="mt-4 font-semibold leading-[1.02] tracking-tight text-fg text-[clamp(2.4rem,5.6vw,4.6rem)]">
-        {featured.kicker}
-      </h2>
-
-      {/* Three columns at every width. The panel is a fixed 100svh with its
-          overflow hidden, so a stacked mobile layout would simply be clipped
-          rather than scrolled — narrow columns beat invisible ones. */}
-      <ul className="mt-[6svh] grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-        {featured.items.map((item) => (
-          <li key={item.id}>
-            <figure className="group">
-              {/* One frame for three very different sources — 1.00, 1.93 and
-                  1.16 — so `object-cover` does the reconciling. Greyscale at
-                  rest, true colour on hover, same as the founder portraits. */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-fg/[0.04] ring-1 ring-fg/10 grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0">
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  sizes="(min-width: 1024px) 30vw, 32vw"
-                  /* The GIF has to skip the optimiser, which would re-encode
-                     it to a still and quietly drop the animation. */
-                  unoptimized={item.animated}
-                  className="object-cover"
-                />
-              </div>
-              <figcaption className="mt-3 sm:mt-4">
-                <p className="font-semibold leading-snug text-fg text-[clamp(0.72rem,1.05vw,1.05rem)]">
-                  {item.title}
-                </p>
-                <p className="mt-1 leading-snug text-fg/60 text-[clamp(0.6rem,0.82vw,0.9rem)]">
-                  {item.caption}
-                </p>
-              </figcaption>
-            </figure>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export function AboutPanel() {
-  const { about } = designLab.panels;
-
-  return (
-    <div className={`${SHELL} flex h-full flex-col justify-center`}>
-      <Eyebrow>{about.kicker}</Eyebrow>
-
-      {/* §13.5: copy left and justified, photographs reserved on the right. */}
-      <div className="mt-8 grid items-start gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-20">
-        <p className="text-justify font-medium leading-[1.45] tracking-tight text-fg text-[clamp(1.25rem,2.2vw,2rem)]">
-          {/* The wordmark sits in the sentence as ordinary body copy — same
-              weight and colour as the words around it. Only the superscript
-              is set apart, and that is typography rather than emphasis. */}
-          <span className="whitespace-nowrap">
-            R<sup className="text-[0.6em]">2</sup>
-            {about.lead.replace(/^R²/, "")}
-          </span>
-          {about.body}
+    <div className={`${SHELL} ${BODY_PAD} my-auto`}>
+      {/* `mt-4`/`mt-5` below `sm`. Measured at 320x568 — the shortest
+          viewport still in use — this body ran 581px against a 568px stage
+          and lost its last 13px off the bottom, silently, because the stage
+          is `overflow-hidden` and there is no scrollbar to show for it. The
+          margins are where the height was, not the type: cutting the copy or
+          the display size would change what the panel says. */}
+      <div className="max-w-4xl">
+        <Eyebrow>{problem.kicker}</Eyebrow>
+        {/* A step down on a short viewport. `text-display` tops out by width
+            (`clamp(2.4rem, 3.8vw, 4.6rem)`) and a phone is always at its
+            floor, so on a 568px-tall screen the panel was spending 38px lines
+            on a stage with 23px of slack left. A `max-height` query is the
+            only thing that can see the constraint that actually binds here. */}
+        <p className="mt-4 text-display font-semibold text-fg [@media(max-height:700px)]:text-h2 sm:mt-6">
+          {problem.lead}
         </p>
-
-        {/* §13.5: two founder portraits, greyscale until hovered. The slots
-            are reserved now so the panel's proportions do not shift when the
-            real images land — dropping them in means replacing the inner
-            div with an <Image>, nothing else. */}
-        <ul className="grid grid-cols-2 gap-5">
-          {about.founders.map((founder) => (
-            <li key={founder.id}>
-              <figure className="group">
-                {/* Square, because the sources are 400x400 — a portrait crop
-                    of a square headshot cuts through the face. Greyscale at
-                    rest, true colour on hover. */}
-                <div className="relative aspect-square w-full overflow-hidden rounded-sm ring-1 ring-fg/10 grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0">
-                  <Image
-                    src={founder.photo}
-                    alt={founder.name}
-                    fill
-                    sizes="(min-width: 1024px) 20vw, 45vw"
-                    className="object-cover"
-                  />
-                </div>
-                <figcaption className="mt-3 font-mono text-[11px] uppercase tracking-widest text-fg/60">
-                  {founder.short}
-                </figcaption>
-              </figure>
-            </li>
-          ))}
-        </ul>
+        {/* `panel-ink-muted`, not `fg-muted`: this plate is `--color-panel`,
+            which is much lighter than carbon, and the muted grey tuned for
+            carbon drops to 3.55:1 here. */}
+        <p className="mt-5 max-w-2xl text-lead text-panel-ink-muted [@media(max-height:700px)]:text-base sm:mt-8">
+          {problem.body}
+        </p>
       </div>
     </div>
   );
@@ -228,26 +109,60 @@ export function ClosingPanel() {
 
   return (
     <>
-      {/* §13.6: looping backdrop, same arrangement as the Labs panel. */}
-      <PanelVideo src={closing.video} />
+      {/* Looping backdrop, full-bleed rather than `contained` — this panel
+          is dark type on dark plate, so the clip can run under it edge to
+          edge instead of sitting inside a framed, feathered rectangle.
 
-      {/* §13.6: heading and button share one left edge — both sit in the same
+          `boomerang` because this clip's last frame does not meet its first:
+          on a plain loop the panel's only motion ended in a jump cut, which
+          is the one thing a background loop must not do. Playing it back out
+          the way it came in removes the seam without touching the file. */}
+      <PanelVideo src={closing.video} boomerang />
+
+      {/* Heading and buttons share one left edge — all three sit in the same
           flow column, rather than the button being centred under a wider
-          block, which is what made the two look unrelated. */}
-      <div className={`${SHELL} relative flex h-full flex-col justify-center`}>
+          block, which is what made them look unrelated. */}
+      <div className={`${SHELL} ${BODY_PAD} relative my-auto`}>
         <div className="max-w-4xl">
           <Eyebrow>{closing.kicker}</Eyebrow>
-          <p className="mt-6 font-semibold leading-[1.1] tracking-tight text-fg text-[clamp(2.2rem,5vw,4.2rem)]">
+          <p className="mt-4 text-h1 font-semibold text-fg [@media(max-height:700px)]:text-h2 sm:mt-6">
             {closing.body}
           </p>
-          {/* §11.9 names `/contact`; that route does not exist, so this uses
-              the same mailto every other CTA on the site does. */}
-          <a
-            href={mailtoHref}
-            className="mt-12 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-mono text-xs uppercase tracking-widest text-carbon transition-colors duration-200 hover:bg-accent-dim sm:text-sm"
-          >
-            {closing.cta}
-          </a>
+
+          {/* `/contact`, not a mailto: a `mailto:` does nothing at all for a
+              visitor on webmail, so the primary CTA silently failed for most
+              people. Routed through `CTALink`, the single place CTA styling
+              lives, rather than a hand-rolled button.
+
+              The secondary is new. A closing screen with one button asks for
+              the whole commitment or nothing; the reader who is interested
+              but not ready to write an email now has somewhere to go that
+              is not the back button. */}
+          {/* Stacked and full width below `sm`, side by side above it. At
+              178px each plus a 16px gap they needed 372px inside a 342px
+              column on a 390px phone, so `flex-wrap` broke them onto two
+              rows anyway — but as two left-aligned pills with a ragged right
+              edge rather than as a deliberate stack. Full width makes the
+              wrap intentional, and turns the primary into a 58px target
+              running the whole column. */}
+          <div className="mt-10 flex flex-col items-stretch gap-3 sm:mt-12 sm:flex-row sm:items-center sm:gap-4">
+            <CTALink
+              href="/contact"
+              variant="solid"
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              {site.contactLabel}
+            </CTALink>
+            <CTALink
+              href={closing.secondary.href}
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              {closing.secondary.label}
+            </CTALink>
+          </div>
         </div>
       </div>
     </>

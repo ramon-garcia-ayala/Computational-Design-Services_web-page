@@ -7,7 +7,7 @@ export function Manifesto() {
     <section className="border-t border-line py-20 sm:py-28 lg:py-32">
       <div className="shell">
         <Reveal className="grid gap-10 lg:grid-cols-[minmax(0,14rem)_1fr] lg:gap-16">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
             {manifesto.kicker}
           </p>
 

@@ -47,9 +47,19 @@ export function ProgramLegend({
             className="flex items-center justify-between gap-3 text-sm"
           >
             <span className="flex min-w-0 items-center gap-2.5">
+              {/* This legend renders directly on the page ground — no card
+                  behind it — and `entry.color` comes from a palette file
+                  that mirrors `globals.css` for three.js but has no way to
+                  know which of the three scopes it lands on. `core`/`void`
+                  (`#2f373b`) measured 1.06:1 against `[data-site-warm]`'s
+                  ground (`#3d3934`), the two colours nearly identical: the
+                  swatch was there and simply not visible. A ring in `edge` —
+                  guaranteed ≥3:1 in every scope — keeps every swatch legible
+                  regardless of what fill a future palette entry picks,
+                  rather than re-tuning fills against one ground at a time. */}
               <span
                 aria-hidden="true"
-                className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
+                className="h-2.5 w-2.5 shrink-0 rounded-surface ring-1 ring-edge"
                 style={{ backgroundColor: entry.color }}
               />
               <span className="truncate text-fg">{entry.name}</span>

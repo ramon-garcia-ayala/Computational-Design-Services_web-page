@@ -15,15 +15,41 @@ export const FG_MUTED = "#8a918c";
 export const CARBON = "#0a0c0b";
 
 /**
+ * The "site plate" ground colour used inside the R3F scenes themselves
+ * (`LayoutMesh`'s slab, `WfcMesh`'s ground plane) — not `CARBON` above.
+ *
+ * This viewer only ever renders on `/labs/tool`, which is always under
+ * `[data-site-warm]` (`--color-carbon: #3d3934`, a warm charcoal), never on
+ * the site's cool dark scope this file otherwise mirrors. `CARBON`
+ * (`#0a0c0b`) and `LINE` (`#262b2e`) were both used for this exact "ground
+ * the model sits on" role, and both are noticeably cooler than the warm
+ * canvas backdrop (`bg-graphite/40`) they render inside — a cold-toned plate
+ * floating in a warm-tinted frame. This is deliberately its own value, tuned
+ * for the one ground this scene actually renders on, rather than a token
+ * this file otherwise keeps in lockstep with `globals.css`.
+ */
+export const SCENE_GROUND = "#221e1b";
+
+/**
  * One colour per program use. Derived from the site's accent so a massing
  * study still reads as this studio's work rather than a generic BIM viewer:
  * the accent marks what people occupy, cooler greys the servant spaces.
+ *
+ * The comment above predates this file drifting: every one of these except
+ * `parking`/`core` was a lime-green family (`#e8ff8a`…`#5f8f4a`) — the exact
+ * second accent `globals.css` retired site-wide because "a second accent is
+ * what made the palette read as two mixed modes." Nothing here ever imported
+ * that decision; the viewer just kept its original mockup colours. This ramp
+ * is what the comment always described: occupied space steps down from a
+ * pale tint of the accent to the accent itself, servant space steps down
+ * through the site's own cool neutrals (`FG_MUTED`, `LINE` — `parking` and
+ * `core` needed no change, they were already this family).
  */
 export const PROGRAM_COLORS = {
-  retail: "#e8ff8a",
-  office: "#c8f94e",
-  residential: "#8fbf3a",
-  amenity: "#5f8f4a",
+  retail: "#f6dfae",
+  office: "#eec27f",
+  residential: ACCENT,
+  amenity: "#7d7268",
   parking: "#4a5459",
   core: "#2f373b",
 } as const;
@@ -33,13 +59,19 @@ export const PROGRAM_COLORS = {
  * the same near-black the site grid uses, and a tower is the palest thing on
  * the canvas — so the generated field can be read at a glance without a
  * legend, which is what makes reseeding it worth doing repeatedly.
+ *
+ * Same fix as `PROGRAM_COLORS`: `low`/`court`/`mid`/`tall` were the retired
+ * lime family, `mid` was that colour's exact hex. The ramp now walks from
+ * `void`'s near-black neutral through a warm-neutral midpoint into the
+ * accent and a pale tint of it — one hue family, brightness still doing all
+ * the work.
  */
 export const WFC_TILE_COLORS: Record<WfcTile, string> = {
   void: "#2f373b",
-  low: "#5f8f4a",
-  court: "#8fbf3a",
-  mid: "#c8f94e",
-  tall: "#e8ff8a",
+  low: "#54493f",
+  court: "#8a7357",
+  mid: ACCENT,
+  tall: "#f6dfae",
 };
 
 export const WFC_TILE_LABELS: Record<WfcTile, string> = {
@@ -54,12 +86,16 @@ export const WFC_TILE_LABELS: Record<WfcTile, string> = {
  * The utilisation ramp for the structural archetype: comfortable, working
  * hard, past the allowable.
  *
- * The last stop leaves the site's greens on purpose. Everything else here is
- * a shade of the accent, so a warm colour is the only thing on the canvas
- * that cannot be mistaken for "more of the same" — and exceeding a limit is
- * exactly the state that must not read as a degree of the state below it.
+ * The docstring's own description — "everything else here is a shade of the
+ * accent" — never matched the implementation: the first two stops were green
+ * and lime, and only the last, an orange, was even close to warm. This ramp
+ * is what the description always meant: comfortable and working-hard are
+ * genuinely a light tint and the full accent, and past-the-limit breaks into
+ * a colour that cannot read as "a bit more amber" — exceeding a structural
+ * limit is a different kind of state, not a further degree of the one below
+ * it, and the colour now says so.
  */
-const STRUCTURE_STOPS = ["#4f7f46", "#c8f94e", "#ff8f5e"] as const;
+const STRUCTURE_STOPS = ["#f0c67a", ACCENT, "#c0392b"] as const;
 
 /* There was a `STRUCTURE_LABELS` here — three band names for a legend that
    ended up reading out numbers rather than bands. Nothing imported it, and

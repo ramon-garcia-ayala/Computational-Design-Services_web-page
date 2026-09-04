@@ -1,0 +1,119 @@
+{
+  "$schema": "Machine-readable mirror of src/app/globals.css. Source of truth is the code — regenerate this file by hand whenever globals.css changes, in the same commit. See design-concpet/brand-guidelines.md for the human-readable version with rationale.",
+  "brand": {
+    "name": "R²χTECH",
+    "nameFlat": "R²XTECH",
+    "tagline": "We automate AEC. You ship faster.",
+    "positioningLine": "Architecture, computed.",
+    "descriptor": "Computational automation studio for architecture, engineering and construction.",
+    "contactLabel": "Get in touch",
+    "contactSubject": "Project inquiry",
+    "location": "Remote · Worldwide",
+    "primaryCtaDestination": "/contact"
+  },
+  "color": {
+    "dark": {
+      "carbon": "#0a0c0b",
+      "graphite": "#14171a",
+      "graphiteHi": "#1c2024",
+      "line": "#262b2e",
+      "lineSoft": "#1a1e21",
+      "edge": "#5e686d",
+      "fg": "#f2f4f0",
+      "fgMuted": "#8a918c",
+      "accent": "#e8a94a",
+      "accentDim": "#c8913a",
+      "accentInk": "#e8a94a",
+      "onAccent": "#2a2826",
+      "focus": "#e8a94a",
+      "danger": "#d25854",
+      "_note": "edge was #5a6368 (3.19:1 on carbon, 2.93:1 on graphite — failing against a surface). Current value clears 3.44:1 / 3.15:1 against both."
+    },
+    "warm": {
+      "_scope": "[data-site-warm]",
+      "_note": "Redefines carbon/graphite/line/fg/fgMuted, plus edge and danger (added — this scope silently inherited dark-scope edge before, at 1.87:1). Accent/accentInk/onAccent/focus still inherit from dark scope unchanged.",
+      "carbon": "#3d3934",
+      "graphite": "#47423c",
+      "graphiteHi": "#514b44",
+      "line": "#55504a",
+      "lineSoft": "#494440",
+      "fg": "#f2f4f0",
+      "fgMuted": "#b4aea5",
+      "edge": "#96918a",
+      "danger": "#ff9686"
+    },
+    "pale": {
+      "_scope": "[data-site-pale]",
+      "_note": "Redefines carbon/graphite/line/fg AND the three accent-ink-role tokens (accentInk, focus, edge), plus danger. --color-accent itself is never redefined — it stays #e8a94a everywhere, used only as a filled plate on this ground.",
+      "carbon": "#b8b4b1",
+      "graphite": "#c1bdba",
+      "graphiteHi": "#c9c5c2",
+      "line": "#9c9793",
+      "lineSoft": "#aaa6a2",
+      "fg": "#2a2826",
+      "fgMuted": "#4a4642",
+      "accentInk": "#2a2826",
+      "focus": "#2a2826",
+      "edge": "#625d57",
+      "danger": "#900e0e"
+    },
+    "labOnly": {
+      "_note": "Used only inside Home's own dark-scope context (the hero's greige plate and the panel charcoal), never a scope selector. panelInkMuted is new: --color-fg-muted (tuned for carbon, 6.08:1) drops to 3.55:1 on --color-panel, which is much lighter than carbon.",
+      "labBg": "#b8b4b1",
+      "labInk": "#2a2826",
+      "labInkMuted": "#4a4642",
+      "panel": "#3d3934",
+      "panelLine": "#55504a",
+      "panelInkMuted": "#ada79f"
+    },
+    "rules": [
+      "Amber text/border/hairline anywhere => use the accentInk token, never the literal accent hex.",
+      "Amber as a filled button/plate => use accent + onAccent, on any ground.",
+      "Amber is structurally illegible as ink on the pale ground (1.00:1) — this cannot be fixed by choosing a darker amber; see brand-guidelines.md §2.4.",
+      "Meaningful borders/lines (fields, controls, diagram structure, table rows, grid-card dividers, checklist checkboxes) => edge token, not line (line is 1.37:1, decorative only). 'Meaningful' means: if this line disappearing would change what the reader understands, it is edge.",
+      "Error text and invalid-field borders => danger token, scoped per ground the same way accentInk is — never an unscoped Tailwind colour like text-red-400.",
+      "A component must carry data-site-pale if it visually sits on the pale ground, even if it renders outside the page's own [data-site-pale] wrapper div.",
+      "When toggling data-site-pale from a boolean prop, guard with `value || undefined` — a literal `data-site-pale=\"false\"` still matches the CSS attribute selector.",
+      "Never dilute an accent border with alpha (border-accent/40) to make it 'softer' — alpha does not change relative luminance against an opaque background, so it is exactly as illegible on the pale ground as full-opacity amber. Use accentInk at full opacity instead.",
+      "Never hardcode an accent-derived rgba() literal in a gradient; use color-mix(in srgb, var(--color-accent) N%, transparent) inside the arbitrary Tailwind value."
+    ]
+  },
+  "radius": {
+    "surface": { "token": "rounded-surface", "value": "0.25rem", "usage": "Container, card, panel, media frame, text field (including textarea)" },
+    "control": { "token": "rounded-control", "value": "9999px", "usage": "Button, chip, toggle, badge, small circular marker" },
+    "_note": "Exactly two values, everywhere. Before this the codebase carried six (rounded-full, -lg, -xl, -md, -sm, bare rounded) mixed within single components. A text field is 'surface' even though it is interactive — it holds content the way a card does, it does not trigger an action the way a button does."
+  },
+  "typography": {
+    "families": {
+      "display": { "token": "font-display", "family": "Space Grotesk", "weights": "500-700", "usage": "Headings, nav, buttons" },
+      "sans": { "token": "font-sans", "family": "Inter", "weights": "400-600", "usage": "Body and UI text (also the document default)" },
+      "mono": { "token": "font-mono", "family": "JetBrains Mono", "weights": "400-500", "usage": "Labels, eyebrows, data, figures" }
+    },
+    "scale": {
+      "display": { "fontSize": "clamp(2.4rem, 3.8vw, 4.6rem)", "lineHeight": 1.05, "letterSpacing": "-0.02em" },
+      "h1": { "fontSize": "clamp(2.1rem, 3.25vw, 3.9rem)", "lineHeight": 1.08, "letterSpacing": "-0.02em" },
+      "h2": { "fontSize": "clamp(1.75rem, 2.3vw, 2.75rem)", "lineHeight": 1.12, "letterSpacing": "-0.015em" },
+      "h3": { "fontSize": "clamp(1.35rem, 1.55vw, 1.85rem)", "lineHeight": 1.2 },
+      "lead": { "fontSize": "clamp(1.15rem, 1.25vw, 1.5rem)", "lineHeight": 1.55, "_note": "Defined, not yet used anywhere in the codebase." }
+    },
+    "exceptions": [
+      "HeroOverlay.tsx headline + scroll statements: bespoke clamp() values tuned against the geodesic model's measured mobile clearance. Do not migrate onto the shared scale.",
+      "Panels.tsx AboutPanel lead paragraph: bespoke clamp(1.25rem,2.2vw,2rem) at leading-1.45 — justified running prose, not a heading."
+    ]
+  },
+  "breakpoints": {
+    "sm": "640px",
+    "lg": "1024px",
+    "xl": "1440px",
+    "_note": "Tailwind's default md and 2xl are cleared (--breakpoint-*: initial) and do not exist."
+  },
+  "logo": {
+    "wordmarkSource": "public/logo/logo.png",
+    "wordmarkMask": "public/logo/logo-mask.png",
+    "nativeSize": { "width": 3103, "height": 611 },
+    "technique": "CSS mask-image, recoloured per scope via background-color — never rendered as a plain <img>.",
+    "lockups": ["horizontal wordmark (only one that exists)", "R² favicon glyph, auto-cropped by scripts/favicon.mjs"],
+    "clearSpaceDefault": "~1 cap-height (not yet formally specified in code)",
+    "minWidthDefault": "~96px (not yet formally specified in code)"
+  }
+}

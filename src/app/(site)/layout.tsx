@@ -26,10 +26,22 @@ export default function SiteLayout({
     <div data-site-warm className="relative">
       {/* Solid behind the chrome, gone before the first heading. Absolute
           rather than fixed: it belongs to the top of the document, the way
-          Home's hero does, instead of following the viewport down. */}
+          Home's hero does, instead of following the viewport down.
+
+          The stops are measured, not guessed. `<main>` is `pt-20` (80px) and
+          every route's first section opens at `pt-32` (128px, 160px at `sm:`)
+          — so the earliest a heading's box can start is 80+128=208px. This
+          band has to read fully transparent well before that, or the kicker
+          above the heading sits on a greige wash instead of the page's own
+          warm ground: an earlier version faded out to 250px, so at 208px it
+          was still ~27% opaque and the amber kicker measured 3.3:1 there —
+          a failure invisible on /about and /contact, whose ground already is
+          this same greige. Solid to 96px (the header's own height, matching
+          its internal legibility gradient below) then fades out by 150px,
+          which leaves the full 640px+ case (240px) an even wider margin. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[250px] bg-[linear-gradient(to_bottom,var(--color-lab-bg)_0,var(--color-lab-bg)_96px,transparent_100%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[150px] bg-[linear-gradient(to_bottom,var(--color-lab-bg)_0,var(--color-lab-bg)_96px,transparent_100%)]"
       />
 
       <Header variant="light" />

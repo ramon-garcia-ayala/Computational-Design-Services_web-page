@@ -25,7 +25,7 @@ export function ChecklistBlock({ block }: { block: ChecklistBlockData }) {
       lead={block.lead}
     >
       <Reveal className="mt-10">
-        <span className="inline-flex rounded-full border border-line px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-fg-muted">
+        <span className="inline-flex rounded-control border border-edge px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-fg-muted">
           {total} items to receive
         </span>
       </Reveal>
@@ -33,9 +33,9 @@ export function ChecklistBlock({ block }: { block: ChecklistBlockData }) {
       <ol className="mt-10">
         {block.groups.map((group, groupIndex) => (
           <Reveal key={group.id} as="li" stagger="[data-reveal]">
-            <div className="grid gap-6 border-t border-line py-10 lg:grid-cols-[13rem_1fr] lg:gap-12">
+            <div className="grid gap-6 border-t border-edge py-10 lg:grid-cols-[13rem_1fr] lg:gap-12">
               <div className="reveal-init flex items-baseline gap-3 lg:flex-col lg:gap-1" data-reveal>
-                <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
                   {String(groupIndex + 1).padStart(2, "0")} · {group.category}
                 </p>
                 <p className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">
@@ -50,9 +50,13 @@ export function ChecklistBlock({ block }: { block: ChecklistBlockData }) {
                     className="reveal-init grid grid-cols-[1.125rem_1fr] gap-4"
                     data-reveal
                   >
+                    {/* Was `border-line-soft` (1.17:1, invisible) at a
+                        one-off `rounded-[3px]` — one of four different radii
+                        the site used for the same small-square-marker shape.
+                        `rounded-surface` is that shape's one token now. */}
                     <span
                       aria-hidden="true"
-                      className="mt-1 h-[1.125rem] w-[1.125rem] rounded-[3px] border border-line-soft"
+                      className="mt-1 h-[1.125rem] w-[1.125rem] rounded-surface border border-edge"
                     />
                     <div>
                       <h3 className="font-display text-base leading-snug font-semibold tracking-tight text-fg">

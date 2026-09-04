@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { preloader } from "@/data/preloader";
+import { holdScrollGate } from "@/lib/scroll-gate";
 
 /**
  * Module scope, so it survives client-side navigation and is reset only by a
@@ -59,15 +60,38 @@ export function Preloader() {
      has nothing to move either and no second instance is involved.
      `scrollTo` covers a reload part-way down the page, where the browser
      restores the old offset and the hero would otherwise be revealed already
-     scrolled past. */
+     scrolled past.
+     
+     Two things guard the case where the URL carries a hash:
+     
+     - **The reset is skipped.** A restored offset is an accident of reloading;
+       a fragment is a destination the visitor asked for, and sending it to the
+       top is not "covering" it, it is discarding it. This is what keeps a deep
+       link working on the reduced-motion path, where Lenis is never
+       instantiated and the browser's own fragment scroll is all there is.
+     - **The gate is held for the whole sequence.** `SmoothScroll` waits on it
+       before jumping. The lock alone would be reason enough, but the deciding
+       one is that this component waits on `document.fonts.ready` before it
+       fades: the display face swapping in reflows every heading below the
+       fold, so a jump measured before the swap is pointing at an element that
+       has since moved. Releasing only once the overlay is gone means the jump
+       reads a layout that has stopped changing.
+     
+     The hold is released from this effect's cleanup, which covers all three
+     ways the overlay can end — finishing, unmounting, and the reduced-motion
+     re-run — so the gate cannot be left latched shut with nothing to open it. */
   useEffect(() => {
     if (!shouldPlay || finished) return;
+
+    const release = holdScrollGate();
     const html = document.documentElement;
     const previous = html.style.overflow;
     html.style.overflow = "hidden";
-    window.scrollTo(0, 0);
+    if (window.location.hash.length <= 1) window.scrollTo(0, 0);
+
     return () => {
       html.style.overflow = previous;
+      release();
     };
   }, [shouldPlay, finished]);
 
@@ -115,7 +139,11 @@ export function Preloader() {
 
       const solidify = (cell: HTMLElement) => {
         cell.textContent = "";
-        cell.style.background = "#ffffff";
+        // `var(--color-fg)`, not a hardcoded `#ffffff` — the token is
+        // #f2f4f0, near-white but not pure white, and reading the variable
+        // rather than duplicating its value is what keeps this in step with
+        // it if it ever changes.
+        cell.style.background = "var(--color-fg)";
       };
 
       /* Waiting for fonts is what keeps the reveal seamless: the hero's copy
@@ -238,27 +266,52 @@ export function Preloader() {
         data-preloader
         role="status"
         aria-label={preloader.label}
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a] px-6"
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-carbon px-6"
       >
         <div
           ref={gridRef}
           aria-hidden="true"
-          className="w-full opacity-0 transition-opacity duration-150"
+          /* `max-w-[220px]` below `sm`, `mask.maxWidth` from `sm` up. At 342px
+             (a 390px phone minus the root's `px-6`) the flat `mask.maxWidth`
+             read nearly edge to edge — almost the loudest thing on the screen
+             the site opens on. A breakpoint rather than a `vw`-scaled `clamp`
+             is deliberate: a `vw` term shrinking continuously from 0 would
+             also pull in the tablet/desktop sizing this was never asked to
+             touch, where the mark sitting inside `mask.maxWidth`'s 600px cap
+             is already right. The desktop value still comes from
+             `mask.maxWidth` alone (via the CSS variable below), so there is
+             one source of truth for it, not two.
+
+             **`text-[7px]` below `sm` is not a style choice, it is what keeps
+             the mid-scramble frames from reading as a stretched blur.** Font
+             size was a flat 11px, sized against the `narrow` grid's cell
+             width at the *old* unclamped mobile box (~342px / 52 columns ≈
+             6.6px a cell — already an overflowing glyph, at roughly the same
+             ratio the desktop grid runs at). Capping the box to 220px shrank
+             that cell to ~4.2px without shrinking the glyph, so every
+             scrambling character now spilled across two or three rows above
+             and below its own cell — solid stretched-looking type while
+             cells were still resolving, cropping back to the correct
+             letterforms only once each cell stopped drawing text and
+             switched to its solid fill. `7px` restores roughly the original
+             glyph-to-cell ratio at the smaller box; `sm:text-[11px]` is the
+             untouched desktop value. Re-derive if either the mobile cap or
+             the grid density in `data/preloader.ts` changes. */
+          className="w-full max-w-[220px] text-[7px] opacity-0 transition-opacity duration-150 sm:max-w-[var(--preloader-max-w)] sm:text-[11px]"
           style={{
             display: "grid",
-            maxWidth: `${mask.maxWidth}px`,
+            "--preloader-max-w": `${mask.maxWidth}px`,
             aspectRatio: `${mask.width} / ${mask.height}`,
             fontFamily: "var(--font-jetbrains), ui-monospace, monospace",
-            fontSize: "11px",
             lineHeight: 1,
-            color: "#ffffff",
+            color: "var(--color-fg)",
             WebkitMaskImage: `url('${mask.src}')`,
             maskImage: `url('${mask.src}')`,
             WebkitMaskSize: "100% 100%",
             maskSize: "100% 100%",
             WebkitMaskRepeat: "no-repeat",
             maskRepeat: "no-repeat",
-          }}
+          } as React.CSSProperties}
         />
       </div>
     </>

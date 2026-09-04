@@ -80,9 +80,13 @@ export function ContactForm() {
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       update(name, e.target.value),
     className: cn(
-      "mt-2 w-full rounded-lg border bg-graphite/40 px-4 py-3 text-sm text-fg",
+      "mt-2 w-full rounded-surface border bg-graphite/40 px-4 py-3 text-sm text-fg",
       "placeholder:text-fg-muted focus:outline-none",
-      errors[name] ? "border-red-400/70 focus:border-red-400" : "border-line focus:border-accent",
+      /* `--color-danger` (Fase 1) replaces the site's one non-token colour:
+         `text-red-400` measured ~1.3:1 on the pale ground `/contact` renders
+         on, so a failed field and the error banner below were both
+         effectively invisible there. */
+      errors[name] ? "border-danger focus:border-danger" : "border-edge focus:border-accent-ink",
     ),
   });
 
@@ -92,7 +96,12 @@ export function ContactForm() {
     return (
       <div
         role="status"
-        className="rounded-lg border border-accent/40 bg-graphite/30 p-8 text-center"
+        /* Was `border-accent/40`: on the pale ground this form renders on,
+           amber measures 1.00:1 against it — the brand guide's own rule is
+           that amber never carries an ink or border role there, only a
+           filled plate does, so no amount of alpha fixes it. `border-edge`
+           is the token built to be a visible, meaningful border everywhere. */
+        className="rounded-surface border border-edge bg-graphite/30 p-8 text-center"
       >
         <p className="font-display text-xl font-semibold text-fg">
           {contactCopy.success.title}
@@ -103,7 +112,7 @@ export function ContactForm() {
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="mt-6 font-mono text-[11px] uppercase tracking-widest text-accent transition-opacity hover:opacity-70"
+          className="mt-6 font-mono text-[11px] uppercase tracking-widest text-accent-ink transition-opacity hover:opacity-70"
         >
           {contactCopy.success.again}
         </button>
@@ -119,7 +128,7 @@ export function ContactForm() {
         </label>
         <input {...field("name")} type="text" autoComplete="name" placeholder={contactCopy.placeholders.name} />
         {errors.name ? (
-          <p id={`${id}-name-error`} className="mt-2 text-xs text-red-400">{errors.name}</p>
+          <p id={`${id}-name-error`} className="mt-2 text-xs text-danger">{errors.name}</p>
         ) : null}
       </div>
 
@@ -129,7 +138,7 @@ export function ContactForm() {
         </label>
         <input {...field("email")} type="email" autoComplete="email" placeholder={contactCopy.placeholders.email} />
         {errors.email ? (
-          <p id={`${id}-email-error`} className="mt-2 text-xs text-red-400">{errors.email}</p>
+          <p id={`${id}-email-error`} className="mt-2 text-xs text-danger">{errors.email}</p>
         ) : null}
       </div>
 
@@ -139,7 +148,7 @@ export function ContactForm() {
         </label>
         <textarea {...field("message")} rows={6} placeholder={contactCopy.placeholders.message} />
         {errors.message ? (
-          <p id={`${id}-message-error`} className="mt-2 text-xs text-red-400">{errors.message}</p>
+          <p id={`${id}-message-error`} className="mt-2 text-xs text-danger">{errors.message}</p>
         ) : null}
       </div>
 
@@ -162,7 +171,7 @@ export function ContactForm() {
       </div>
 
       {status === "error" ? (
-        <p role="alert" className="text-sm text-red-400">
+        <p role="alert" className="text-sm text-danger">
           {contactCopy.errors.send}
         </p>
       ) : null}
@@ -171,7 +180,7 @@ export function ContactForm() {
         type="submit"
         aria-disabled={status === "sending"}
         className={cn(
-          "self-start rounded-full bg-accent px-8 py-3 font-mono text-xs uppercase tracking-widest text-on-accent",
+          "self-start rounded-control bg-accent px-8 py-3 font-mono text-xs uppercase tracking-widest text-on-accent",
           "transition-colors duration-200 hover:bg-accent-dim",
           status === "sending" && "cursor-not-allowed opacity-60",
         )}

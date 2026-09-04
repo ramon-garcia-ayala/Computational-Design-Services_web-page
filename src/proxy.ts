@@ -1,17 +1,46 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { proposalAccess } from "@/data/proposals/access";
 import { cookieName, getSecret, verifyToken } from "@/lib/proposal-auth";
+import {
+  PORTAL_SESSION_COOKIE,
+  PORTAL_SLUG_COOKIE,
+  getPortalSecret,
+  verifySessionToken,
+} from "@/lib/portal-auth";
 
 /**
- * Gatekeeper for client proposals. (In Next 16 this is `proxy`, the
- * replacement for `middleware`.)
+ * Gatekeeper for client proposals and the client portal. (In Next 16 this is
+ * `proxy`, the replacement for `middleware`.)
  *
- * It runs BEFORE the page is served, which is the only way the password means
- * anything: proposals are SSG and their HTML already contains all the content.
- * It also covers RSC requests for the same route, since they share a pathname.
+ * It runs BEFORE the page is served, which is the only way either check means
+ * anything: both are SSG/dynamic pages whose response would otherwise already
+ * carry the content. It also covers RSC requests for the same route, since
+ * they share a pathname.
  */
 export async function proxy(request: NextRequest) {
-  const slug = decodeURIComponent(request.nextUrl.pathname.slice(1));
+  const pathname = request.nextUrl.pathname;
+
+  /* The portal branch. `/portal` (the login) and `/portal/enter` (the magic
+     link redemption) are unauthenticated on purpose — they are how a session
+     gets created in the first place. Everything else under `/portal/*`
+     requires a verified session. */
+  if (pathname === "/portal" || pathname.startsWith("/portal/enter")) {
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/portal")) {
+    const secret = getPortalSecret();
+    const slug = request.cookies.get(PORTAL_SLUG_COOKIE)?.value;
+    const token = request.cookies.get(PORTAL_SESSION_COOKIE)?.value;
+
+    if (secret && slug && (await verifySessionToken(token, slug, secret))) {
+      return NextResponse.next();
+    }
+
+    return NextResponse.redirect(new URL("/portal", request.url));
+  }
+
+  const slug = decodeURIComponent(pathname.slice(1));
   const credentials = proposalAccess[slug];
 
   /* Any other route on the site, and proposals with no password configured,

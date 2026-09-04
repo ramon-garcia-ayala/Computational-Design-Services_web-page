@@ -23,13 +23,86 @@
      one colour that must stay dark when the light theme below inverts
      everything else, because its background is amber either way. */
   --color-on-accent: #2a2826;
+  /* The accent in its *ink* role — type, an underline, a hairline. Amber on
+     every dark ground, so here it is simply the accent. It exists as its own
+     token because on a mid-luminance ground amber cannot be ink at any size:
+     #e8a94a on #b8b4b1 is 1.00:1, identical luminance. `[data-site-pale]`
+     redefines this one and leaves `--color-accent` alone, which is what lets
+     the accent stay amber as a filled plate (7.14:1 with on-accent on it)
+     while its ink role is carried by something legible. */
+  --color-accent-ink: #e8a94a;
+  /* The focus ring, split out of `--color-accent` for the same reason. An
+     `outline` cannot be reached by a class-level override, so while this was
+     hardwired to the accent the keyboard focus indicator on /about and
+     /contact was amber on greige — 1.00:1, invisible. */
+  --color-focus: #e8a94a;
+  /* Borders that carry meaning: fields, controls, selected state. WCAG 1.4.11
+     wants 3:1 for those, and `--color-line` is 1.37:1 — right for a decorative
+     divider, wrong for an input. Keep the two apart.
+     Was `#5a6368`, 3.19:1 on carbon but only 2.93:1 on `--color-graphite` — a
+     bordered control drawn on a surface, not the page ground, fell under the
+     line it exists to clear. This value keeps ≥3.15:1 against both. */
+  --color-edge: #5e686d; /* 3.44:1 on carbon, 3.15:1 on graphite */
   --color-fg: #f2f4f0; /* primary text */
   --color-fg-muted: #8a918c; /* secondary text */
+  /* Error text and validation borders. Was `text-red-400` inline — the only
+     colour in the site's own UI that bypassed the token system, and on the
+     pale ground (`/contact`'s form) it measured ~1.3:1: every validation
+     message and the failure alert were unreadable. Scoped like `fg`/`accent-ink`
+     because a red tuned for this near-black ground goes invisible on the
+     lighter warm and pale grounds `[data-site-warm]`/`[data-site-pale]`
+     redefine below. */
+  --color-danger: #d25854; /* 4.92:1 on carbon, 4.51:1 on graphite */
 
-  /* Type: geometric for headings, neutral for body, mono for figures */
-  --font-display: var(--font-sora);
+  /* Type: geometric for headings, neutral for body, mono for figures.
+     Space Grotesk, not Sora — its squared, monolinear letterforms are the
+     closest match to the logo, and it was already sitewide chrome (Header,
+     MenuOverlay, LabFooter all rendered it via the now-retired `font-lab`
+     token on every route). Repointing this one line finishes that
+     consolidation instead of running two display faces side by side. */
+  --font-display: var(--font-space);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains);
+
+  /* One fluid scale, used everywhere. Before this, Home's design-lab panels
+     scaled with inline `clamp()` arbitrary values while every other route
+     stepped at breakpoints (`text-4xl sm:text-6xl lg:text-7xl`) — the same
+     heading changed *behaviour*, not just size, depending on the route. Steps
+     are derived from the existing extremes on both sides so nothing jumps.
+     `HeroOverlay`'s own two clamps are deliberately not on this scale — see
+     the comment at their call site.
+
+     **The vw coefficient decides where the ramp ends, and that is the whole
+     laptop story.** A `clamp()` stops growing at `max / coefficient`. The
+     first version of this scale ended its ramp at ~1300px on every heading
+     (display 4.6rem/5.6vw = 1314px, h1 1300, h2 1294, h3 1345) — which is
+     not "desktop", it is exactly where a 14" laptop lands: 1920 physical at
+     Windows' 150% scaling is 1280 CSS px, a 14" MacBook Pro is 1512, older
+     panels are 1366. So a laptop was being served the *full 32"-monitor
+     maximum* type on a canvas 30-50% narrower, and everything read as
+     cramped — while the 32" itself looked right, because there the same
+     maximum finally had the width it was drawn for.
+
+     The coefficients below end the ramp at ~1920px instead, so the laptop
+     band (1024-1440) sits mid-ramp and scales with its actual canvas.
+     `min` and `max` are deliberately untouched: the max is what the 32"
+     already renders and the min is what phones already render, so both ends
+     are byte-for-byte what they were and only the middle moves. ~1920 is
+     also the figure `HeroOverlay`'s own measured lockup clamp already ends
+     on (2.56rem/2.16vw = 1896px), so the hero and the scale now agree. */
+  --text-display: clamp(2.4rem, 3.8vw, 4.6rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.02em;
+  --text-h1: clamp(2.1rem, 3.25vw, 3.9rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h2: clamp(1.75rem, 2.3vw, 2.75rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h3: clamp(1.35rem, 1.55vw, 1.85rem);
+  --text-h3--line-height: 1.2;
+  --text-lead: clamp(1.15rem, 1.25vw, 1.5rem);
+  --text-lead--line-height: 1.55;
 
   /* The project's exact breakpoints: 640 / 1024 / 1440.
      `--breakpoint-*: initial` clears Tailwind's defaults (md, xl, 2xl) so that
@@ -39,6 +112,15 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1440px;
 
+  /* Shape: exactly two radii, everywhere. Before this the site carried six
+     values (`rounded-full`, `-lg`, `-xl`, `-md`, `-sm`, bare `rounded`) mixed
+     within single components — `ContactForm` and `ChatWidget` each used three.
+     Tokens rather than the Tailwind scale directly so the rule stays
+     greppable: any `rounded-*` other than these two is a violation to fix,
+     not a judgement call to make again. */
+  --radius-surface: 0.25rem; /* container, card, field, diagram node */
+  --radius-control: 9999px; /* button, chip, toggle, pill marker */
+
   /* `/design-lab` only. Prefixed `lab-*` deliberately: an unprefixed
      `--color-accent` etc. would collide with the live site's tokens above,
      repainting every CTA and focus ring on the real site the moment this
@@ -46,9 +128,26 @@
   --color-lab-bg: #b8b4b1;
   /* Type over the greige plate. The site's `fg` is near-white and would be
      illegible there, so the hero overlay needs its own dark pair. Charcoal
-     is the spec's `--color-structure` value (§3). */
+     is the spec's `--color-structure` value (§3).
+     `-muted` was `#57534e`, 3.71:1 — the exact ratio `[data-site-pale]` names
+     below as the failure it fixed for `--color-fg-muted`, on the identical
+     ground (`--color-lab-bg` and pale's `--color-carbon` are both #b8b4b1),
+     but the `lab-*` pair never got the same treatment. This reuses that
+     already-verified value rather than deriving a third one. */
   --color-lab-ink: #2a2826;
-  --color-lab-ink-muted: #57534e;
+  --color-lab-ink-muted: #4a4642; /* 4.54:1 on lab-bg, was 3.71:1 */
+  /* Decorative hairline on the greige, the counterpart of `--color-line` on
+     carbon — a rule that gives a section an edge without being read as
+     content. It is not derived: `[data-site-pale]` below already sets
+     `--color-line` for a ground of exactly this colour (its `--color-carbon`
+     and `--color-lab-bg` are both #b8b4b1), so this is that same verified
+     value, the way `-ink-muted` above borrows pale's `--color-fg-muted`.
+     1.40:1 on lab-bg, within a hair of the 1.37:1 `--color-line` measures on
+     carbon — the whole point being that a decorative rule reads the same
+     weight on both grounds. Anything a reader has to actually see still
+     takes `--color-edge`, which is what the header pills and the hero's
+     secondary CTA use on this plate. */
+  --color-lab-line: #9c9793;
 
   /* Panel plate (§13.2). Pure carbon read as flat black against the hero;
      this is a warm charcoal — clearly lighter than black, clearly darker
@@ -56,14 +155,13 @@
      page ending. Light type still passes on it comfortably. */
   --color-panel: #3d3934;
   --color-panel-line: #55504a;
-
-  /* `/design-lab`'s one typeface (spec §12.1): geometric and technical, to
-     sit with the logo's squared, monolinear letterforms. `--font-space` is
-     supplied by next/font from the design-lab page itself, not from the root
-     layout, so the live site neither loads it nor changes typeface — §12 is
-     design-lab only. Anything using `font-lab` outside that page gets the
-     fallback, which is the intended failure. */
-  --font-lab: var(--font-space), ui-sans-serif, system-ui, sans-serif;
+  /* Secondary ink on the panel plate. `--color-fg-muted` (#8a918c) is tuned
+     against carbon (6.08:1) and drops to 3.55:1 here — the panel is much
+     lighter than carbon, so the same grey that reads as "muted" on the page
+     ground fails outright on it. Every panel's captions and footnotes
+     (`text-fg/60`, `text-fg/70` in `Panels.tsx`) sit on this plate, not on
+     carbon, so they need their own ink rather than a dimmed `fg`. */
+  --color-panel-ink-muted: #ada79f; /* 4.80:1 on panel */
 }
 
 /* ---------------------------------------------------------------------------
@@ -125,7 +223,20 @@ html:has([data-design-lab]) body {
   --color-line: #55504a; /* borders */
   --color-line-soft: #494440; /* subtle borders, the background grid */
   --color-fg: #f2f4f0; /* primary text */
-  --color-fg-muted: #a8a29a; /* secondary text */
+  /* Was `#a8a29a`, 4.53:1 on this scope's own carbon but only 3.93:1 on its
+     `--color-graphite` — the same border-vs-surface gap `--color-edge` had,
+     just for text. This value clears 4.5:1 against both. */
+  --color-fg-muted: #b4aea5; /* 5.20:1 on carbon, 4.52:1 on graphite */
+  /* `--color-edge` has no dark-scope inheritance worth keeping: `#5e686d`
+     (this scope's inherited default) reads 1.87:1 here — the token built for
+     WCAG 1.4.11 failed it on the ground most of the site's routes actually
+     use. Every field, toggle and diagram border on `(site)` inherits from
+     this. */
+  --color-edge: #96918a; /* 3.66:1 on carbon, 3.18:1 on graphite */
+  /* See `--color-danger` in `@theme` — the dark-scope red is unreadable on
+     this ground's mid greys, so it gets its own value rather than a shared
+     one tuned for near-black. */
+  --color-danger: #ff9686; /* 5.43:1 on carbon, 4.71:1 on graphite */
 }
 
 html:has([data-site-warm]),
@@ -143,11 +254,28 @@ html:has([data-site-warm]) body {
    1.00:1 against it — identical luminance, invisible — and darkening it far
    enough to pass (#6b4206) stops it being the brand colour at all. But amber
    is only illegible as *ink*: as a button's background with dark type on it,
-   it is perfectly readable and still amber. So the token keeps its value and
-   only its use as a text or border colour is redirected, which is what the
-   two overrides below do.
+   it is perfectly readable and still amber. So `--color-accent` keeps its
+   value, and only the three tokens that carry the accent's *ink* role —
+   `--color-accent-ink`, `--color-focus`, `--color-edge` — are redirected
+   below. This replaced an earlier version that remapped `.text-accent` and
+   `.border-accent` directly: a class-level override cannot reach an
+   `outline`, so the focus ring stayed hardwired to amber and was invisible
+   on every control on this ground.
 --------------------------------------------------------------------------- */
-[data-site-pale] {
+/* `[data-site-pale-chrome]` reaches the same token values without the
+   `html:has()` background side effect below. `Header`'s `light` variant
+   stamps only the chrome variant: it always sits on the pale greige top
+   band, on *every* `(site)` route, not only /about and /contact — so before
+   this split, `html:has([data-site-pale])` matched on every route the
+   Header rendered on, and its background-color rule (same specificity as
+   `[data-site-warm]`'s, later in the file, so it won every tie) painted the
+   entire page pale greige instead of warm charcoal. `/projects`, `/services`,
+   `/labs`, `/labs/tool` and every project page were rendering on the wrong
+   page ground, sitewide, for as long as the Header's `light` variant has
+   existed — a single fixed strip's chrome scope was repainting content it
+   never visually touches. */
+[data-site-pale],
+[data-site-pale-chrome] {
   --color-carbon: #b8b4b1; /* page ground — the hero's plate */
   --color-graphite: #c1bdba; /* surfaces */
   --color-graphite-hi: #c9c5c2; /* elevated surface */
@@ -155,13 +283,15 @@ html:has([data-site-warm]) body {
   --color-line-soft: #aaa6a2; /* subtle borders, the background grid */
   --color-fg: #2a2826; /* primary text — 7.13:1 */
   --color-fg-muted: #4a4642; /* secondary text — 4.54:1, where #57534e was 3.71 */
-}
-
-[data-site-pale] .text-accent {
-  color: var(--color-fg);
-}
-[data-site-pale] .border-accent {
-  border-color: var(--color-fg);
+  --color-accent-ink: #2a2826; /* 7.13:1 — the fg colour carries the accent's ink role here */
+  --color-focus: #2a2826;
+  /* Was `#66615b`, 2.98:1 against carbon — under the 3:1 this token exists to
+     clear, by a margin small enough that it read as passing at a glance. This
+     value keeps ≥3.17:1 against both carbon and `--color-graphite`. */
+  --color-edge: #625d57; /* 3.17:1 on carbon, 3.49:1 on graphite */
+  /* See `--color-danger` in `@theme`. This ground is light, so the readable
+     direction inverts: a dark red, not a bright one. */
+  --color-danger: #900e0e; /* 4.52:1 on carbon, 4.99:1 on graphite */
 }
 
 html:has([data-site-pale]),
@@ -176,7 +306,7 @@ html:has([data-site-pale]) body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
 
@@ -208,6 +338,23 @@ html.lenis body {
 }
 
 /* ---------------------------------------------------------------------------
+   Custom cursor
+   The class is added by `CustomCursor.tsx` on mount and only ever on a device
+   that reports `(pointer: fine)` — a touch screen has no hovering pointer, so
+   it never gets this and keeps its native behaviour untouched. Nothing here
+   applies before hydration either, so a visitor with JS off keeps a real
+   cursor rather than losing one to a crosshair that will never be drawn.
+
+   `!important` because every `cursor-*` utility Tailwind emits is a single
+   class, the same specificity as the rule below: without it the winner would
+   be decided by stylesheet order, i.e. differently on different pages.
+--------------------------------------------------------------------------- */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+
+/* ---------------------------------------------------------------------------
    Project utilities
 --------------------------------------------------------------------------- */
 
@@ -235,6 +382,18 @@ html.lenis body {
     linear-gradient(to right, var(--color-line-soft) 1px, transparent 1px),
     linear-gradient(to bottom, var(--color-line-soft) 1px, transparent 1px);
   background-size: 64px 64px;
+}
+
+/* A strip that scrolls sideways and does not draw a bar for it.
+   The overflow itself is the affordance — a chip clipped at the edge says
+   there is more — and the 6px bar the site sets globally is styled for the
+   vertical case, where it sits in the gutter rather than across content.
+   Used by the panel's mobile section rail. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Initial state of the elements GSAP animates.
@@ -284,8 +443,12 @@ html.lenis body {
     transform: none !important;
   }
 
-  /* Sticky header and side index: noise on paper. */
-  [data-proposal-chrome] {
+  /* Sticky header and side index: noise on paper. `data-portal-chrome` is
+     the client portal's own attribute, kept separate from
+     `data-proposal-chrome` rather than reused — the two chrome scopes stay
+     independently toggleable even though they hide for the same reason. */
+  [data-proposal-chrome],
+  [data-portal-chrome] {
     display: none !important;
   }
 

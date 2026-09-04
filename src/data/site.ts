@@ -1,7 +1,7 @@
 /**
  * Global site constants.
  *
- * Contact: every mailto on the site goes to both partners at once, and the
+ * Contact: every mailto on the site goes to the studio address, and that
  * address is NEVER printed as visible text — not in the header, not in the
  * footer, not in the CTAs, not in the proposals. CTAs use `contactLabel`;
  * whoever clicks gets their mail client opened prefilled. This also keeps spam
@@ -14,8 +14,18 @@ export const site = {
   tagline: "We automate AEC. You ship faster.",
   subcopy:
     "We build custom automation tools and computational workflows for AEC firms, from parametric design pipelines to AI-driven systems.",
-  /** Short descriptor for the header and the metadata. */
-  descriptor: "Computational automation studio for architecture, engineering and construction.",
+  /**
+   * Short descriptor for the header and the two footers.
+   *
+   * It has to actually be short. The 78-character version this replaces was
+   * set `whitespace-nowrap` and absolutely centred in the header, so it took
+   * whatever width it needed and ran *underneath* the control cluster on the
+   * right — the tail of "construction" sat behind the controls at every
+   * width from 1024 up. Absolute centring is what makes the header's middle
+   * slot independent of the logo and the controls; the price is that this
+   * string is the only thing keeping it out of them.
+   */
+  descriptor: "Computational automation for AEC.",
   contactSubject: "Project inquiry",
   /** Visible text of any contact CTA. Never the address. */
   contactLabel: "Get in touch",
@@ -69,15 +79,21 @@ export const seo = {
   ],
 } as const;
 
-/** Recipients of every mailto on the site. Both of them, always. */
-export const contactRecipients = [
-  "gramonga4434@gmail.com",
-  "ramyayoub8@gmail.com",
-] as const;
+/**
+ * Recipients of every mailto on the site, and the default `to` for the
+ * contact form's own send (`/api/contact`, overridable with `CONTACT_TO`).
+ *
+ * One studio address, not the two partners' personal inboxes it used to
+ * carry: a shared address survives either partner being away, and it is the
+ * only address a visitor ever sees quoted back at them. The array shape is
+ * kept — `contactHref` joins it with commas — so adding a second recipient
+ * stays a one-line change.
+ */
+export const contactRecipients = ["info@r-xtech.com"] as const;
 
 /**
- * Builds a mailto to both partners with the given subject and, optionally, a
- * prewritten body.
+ * Builds a mailto to `contactRecipients` with the given subject and,
+ * optionally, a prewritten body.
  *
  * Each part is escaped on its own with `encodeURIComponent` rather than built
  * through `URLSearchParams`, which serialises a space as `+` — correct for a
@@ -103,6 +119,6 @@ export const MAILTO_MAX_CHARS = 1800;
 
 /** Social links. Emptying the array hides the block in the footer. */
 export const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/company/r-xtech/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/r-xtech" },
   { label: "Instagram", href: "https://www.instagram.com/r2xtech/" },
 ] as const;

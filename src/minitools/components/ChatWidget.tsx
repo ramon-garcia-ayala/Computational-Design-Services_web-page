@@ -68,7 +68,7 @@ function BuildProgress({ template }: { template: TemplateId }) {
   return (
     <div
       role="status"
-      className="flex items-center gap-3 rounded-xl border border-line bg-carbon/50 px-4 py-3"
+      className="flex items-center gap-3 rounded-surface border border-edge bg-carbon/50 px-4 py-3"
     >
       <span aria-hidden="true" className="flex items-center gap-1">
         {[0, 1, 2].map((dot) => (
@@ -84,7 +84,7 @@ function BuildProgress({ template }: { template: TemplateId }) {
           and this region is atomic, so announcing it would re-read the whole
           panel on every tick for as long as the build runs. The rotating line
           above carries the same information at a readable pace. */}
-      <span aria-hidden="true" className="font-mono text-xs tabular-nums text-accent">
+      <span aria-hidden="true" className="font-mono text-xs tabular-nums text-accent-ink">
         {elapsed.toFixed(1)}s
       </span>
     </div>
@@ -411,7 +411,7 @@ export function ChatWidget() {
                   <button
                     type="button"
                     onClick={() => void send(suggestion)}
-                    className="rounded-full border border-line px-3 py-1.5 text-xs text-fg-muted transition-colors duration-200 hover:border-accent hover:text-accent"
+                    className="rounded-control border border-edge px-3 py-1.5 text-xs text-fg-muted transition-colors duration-200 hover:border-accent-ink hover:text-accent-ink"
                   >
                     {suggestion}
                   </button>
@@ -429,7 +429,10 @@ export function ChatWidget() {
                 <div
                   className={
                     entry.role === "user"
-                      ? "max-w-[85%] rounded-xl rounded-br-sm bg-graphite-hi px-3 py-2 text-sm text-fg"
+                      ? /* Was `rounded-xl rounded-br-sm` — the one asymmetric
+                           corner in the design system, a messaging-app idiom
+                           this site's shape language otherwise never uses. */
+                        "max-w-[85%] rounded-surface bg-graphite-hi px-3 py-2 text-sm text-fg"
                       : "max-w-[92%] text-sm leading-relaxed text-fg-muted"
                   }
                 >
@@ -443,7 +446,7 @@ export function ChatWidget() {
                       href={entry.href}
                       /* `flex w-fit`, not inline: on its own line below the
                          title instead of crowding the last line of text. */
-                      className="mt-3 flex w-fit items-center gap-2 rounded-full bg-accent px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim"
+                      className="mt-3 flex w-fit items-center gap-2 rounded-control bg-accent px-4 py-2 font-mono text-xs tracking-wide text-on-accent uppercase transition-colors duration-200 hover:bg-accent-dim"
                     >
                       {entry.linkLabel ?? widgetCopy.openTool}
                       <span aria-hidden="true">→</span>
@@ -455,8 +458,11 @@ export function ChatWidget() {
 
             {pending && !busy ? (
               <li>
-                <div className="rounded-xl border border-accent/40 bg-carbon/50 px-4 py-3">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+                {/* Was `border-accent/40` — the same low-alpha accent border
+                    the pale-ground findings turned up elsewhere; solid
+                    `accent-ink` reads clearly regardless of scope. */}
+                <div className="rounded-surface border border-accent-ink bg-carbon/50 px-4 py-3">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
                     {widgetCopy.confirm.lead}
                   </p>
                   {/* The router's own sentence leads, because it is the only
@@ -480,14 +486,14 @@ export function ChatWidget() {
                       ref={buildRef}
                       type="button"
                       onClick={() => void build()}
-                      className="rounded-full bg-accent px-4 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim"
+                      className="rounded-control bg-accent px-4 py-2 font-mono text-xs tracking-wide text-on-accent uppercase transition-colors duration-200 hover:bg-accent-dim"
                     >
                       {widgetCopy.confirm.build}
                     </button>
                     <button
                       type="button"
                       onClick={decline}
-                      className="rounded-full border border-line px-4 py-2 font-mono text-xs tracking-wide text-fg-muted uppercase transition-colors duration-200 hover:border-accent hover:text-accent"
+                      className="rounded-control border border-edge px-4 py-2 font-mono text-xs tracking-wide text-fg-muted uppercase transition-colors duration-200 hover:border-accent-ink hover:text-accent-ink"
                     >
                       {widgetCopy.confirm.refine}
                     </button>
@@ -537,15 +543,18 @@ export function ChatWidget() {
             }
           }}
           className={cn(
-            "max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-line bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none",
+            "max-h-24 min-h-9 flex-1 resize-none rounded-surface border border-edge bg-carbon/60 px-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent-ink focus:outline-none",
             busy && "opacity-50",
           )}
         />
+        {/* Was `rounded-lg` — the Build button two states up the tree is a
+            pill (`rounded-control`), and this is the same kind of action;
+            they read as two different UI systems in one widget. */}
         <button
           type="submit"
           aria-disabled={busy || draft.trim().length === 0}
           className={cn(
-            "rounded-lg bg-accent px-3 py-2 font-mono text-xs tracking-wide text-carbon uppercase transition-colors duration-200 hover:bg-accent-dim",
+            "rounded-control bg-accent px-3 py-2 font-mono text-xs tracking-wide text-on-accent uppercase transition-colors duration-200 hover:bg-accent-dim",
             (busy || draft.trim().length === 0) && "cursor-not-allowed opacity-40",
           )}
         >

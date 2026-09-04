@@ -15,12 +15,12 @@ export function ProjectIntro({ project }: { project: Project }) {
         <Reveal>
           <Link
             href="/projects"
-            className="font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors hover:text-accent"
+            className="font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors hover:text-accent-ink"
           >
             ← All projects
           </Link>
 
-          <h1 className="mt-8 max-w-4xl font-display text-4xl leading-[1.05] font-semibold tracking-tight text-fg sm:text-6xl lg:text-7xl">
+          <h1 className="mt-8 max-w-4xl text-display font-display font-semibold text-fg">
             {project.title}
           </h1>
 
@@ -59,7 +59,7 @@ export function ProjectIntro({ project }: { project: Project }) {
                 is 1254x1313, which at full shell width would be a screen and a
                 half tall before the brief below it started. */}
             <div
-              className="relative max-h-[72vh] w-full overflow-hidden rounded-lg border border-line bg-graphite"
+              className="relative max-h-[72vh] w-full overflow-hidden rounded-surface border border-line bg-graphite"
               style={{ aspectRatio: `${cover.width} / ${cover.height}` }}
             >
               {/* The LCP of a project page, so it loads eagerly and is the one
@@ -80,7 +80,7 @@ export function ProjectIntro({ project }: { project: Project }) {
             rather than as a second lead: it is the long read under the hook
             above, not a repeat of it. */}
         <Reveal stagger="[data-reveal]" className="mt-20 max-w-2xl">
-          <p className="reveal-init font-mono text-[10px] uppercase tracking-widest text-accent" data-reveal>
+          <p className="reveal-init font-mono text-[10px] uppercase tracking-widest text-accent-ink" data-reveal>
             Brief
           </p>
           {project.brief.map((paragraph) => (

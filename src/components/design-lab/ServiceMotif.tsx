@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { cn } from "@/lib/utils";
 
 export type MotifKind =
   | "network"
@@ -60,7 +61,21 @@ function rng(seed: number): () => number {
  * and GSAP can drive SVG attributes directly — a canvas each would mean four
  * more render loops for no visual gain.
  */
-export function ServiceMotif({ kind }: { kind: MotifKind }) {
+export function ServiceMotif({
+  kind,
+  /**
+   * Overrides the default 120x60 box.
+   *
+   * Everything inside is authored in viewBox units — `strokeWidth="0.6"`, the
+   * node radii — so the whole constellation scales with the frame and stays
+   * proportionate. The default is kept rather than removed so any caller that
+   * does not care about size still gets the original figure.
+   */
+  className,
+}: {
+  kind: MotifKind;
+  className?: string;
+}) {
   const rootRef = useRef<SVGSVGElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -212,7 +227,7 @@ export function ServiceMotif({ kind }: { kind: MotifKind }) {
       ref={rootRef}
       viewBox="0 0 120 60"
       aria-hidden="true"
-      className="h-[60px] w-[120px] overflow-visible"
+      className={cn("h-[60px] w-[120px] overflow-visible", className)}
     >
       {links.map(([a, b], i) => (
         <line

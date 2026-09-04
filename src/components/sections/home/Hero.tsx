@@ -17,13 +17,13 @@ export function Hero() {
       {/* Background: CSS grid always present + optional R3F scene on top */}
       <div className="grid-bg absolute inset-0 opacity-50" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,rgba(232,169,74,0.07),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,color-mix(in_srgb,var(--color-accent)_7%,transparent),transparent_60%)]"
         aria-hidden="true"
       />
 
       <div className="shell relative grid w-full items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
             Computational automation · AEC
           </p>
 
@@ -46,7 +46,11 @@ export function Hero() {
             </CTALink>
           </div>
 
-          <ScrollCue className="mt-14 hidden sm:flex" />
+          {/* `mt-10`, not the `mt-14` this carried while `ScrollCue` was a
+              horizontal row. Stacking the label over the chevron made the cue
+              about 20px taller, which pushed the chevron off the bottom of
+              this hero at 675px — the label was left pointing at nothing. */}
+          <ScrollCue className="mt-10 hidden sm:flex" />
         </div>
 
         {/* Right column: the chat slot with the decorative scene behind it */}

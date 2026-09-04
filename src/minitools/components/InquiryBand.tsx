@@ -88,11 +88,11 @@ export function InquiryBand({
       <div aria-hidden="true" className="grid-bg pointer-events-none absolute inset-0 opacity-40" />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_115%,rgba(232,169,74,0.16),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_115%,color-mix(in_srgb,var(--color-accent)_16%,transparent),transparent_70%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,rgba(232,169,74,0.55),transparent)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--color-accent)_55%,transparent),transparent)]"
       />
       <div
         aria-hidden="true"
@@ -101,18 +101,18 @@ export function InquiryBand({
 
       <div className="shell relative py-24 sm:py-32 lg:py-40">
         <div className="max-w-4xl">
-          <p className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-accent">
+          <p className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-accent-ink">
             <span aria-hidden="true" className="h-px w-8 bg-accent/60" />
             <span>
-              {inquiryCopy.kicker} R<sup className="text-accent">2</sup>&#967;TECH
+              {inquiryCopy.kicker} R<sup className="text-accent-ink">2</sup>&#967;TECH
             </span>
           </p>
 
           <h2
             id="inquiry-title"
-            className="mt-6 font-display text-4xl leading-[0.95] font-semibold tracking-tight text-fg sm:text-6xl lg:text-7xl"
+            className="mt-6 text-display font-display font-semibold text-fg"
           >
-            {headline} <span className="text-accent">{headlineAccent}</span>
+            {headline} <span className="text-accent-ink">{headlineAccent}</span>
           </h2>
 
           <p className="mt-7 max-w-2xl text-base leading-relaxed text-fg-muted sm:text-lg">{body}</p>
@@ -139,7 +139,7 @@ export function InquiryBand({
                       name: cleanVisitorField(event.target.value, VISITOR_FIELD_LIMITS.name),
                     }))
                   }
-                  className="mt-2 w-full rounded-full border border-line bg-graphite px-5 py-3 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none"
+                  className="mt-2 w-full rounded-surface border border-edge bg-graphite px-5 py-3 text-sm text-fg placeholder:text-fg-muted focus:border-accent-ink focus:outline-none"
                 />
               </div>
 
@@ -166,7 +166,7 @@ export function InquiryBand({
                       email: cleanVisitorField(event.target.value, VISITOR_FIELD_LIMITS.email),
                     }))
                   }
-                  className="mt-2 w-full rounded-full border border-line bg-graphite px-5 py-3 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none"
+                  className="mt-2 w-full rounded-surface border border-edge bg-graphite px-5 py-3 text-sm text-fg placeholder:text-fg-muted focus:border-accent-ink focus:outline-none"
                 />
               </div>
             </div>

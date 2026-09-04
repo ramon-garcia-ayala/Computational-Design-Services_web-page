@@ -1,9 +1,28 @@
 /**
- * Asset configuration and copy for the `/design-lab` prototype.
+ * Asset configuration and copy for the Home page.
  *
- * Isolated sandbox route: nothing here is imported by the live site, and the
- * route is not linked from it. Per repo convention the component holds no
- * copy and no asset paths of its own — they live here.
+ * The name is historical: this began as the `/design-lab` prototype route and
+ * was promoted to `/`. Per repo convention the components hold no copy and no
+ * asset paths of their own — they live here.
+ *
+ * Home is a sandwich: two cinema stretches around a document band.
+ *
+ *   CINE      hero sequence · proof strip  ->  "the problem" panel
+ *   DOCUMENT  services · work · about
+ *   CINE      closing panel
+ *
+ * There used to be a Playground panel between the document band and Closing
+ * — the chat assistant, "try it yourself". It now lives at `/labs` instead,
+ * reachable only from the menu, not from Home's own scroll; see
+ * `src/data/labs.ts`.
+ *
+ * The cine panels are 100svh stages that morph up over what precedes them.
+ * The document band is ordinary flow, and that is the point: a panel is a
+ * fixed viewport with its overflow hidden, so anything taller than the screen
+ * is *clipped*, not scrolled. Services with deliverables and three work cards
+ * do not fit that format — they used to be panels, and the top of each one
+ * was silently cut off. Content that has to be read lives in the band;
+ * content that has to land lives in a panel.
  */
 
 import { founders } from "./founders";
@@ -42,19 +61,45 @@ export const designLab = {
     height: 611,
   },
 
-  /* Spec §11.3 / §11.1. Shown over the sequence from the first frame. */
+  /* Shown over the sequence from the first frame.
+     `headline` is the positioning line; below it sits one of two copy
+     blocks, and which one depends on the width.
+
+     `description` is the spec's own paragraph (§11.1) and is what shows from
+     `sm` up. It was cut once because it ran under the geodesic — it was set
+     to `max-w-lg` (32rem) at every width, and the model owns the middle of
+     the plate, so the last third of every line was over mesh. That was a
+     sizing bug rather than a copy problem: the space between the column and
+     the mesh is 24.2rem at 1280px and 29.1rem at 1920, so 32rem overflowed
+     at *every* width up to 2560. `HeroOverlay` now caps the measure against
+     that gap instead, and the paragraph is back.
+
+     `outcome` is the short line that replaced it, kept for below `sm`. On a
+     phone the lockup has to fit between the header and the top of the model
+     — roughly 34px of margin on a 390x844 — and three sentences do not,
+     whatever they are set at. One line does. Same reason the secondary CTA
+     is desktop-only. */
   hero: {
     logoAlt: "R²χTECH",
     headline: "Architecture, computed.",
     description:
       "We are a computational studio embedded in architecture, engineering, and construction. We build the parametric pipelines, model automations, and AI-driven systems.",
+    outcome: "We automate AEC. You ship faster.",
+    /* The hero had no call to action at all: four screen-heights of the most
+       expensive real estate on the site, and nothing to click. */
+    ctaPrimary: { label: "Start a project", href: "/contact" },
+    ctaSecondary: { label: "See what we build", href: "#services" },
   },
 
-  /* The bar in the transition between the hero and the first panel.
-     Deliberately unrelated to `data/stats.ts` and `data/awards.ts`: those hold
+  /* Deliberately unrelated to `data/stats.ts` and `data/awards.ts`: those hold
      the original mockup's placeholder figures and are still wired to
      `/archive-home`. These are the real ones, and reusing that shape would
-     have tied the live page to numbers nobody has verified. */
+     have tied the live page to numbers nobody has verified.
+
+     They sit inside the document band now, not in the gap between the hero and
+     the first panel. In that gap they were readable for about one gesture
+     before the panel rose over them — proof that scrolls past unread is not
+     proof. */
   stats: [
     { id: "founded", value: "2026", label: "Founded" },
     { id: "market", value: "US", label: "First market" },
@@ -63,110 +108,210 @@ export const designLab = {
       id: "countries",
       value: "3",
       label: "Countries",
-      /* Revealed on hover in place of the label. Kept in the DOM either way,
-         so assistive tech gets the names without needing the pointer. */
+      /* Rendered under the label in the proof strip, not swapped in on hover —
+         a hover-only reveal on a non-focusable stat had no keyboard
+         equivalent. */
       detail: "Lebanon · Mexico · US",
     },
   ],
 
-  /* Spec §11.1. `from`/`to` are 1-based frame numbers, matching how the spec
-     and the filenames count. The component converts them to scroll progress,
-     so the ranges stay readable against the spec rather than being pre-baked
-     into fractions nobody can check. Statement 2 deliberately runs to the
-     last frame: it is still on screen when the first panel rises over it. */
+  /* `from`/`to` are 1-based frame numbers, matching how the spec and the
+     filenames count. The component converts them to scroll progress, so the
+     ranges stay readable against the spec rather than being pre-baked into
+     fractions nobody can check.
+
+     Staged, not concurrent: the first fades out and the second answers it.
+     `HeroOverlay` already handles both halves of that — a statement whose
+     `to` lands before the final frame gets its own fade-out (the `to < 1`
+     branch), and one that runs to 96 is simply carried into the first panel.
+
+     **Both statements have to open and close while the canvas is still
+     centred.** The stage is `sticky` and 100svh inside a 260svh wrapper, so
+     it holds still for `260 - 100 = 160svh` and only then scrolls away —
+     and the tween is scrubbed across the wrapper's *full* height
+     (`end: "bottom top"`, deliberately, so the frames keep advancing while
+     the canvas leaves). Progress 0.615 is where the canvas releases;
+     anything after that animates on a model that is already moving off.
+
+     Laid out against that 160svh, in scroll rather than frames:
+
+       lockup out   0 ->  47svh
+       statement 1  52svh in, held 62 -> 94, gone by 104svh
+       statement 2  115svh in, held 125 -> 146, gone by 153svh
+       release      160svh  (7svh after the last word clears)
+
+     Frames 57-96 then play over the exit, 160 -> 260svh.
+
+     The runway is derived from these numbers, not the other way round — see
+     `FrameCanvas`. Move a frame here and the height there has to be
+     re-derived, or the second statement ends up finishing after the canvas
+     has let go, which is exactly what used to happen: at frame 60 on the old
+     140svh runway it reached full opacity three svh *after* leaving the top
+     of the screen, so it was never actually seen.
+
+     The wording is the spec's own (§11.1). An intermediate version replaced
+     both with benefit lines ("Hours back, every week." / "Tools your team
+     keeps.") on the argument that these are the only words on screen for two
+     viewports and should sell rather than set a mood; the copy here is the
+     original brief restored.
+
+     **Length is a layout constraint, not a style preference.**
+     `HeroOverlay` sets these `whitespace-nowrap`, so they can never wrap:
+     the clamp floor has to fit the longest line at 375px, and
+     `FrameCanvas`'s `LOCKUP_SAFE_RIGHT` — the margin that keeps the
+     geodesic's mesh out from under this text on a laptop — is measured
+     against the longest line at the clamp *ceiling*. "Design that scales
+     itself." is 26 characters against the 23 of the line it replaced, so
+     that constant was re-measured with it. Changing this copy means
+     re-measuring it again. */
   statements: [
-    { id: "complexity", text: "Complexity, computed.", from: 20, to: 45, side: "right" },
-    { id: "scales", text: "Design that scales itself.", from: 60, to: 96, side: "left" },
+    { id: "complexity", text: "Complexity, computed.", from: 20, to: 39, side: "right" },
+    { id: "scales", text: "Design that scales itself.", from: 43, to: 57, side: "left" },
   ],
 
-  /* Spec §11.5–11.9, in scroll order. `kind` picks the body component; the
-     copy for each lives with it here. */
-  /* No panel carries an index number any more (§13.1): the eyebrow is the
-     category alone. */
   panels: {
+    /* CINE. The manifesto that was stranded on `/archive-home`: the sharpest
+       sentence written for this studio, and the live landing page never
+       showed it. One panel, two blocks, nothing else — it is the turn from
+       atmosphere to argument. */
+    problem: {
+      id: "problem",
+      kicker: "The problem",
+      lead: "AEC teams lose their best hours to work that software should be doing.",
+      body: "We build the pipelines, automations and AI systems that take that work off your team — and hand them over documented, so they keep running without us.",
+    },
+
+    /* DOCUMENT. Four cards, motif first.
+
+       **`body` is still here, and Home no longer renders it.** That is not an
+       oversight: `/services` reads these same four items and merges them with
+       `data/capabilities.ts` into one ten-card grid, where every card needs a
+       sentence — deleting the field breaks that page, and giving that page its
+       own copy would hand the site two answers to the same question.
+
+       Home drops it because on Home it is the second of two registers saying
+       the same thing: a sentence, and under it four deliverables saying it
+       concretely. The sentence was also what forced the layout — a paragraph
+       needs a prose measure, which is what turned four services into four
+       full-width rows running to roughly three screens, with the figure that
+       is supposed to say what each service does sitting at 120x60 underneath
+       the words. */
     services: {
       id: "services",
       kicker: "Services",
       title: "What we build",
-      /* `motif` picks the animated figure above each card (§13.2). They are
+      /* `motif` picks the animated figure at the top of each card. They are
          behaviours, not decorations: the motion is meant to say what the
          service does, so a card keeps the one that matches it. */
       items: [
         {
           name: "Computational Design",
           motif: "network" as const,
-          body: "Parametric modeling and generative workflows that turn design intent into explorable, optimizable systems.",
+          body: "Design logic encoded once, reused across every revision.",
+          deliverables: [
+            "Grasshopper and Dynamo, built for handover",
+            "Rhino.Compute geometry services",
+            "Option studies and browser configurators",
+            "Fabrication and CNC-ready export",
+          ],
         },
         {
           name: "Design Automation",
           motif: "pipeline" as const,
-          body: "Custom tools and scripts that eliminate repetitive work across your studio's modeling, documentation, and delivery pipeline.",
+          body: "Model work that runs on its own, overnight and unattended.",
+          deliverables: [
+            "Revit and IFC tooling via API",
+            "Automated model quality audits",
+            "Parameter and classification management",
+            "Drawing and schedule generation",
+          ],
         },
         {
           name: "AI-Driven Design Tools",
           motif: "inference" as const,
-          body: "AI-assisted generation, analysis, and decision-making built directly into your design process, from massing studies to facade systems.",
+          body: "AI where it earns its place: document-heavy, judgement-light, reviewed by a human.",
+          deliverables: [
+            "Document and drawing extraction",
+            "Retrieval over standards and archives",
+            "Takeoff, compliance and review agents",
+            /* Was "Evaluation harnesses, so quality stays measurable" — the
+               longest line in the set by eight characters, and in a 300px
+               column that is what decides whether a card runs to three rows
+               of text or four. */
+            "Evaluation harnesses for measurable quality",
+          ],
         },
         {
           name: "Custom Software & Plugins",
           motif: "assembly" as const,
-          body: "Bespoke Grasshopper, Revit, and Rhino tooling built for your specific studio workflow, not off-the-shelf.",
+          body: "Bespoke tooling, and the connective work that moves data between your systems.",
+          deliverables: [
+            "Custom connectors and ETL",
+            "Project dashboards and reporting",
+            "Common data environment integration",
+            "Cost, programme and model data joined",
+          ],
         },
       ],
     },
 
-    labs: {
-      id: "labs",
-      kicker: "Playground",
-      title: "Try it yourself",
-      /* Transcoded from the supplied .mov: the source is HEVC, which Chrome
-         and Firefox cannot decode at all, so the container was never the
-         problem — the codec was. See scripts note in the panels README. */
-      video: "/videos/panels/labs-loop.mp4",
-    },
+    /* DOCUMENT. Was `featured` — three images with a caption, no result and
+       no context, in a panel that clipped the top 40% of every one of them.
 
-    /* Spec §11.7: present but intentionally blank. Kept in the scroll order
-       so the rhythm of the page is the real one while the content is decided. */
-    featured: {
-      id: "featured",
-      kicker: "Featured work",
-      title: "",
-      /* A showcase strip, deliberately not the `/projects` system: no routes,
-         no detail pages, no entries in `data/projects.ts`. Three images and a
-         line each, nothing clickable.
-
-         `animated` marks the one that must bypass Next's image optimiser —
-         it re-encodes a GIF to a still by default, which would silently drop
-         all 99 frames and leave a frozen first frame that still looks like a
-         working image. */
+       These are research projects, not client engagements, and the page says
+       so: every card carries its `context` and the line under it is a
+       *finding*, never a business metric. `result` is quoted from the
+       project's own write-up in `data/projects.ts` where one exists —
+       inventing "saved 40% of hours" for an IAAC thesis would be a lie on a
+       page whose entire job is to be believed. */
+    work: {
+      id: "work",
+      kicker: "Selected work",
+      title: "What it produced",
       items: [
         {
           id: "spatial-flow",
           src: "/projects/spatial-flow.gif",
           animated: true,
           title: "Spatial Flow",
-          caption: "AI-driven layout optimization for industrial environments.",
+          context: "IAAC · Barcelona",
+          /* `projects.ts`, panel `outcome`, verbatim intent. */
+          result:
+            "Several defensible layouts, and the reasoning behind each — a comparison, not a verdict.",
           alt: "Generated industrial layouts cycling through machine, workstation and circulation arrangements as the agent searches for a better configuration.",
         },
         {
           id: "hyper-building-automation",
-          src: "/projects/hyper-building-automation.jpg",
+          src: "/projects/hyper-building-automation.gif",
           animated: false,
           title: "Hyper Building Automation",
-          caption: "Automated data workflow linking structural and façade teams.",
+          /* This one is not in `projects.ts` — it is a loose file in
+             `public/projects/`, so there is no write-up to quote and no
+             verified context string. The line below is its existing caption,
+             which describes what the pipeline does rather than what it
+             showed. It needs a real finding in the studio's own words before
+             this section is published. */
+          context: "Studio pipeline",
+          result:
+            "An automated data workflow linking the structural and façade teams off one published model version.",
           alt: "An automated pipeline extracting and distributing data from published 3D model versions across structural and façade teams.",
         },
         {
           id: "la-cite-radieuse",
           src: "/projects/la-cite-radieuse-topology.png",
           animated: false,
-          title: "La Cité Radieuse — Topology",
-          caption: "Spatial-graph analysis of circulation and connectivity.",
+          title: "La Cité Radieuse",
+          context: "IAAC · Barcelona",
+          /* `projects.ts`, panel `prediction`, verbatim intent. */
+          result:
+            "Where the models predict a room's function, the plan's logic is legible in its topology alone.",
           alt: "Floor plans of the Unité d'Habitation converted into spatial graphs, showing circulation and connectivity between apartments and rooms.",
         },
       ],
     },
 
+    /* DOCUMENT. Moved out of the cine stretch: it is information, not
+       spectacle, and it was the panel most likely to overflow its viewport. */
     about: {
       id: "about",
       kicker: "About",
@@ -179,16 +324,15 @@ export const designLab = {
       founders,
     },
 
+    /* CINE. */
     closing: {
       id: "closing",
       kicker: "Next",
-      /* §13.6, same arrangement as the Labs loop. */
       video: "/videos/panels/closing-loop.mp4",
       body: "We're already thinking in code. Let's think about your project next.",
-      /* §11.9 specifies `/contact`, which does not exist yet; the mailto is
-         what every other CTA on the site uses. Swap to the route when it
-         exists. */
-      cta: "Contact us →",
+      /* A second, lower-friction way in beside the primary CTA. Someone not
+         ready to write an email will still open a page. */
+      secondary: { label: "See the work", href: "/projects" },
     },
   },
 };

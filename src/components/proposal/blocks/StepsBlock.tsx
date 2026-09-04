@@ -40,11 +40,13 @@ function FlowSteps({ block }: { block: StepsBlockData }) {
           data-reveal
         >
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent bg-carbon font-mono text-xs text-accent">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent-ink bg-carbon font-mono text-xs text-accent-ink">
               {step.number}
             </span>
+            {/* Was `bg-line` — same 1.38:1 connector failure as
+                `FlowDiagram`'s rail. This one *is* the pipeline read. */}
             {index < block.steps.length - 1 ? (
-              <span aria-hidden="true" className="h-px flex-1 bg-line" />
+              <span aria-hidden="true" className="h-px flex-1 bg-edge" />
             ) : null}
           </div>
 
@@ -72,8 +74,9 @@ function FlowSteps({ block }: { block: StepsBlockData }) {
 function ListSteps({ block }: { block: StepsBlockData }) {
   return (
     <div className="relative mt-12 max-w-3xl">
+      {/* Was `bg-line` — same connector failure, chaining the whole column. */}
       <div
-        className="absolute top-5 bottom-5 left-5 w-px bg-line"
+        className="absolute top-5 bottom-5 left-5 w-px bg-edge"
         aria-hidden="true"
       />
 
@@ -84,7 +87,7 @@ function ListSteps({ block }: { block: StepsBlockData }) {
             className="reveal-init grid grid-cols-[2.5rem_1fr] gap-5 pb-8 last:pb-0"
             data-reveal
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-accent bg-carbon font-mono text-xs text-accent">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-accent-ink bg-carbon font-mono text-xs text-accent-ink">
               {step.number}
             </span>
 

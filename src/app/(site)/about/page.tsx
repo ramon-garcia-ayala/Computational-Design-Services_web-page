@@ -31,7 +31,7 @@ export default function AboutPage() {
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-20">
         <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
         <div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_25%_35%,rgba(232,169,74,0.06),transparent_60%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_25%_35%,color-mix(in_srgb,var(--color-accent)_6%,transparent),transparent_60%)]"
           aria-hidden="true"
         />
         <div className="shell relative">
@@ -51,7 +51,7 @@ export default function AboutPage() {
               </Reveal>
 
               <Reveal className="mt-16">
-                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-accent">
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-accent-ink">
                   {about.storyKicker}
                 </p>
                 {about.story.map((paragraph, i) => (
@@ -81,7 +81,7 @@ export default function AboutPage() {
       <section className="relative border-y border-line py-10 sm:py-12">
         <div className="shell">
           <Reveal>
-            <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent sm:text-sm">
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent-ink sm:text-sm">
               {about.facts}
             </p>
           </Reveal>
@@ -116,7 +116,7 @@ export default function AboutPage() {
                       <h3 className="font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
                         {founder.name}
                       </h3>
-                      <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
+                      <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-ink">
                         {founder.title}
                       </p>
                       <p className="text-justify hyphens-auto mt-5 text-sm leading-relaxed text-fg-muted sm:text-base">

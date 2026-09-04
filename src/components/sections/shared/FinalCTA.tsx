@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { CTALink } from "@/components/ui/CTALink";
-import { mailtoHref, site } from "@/data/site";
+import { site } from "@/data/site";
 
 /**
  * Closing CTA, right before the footer. It is reused across several pages,
@@ -19,14 +19,14 @@ export function FinalCTA({
         <div className="grid-bg absolute inset-0 opacity-30" aria-hidden="true" />
 
         <Reveal className="relative max-w-3xl">
-          <h2 className="font-display text-3xl leading-[1.1] font-semibold tracking-tight text-fg sm:text-5xl lg:text-6xl">
+          <h2 className="text-h1 font-display font-semibold text-fg">
             {title}
           </h2>
           <p className="text-justify hyphens-auto mt-6 max-w-xl text-base leading-relaxed text-fg-muted sm:text-lg">
             {body}
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <CTALink href={mailtoHref} variant="solid" size="lg" external>
+            <CTALink href="/contact" variant="solid" size="lg">
               {site.contactLabel}
             </CTALink>
             <span className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">

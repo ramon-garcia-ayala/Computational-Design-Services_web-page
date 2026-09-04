@@ -12,7 +12,7 @@ export function AwardsMetrics() {
         <div>
           <h2
             id="awards-heading"
-            className="font-mono text-[10px] uppercase tracking-widest text-accent"
+            className="font-mono text-[10px] uppercase tracking-widest text-accent-ink"
           >
             Recognition
           </h2>
@@ -41,7 +41,7 @@ export function AwardsMetrics() {
         </div>
 
         <div>
-          <h2 className="font-mono text-[10px] uppercase tracking-widest text-accent">
+          <h2 className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
             Studio metrics
           </h2>
 

@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Sora, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 import { seo, site } from "@/data/site";
 
-/* Fonts exposed as CSS variables and consumed from the @theme in globals.css */
-const sora = Sora({
-  variable: "--font-sora",
-  subsets: ["latin"],
-  display: "swap",
-});
-
+/* Fonts exposed as CSS variables and consumed from the @theme in globals.css.
+   Sora was retired here: it and Space Grotesk were both loaded as display
+   faces with nothing declaring which was the brand face, and Space Grotesk was
+   already sitewide chrome (Header, MenuOverlay, LabFooter all rendered it via
+   `font-lab`, now folded into `--font-display`) — this removes the duplicate
+   instead of keeping two. */
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -76,26 +76,31 @@ export default function RootLayout({
     /* The font variables belong on <html>, not <body>.
 
        Tailwind v4 declares every `@theme` token on `:root`, so
-       `--font-display: var(--font-sora)` is substituted *there*. next/font's
+       `--font-display: var(--font-space)` is substituted *there*. next/font's
        classes were on <body>, one level below — and a `var()` on :root cannot
        see a variable defined on a descendant. Every font token was therefore
        invalid at computed-value time and silently fell back: measured, `h1`
-       and `body` alike were resolving to the system stack, so Sora, Inter and
-       JetBrains never actually rendered anywhere on the site. Moving the
+       and `body` alike were resolving to the system stack, so none of the
+       loaded faces ever actually rendered anywhere on the site. Moving the
        classes up one element is the whole fix. */
     <html
       lang="en"
-      className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable}`}
     >
       <body className="antialiased">
         <SmoothScroll>
           <a
             href="#main"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-60 focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-carbon"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-60 focus:rounded-control focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-on-accent"
           >
             Skip to content
           </a>
           {children}
+          {/* Site-wide, so it belongs with the other things that must exist
+              exactly once: every route group renders through this layout, and
+              a cursor that stopped at a route boundary would be worse than
+              none. It draws nothing until a fine pointer moves. */}
+          <CustomCursor />
         </SmoothScroll>
       </body>
     </html>

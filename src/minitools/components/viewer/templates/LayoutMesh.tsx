@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import type { LayoutSpec } from "../../../schema/spec";
 import { planFloor } from "../../../lib/subdivide";
-import { CARBON, FG_MUTED, PROGRAM_COLORS } from "../../../lib/palette";
+import { FG_MUTED, PROGRAM_COLORS, SCENE_GROUND } from "../../../lib/palette";
 
 const FIT = 6;
 
@@ -25,10 +25,13 @@ export function LayoutMesh({ spec }: { spec: LayoutSpec }) {
 
   return (
     <group scale={fit} rotation={[0, 0, 0]}>
-      {/* Slab, so the plan reads against the dark page. */}
+      {/* Slab, so the plan reads against the dark page. `SCENE_GROUND`, not
+          the site's own `CARBON` — this canvas always sits on the warm
+          scope, and the cool near-black read as a mismatched cold plate
+          inside the warm-tinted canvas frame around it. */}
       <mesh position={[0, -0.06, 0]}>
         <boxGeometry args={[params.footprintW, 0.12, params.footprintD]} />
-        <meshBasicMaterial color={CARBON} />
+        <meshBasicMaterial color={SCENE_GROUND} />
       </mesh>
 
       {floor.corridor ? (

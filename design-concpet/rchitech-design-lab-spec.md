@@ -1,6 +1,17 @@
 # R²χTECH — Design Lab Build Spec
 Handoff document for Claude Code. Target: isolated test route inside the existing Next.js repo, to be merged into the live site once approved.
 
+> **Historical document — §3's token table is superseded.** The `/design-lab`
+> route this spec describes was promoted to Home, and the design system it
+> shipped with (Direction A · Instrument) replaced the token values below:
+> `--color-background`/`#C2BEBB` became `--color-lab-bg`/`#b8b4b1`,
+> `--color-structure` became `--color-lab-ink`, and the accent range
+> `#E8A94A`–`#F4C572` settled on the single value `#e8a94a`. The rest of this
+> document (route history, the §12/§13 fix rounds) is still an accurate
+> record of how Home was built — only the §3 table itself is stale. For the
+> tokens actually shipping, read `design-concpet/brand-guidelines.md` and
+> `design-concpet/design-tokens.json`, both generated from `globals.css`.
+
 ---
 
 ## 1. Goal

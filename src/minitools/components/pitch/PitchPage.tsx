@@ -34,7 +34,11 @@ export function PitchPage({ spec }: { spec: PitchSpec }) {
             <ol className="mt-6 flex flex-col gap-8">
               {spec.approach.map((step, index) => (
                 <li key={step.title} className="flex gap-5">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line font-mono text-xs text-accent">
+                  {/* Same treatment as the numbered markers in `StepsBlock` —
+                      `border-line`/`text-accent` was both an invisible ring
+                      (1.38:1) and its own one-off variant of a marker style
+                      used elsewhere with the right tokens. */}
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-control border border-accent-ink bg-carbon font-mono text-xs text-accent-ink">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div className="min-w-0">
@@ -61,7 +65,7 @@ export function PitchPage({ spec }: { spec: PitchSpec }) {
                 {spec.stack.map((item) => (
                   <li
                     key={item}
-                    className="rounded-full border border-line px-3 py-1 font-mono text-xs text-fg-muted"
+                    className="rounded-control border border-edge px-3 py-1 font-mono text-xs text-fg-muted"
                   >
                     {item}
                   </li>

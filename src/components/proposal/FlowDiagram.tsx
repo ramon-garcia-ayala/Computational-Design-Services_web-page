@@ -58,13 +58,19 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
                   this stage reads configuration, so every card is the same
                   width and the spine stays a straight column. */}
               <div className="grid items-center gap-3 lg:grid-cols-[minmax(0,1fr)_2rem_14rem]">
+                {/* `--color-graphite` is only 1.09:1 against `--color-carbon` —
+                    ambient enough on purpose, everywhere else it's a plain
+                    fill. Here it is the entire stage card's silhouette, so
+                    the border is what has to carry the shape: `border-line`
+                    (1.37:1) left the card reading as almost nothing against
+                    the page. `edge` is the token built to stay visible. */}
                 <article
-                  className="reveal-init rounded-lg border border-line bg-graphite p-5"
+                  className="reveal-init rounded-surface border border-edge bg-graphite p-5"
                   data-reveal
                 >
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     {node.stage ? (
-                      <span className="font-mono text-xs text-accent">
+                      <span className="font-mono text-xs text-accent-ink">
                         {node.stage}
                       </span>
                     ) : null}
@@ -85,10 +91,13 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
                   ) : null}
                 </article>
 
+                {/* Was `border-line`, dashed at 1px — the exact connector the
+                    diagram exists to show, at 1.38:1, below the visible
+                    threshold on most displays. */}
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "hidden h-px w-8 border-t border-dashed border-line lg:block",
+                    "hidden h-px w-8 border-t border-dashed border-edge lg:block",
                     configs.length === 0 && "lg:invisible",
                   )}
                 />
@@ -97,7 +106,7 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
                   {configs.map((config) => (
                     <li
                       key={config.id}
-                      className="reveal-init rounded-md border border-line bg-graphite-hi px-3 py-2"
+                      className="reveal-init rounded-surface border border-edge bg-graphite-hi px-3 py-2"
                       data-reveal
                     >
                       <p className="font-mono text-[10px] text-fg">
@@ -118,9 +127,11 @@ export function FlowDiagram({ block }: { block: FlowBlockData }) {
                    need, so the line always reaches the next card instead of
                    stopping short of it. */
                 <div className="flex items-stretch gap-4">
+                  {/* Was `bg-line` — the rail connecting one stage to the
+                      next, same 1.38:1 failure as the connector above. */}
                   <span
                     aria-hidden="true"
-                    className="ml-6 w-px shrink-0 bg-line"
+                    className="ml-6 w-px shrink-0 bg-edge"
                   />
                   <ul className="flex min-h-10 flex-1 flex-wrap items-center gap-x-5 gap-y-1 py-2">
                     {outputs.map((output) => (

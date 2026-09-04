@@ -19,11 +19,12 @@ export function TimelineBlock({ block }: { block: TimelineBlockData }) {
       title={block.title}
       lead={block.lead}
     >
+      {/* Was `border-line bg-line` (1.38:1) — same invisible-divider grid. */}
       <Reveal
         stagger="[data-reveal]"
         as="ul"
         className={cn(
-          "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
+          "mt-14 grid gap-px overflow-hidden rounded-surface border border-edge bg-edge",
           cardGrid(block.phases.length, 3),
         )}
       >
@@ -40,19 +41,19 @@ export function TimelineBlock({ block }: { block: TimelineBlockData }) {
                 <span
                   className={cn(
                     "font-mono text-[10px] uppercase tracking-widest",
-                    settled ? "text-accent" : "text-fg-muted",
+                    settled ? "text-accent-ink" : "text-fg-muted",
                   )}
                 >
                   {phase.label}
                 </span>
                 <span
                   className={cn(
-                    "rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest",
+                    "rounded-control px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest",
                     phase.state === "active"
-                      ? "bg-accent text-carbon"
+                      ? "bg-accent text-on-accent"
                       : phase.state === "done"
-                        ? "border border-accent text-accent"
-                        : "border border-dashed border-line text-fg-muted",
+                        ? "border border-accent-ink text-accent-ink"
+                        : "border border-dashed border-edge text-fg-muted",
                   )}
                 >
                   {stateLabel[phase.state]}
@@ -69,7 +70,7 @@ export function TimelineBlock({ block }: { block: TimelineBlockData }) {
               <ul
                 className={cn(
                   "mt-6 border-l-2 pl-5",
-                  settled ? "border-accent" : "border-dashed border-line",
+                  settled ? "border-accent-ink" : "border-dashed border-edge",
                 )}
               >
                 {phase.items.map((item) =>

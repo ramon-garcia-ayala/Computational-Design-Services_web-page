@@ -26,7 +26,16 @@ export function BlockShell({
       id={id}
       aria-label={title}
       className={cn(
-        "relative border-t border-line py-20 sm:py-28 lg:py-32",
+        /* `scroll-mt` because every one of these is an anchor target — the
+           whole `ProposalIndex` rail points at them — and an anchor lands a
+           section's top edge at the top of the viewport, behind the fixed
+           header. Measured on `/29.06.2026_ecogen`, the three sections a rail
+           link jumps to came to rest 31px, 92px and 64px *above* the viewport
+           top, so the jump appeared to land mid-section. Lenis reads the
+           computed `scroll-margin-top` in its own `scrollTo`, so this covers
+           the smooth path, the native path under reduced motion, and a URL
+           that arrives with the hash already on it. */
+        "relative border-t border-line py-20 scroll-mt-24 sm:py-28 lg:py-32",
         className,
       )}
     >

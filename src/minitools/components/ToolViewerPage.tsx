@@ -279,10 +279,10 @@ export function ToolViewerPage() {
     <>
       <Shell>
         <header className="max-w-3xl">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
             {spec.template === "pitch" ? "Scoped for you" : "Generated tool"}
           </p>
-          <h1 className="mt-4 font-display text-3xl leading-tight text-fg sm:text-4xl lg:text-5xl">
+          <h1 className="mt-4 text-h2 font-display text-fg">
             {spec.meta.title}
           </h1>
           <p className="mt-4 text-base leading-relaxed text-fg-muted sm:text-lg">
@@ -300,7 +300,7 @@ export function ToolViewerPage() {
                     canvas it has to mean zoom, not scroll. */}
                 <div
                   data-lenis-prevent
-                  className="h-[58svh] min-h-[340px] overflow-hidden rounded-xl border border-line bg-graphite/40 lg:h-[620px]"
+                  className="h-[58svh] min-h-[340px] overflow-hidden rounded-surface border border-edge bg-graphite/40 lg:h-[620px]"
                 >
                   {isViewerSpec(spec) ? <ViewerCanvas spec={spec} /> : null}
                 </div>
@@ -350,7 +350,7 @@ function Shell({ children }: { children: React.ReactNode }) {
     <section className="relative min-h-[100svh] overflow-hidden pt-32 pb-24">
       <div className="grid-bg absolute inset-0 opacity-30" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(232,169,74,0.05),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,color-mix(in_srgb,var(--color-accent)_5%,transparent),transparent_60%)]"
         aria-hidden="true"
       />
       <div className="shell relative">{children}</div>

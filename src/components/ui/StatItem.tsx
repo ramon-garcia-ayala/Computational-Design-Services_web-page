@@ -60,7 +60,7 @@ export function StatItem({ stat }: { stat: Stat }) {
   return (
     <div
       ref={ref}
-      className="reveal-init border-t border-line pt-5"
+      className="reveal-init border-t border-edge pt-5"
       data-reveal
     >
       <p className="font-mono text-2xl font-medium tracking-tight text-fg tabular-nums sm:text-3xl lg:text-4xl">

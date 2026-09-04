@@ -50,6 +50,7 @@ No component carries copy or figures inside it. Everything lives in `src/data/`:
 | `expertise.ts` | expertise areas (accordion / tabs) |
 | `awards.ts` | recognitions and studio metrics |
 | `proposals/` | client proposals — see below |
+| `portal/` | client portal — see below |
 
 The assistant and the tools it generates keep their own copy in
 `src/minitools/data/copy.ts`, next to the rest of that module.
@@ -97,6 +98,42 @@ Currently live: the August 2026 Ecogen Discovery report is protected; the two
 June 2026 commercial proposals are open, and they show pricing, so their URLs are
 effectively public.
 
+## Client portal
+
+A per-client project panel at `/portal`, reached from the "Client access"
+link in the header and the menu. Timeline, KPIs, scope, an outstanding-items
+list, documents and budget, all in one place — so a client can check status
+without a call.
+
+**Sign-in is a magic link, not a password.** A client enters their email at
+`/portal`, gets a 15-minute link mailed to them (via the same Resend
+integration `/contact` already uses), and redeeming it issues a 30-day
+session cookie. There is no separate password to lose or share. Client
+emails are never stored in the repo — only a salted hash, generated with:
+
+```bash
+node scripts/portal-email.mjs "client@example.com" ecogen
+```
+
+paste the result into `src/data/portal/access.ts`.
+
+**Each client is a folder**, same shape as a proposal:
+
+```
+src/data/portal/ecogen/index.ts   →  the "ecogen" client's data
+private/portal/ecogen/            →  that client's private documents
+```
+
+`private/portal/` sits outside `public/`, so its files are reachable only
+through `/api/portal/file/[...path]`, which checks the session cookie first.
+A client's own proposal is not duplicated into the portal — a `documents`
+entry just links to the existing `/<proposal-slug>` page.
+
+**Production needs `PORTAL_SECRET`** (see `.env.example`), separate from
+`PROPOSAL_SECRET` so rotating one never invalidates the other's sessions.
+Without it, the portal stays closed to everyone — fails safe, same as the
+proposal system.
+
 ## The assistant and its mini tools
 
 The panel in the hero is a working assistant. Describe something you would
@@ -132,10 +169,20 @@ and then every route 404s.
 
 ## Contact
 
-Every mailto on the site goes to both partners at once, and the address is never
-rendered as visible text — CTAs read "Get in touch". Clicking still opens a
-prefilled mail client, and the addresses aren't sitting in the page for spam
-harvesters. Edit `contactRecipients` in `src/data/site.ts`.
+Every mailto on the site goes to the studio address (`info@r-xtech.com`), and
+that address is never rendered as visible text — CTAs read "Get in touch".
+Clicking still opens a prefilled mail client, and the address isn't sitting in
+the page for spam harvesters. Edit `contactRecipients` in `src/data/site.ts`.
+
+**Production needs `RESEND_API_KEY`** (see `.env.example`) for the contact form
+to send at all; without it the route answers 503 and the form says so rather
+than dropping a submission silently.
+
+**`CONTACT_FROM` is still on Resend's sandbox sender.** Until `r-xtech.com` is
+verified in Resend and that variable is set, both the contact form *and* the
+portal's magic link go out as `onboarding@resend.dev` — the wrong domain on
+every mail a client gets, and a good share of them land in spam. The steps are
+in `.env.example`; it is a launch blocker, not a nice-to-have.
 
 ## Known placeholders
 
@@ -143,8 +190,6 @@ harvesters. Edit `contactRecipients` in `src/data/site.ts`.
 - Logos in `clients.ts` render as a grey block until the `logo` field points at
   an SVG in `/public`.
 - The newsletter form in the menu is UI only, with no backend.
-- The music button's audio track is disabled (`AUDIO_SRC = null` in
-  `src/components/layout/MusicToggle.tsx`).
 
 ## Documentation
 

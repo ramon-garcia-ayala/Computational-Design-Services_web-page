@@ -34,7 +34,7 @@ export function FigureBlock({ block }: { block: FigureBlockData }) {
     >
       <Reveal>
         <figure className="mt-14">
-          <div className="overflow-hidden rounded-lg border border-line bg-white p-4 sm:p-6 lg:p-8">
+          <div className="overflow-hidden rounded-surface border border-line bg-white p-4 sm:p-6 lg:p-8">
             {/* Plain <img>, not next/image. The source is an SVG that animates
                 itself: the optimizer does not process SVG, and routing it
                 through the loader would only add a request in front of a file
@@ -71,11 +71,11 @@ export function FigureBlock({ block }: { block: FigureBlockData }) {
                 <a
                   href={block.download.file}
                   download
-                  className="group inline-flex shrink-0 items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors hover:text-accent"
+                  className="group inline-flex shrink-0 items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors hover:text-accent-ink"
                 >
                   <Icon
                     name="file"
-                    className="h-3.5 w-3.5 text-accent transition-opacity group-hover:opacity-80"
+                    className="h-3.5 w-3.5 text-accent-ink transition-opacity group-hover:opacity-80"
                   />
                   {block.download.label}
                 </a>

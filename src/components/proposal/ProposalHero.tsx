@@ -30,19 +30,19 @@ export function ProposalHero({ proposal }: { proposal: Proposal }) {
     <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
       <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(232,169,74,0.07),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,color-mix(in_srgb,var(--color-accent)_7%,transparent),transparent_60%)]"
         aria-hidden="true"
       />
 
       <div className="shell relative">
         <Reveal>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
             {proposal.hero.kicker}
           </p>
 
           <h1 className="mt-6 max-w-4xl font-display text-4xl leading-[1.05] font-semibold tracking-tight text-fg sm:text-6xl lg:text-7xl">
             {before}
-            {accent ? <span className="text-accent">{accent}</span> : null}
+            {accent ? <span className="text-accent-ink">{accent}</span> : null}
             {after}
           </h1>
 

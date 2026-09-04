@@ -5,6 +5,7 @@ import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { setLenis } from "@/lib/lenis";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { whenScrollGateOpen } from "@/lib/scroll-gate";
 
 /**
  * Global smooth scroll (Lenis) coupled to GSAP.
@@ -36,6 +37,10 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       anchors: true,
     });
 
+    /* Guards the gated jump below against this effect being cleaned up while
+       it is still waiting. */
+    let cancelled = false;
+
     lenis.on("scroll", ScrollTrigger.update);
 
     /* Published so a control that scrolls on click can go through Lenis
@@ -64,13 +69,37 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       }
 
       if (target) {
-        window.scrollTo(0, 0);
-        lenis.scrollTo(target as HTMLElement, { immediate: true });
-        ScrollTrigger.refresh();
+        /* The jump waits for the page to stop moving.
+           
+           Two things move it. Home pins two `PanelSection` runways above the
+           document band, and a pin's spacer height is only decided by
+           `ScrollTrigger.refresh()` — so the refresh has to come *before* the
+           jump, or the target is measured against a layout that then shifts
+           underneath it. And `Preloader`, mounted on the same commit, holds
+           the scroll gate until it has faded, which it will not do until
+           `document.fonts.ready` has settled: the display face swapping in
+           reflows every heading below the fold. Jumping before either of
+           those left the section a hash pointed at anywhere from 101px above
+           the header's bottom edge to 61px below it, varying with viewport
+           size — a stale measurement, not a wrong offset, which is why no
+           amount of `scroll-margin-top` could correct it.
+           
+           On every route that mounts no preloader the gate is already open and
+           this costs one microtask. `scroll-margin-top` on the target is read
+           by Lenis's own `scrollTo`, which is what clears the fixed header. */
+        void whenScrollGateOpen().then(() => {
+          /* The effect can be torn down while we wait — a route change, or
+             StrictMode's second pass — and Lenis is destroyed in its cleanup.
+             Same guard as the encode effect in `ToolViewerPage`. */
+          if (cancelled) return;
+          ScrollTrigger.refresh();
+          lenis.scrollTo(target as HTMLElement, { immediate: true });
+        });
       }
     }
 
     return () => {
+      cancelled = true;
       setLenis(null);
       gsap.ticker.remove(raf);
       gsap.ticker.lagSmoothing(500, 33);

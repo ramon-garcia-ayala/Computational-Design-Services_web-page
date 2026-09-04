@@ -16,6 +16,46 @@ type PanelSectionProps = {
    * Panel-on-panel is carbon over carbon, where there is no seam to hide.
    */
   blend?: boolean;
+  /**
+   * How many viewports of scroll the climb is spread over, counted back from
+   * the moment the section's top reaches the top of the screen.
+   *
+   * At the default `1` the panel closes on the viewport at exactly twice the
+   * scroll speed — its leading edge sits at `2 × sectionTop`, so it does not
+   * cross into the screen until the section is halfway up, and the first half
+   * of the approach is a full half-viewport of untouched ground. Measured at
+   * 675px: section top 473 put the panel's edge at 935, and the gap under the
+   * stats peaked at 413px, over 60% of the screen.
+   *
+   * Raising it flattens that ratio to `1 + 1/n`, so the edge appears earlier
+   * and the empty stretch is `V / (n + 1)` instead of `V / 2`. It costs no
+   * scroll: only the trigger's `start` moves, the section's own height and
+   * the hold at the end are untouched.
+   *
+   * Only the panel that rises over the pale hero ground needs it. Panel over
+   * panel is charcoal on charcoal, where the gap is the panel's own colour
+   * and there is nothing to see.
+   */
+  approach?: number;
+  /**
+   * Background class for the *ground the panel rises over* — normally the
+   * plate of whatever section precedes this one.
+   *
+   * The section itself is what fills the screen while the panel is still
+   * below it climbing, and it was transparent. `data-design-lab` paints the
+   * document root greige for the hero, so every panel after the first rose
+   * over a band of hero colour that had no business being there: a slab of
+   * greige between two dark sections, wiped away by the panel a moment later.
+   *
+   * Naming the previous plate here makes the join invisible *and* keeps the
+   * morph readable — the panel arrives in a colour that contrasts with what
+   * it is covering, which is the entire effect. Painting it the panel's own
+   * colour would hide the seam and the animation with it.
+   *
+   * A `blend` panel takes none: it is the one that has to let the hero
+   * sequence show through as it climbs.
+   */
+  behind?: string;
   className?: string;
 };
 
@@ -51,7 +91,9 @@ export function PanelSection({
      covering — two or three gestures to clear one panel. 115 keeps a short
      beat to read on without the scroll feeling stuck. */
   runway = 115,
+  approach = 1,
   blend = false,
+  behind,
   className,
 }: PanelSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -84,7 +126,12 @@ export function PanelSection({
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top bottom",
+            /* The extra viewports are added *below* the fold, so the panel
+               is already part-way up by the time the stage carrying it
+               reaches the screen. Percentages on the scroller side of a
+               `start` string are read against the viewport, which is what
+               keeps this in the same `svh` currency as the runway. */
+            start: `top bottom+=${(approach - 1) * 100}%`,
             end: "top top",
             scrub: 0.6,
             // The runway is sized in `svh`, so a mobile URL bar collapsing
@@ -101,7 +148,7 @@ export function PanelSection({
         tween.kill();
       };
     },
-    { scope: sectionRef, dependencies: [reducedMotion] },
+    { scope: sectionRef, dependencies: [reducedMotion, approach] },
   );
 
   if (reducedMotion) {
@@ -115,14 +162,33 @@ export function PanelSection({
   return (
     <section
       ref={sectionRef}
-      className="relative"
+      className={cn("relative", !blend && behind)}
       style={{ height: `${runway}svh` }}
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div
           ref={panelRef}
+          /* `justify-start`, and the body centres itself with `my-auto`.
+             This is not a style preference, it is the fix for content
+             disappearing off the top of the screen.
+
+             With `justify-center`, a child taller than the 100svh stage
+             overflows it *symmetrically* — half above, half below — and the
+             stage's `overflow-hidden` then eats the top half. There is no
+             scrollbar and no error: the section heading and the top of the
+             first row are simply gone, and the panel looks like it starts
+             mid-sentence. That is what happened to the old Featured panel
+             (its "Featured work" kicker and the top 40% of all three images
+             were unreachable at every desktop height) and to the Playground
+             widget's own header row.
+
+             Auto margins on a flex item distribute *free* space. When there
+             is none, they resolve to zero and the item aligns to the start,
+             so overflow can only ever go downward — clipping the end of the
+             content rather than its beginning. Same centring when it fits,
+             a recoverable failure when it does not. */
           className={cn(
-            "absolute inset-0 flex flex-col justify-center will-change-transform",
+            "absolute inset-0 flex flex-col justify-start will-change-transform",
             !blend && "bg-panel",
             className,
           )}

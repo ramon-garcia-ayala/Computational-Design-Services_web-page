@@ -20,11 +20,11 @@ export function SectionHeading({
   return (
     <div className={cn("max-w-2xl", className)}>
       {kicker ? (
-        <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+        <p className="font-mono text-[10px] uppercase tracking-widest text-accent-ink">
           {kicker}
         </p>
       ) : null}
-      <Tag className="mt-4 font-display text-3xl leading-[1.1] font-semibold tracking-tight text-fg sm:text-4xl lg:text-5xl">
+      <Tag className="mt-4 text-h2 font-display font-semibold text-fg">
         {title}
       </Tag>
       {lead ? (

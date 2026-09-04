@@ -6,9 +6,32 @@ import { cn } from "@/lib/utils";
 export type IndexEntry = { id: string; label: string };
 
 /**
- * Navigation rail for the document. It sits in the left margin (`.shell` leaves
- * 3rem of padding from 1024px up), so it never encroaches on the content at any
- * width. Below `lg`, and when printing, it is not shown.
+ * Navigation rail for the document. Below `lg`, and when printing, it is not
+ * shown.
+ *
+ * ## The label cannot live in the margin, so it no longer tries
+ *
+ * This used to print the active entry's label permanently, on the stated
+ * reasoning that `.shell`'s 3rem of `lg`-and-up padding was margin enough that
+ * it "never encroaches on the content at any width". Measured, that margin is
+ * 48px and the label needs 130 — so at 1440px the label ran to x=123 while the
+ * content column started at x=48, and `01 · SUMMARY` was drawn straight across
+ * the proposal's own headline. Widening the padding cannot fix it either:
+ * `.shell` is capped at `max-width: 1440px`, so below that width there is no
+ * margin at all and the overlap is structural.
+ *
+ * So the rail is a column of ticks, and the label appears only for the entry
+ * the reader is pointing at or has tabbed to — plated, in the site's chip
+ * idiom, because a label revealed on demand still lands on whatever is
+ * underneath it.
+ *
+ * `group-focus-visible` is not decoration: every label was `opacity-0` for
+ * keyboard users, so tabbing through the rail moved a focus ring across seven
+ * links with nothing legible beside any of them.
+ *
+ * Kept in step with `PortalIndex`, which is the same rail under its own chrome
+ * attribute — the two are deliberate duplicates so the print scopes stay
+ * independently toggleable, which means a fix to one belongs in both.
  */
 export function ProposalIndex({ entries }: { entries: IndexEntry[] }) {
   const [activeId, setActiveId] = useState(entries[0]?.id ?? "");
@@ -53,9 +76,10 @@ export function ProposalIndex({ entries }: { entries: IndexEntry[] }) {
               <a
                 href={`#${entry.id}`}
                 aria-current={active ? "true" : undefined}
-                className="group flex h-6 items-center gap-2"
+                className="group relative flex h-6 items-center gap-2"
               >
                 <span
+                  aria-hidden="true"
                   className={cn(
                     "h-px transition-all duration-300",
                     active
@@ -63,12 +87,17 @@ export function ProposalIndex({ entries }: { entries: IndexEntry[] }) {
                       : "w-3 bg-line group-hover:w-5 group-hover:bg-fg-muted",
                   )}
                 />
+
+                {/* Absolute so revealing it never reflows the rail. */}
                 <span
                   className={cn(
-                    "font-mono text-[10px] whitespace-nowrap uppercase tracking-widest transition-opacity duration-300",
+                    "pointer-events-none absolute left-8 rounded-control border px-2.5 py-1",
+                    "font-mono text-[10px] whitespace-nowrap uppercase tracking-widest",
+                    "opacity-0 transition-opacity duration-200",
+                    "group-hover:opacity-100 group-focus-visible:opacity-100",
                     active
-                      ? "text-accent opacity-100"
-                      : "text-fg-muted opacity-0 group-hover:opacity-100",
+                      ? "border-accent-ink bg-carbon text-accent-ink"
+                      : "border-line bg-carbon text-fg-muted",
                   )}
                 >
                   {String(index + 1).padStart(2, "0")} · {entry.label}

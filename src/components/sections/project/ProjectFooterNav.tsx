@@ -13,13 +13,13 @@ export function ProjectFooterNav({ next }: { next: Project }) {
               <p className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">
                 Next project
               </p>
-              <p className="mt-4 font-display text-3xl leading-tight font-semibold tracking-tight text-fg transition-colors group-hover:text-accent sm:text-5xl">
+              <p className="mt-4 font-display text-3xl leading-tight font-semibold tracking-tight text-fg transition-colors group-hover:text-accent-ink sm:text-5xl">
                 {next.title}
               </p>
             </div>
             <span
               aria-hidden="true"
-              className="font-mono text-2xl text-accent transition-transform duration-300 group-hover:translate-x-2"
+              className="font-mono text-2xl text-accent-ink transition-transform duration-300 group-hover:translate-x-2"
             >
               →
             </span>

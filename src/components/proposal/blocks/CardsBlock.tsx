@@ -13,10 +13,13 @@ export function CardsBlock({ block }: { block: CardsBlockData }) {
       title={block.title}
       lead={block.lead}
     >
+      {/* Was `border-line bg-line` (1.38:1) — the grid's dividers were
+          background showing through a 1px gap, and at this ratio the gap
+          reads as no gap at all. */}
       <Reveal
         stagger="[data-reveal]"
         className={cn(
-          "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
+          "mt-14 grid gap-px overflow-hidden rounded-surface border border-edge bg-edge",
           cardGrid(block.cards.length, block.columns ?? 2),
         )}
       >
@@ -26,7 +29,7 @@ export function CardsBlock({ block }: { block: CardsBlockData }) {
             className="reveal-init flex flex-col gap-4 bg-carbon p-8 lg:p-10"
             data-reveal
           >
-            <Icon name={card.icon} className="h-7 w-7 text-accent" />
+            <Icon name={card.icon} className="h-7 w-7 text-accent-ink" />
             <h3 className="font-display text-lg font-semibold tracking-tight text-fg">
               {card.title}
             </h3>

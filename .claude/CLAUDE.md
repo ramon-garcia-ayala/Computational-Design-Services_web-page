@@ -50,8 +50,8 @@ directly:
 ```css
 @theme {
   --color-carbon: #0a0c0b;
-  --color-accent: #c8f94e;
-  --font-display: var(--font-sora);
+  --color-accent: #e8a94a;
+  --font-display: var(--font-space);
 }
 ```
 
@@ -61,19 +61,54 @@ Used as `bg-carbon`, `text-accent`, `font-display`.
 Tailwind's defaults are cleared with `--breakpoint-*: initial`, so `md:` and
 `2xl:` **do not exist** — writing them produces no styles and fails silently.
 
+**Full colour/type/logo/voice reference: `design-concpet/brand-guidelines.md`**
+(human-readable, with the rationale for every rule) and
+`design-concpet/design-tokens.json` (machine-readable mirror, same values).
+Read one of those before adding a new colour, font, or CTA pattern — not just
+this section, which only covers the Tailwind mechanics. If a token in
+`globals.css` changes, update both of those files in the same commit; they are
+documentation, `globals.css` is the only source of truth.
+
 Project utilities defined in `globals.css`: `.shell` (page container), `grid-bg`
 (background grid) and `reveal-init` (initial state for anything GSAP animates).
 Note `.shell` is a plain class, not an `@utility`, so it takes no variants:
 `lg:shell` does nothing.
 
+**`--color-line` is decorative-only; `--color-edge` is for anything a reader
+has to actually see** — field borders, control boundaries, and just as much
+the structure of a hand-drawn diagram, a table's row rules, or a `gap-px`
+card grid's divider. `--color-line` measures 1.37:1 on the dark ground; it
+was also drawing `FlowDiagram`'s connector rail and a checklist's checkboxes
+before a contrast pass caught it, on the reasoning that "meaningful" isn't
+limited to form fields. If a line's absence would change what the reader
+understands, it's `edge`, not `line`. There is a **`--color-danger`** token
+too (scoped like `accent-ink`, since a bright red on `carbon` is invisible on
+`pale`) — never reach for an unscoped Tailwind colour like `text-red-400` for
+an error state.
+
+**Shape is exactly two radii, everywhere**: `rounded-surface` (containers,
+cards, panels, **and text fields** — a field holds content the way a card
+does, it isn't a control that triggers an action) and `rounded-control`
+(buttons, chips, toggles, badges, small circular markers). Any other
+`rounded-*` in the codebase is a regression, not a style choice — the site
+used to carry six different radii, several mixed within one component.
+
+**`scripts/contrast-check.mjs` gates the token layer.** It reads
+`globals.css` directly (not a copy of the values) and asserts every
+token/background pair the design system actually promises — 4.5:1 for text,
+3:1 for meaningful borders — across all three scopes plus Home's `lab-*`
+family. Run it (`node scripts/contrast-check.mjs`) after touching any colour
+token; every failure it would catch was, at one point, a real bug that shipped
+silently because nobody multiplied the numbers out.
+
 ## Architecture
 
-Multi-page App Router site, split into two route groups so the client-facing
-proposals don't inherit the site navigation:
+Multi-page App Router site, split into three route groups so the client-facing
+proposals and the client portal don't inherit the site navigation:
 
 | Route | File |
 |---|---|
-| `/` | `src/app/(site)/page.tsx` |
+| `/` | `src/app/page.tsx` (app root, not in `(site)` — it mounts its own header and footer) |
 | `/about` | `src/app/(site)/about/page.tsx` |
 | `/projects` | `src/app/(site)/projects/page.tsx` |
 | `/projects/[slug]` | `src/app/(site)/projects/[slug]/page.tsx` (`generateStaticParams`) |
@@ -81,14 +116,22 @@ proposals don't inherit the site navigation:
 | `/labs/tool` | `src/app/(site)/labs/tool/page.tsx` (a generated mini tool) |
 | `/<proposal-slug>` | `src/app/(proposal)/[proposal]/page.tsx` (`generateStaticParams`) |
 | `/unlock` | `src/app/(proposal)/unlock/page.tsx` |
+| `/portal` | `src/app/(portal)/portal/page.tsx` (sign-in) |
+| `/portal/enter` | `src/app/(portal)/portal/enter/route.ts` (redeems the magic link) |
+| `/portal/dashboard` | `src/app/(portal)/portal/dashboard/page.tsx` (`force-dynamic`) |
 | `/api/proposal-unlock` | `src/app/api/proposal-unlock/route.ts` (checks the password) |
+| `/api/portal/request-link` | `src/app/api/portal/request-link/route.ts` (mails the magic link) |
+| `/api/portal/logout` | `src/app/api/portal/logout/route.ts` |
+| `/api/portal/file/[...path]` | `src/app/api/portal/file/[...path]/route.ts` (private documents) |
+| `/api/contact` | `src/app/api/contact/route.ts` (the contact form) |
 | `/api/minitools-chat` | `src/app/api/minitools-chat/route.ts` (the hero assistant) |
 
-Everything is static except those two route handlers and `src/proxy.ts`.
+Everything else is static; these route handlers, `/portal/dashboard` and
+`src/proxy.ts` are the dynamic surface.
 
 The root layout holds only what must never be duplicated: `<html>`, the fonts and
 the single Lenis instance. `(site)/layout.tsx` adds the header and footer;
-`(proposal)/layout.tsx` deliberately does not.
+`(proposal)/layout.tsx` and `(portal)/layout.tsx` deliberately do not.
 
 **The data layer** (`src/data/`) holds all copy and all figures. Never hardcode
 text in a component. See the table in `README.md`.
@@ -99,8 +142,8 @@ run `node scripts/project-media.mjs`. The grid, the static route, the
 horizontal-scroll detail page and the next-project navigation all come from it.
 
 `featured: true` surfaces a project on `/archive-home`, **not on `/`** — the
-live home page is the design-lab layout, whose `FeaturedPanel` reads its own
-hardcoded three items from `src/data/design-lab.ts`.
+live home page reads its own hardcoded three items from the `work` block in
+`src/data/design-lab.ts`.
 
 ## Project media
 
@@ -175,7 +218,7 @@ track faster than the wheel and buys it back.
 `data-lenis-prevent`, or scrolling a long caption scrolls the page instead.
 
 `public/projects/` also holds three loose files (`spatial-flow.gif`,
-`hyper-building-automation.jpg`, `la-cite-radieuse-topology.png`) read by
+`hyper-building-automation.gif`, `la-cite-radieuse-topology.png`) read by
 `src/data/design-lab.ts`. They are not part of this system — **do not move
 them.**
 
@@ -257,6 +300,162 @@ It is a Server Component with no animation of its own. An earlier version
 hand-rolled per-stage ScrollTriggers, which silently never ran and left the
 whole diagram blank — entrances go through `Reveal`, as everywhere else on the
 site, and a block component has no business owning scroll animation.
+
+## Client portal
+
+A per-client project panel at `/portal` → `/portal/dashboard`: timeline,
+KPIs, scope, an outstanding-items list, documents and budget, all reading
+from `src/data/portal/<slug>/index.ts` — same shape and same discipline as a
+proposal (one folder per client, all copy in the data layer, nothing
+hardcoded in a component).
+
+**Sign-in is a magic link, never a password.** WCAG 2.2's Accessible
+Authentication is the actual reason, not a stylistic preference: a magic
+link has no cognitive-test step to fail. The client emails Resend already
+proved out for `/contact` sends a 15-minute link; redeeming it at
+`/portal/enter` issues a 30-day session cookie, both through
+`src/lib/portal-auth.ts`.
+
+**Client emails are never stored in the repo, only a salted hash** — the
+same reasoning `data/proposals/access.ts` applies to passwords. It works
+because the link is mailed to the address the visitor just typed; the system
+never needs to remember it to prove who they are. Generate an entry with
+`node scripts/portal-email.mjs "client@example.com" <slug>`. Unlike a
+proposal's single `slug → credentials` lookup, `resolvePortalSlug` in
+`src/data/portal/access.ts` scans every entry, hashing the incoming email
+against each one's own salt — a per-entry salt (rather than one shared salt
+the whole list could be hashed against) is what keeps a leaked repo from
+becoming a rainbow table against common addresses. The list is a studio's
+active clients, not its history, so the scan is cheap.
+
+**Two token kinds share one signature format but are never interchangeable.**
+`signMagicToken`/`signSessionToken` in `portal-auth.ts` both produce
+`<expiry>.<hmac>`, but the message each signs is prefixed with its own kind
+(`"magic|"` / `"session|"`) before the client slug. That prefix is domain
+separation — it is what stops a 15-minute magic link from ever verifying as
+a 30-day session, or vice versa, even if one leaks into the wrong place.
+Reuses `hmac`/`safeEqual` from `proposal-auth.ts` rather than
+reimplementing them, and `getPortalSecret()` follows `getSecret()`'s exact
+shape (validated length, `null` not a throw, a fixed `development` fallback)
+— but `PORTAL_SECRET` is its own env var, deliberately separate from
+`PROPOSAL_SECRET`, so rotating one never invalidates the other's sessions.
+
+**No single-use enforcement on the magic link.** Without a shared store,
+anyone holding the link can redeem it within its 15-minute window — the
+short expiry and the fact that it only ever reaches the recipient's inbox
+are the whole mitigation. If that ever needs closing, the fix is a shared KV
+recording consumed `jti`s, not a redesign.
+
+**`src/proxy.ts` gates `/portal/dashboard*`, and the dashboard page
+re-verifies the session itself anyway.** Belt-and-braces, the same
+discipline every secret accessor in this codebase already applies: a page
+this sensitive should not depend solely on the proxy having run. The
+dashboard reads its cookies directly and redirects to `/portal` on its own
+if the session token doesn't verify — `export const dynamic =
+"force-dynamic"`, since the content is per-session and must never be cached.
+
+**Which project shows lives in the URL** (`?project=<id>`), not client
+state: `ProjectSwitcher` is a server component rendering plain links, so
+switching needs no JavaScript. It renders nothing for a single-project
+client — a switcher with one option is decoration, not a control.
+
+**Documents are either a private file or a link, and the type says which —
+never a truthy check on which field is set.** `PortalDocument`'s
+discriminant is a real `source: "file" | "link"` field.
+`Base & {file: string}` vs. `Base & {href: string}` looked equivalent and
+is not: TypeScript's narrowing does not reliably follow a presence check
+through an intersection type, so `if (doc.file)` left `doc.href` typed
+`string | undefined` at every use site. Costs one extra field, buys back
+every use site typed correctly.
+
+**Private documents live in `private/portal/<slug>/`, outside `public/` on
+purpose.** A budget or a deliverable is not something to hand out to anyone
+with the URL, which is what anything under `public/` effectively is.
+`/api/portal/file/[...path]/route.ts` is the only way in: it verifies the
+session, then rejects any request whose first path segment isn't that
+session's own slug — a client cannot reach another client's folder by
+editing the URL — and re-checks the resolved path's prefix after
+`path.join` rather than scanning the input for a literal `..`, since that is
+what actually closes path traversal. **`next.config.ts`'s
+`outputFileTracingIncludes` has to list `private/portal/**/*`** or the
+directory never reaches the deployed function's bundle: the route works in
+`next dev` (reads straight off disk) and then 404s in production, a gap
+that only shows up after deploy.
+
+**KPIs render as a bullet-bar row, never a gauge, and the state is always
+printed as a word.** With three or more KPIs on one screen a gauge grid
+reads worse than a row of bars, and colour alone is never enough — every
+`KpiBar` prints `value · target N` before the bar, and every state (`state:
+"on-track" | "at-risk" | "off-track"`) goes through `StatusChip`, whose
+label is never optional. The bar itself scales `value` and `target` against
+whichever is larger, with a tick at the target — the same geometry whether
+the metric is "higher is better" or not, so the chip carries the actual
+verdict, never the bar's colour alone.
+
+**One status vocabulary for the whole panel** (`StatusChip.tsx`), extended
+from the `"done" | "active" | "next"` a proposal's `TimelineBlock` and
+`QaBlock` already use: a filled accent plate for "happening now", an
+`accent-ink` outline for "done", a dashed `edge` outline for "not yet", plus
+`danger` for the two states a proposal never needed. To-dos render the same
+static distinction — a checked box is a status indicator, not a control;
+marking one done needs a database and is explicitly out of scope for this
+version.
+
+**The panel is denser than a proposal, on purpose.** `PortalSection.tsx` is
+`BlockShell`'s sibling, trimmed from `py-20 sm:py-28 lg:py-32` /
+`p-8 lg:p-10` to `py-14 sm:py-16 lg:py-20` / `p-6 lg:p-8`. A proposal is read
+once, start to finish; this panel gets checked back into for one line of
+status, and the proposal's rhythm turned that into a multi-screen scroll at
+seven sections. The file's own comment says so, so it isn't "corrected" back
+to match later.
+
+**No new colour tokens.** Every portal component builds from the existing
+vocabulary (`fg`, `fg-muted`, `carbon`, `graphite`, `graphite-hi`, `edge`,
+`line`, `accent`, `accent-dim`, `accent-ink`, `on-accent`, `focus`,
+`danger`), which `scripts/contrast-check.mjs` already covers in all three
+scopes — including `accent-ink` on `graphite`, added to `SCOPED_CHECKS`
+because the panel puts accent-coloured text inside `bg-graphite` cards
+throughout, a pair the script didn't measure before.
+
+**Both client-facing route groups carry `data-site-warm`.** `(portal)` and
+`(proposal)` stamp it on their `<main>`, so the panel and the document render
+on the same warm charcoal as every `(site)` route. They used to sit on the
+default carbon on the stated reasoning that the panel should be
+"deliberately distinct from the marketing site's warm mood" — and what that
+produced was a surface that looked like a different product from the site the
+client had just come through. What the old decision was actually protecting is
+that a client's proposal and their panel read as one family, and that survives
+intact because *both* groups carry the attribute; changing only one would put
+the same client's proposal and dashboard on different grounds.
+
+Nothing was repainted to do it. The scope redefines what `--color-carbon`,
+`--color-line`, `--color-fg-muted`, `--color-edge` and `--color-danger` *mean*,
+so `bg-carbon` / `border-line` / `text-fg-muted` keep their names throughout
+both route groups and come out warm — the mechanism `globals.css` documents at
+`[data-site-warm]`, and the reason this is two attributes rather than a sweep
+through forty components. `contrast-check.mjs` already measures every one of
+those pairs in this scope.
+
+**The scrollspy rail has no margin to live in, so its label is
+hover/focus-only.** `PortalIndex` and `ProposalIndex` both claimed in their own
+comments that `.shell`'s `lg`-and-up 3rem padding was margin enough for the
+active entry's label. Measured at 1440px: the margin is 48px, the label runs to
+x=123, and the content column starts at x=48 — so `01 · OVERVIEW` was drawn
+across the hero's lead paragraph on the panel and across the headline on every
+proposal. It is not a tuning problem. `.shell` is capped at `max-width: 1440px`,
+so at and below that width there is no margin at all. The rail is therefore a
+column of ticks, and the label appears only for the entry being pointed at or
+tabbed to, on its own plate because it still lands on top of content. The
+`group-focus-visible` half is the accessibility bug that was hiding underneath:
+every label was `opacity-0` for keyboard users, so tabbing the rail moved a
+focus ring through seven links with nothing readable beside any of them. **The
+two components are deliberate duplicates** — they differ only in their chrome
+attribute — so a fix to one belongs in both.
+
+**Print uses its own chrome attribute.** `[data-portal-chrome]` sits beside
+`[data-proposal-chrome]` in the same `@media print` rule in `globals.css` —
+kept as two attributes rather than one shared name so the two chrome scopes
+stay independently toggleable even though they hide for the same reason.
 
 ## Concept animations
 
@@ -481,8 +680,8 @@ else, so without it reading a reply scrolls the page instead.
 
 **But the message list applies it only while it actually overflows.** Applied
 unconditionally it hands Lenis's wheel to the transcript whenever the pointer is
-over it, and on the home page this widget fills the middle of the Labs panel
-with an empty transcript: scrolling there did nothing through Lenis and fell
+over it, and on the home page this widget fills the middle of the Playground
+panel with an empty transcript: scrolling there did nothing through Lenis and fell
 back to a native jump, so that one panel lurched while the rest of the page
 glided. `ChatWidget` measures `scrollHeight > clientHeight` (a `ResizeObserver`
 on the list *and* its children, since a streaming reply grows the content
@@ -654,12 +853,80 @@ invalid-link screen to the visitor who just generated it.
   `onRefresh` so landing part-way down a page, where no toggle fires, still
   sets the state.
 
+## Home: cinema, document, cinema
+
+`src/app/page.tsx` is a sandwich, and the middle is the part that sells.
+
+```
+CINE      hero sequence (240svh scrub)  ->  "the problem" panel
+DOCUMENT  proof strip · services · method · work · about   (HomeDocument.tsx)
+CINE      playground panel  ->  closing panel
+```
+
+It used to be six panels end to end, and paid for that twice. Of six sections
+exactly one said what the studio does, in four single sentences — while the
+sharpest copy in the repo (`manifesto.lead` in `data/approach.ts`, the four
+`approachSteps`, the sixteen `expertiseAreas` capabilities) rendered only on
+`/archive-home` and `/about`. And the three panels that had outgrown a viewport
+were **clipped, not scrolled**.
+
+**A panel is a fixed 100svh box with `overflow-hidden`. Content taller than
+that disappears, and it disappears off the *top*.** `PanelSection`'s plate is
+`justify-start` and every body carries `my-auto` for exactly this reason: with
+`justify-center`, an oversized child overflows symmetrically and the stage eats
+its opening — the old Featured panel lost its heading and the top 40% of all
+three images at every desktop height, with no scrollbar and nothing to find.
+Auto margins centre when there is free space and resolve to zero when there is
+not, so overflow can only ever clip the *end*. Anything that has to be read
+goes in the document band; only content that is genuinely one idea on one
+screen belongs in a panel. **`justify-center` on a box that can overflow clips the *top*, and that trap
+is not limited to panels.** `MenuOverlay` had the identical bug: its column was
+`justify-center` with a fixed `pt`, so at 320x568 the content outgrew the
+viewport and the first nav link, "Home", was drawn underneath the header with
+no way to reach it. The fix is the same one `PanelSection` uses — `justify-start`
+with `my-auto` on the children, which centres while it fits and collapses to
+top-aligned when it does not — plus `overflow-y-auto`, so the part that no
+longer fits is scrollable rather than merely clipped somewhere less visible.
+Any full-viewport overlay added later inherits this problem by default.
+
+**Type that has to fit a height should be sized by height.** The site's scale
+is width-driven (`clamp(2.4rem, 3.8vw, 4.6rem)`), and a phone sits at its floor
+at every viewport height — so a 568px screen and a 932px screen get the same
+38px display line inside stages that differ by 364px. Where the constraint is
+vertical, say so: the menu's nav uses `clamp(1.65rem, 4.6svh, 2.25rem)`, and
+the two panel bodies step down under `[@media(max-height:700px)]`. That took
+the shortest viewport's panel slack from 23px to 191px. Do not reach for this
+by default — the shared scale is still the rule — only where a measurement
+shows the height is what binds.
+
+**Measure a new panel body against the stage** —
+`PlaygroundPanel` is 633px against 675 and is the one that will break first.
+
+**`PanelSection`'s `behind` is the ground the panel rises over**, normally the
+plate of the section before it. The section itself fills the screen while the
+panel is still climbing, and `data-design-lab` paints `html` greige for the
+hero — so without it every dark panel rose over a slab of hero colour. Naming
+the previous plate hides the seam *and* keeps the morph legible; painting it
+the panel's own colour would hide the animation along with the join.
+
+**`site.descriptor` has to stay short.** The light header centres it
+absolutely, which puts it out of flow, so nothing but its own length keeps it
+clear of the control cluster — at 78 characters its tail sat behind that
+cluster from `lg` up. There is a `max-w-[calc(100vw-44rem)] truncate` guard, but
+truncating a tagline is a failure mode, not a design.
+
+**Do not cap `ChatPlaceholder` with `lg:max-h-*`.** Its base classes carry
+`lg:max-h-none`, `cn()` does not dedupe that against an arbitrary value in the
+same group, and Tailwind sorts `none` last — the cap reaches the class
+attribute, computes to `max-height: none`, and silently does nothing. Size the
+panel's padding instead.
+
 ## The home hero on a phone
 
 `HeroOverlay` centres the lockup and both statements from `sm` up, and moves
 them out of the centre below it. On a narrow screen the geodesic fills the
 middle third of the viewport, so centred type lands straight on the model:
-the lockup goes above it (`justify-start pt-[9svh]`), the right-hand statement
+the lockup goes above it (`justify-start pt-[6svh]`), the right-hand statement
 above (`items-start pt-[15svh]`), the left-hand one below
 (`items-end pb-[18svh]`). Every one of those is reset at `sm:` — the desktop
 layout resolves to exactly what it was, which is the point.
@@ -670,6 +937,12 @@ are the difference between clearing it and grazing it. **The margin is small
 (~34px on a 390x844 phone) and the model's position is measured off a
 screenshot rather than computed**, so anything that changes the hero copy
 length or the logo size needs re-checking on a real phone.
+
+That margin is why the hero's two CTAs are not two CTAs on a phone. Side by
+side the labels run ~348px of pill against 327px of usable width at 375, so
+they wrap — and the second row is ~45px the stack does not have. The secondary
+is `hidden … sm:inline-flex`; the primary keeps `py-3` over its size's own
+`py-2.5`, because 41px is under the 44px a touch target has to clear.
 
 ## prefers-reduced-motion
 
@@ -721,10 +994,11 @@ panels stack vertically and no ScrollTrigger is created.
 
 ## Contact links
 
-Every mailto goes to both partners at once, built by `contactHref()` in
-`src/data/site.ts`. **Never render the address as visible text** — CTAs use
-`site.contactLabel` ("Get in touch"). This keeps the addresses out of the page
-for spam harvesters.
+Every mailto goes to the studio address (`info@r-xtech.com`), built by
+`contactHref()` in `src/data/site.ts` — one shared inbox rather than the two
+partners' personal ones, so a send survives either of them being away.
+**Never render the address as visible text** — CTAs use `site.contactLabel`
+("Get in touch"). This keeps the address out of the page for spam harvesters.
 
 ## Icons
 
@@ -789,13 +1063,115 @@ it does not fail the build — the deployment reports READY and then every route
 a real Next.js build records `lambdaRuntimeStats` and `bundler`, and a broken one
 records neither.
 
-`PROPOSAL_SECRET` is set in the project's environment variables. Environment
-variables do not apply to deployments that already exist, so after changing one,
-redeploy.
+`PROPOSAL_SECRET` and `PORTAL_SECRET` are both set in the project's environment
+variables — two separate secrets, so rotating one never invalidates the other's
+sessions. Environment variables do not apply to deployments that already exist,
+so after changing one, redeploy.
+
+**`CONTACT_FROM` governs two senders, and is still unset.** Both
+`/api/contact` and `/api/portal/request-link` read
+`process.env.CONTACT_FROM ?? "onboarding@resend.dev"`, so a wrong value there
+breaks portal sign-in as well as the contact form. It stays on Resend's
+sandbox sender until `r-xtech.com` is verified in Resend (DKIM/SPF on the
+domain's DNS zone) — see `.env.example` for the sequence. Point it at a
+send-only mailbox rather than the inbox that receives: the contact route
+already sets `replyTo` to the visitor, so nothing needs to arrive at the
+sending address.
 
 **Local builds can fail with `EPERM` on `.next/types`** while VS Code is open —
 its TypeScript server holds the directory, and `tsconfig.json` includes it. Close
 the editor, or verify with a build from a clean clone instead.
+
+**`Jest worker encountered 2 child process exceptions, exceeding retry limit`
+on a dynamic route in `next dev` means restart the server, not that the page is
+broken.** `getStaticPathsWorker` is the *only* jest-worker `next dev` runs, and
+it exists to evaluate `generateStaticParams` in a forked child — which is why
+this hits `/projects/[slug]` and the proposal routes while `/projects` beside
+them still answers 200. The fork is per dynamic route, the pool is
+`numWorkers: 1, maxRetries: 1`, and Next never recovers a worker that failed to
+start: once the child cannot spawn, every later request for that route reports
+the retry limit, so the error long outlives whatever caused it. What stops the
+spawn is host resource pressure — a dev server left running through a long
+animation session climbs past a gigabyte, and this repo lives inside a
+OneDrive-synced folder whose file locks are the same ones behind the `EPERM`
+above. Restarting `npm run dev` clears it; deleting `.next` is not needed and
+does not address it.
+
+## An anchor jump waits for the page to stop moving
+
+Landing on a URL with a hash used to put the target anywhere: measured across
+four viewport heights on one build, the section `/#services` points at came to
+rest from 101px *above* the header's bottom edge to 61px below it. It reads as
+a wrong offset and is not one — nothing about `scroll-margin-top` can correct a
+jump that was measured against a layout which then moved. **Do not tune
+`scroll-mt` against numbers like these**; fitting one viewport makes another
+worse, which is exactly what happened when it was tried.
+
+Three things moved the page after the jump, and all three are now waited on:
+
+- **Pins.** Home pins two `PanelSection` runways above the document band, and a
+  pin's spacer height is only decided by `ScrollTrigger.refresh()`. That
+  refresh now runs *before* the jump rather than after.
+- **The preloader.** It holds `html { overflow: hidden }` and calls
+  `window.scrollTo(0, 0)` for its own ~2.75s. The reset is skipped outright
+  when the URL carries a hash — a restored offset is an accident of reloading,
+  a fragment is a destination — which is also what keeps a deep link working on
+  the reduced-motion path, where Lenis never exists and the browser's own
+  fragment scroll is all there is.
+- **Fonts.** The deciding one. `Preloader` waits on `document.fonts.ready`
+  before it fades, and the display face swapping in reflows every heading below
+  the fold.
+
+`src/lib/scroll-gate.ts` is the latch: anything that will change layout during
+startup takes a hold, `SmoothScroll` waits for the last release before it
+jumps. It is a module, not a context — the two parties are a provider in the
+root layout and a component deep inside a route, the same gap `lib/lenis.ts`
+already bridges the same way. On every route that mounts no preloader the gate
+is already open and costs one microtask.
+
+Verified on screen at 320x568, 390x844 and 430x932, three runs each: the
+kicker lands 73px below the header every time, on all three of Home's anchors.
+
+**Measure anchors in a *visible* iframe.** Chrome throttles `requestAnimationFrame`
+in an offscreen one, the preloader's scramble is a rAF loop, and its sequence
+then takes long enough that a probe times out mid-jump and reports a number
+that looks like a layout bug. Some of the original variance was this, not the
+race.
+
+`BlockShell` and `PortalSection` carry `scroll-mt` for the same reason from the
+other direction — no preloader is involved there, only a fixed header. Before
+it, the three sections a proposal's rail jumps to landed 31px, 92px and 64px
+above the viewport top.
+
+## Opening the dev server from a phone
+
+`next dev` refuses `/_next/*` to every origin but localhost, and **the refusal
+is silent exactly where it hurts**: the document still returns 200 and the HTML
+still renders, but `/_next/webpack-hmr` is blocked, the dev runtime never
+finishes hydrating, and *no client effect on the page ever runs*. What that
+looks like is not an error:
+
+- **Home is a black screen.** `Preloader` is server-rendered as a
+  full-viewport `bg-carbon` plate at `z-[100]`, and the only thing that ever
+  takes it away is its own `useGSAP` callback. No hydration, no callback, no
+  removal — the page sits behind it for good. (Its `<noscript>` escape hatch
+  does not fire either: scripting is enabled, it just never completed.)
+- **Every other route shows its chrome and no content.** `Reveal` holds
+  everything at `reveal-init`'s `opacity: 0` until GSAP settles it, so headers,
+  buttons and backgrounds paint and the words and images do not.
+
+Both read as rendering faults and are neither. The one clue is a warning in the
+dev server's own log — `⚠ Blocked cross-origin request to Next.js dev resource
+… from "192.168.x.x"` — which never reaches the browser console, so debugging
+this from the device tells you nothing.
+
+`next.config.ts` sets `allowedDevOrigins` and defaults it to the private IPv4
+ranges, so a phone on the same Wi-Fi works with no configuration; `DEV_ORIGINS`
+overrides the list. It is dev-only and `next build` ignores it.
+
+Worth knowing because **testing the mobile layout on a real device is the only
+way to check it**, and this failure makes the first attempt look like the site
+itself is broken.
 
 ## GIF recording (visual verification)
 

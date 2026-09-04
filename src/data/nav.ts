@@ -5,7 +5,26 @@ export type NavLink = {
   external?: boolean;
 };
 
-/** Main navigation of the fullscreen overlay menu. */
+/**
+ * The client portal's entry point, read by `Header.tsx`'s own pill — one
+ * label, defined once, never re-typed at the call site.
+ *
+ * "Login", not "Client access": the pill it labels is now icon-sized, and at
+ * `text-[10px]` the longer phrase was most of the header's right edge for a
+ * control that is deliberately the secondary one there.
+ */
+export const portalLink: NavLink = { label: "Login", href: "/portal" };
+
+/**
+ * Main navigation of the fullscreen overlay menu.
+ *
+ * `portalLink` is deliberately absent: it stays a header-only pill
+ * (`Header.tsx`, `sm` up), not a menu entry. It used to also close this list
+ * — the reasoning was that the header at 375px has no room for it, so the
+ * menu was the only way to reach the portal below `sm` — but the client
+ * portal is a returning-client bookmark, not a route a first-time visitor
+ * needs surfaced in the primary nav.
+ */
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
@@ -14,5 +33,16 @@ export const navLinks: NavLink[] = [
   { label: "Contact", href: "/contact" },
 ];
 
-/** Secondary highlighted link inside the overlay. */
-export const labsLink: NavLink = { label: "Labs", href: "/labs" };
+/**
+ * Secondary highlighted link inside the overlay.
+ *
+ * `description` is the card's second line, which used to be hardcoded in
+ * `MenuOverlay.tsx`. It says what it says because this card is now the only
+ * way in: the assistant moved off Home's scroll and onto `/labs`, so a
+ * visitor who is never told it is there will never find it.
+ */
+export const labsLink: NavLink & { description: string } = {
+  label: "Labs",
+  href: "/labs",
+  description: "Build a tool with the assistant",
+};

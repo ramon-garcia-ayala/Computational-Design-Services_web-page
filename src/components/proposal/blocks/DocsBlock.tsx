@@ -15,11 +15,12 @@ export function DocsBlock({ block }: { block: DocsBlockData }) {
       title={block.title}
       lead={block.lead}
     >
+      {/* Was `border-line bg-line` (1.38:1) — same invisible-divider grid. */}
       <Reveal
         stagger="[data-reveal]"
         as="ul"
         className={cn(
-          "mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line",
+          "mt-14 grid gap-px overflow-hidden rounded-surface border border-edge bg-edge",
           cardGrid(block.docs.length),
         )}
       >
@@ -31,9 +32,9 @@ export function DocsBlock({ block }: { block: DocsBlockData }) {
               rel="noreferrer noopener"
               className="group flex h-full items-start gap-4 p-8 transition-colors hover:bg-graphite lg:p-10"
             >
-              <Icon name="file" className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+              <Icon name="file" className="mt-0.5 h-5 w-5 shrink-0 text-accent-ink" />
               <span className="flex flex-col gap-2">
-                <span className="font-display text-base font-semibold tracking-tight text-fg transition-colors group-hover:text-accent">
+                <span className="font-display text-base font-semibold tracking-tight text-fg transition-colors group-hover:text-accent-ink">
                   {doc.label}
                 </span>
                 {doc.note ? (

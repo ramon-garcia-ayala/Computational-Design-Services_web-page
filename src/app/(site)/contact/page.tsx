@@ -27,7 +27,7 @@ export default function ContactPage() {
     <section className="relative overflow-hidden pt-32 pb-24 sm:pt-40 sm:pb-28">
       <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_35%,rgba(232,169,74,0.06),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_35%,color-mix(in_srgb,var(--color-accent)_6%,transparent),transparent_60%)]"
         aria-hidden="true"
       />
 
@@ -43,7 +43,7 @@ export default function ContactPage() {
 
         <div className="mt-16 grid gap-14 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <Reveal>
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent-ink">
               {contactCopy.formKicker}
             </p>
             <div className="mt-6">
@@ -59,7 +59,7 @@ export default function ContactPage() {
                 </p>
                 <a
                   href={mailtoHref}
-                  className="mt-4 inline-block border-b border-accent pb-1 font-display text-xl font-semibold text-accent transition-opacity hover:opacity-70 sm:text-2xl"
+                  className="mt-4 inline-block border-b border-accent-ink pb-1 font-display text-xl font-semibold text-accent-ink transition-opacity hover:opacity-70 sm:text-2xl"
                 >
                   {site.contactLabel}
                 </a>

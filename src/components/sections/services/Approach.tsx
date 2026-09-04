@@ -18,9 +18,11 @@ export function Approach() {
           />
         </Reveal>
 
+        {/* Was `border-line bg-line` (1.38:1 / ~1.4:1 on warm) — same
+            invisible-divider grid as the proposal blocks. */}
         <Reveal
           stagger="[data-reveal]"
-          className="mt-16 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2"
+          className="mt-16 grid gap-px overflow-hidden rounded-surface border border-edge bg-edge sm:grid-cols-2"
         >
           {approachSteps.map((step) => (
             <article
@@ -29,7 +31,7 @@ export function Approach() {
               data-reveal
             >
               <span
-                className="font-mono text-sm text-accent"
+                className="font-mono text-sm text-accent-ink"
                 aria-hidden="true"
               >
                 {step.number}
