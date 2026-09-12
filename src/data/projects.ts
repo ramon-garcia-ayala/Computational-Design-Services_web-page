@@ -409,6 +409,273 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: "hyper-builder-vertical-community-generator",
+    title: "Hyper Builder",
+    context: "IAAC · Barcelona",
+    year: "2026",
+    tags: ["Grasshopper", "Web app", "Cloud data management"],
+    summary:
+      "A web-based parametric app that turns building massing and program into something you compose in real time, not wait hours to see.",
+    intro:
+      "Urban design has always oscillated between a static CAD drawing and a simulation that takes hours to update, and that lag kills creativity. Hyper Builder closes the gap: a Grasshopper backend behind a browser interface, so the model reruns as fast as a slider moves.",
+    brief: [
+      "Hyperbuilder is a web-based parametric design app that transforms complex architectural modeling into a seamless, rapid-iteration process. Powered by a Grasshopper backend, it allows users to effortlessly generate, evaluate, and configure complex building massings and program distributions through a highly intuitive, simple interface.",
+    ],
+    panels: [
+      {
+        id: "vision",
+        kicker: "01 · Vision",
+        title: "Vertical communities, quantified",
+        body: "The industry is obsessed with the final render and has been ignoring the space between the sketch and the BIM model. Hyper Builder bridges that gap with a real-time, cloud-based environment where data doesn't just follow the design — it drives it.",
+        media: assetRange(0, 3),
+      },
+      {
+        id: "controls",
+        kicker: "02 · Controls",
+        title: "Composing, not drawing",
+        body: "A project grid, towers added or removed with a click, height and program mix on sliders that update the 3D model instantly, and site context imported straight from a 3DM file. Every input is live, so the model is always the current answer, never a stale export.",
+        facts: [
+          { label: "Backend", value: "Grasshopper" },
+          { label: "Update latency", value: "Instant, on every slider move" },
+        ],
+        media: assetRange(3, 5),
+      },
+      {
+        id: "analytics",
+        kicker: "03 · Analytics",
+        title: "The dashboard that catches the ratio before export",
+        body: "A donut chart tracks the overall program split; bar charts break it down tower by tower. If the retail-to-residential ratio is off, it shows up on screen long before anyone hits export — and a version history panel keeps every iteration browsable and reversible.",
+        media: assetRange(5, 7),
+      },
+    ],
+  },
+  {
+    slug: "geometry-of-intelligence-hb01",
+    title: "The Geometry of Intelligence",
+    context: "IAAC · Barcelona",
+    year: "2026",
+    tags: ["Grasshopper", "Speckle", "Computational design", "BIM"],
+    summary:
+      "Hyper Building One's geometry stops being a shape and becomes a carrier of over ten embedded metadata points.",
+    intro:
+      "A one-million-square-metre tower can't stay agile if its blueprint is a static snapshot that starts ageing the moment it's drawn. This phase of HB-01 asks how raw geometry becomes live data — and answers it capsule by capsule.",
+    brief: [
+      "Hyperbuilding One is a data-driven ecosystem that achieves seamless connectivity between Static and Kinetic spaces through an optimized large-scale integrated environment.",
+    ],
+    panels: [
+      {
+        id: "system",
+        kicker: "01 · System",
+        title: "Static body, kinetic cells",
+        body: "The tower splits into two systems in constant dialogue: a permanent infrastructural body carrying the skeletal and circulatory logic, and a series of hexagonal plug-in capsules — the Abyss, the Groot, the Recycler, the Boss — that exchange air, water and energy. Hexagonal packing keeps it gapless and maximises sunlight.",
+        media: assetRange(0, 3),
+      },
+      {
+        id: "metadata",
+        kicker: "02 · Metadata",
+        title: "Every capsule carries its own dataset",
+        body: "Generated through the Grasshopper and Speckle pipeline, a capsule is never just a 3D model — it's a container for over ten metadata points: programmatic function, precise weight and embodied carbon, and its spatial relationship to the core and to its neighbours.",
+        facts: [
+          { label: "Metadata points per capsule", value: "10+" },
+          { label: "Pipeline", value: "Grasshopper → Speckle" },
+        ],
+        media: assetRange(3, 5),
+      },
+      {
+        id: "validation",
+        kicker: "03 · Validation",
+        title: "KPIs instead of guesses",
+        body: "Space utilisation against the one-million-square-metre target, spatial proximity between interdependent functions, and the exact energy demand of each cluster — validated in real time rather than assumed, and checked against the city below through shadow and daylight analysis so the tower stays a good neighbour.",
+        media: assetRange(5, 6),
+      },
+    ],
+  },
+  {
+    slug: "automated-metadata-extraction-hb01",
+    title: "Automated Metadata Extraction — HB01",
+    context: "IAAC · Barcelona",
+    year: "2026",
+    tags: ["Speckle", "Automation", "Data pipelines", "BIM"],
+    summary:
+      "A Speckle automation that turns a newly published model into a structured spreadsheet of KPIs, with no one exporting a file by hand.",
+    intro:
+      "Coordination across a large design team breaks down at data translation — too many file formats, too much room for miscommunication. This pipeline extracts a model's KPIs the moment a new version is published and pushes them into one format every team can read.",
+    brief: [
+      "An automated pipeline that transforms raw 3D model metadata into structured cloud spreadsheets. This makes complex geometric data easily accessible and adaptable for various end-uses, from simple data reading to feeding live web platforms.",
+    ],
+    panels: [
+      {
+        id: "problem",
+        kicker: "01 · Problem",
+        title: "The bottleneck is translation, not measurement",
+        body: "The geometric, textual and numerical data a design team generates is enormous, and the missing link isn't better analysis — it's a single, legible format everyone downstream can actually use. The Studio's Data Team needed raw geometry to arrive already structured for its KPI database.",
+        media: assetRange(0, 1),
+      },
+      {
+        id: "pipeline",
+        kicker: "02 · Pipeline",
+        title: "Speckle extracts, the report writes itself",
+        body: "The automation pulls architectural KPIs — areas, use ratios, evacuation distances — straight from the 3D model and processes them into a structured Excel or Google Sheet, with summary matrices by tower, level and program ready for immediate validation.",
+        facts: [
+          { label: "Extracted", value: "Areas · use ratios · evacuation distances" },
+          { label: "Output", value: "Structured spreadsheet, by tower/level/program" },
+        ],
+        media: assetRange(1, 4),
+      },
+      {
+        id: "validation",
+        kicker: "03 · Validation",
+        title: "Every version checked against the last",
+        body: "The tables run from a per-geometry summary to validation tables that flag errors and version-to-version changes — matching, missing or modified — so a stale export is caught before it reaches anyone who'd act on it.",
+        media: assetRange(4, 5),
+      },
+    ],
+  },
+  {
+    slug: "geomorphing-terrascape-chihuahua",
+    title: "Geomorphing Terrascape",
+    context: "IAAC · Barcelona",
+    year: "2025",
+    tags: ["Monoceros / WFC", "Grasshopper", "Environmental analysis", "3D-printed adobe"],
+    summary:
+      "Chihuahua's informal barrio, encoded as an aggregation system — dignifying its survival logic rather than replacing it with a grid.",
+    intro:
+      "The barrio in Chihuahua's rugged topography isn't just housing; it's a morphological catalyst, a vernacular intelligence of incremental growth built to survive an extreme desert climate. Terrascape reads that logic as a rule set and lets Monoceros grow from it, rather than imposing an order from outside.",
+    brief: [
+      "Terrascape does not impose an external order; it encodes the survival logic of the Mexican informal barrio to transform it into a dignified, resilient, and dynamic housing system.",
+    ],
+    panels: [
+      {
+        id: "strategy",
+        kicker: "01 · Strategy",
+        title: "Encoding the barrio, not erasing it",
+        body: "Three computational concepts translate the barrio's spontaneous survival logic: Wave Function Collapse for rule-based rather than gridded growth, a topographical agent that interweaves with Chihuahua's hills, and modular dignification — structural safety and climate resilience without losing the self-built essence.",
+        media: assetRange(0, 3),
+      },
+      {
+        id: "typology",
+        kicker: "02 · Typology",
+        title: "The Tianguis: a little bit of everything",
+        body: "Organised like the traditional open-air market, clusters stay under six modules to hold a human scale. Housing modules go subterranean for thermal inertia or open to voids above for ventilation; functional modules carry commerce and rainwater harvesting; circulation modules — cores and bridges — adapt to the slope.",
+        media: assetRange(3, 6),
+      },
+      {
+        id: "workflow",
+        kicker: "03 · Workflow",
+        title: "TSP path, then Monoceros aggregation",
+        body: "The terrain is read first, a Traveling Salesman solve finds the shortest path between points of interest, and that route projects onto the module grid for Monoceros to aggregate against. The result reports its own area, BCR, FAR and population density as it forms.",
+        facts: [
+          { label: "Primary structure", value: "3D-printed adobe" },
+          { label: "Water yield", value: "3–10 L/m² per day" },
+        ],
+        media: assetRange(6, 9),
+      },
+      {
+        id: "validation",
+        kicker: "04 · Validation",
+        title: "Stress-tested across five sites",
+        body: "From a steep mountain periphery demanding an organic response to a flat urban lot suited to grid logic, the aggregation was tested across five extreme topographical conditions — proving the system holds regardless of slope or scale.",
+        media: assetRange(9, 15),
+      },
+    ],
+  },
+  {
+    slug: "materia-assente",
+    title: "Materia Assente",
+    context: "IAAC · Barcelona",
+    year: "2025",
+    tags: ["Kangaroo", "Crystallon", "Alpaca FEA", "Galapagos"],
+    summary:
+      "A lattice pavilion that weighs 202 kg and displaces 0.16 mm — engineering the memory of a form rather than its mass.",
+    intro:
+      "What happens when a pavilion is designed for the memory of a building instead of the building itself? Materia Assente reconstructs an architectural volume as a wire-mesh lattice: poetic in concept, resolved entirely through finite element analysis and evolutionary optimisation.",
+    brief: [
+      "Materia Assente explores the intersection of poetic parametric design and rigorous structural integrity. The project seeks to answer a complex question: how can we create a structure that feels like a ghost — evoking ancient forms — while maintaining the structural stability required for a real-world pavilion?",
+    ],
+    panels: [
+      {
+        id: "concept",
+        kicker: "01 · Concept",
+        title: "Absent matter, present structure",
+        body: "Instead of solid walls, complex lattice structures reconstruct the volume of an architectural form, filtering the landscape through a wire-mesh transparency. The concept is poetic; the execution is purely mathematical.",
+        media: assetRange(0, 1),
+      },
+      {
+        id: "workflow",
+        kicker: "02 · Workflow",
+        title: "Five steps from void to verified lattice",
+        body: "Boolean form-finding carves the ghost geometry; Crystallon voxelises it into a BC Cubic cell topology chosen for its stability; the lattice is trimmed and loaded; Alpaca 4D runs the FEA; Galapagos refines the geometry to minimise displacement.",
+        facts: [
+          { label: "Beams", value: "18,000+ curves" },
+          { label: "Nodes", value: "37,000+ intersections" },
+        ],
+        media: assetRange(1, 3),
+      },
+      {
+        id: "results",
+        kicker: "03 · Results",
+        title: "Light in mass, stiff under load",
+        body: "Fit inside an 8 × 6 × 4.5 m envelope with over 6 km of linear beams, glass-reinforced recycled-PET pipes, the structure weighs 202.22 kg total. Under combined gravity and wind loads it holds global displacement to 0.16 mm, peaking at 67.26 mm under maximum combined load.",
+        media: assetRange(3, 5),
+      },
+      {
+        id: "tradeoff",
+        kicker: "04 · Trade-off",
+        title: "Density against transparency",
+        body: "Galapagos found the densest configurations were also the strongest — and the least habitable, closing off both circulation and the ghost aesthetic the project is named for. The final geometry negotiates that trade-off rather than maximising either side of it.",
+        media: assetRange(5, 7),
+      },
+    ],
+  },
+  {
+    slug: "pneumatical-incrustation",
+    title: "The Pneumatical Incrustation",
+    context: "IAAC · Barcelona",
+    year: "2025",
+    tags: ["Kangaroo", "Digital fabrication", "Panelisation", "Adaptive reuse"],
+    summary:
+      "Inflated pneumatic forms grafted onto a decaying market's existing grid — soft geometry defining a space traditionally held by solid walls.",
+    intro:
+      "How can something low in inherent solidity still be structurally present and define architectural space? Developed for the Complex Forming Seminar, the project pushes that question through Cairo's Bab El-Louk market, using the site's own structural grid as the foundation for a soft, inflated transformation.",
+    brief: [
+      "How can an object low in inherent solidity still be structurally present and define architectural space? This question lies at the heart of The Pneumatical Incrustation, exploring the fundamental contrast between the solid and the soft — a dialogue between the rigidity of traditional architecture and the fluidity of pneumatic structures.",
+    ],
+    panels: [
+      {
+        id: "challenge",
+        kicker: "01 · Challenge",
+        title: "From free-form simulation to a panelisable system",
+        body: "Early Kangaroo explorations produced compelling free-form geometry that couldn't be standardised for construction. The fix was a pseudo-code membrane that hangs downward into columns while simultaneously inflating upward into domes — complexity traded for quantifiability.",
+        media: assetRange(0, 2),
+      },
+      {
+        id: "process",
+        kicker: "02 · Process",
+        title: "Eight steps, from frame to pillowy panel",
+        body: "A horizontal frame subdivides along the site grid, extrudes down to anchor the form, relaxes into a membrane, inflates upward under negative load, and trims to open shopfronts. A Kangaroo circle-packing solve joins into hexagonal panels, each one extruded along its normal and smoothed into the finished pneumatic surface.",
+        media: assetRange(2, 3),
+      },
+      {
+        id: "parameters",
+        kicker: "03 · Parameters",
+        title: "Four dials, a family of forms",
+        body: "Column descent, dome inflation, panelisation density and per-panel inflation magnitude are all adjustable, letting the system respond to structural weight and constraint without a redesign.",
+        facts: [
+          { label: "Adjustable parameters", value: "4" },
+          { label: "Site", value: "Bab El-Louk market, Cairo" },
+        ],
+        media: assetRange(3, 4),
+      },
+      {
+        id: "context",
+        kicker: "04 · Context",
+        title: "Revival, not demolition",
+        body: "The existing structural grid becomes the foundation rather than an obstacle. From outside, the inflated volumes read as extrusions hinting at the commerce below; inside, the upper faces filter daylight while the lower faces descend to sculpt intimate shops and corridors.",
+        media: assetRange(4, 9),
+      },
+    ],
+  },
+  {
     slug: "lightweave-pavilion",
     title: "Lightweave Pavilion",
     context: "IAAC · Barcelona",

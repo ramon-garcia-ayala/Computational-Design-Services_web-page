@@ -1068,15 +1068,36 @@ variables — two separate secrets, so rotating one never invalidates the other'
 sessions. Environment variables do not apply to deployments that already exist,
 so after changing one, redeploy.
 
-**`CONTACT_FROM` governs two senders, and is still unset.** Both
-`/api/contact` and `/api/portal/request-link` read
-`process.env.CONTACT_FROM ?? "onboarding@resend.dev"`, so a wrong value there
-breaks portal sign-in as well as the contact form. It stays on Resend's
-sandbox sender until `r-xtech.com` is verified in Resend (DKIM/SPF on the
-domain's DNS zone) — see `.env.example` for the sequence. Point it at a
-send-only mailbox rather than the inbox that receives: the contact route
-already sets `replyTo` to the visitor, so nothing needs to arrive at the
-sending address.
+**`CONTACT_FROM` governs two senders, and both it and `r-xtech.com`'s Resend
+verification are done.** Both `/api/contact` and `/api/portal/request-link`
+read `process.env.CONTACT_FROM ?? "onboarding@resend.dev"`, so a wrong value
+there breaks portal sign-in as well as the contact form. `r-xtech.com` is
+verified in Resend (DKIM/SPF added to the domain's DNS zone), and
+`CONTACT_FROM` points at `no-reply@r-xtech.com` — a send-only mailbox, never
+the inbox that receives, since the contact route already sets `replyTo` to
+the visitor.
+
+**`CONTACT_TO` is `info@r-xtech.com`, and that address's delivery is entirely
+outside this codebase and outside Resend/Vercel.** `info@r-xtech.com` is a
+Zoho Mail mailbox with a Zoho-side forwarding rule to `rxtech2026@gmail.com`
+(the address actually checked day to day). Zoho requires that forward
+destination to be verified via a confirmation link before it forwards
+anything — an unverified forward silently drops mail with no error anywhere
+in Vercel's logs. This is why a "the form won't send" report can have three
+unrelated causes at three different layers, and why diagnosis should start
+with `get_runtime_errors` / `get_runtime_logs` on `/api/contact` (the Vercel
+MCP tools, not `vercel logs`, since the CLI isn't installed in this
+environment): a **503** is this route's own fail-closed branch (`RESEND_API_KEY`
+missing), a **502** is Resend rejecting the send (almost always a `CONTACT_FROM`
+domain that isn't verified), and a **200** with nothing arriving means Resend
+already delivered successfully and the problem is downstream — the Zoho
+mailbox or its forwarding rule, not this codebase.
+
+**`RESEND_API_KEY`, `CONTACT_TO` and `CONTACT_FROM` all need the Preview scope
+checked in Vercel, not just Production.** It's an easy gap to leave: setting a
+var and testing only against the production domain leaves preview
+deployments (every non-`main` branch, including mid-PR work) 503ing on the
+same form while production looks fully fixed.
 
 **Local builds can fail with `EPERM` on `.next/types`** while VS Code is open —
 its TypeScript server holds the directory, and `tsconfig.json` includes it. Close
