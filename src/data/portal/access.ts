@@ -27,6 +27,11 @@ export const portalAccess: PortalCredentials[] = [
     salt: "2393bc624880962d",
     hash: "e11d9a79199613374bc80c89e0d7df4fc1cfe1e6253e5764866005fcdf296d42",
   },
+  {
+    slug: "ecogen",
+    salt: "c126345fac9b9973",
+    hash: "bf9a3536f44748532f09b95ac80307929d23730e7dde61d6bbdc0644266432b7",
+  },
 ];
 
 /**
