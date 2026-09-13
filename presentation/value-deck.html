@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>R²XTECH — What we do, what you get</title>
+<title>R²XTECH · What we do, what you get</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   R²χTECH value deck — 10 slides, three acts.
+   R²χTECH value deck — 9 slides, three acts.
 
    The deck answers the three questions a client actually asks, in
    order: what do you do · what does it do for me · what do I get.
@@ -73,6 +73,7 @@
   --fg-muted:    #4a4642;   /* 4.54:1 */
   --edge:        #625d57;   /* 3.17:1 */
   --ink-accent:  #2a2826;   /* amber cannot be ink here */
+  --danger:      #900e0e;   /* 4.52:1 — light ground needs a dark red, not the warm-scope pink */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -130,8 +131,8 @@ html, body {
   z-index: 0;
 }
 
-/* The three plain-cover photo slides (terrace-dusk, vault-night,
-   tower-night) sit inside `.deck`'s 16:9 frame, and syncChrome() paints
+/* The plain-cover photo slides (terrace-dusk, tower-night) sit inside
+   `.deck`'s 16:9 frame, and syncChrome() paints
    the browser's own letterbox — everything outside that frame — to
    match `--carbon` exactly. It has to: at any window ratio other than a
    perfect 16:9 match, the deck is letterboxed, and these photos run
@@ -157,9 +158,8 @@ html, body {
 /* Two fit modes, because the two kinds of asset fail in opposite ways.
 
    Plain `.bg` is cover, and cover is right only where the asset's own
-   ratio already matches the 16:9 frame: vault-night measures 1.777 and
-   terrace-dusk 1.778 against the frame's 1.778, so neither loses
-   anything to it.
+   ratio already matches the 16:9 frame: terrace-dusk measures 1.778
+   against the frame's 1.778, so it loses nothing to it.
 
    `.bg.object` is for the three geodesic frames, which are 4:3. Covered
    into 16:9 they scale to the frame's WIDTH and lose a quarter of their
@@ -356,7 +356,14 @@ p.note strong { color: var(--ink-accent); font-weight: 500; }
 .cols.c4 { grid-template-columns: repeat(4, 1fr); }
 
 .col { display: flex; flex-direction: column; gap: clamp(8px, 0.95vw, 13px); }
-.col.ruled { border-top: 1px solid var(--line); padding-top: clamp(13px, 1.6vw, 22px); }
+.col.ruled { border-top: 1px solid var(--line); padding-top: clamp(13px, 1.6vw, 22px); transition: border-color 0.5s ease; }
+.col.ruled .figure-sub { transition: color 0.5s ease; }
+/* Set by slide 6's records animation on whichever number it is drawing. */
+.col.ruled.live { border-top-color: var(--accent); }
+.col.ruled.live .figure-sub { color: var(--fg); }
+
+.records-figure { position: relative; overflow: hidden; background: var(--graphite); }
+.records-figure canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .figure {
   font-family: var(--font-mono);
@@ -366,7 +373,6 @@ p.note strong { color: var(--ink-accent); font-weight: 500; }
   letter-spacing: -0.025em;
   color: var(--ink-accent);
 }
-.figure.plain { color: var(--fg); }
 .figure.huge { font-size: clamp(3rem, 7.4vw, 8.5rem); letter-spacing: -0.04em; }
 .figure .unit { font-size: 0.5em; color: var(--fg-muted); letter-spacing: 0; vertical-align: 0.22em; }
 .figure.huge .unit { font-size: 0.34em; }
@@ -381,7 +387,7 @@ p.note strong { color: var(--ink-accent); font-weight: 500; }
   line-height: 1.5;
 }
 
-/* Macro/micro scale labels — same register as .ba .side .cap, reused
+/* Macro/micro scale labels: a small mono uppercase kicker, reused
    wherever a figure needs to say which scale it's read at before the
    number itself lands. */
 .scale-tag { font-family: var(--font-mono); font-size: var(--text-mono-sm); text-transform: uppercase; letter-spacing: 0.16em; color: var(--fg-muted); }
@@ -415,11 +421,11 @@ ul.dash li span { color: var(--fg-muted); }
 ul.dash.roomy { gap: clamp(12px, 1.5vw, 20px); }
 ul.dash.roomy li { font-size: var(--text-lead); line-height: 1.5; }
 
-/* An image placed in the flow rather than behind it. The ratio is the
-   asset's own, so nothing is cropped — the lattice used to sit in a box
-   forced to 3.18:1 against its own 1.66:1 and lost 48% of its height. The
-   ring is what stops a mid-grey photograph from floating on the charcoal
-   as a pasted rectangle. */
+/* An image placed in the flow rather than behind it. The ratio is always
+   set inline to the asset's own, so nothing is cropped — a box forced to
+   a ratio the image doesn't have loses part of its height. The ring is
+   what stops a mid-grey photograph from floating on the charcoal as a
+   pasted rectangle. */
 .inset-figure {
   width: 100%;
   border-radius: var(--radius-surface);
@@ -428,12 +434,6 @@ ul.dash.roomy li { font-size: var(--text-lead); line-height: 1.5; }
   background-repeat: no-repeat;
   box-shadow: 0 0 0 1px var(--edge);
 }
-
-/* ── Before / after ──────────────────────────────────────────────── */
-.ba { display: grid; grid-template-columns: 1fr auto 1fr; gap: clamp(20px, 3vw, 52px); align-items: center; }
-.ba .arrow { font-family: var(--font-mono); font-size: clamp(1.4rem, 2.6vw, 2.8rem); color: var(--accent); }
-.ba .side { display: flex; flex-direction: column; gap: 10px; }
-.ba .side .cap { font-family: var(--font-mono); font-size: var(--text-mono-sm); text-transform: uppercase; letter-spacing: 0.16em; color: var(--fg-muted); }
 
 /* ── Pipeline strip ──────────────────────────────────────────────── */
 .pipeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-surface); overflow: hidden; }
@@ -492,7 +492,24 @@ input[type=number]:focus-visible { outline: 2px solid var(--accent); outline-off
 .readout .k { font-size: var(--text-body); color: var(--fg-muted); margin-top: 8px; line-height: 1.4; }
 
 .chart-wrap { position: relative; width: 100%; height: clamp(148px, 21vh, 248px); }
+/* Slide 5's own hinge chart gets more room than the ROI chart it shares
+   .chart-wrap with — it now carries the section's main visual argument,
+   not a supporting one. */
+.chart-wrap.tall { height: clamp(230px, 33vh, 380px); }
 .assumptions { font-family: var(--font-mono); font-size: var(--text-mono-sm); line-height: 1.6; color: var(--fg-muted); letter-spacing: 0.04em; margin-top: 14px; }
+
+/* ── Hinge proof bridge ───────────────────────────────────────────────
+   The chart argues the shape of the choice in the abstract; this bar
+   grounds it before the slide ends, in the one real number the deck
+   has for it. It used to hand the reader forward to a sixth slide
+   with that number's own full reveal; that slide is gone, so this bar
+   now carries the number's full statement, not a teaser of it. The
+   pill is the deck's one safe way to put amber on the greige ground: a
+   filled plate with dark ink measures 7.14:1, where amber text on the
+   plate itself would be 1.00:1 and disappear (see the file header). */
+.hinge-proof { display: flex; flex-wrap: wrap; align-items: baseline; gap: clamp(10px, 1.3vw, 18px); margin-top: clamp(22px, 2.8vw, 38px); padding-top: clamp(16px, 2vw, 26px); border-top: 1px solid var(--line); }
+.hinge-proof-figure { font-family: var(--font-mono); font-weight: 500; font-size: clamp(1.25rem, 1.9vw, 1.9rem); letter-spacing: -0.02em; color: var(--ink-accent); white-space: nowrap; }
+.hinge-proof-caption { font-family: var(--font-mono); font-size: var(--text-mono-sm); color: var(--fg-muted); line-height: 1.5; flex-basis: 100%; }
 
 /* ── Title / closing ─────────────────────────────────────────────── */
 .wordmark { height: clamp(18px, 1.9vw, 30px); width: auto; display: block; }
@@ -546,7 +563,9 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   .col.ruled { padding-top: clamp(10px, 1.2vw, 16px); }
   .source { margin-top: clamp(10px, 1.3vw, 18px); padding-top: 9px; }
   .chart-wrap { height: clamp(128px, 19vh, 198px); }
+  .chart-wrap.tall { height: clamp(160px, 25vh, 240px); }
   .statement { font-size: clamp(1.1rem, 1.95vw, 2.1rem); }
+  .hinge-proof { margin-top: clamp(14px, 1.8vw, 22px); padding-top: clamp(10px, 1.3vw, 16px); }
   .motif { height: clamp(26px, 3.6vh, 42px); }
 }
 
@@ -562,7 +581,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
 
 /* ── Small screens ───────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .split, .split.lean, .calc, .ba { grid-template-columns: 1fr; }
+  .split, .split.lean, .calc { grid-template-columns: 1fr; }
   .cols.c3, .cols.c4 { grid-template-columns: repeat(2, 1fr); }
   .pipeline { grid-template-columns: repeat(2, 1fr); }
   .readout { grid-template-columns: 1fr; gap: 14px; }
@@ -595,9 +614,9 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
     <div class="title-meta">Computational automation for AEC</div>
   </div>
   <aside class="notes">
-    <b>Two lines, two jobs — say both, never merge them.</b> "Architecture, computed" is what people repeat. "We automate AEC, you ship faster" is what convinces someone with a budget.<br>
-    <b>Frame the deck in one sentence:</b> "Three things — what we do, what it does for you, and what you walk away with. Ten slides, and then I want your numbers."<br>
-    <b>The object behind you is ours</b> — the geodesic from our own site. If someone asks, it's a parametric study, not a stock image.
+    <b>Two lines, two jobs: say both, never merge them.</b> "Architecture, computed" is what people repeat. "We automate AEC, you ship faster" is what convinces someone with a budget.<br>
+    <b>Frame the deck in one sentence:</b> "Three things: what we do, what it does for you, and what you walk away with. Ten slides, and then I want your numbers."<br>
+    <b>The object behind you is ours:</b> the geodesic from our own site. If someone asks, it's a parametric study, not a stock image.
   </aside>
 </section>
 
@@ -629,9 +648,9 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
     <span class="float-word right accent" style="right:26%;top:84%;--fd:2.65s">Digital Twins</span>
   </div>
   <aside class="notes">
-    <b>Ask it for real and let it sit — five seconds of quiet is fine.</b> It isn't a rhetorical opener: whatever they answer is the thread for the next nine slides.<br>
-    <b>The words that drift in are prompts, not a list to read aloud.</b> If one of them is why they took the call, let them say so — then slide 3 is the direct answer to it.<br>
-    <b>Write down the word they use.</b> A number (cost, hours, a named project) is slide 8's input. A frustration (manual work, a missed handoff) is where slide 3 should land.
+    <b>Ask it for real and let it sit: five seconds of quiet is fine.</b> It isn't a rhetorical opener: whatever they answer is the thread for the next nine slides.<br>
+    <b>The words that drift in are prompts, not a list to read aloud.</b> If one of them is why they took the call, let them say so. Then slide 3 is the direct answer to it.<br>
+    <b>Write down the word they use.</b> A number (cost, hours, a named project) is slide 7's input. A frustration (manual work, a missed handoff) is where slide 3 should land.
   </aside>
 </section>
 
@@ -699,11 +718,11 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
     </div>
   </div>
   <aside class="notes">
-    <b>The headline is the payoff to the last slide — land it that way.</b> Whatever they said brought them here, this is "good, because that's exactly what we do." Don't rush past it to the marks around it.<br>
-    <b>Name the two that fit what they said, skip the other two.</b> A slide that explains all four persuades nobody — the marks are there so all four exist, not so all four get read aloud.<br>
+    <b>The headline is the payoff to the last slide: land it that way.</b> Whatever they said brought them here, this is "good, because that's exactly what we do." Don't rush past it to the marks around it.<br>
+    <b>Name the two that fit what they said, skip the other two.</b> A slide that explains all four persuades nobody: the marks are there so all four exist, not so all four get read aloud.<br>
     <b>On AI, lead with the limit on the mark itself, not just the name:</b> "judgement-light, human-reviewed" is doing real work in that caption. Industrial clients have been pitched AI badly and often; the constraint is what makes it credible.<br>
     <b>If they ask for specifics:</b> Grasshopper, Dynamo, Revit and IFC via API, model audits, drawing and schedule generation, connectors and ETL, dashboards. Say it, don't put it on the slide.<br>
-    <b>"A 2D site drawing goes in. The model comes out. Nobody drew it."</b> That's the whole answer to 'what do you do' — say it here, the marks are the visual, not a diagram.
+    <b>"A 2D site drawing goes in. The model comes out. Nobody drew it."</b> That's the whole answer to 'what do you do': say it here, the marks are the visual, not a diagram.
   </aside>
 </section>
 
@@ -715,7 +734,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
      instead of leaving "scale it to them" to the presenter's mental
      math, which is what the old single-column version depended on.
      The right-hand figure reuses .figure's existing accent colour and
-     the calculator's own .ctrl/range styling from slide 8, so this
+     the calculator's own .ctrl/range styling from slide 7, so this
      reads as one interactive language across the deck rather than a
      one-off widget. -->
 <section class="slide">
@@ -729,7 +748,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
         <div class="figure huge" style="margin-top:10px">14<span class="unit">%</span></div>
         <div class="figure-label" style="margin-top:14px;max-width:26ch">Of all construction rework traces back to bad project data.</div>
         <p class="lead" style="margin-top:clamp(14px,1.8vw,22px)"><strong>$7.1M of avoidable rework for every $1bn of revenue.</strong></p>
-        <p class="lead">It never arrives as an invoice marked <em>rework</em>. It arrives as overtime, a change order, a slipped programme — so it never gets a line to defend.</p>
+        <p class="lead">It never arrives as an invoice marked <em>rework</em>. It arrives as overtime, a change order, a slipped programme, so it never gets a line to defend.</p>
       </div>
       <div>
         <div class="scale-tag accent">Your firm, same ratio</div>
@@ -738,78 +757,72 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
           <input type="range" id="revenue" min="5000000" max="1000000000" step="5000000" value="50000000" aria-label="Annual revenue">
         </div>
         <div class="figure huge" id="reworkCost" style="margin-top:clamp(14px,1.8vw,22px)">$355K<span class="unit">/yr</span></div>
-        <div class="figure-label" style="margin-top:14px;max-width:28ch">What's already leaving the business on the industry ratio alone — before anyone builds anything.</div>
+        <div class="figure-label" style="margin-top:14px;max-width:28ch">What's already leaving the business on the industry ratio alone, before anyone builds anything.</div>
       </div>
     </div>
   </div>
-  <div class="source">FMI &amp; Autodesk — Harnessing the Data Advantage in Construction</div>
+  <div class="source">FMI &amp; Autodesk: Harnessing the Data Advantage in Construction</div>
   <aside class="notes">
-    <b>Move the slider to their real revenue, live.</b> This used to be mental math done out loud ("$200M is roughly $1.4M a year") — now the slide computes it, and it lands harder because they watched the number move under their own figure, not yours.<br>
-    <b>Expect "our rework isn't from data".</b> Good — ask what it <i>is</i> from. Either they know, and it's a process we can automate, or they don't, and that measurement gap is the first thing we'd fix.<br>
-    <b>Backup figure if they want the macro behind the macro:</b> construction labour productivity grew 1% a year for two decades against 2.8% for the world economy and 3.6% for manufacturing (McKinsey). Kept off the slide on purpose — it's context, not their problem.<br>
-    <b>This right-hand number is the seed for slide 8.</b> Here is what inaction already costs; slide 8 is what the fix costs and when it pays back. If the thread is still live, say so explicitly: "hold that number — we'll come back to it."
+    <b>Move the slider to their real revenue, live.</b> This used to be mental math done out loud ("$200M is roughly $1.4M a year"). Now the slide computes it, and it lands harder because they watched the number move under their own figure, not yours.<br>
+    <b>Expect "our rework isn't from data".</b> Good: ask what it <i>is</i> from. Either they know, and it's a process we can automate, or they don't, and that measurement gap is the first thing we'd fix.<br>
+    <b>Backup figure if they want the macro behind the macro:</b> construction labour productivity grew 1% a year for two decades against 2.8% for the world economy and 3.6% for manufacturing (McKinsey). Kept off the slide on purpose: it's context, not their problem.<br>
+    <b>This right-hand number is the seed for slide 7.</b> Here is what inaction already costs; slide 7 is what the fix costs and when it pays back. If the thread is still live, say so explicitly: "hold that number, we'll come back to it."
   </aside>
 </section>
 
-<!-- ══ 05 · THE CHOICE (hinge, greige) ═══════════════════════════ -->
+<!-- ══ 05 · THE CHOICE (hinge, greige) ═══════════════════════════
+     Act II's close, in full. This used to carry two paragraphs of
+     explanation next to a two-hairline chart in near-identical greys,
+     asking the reader to do the persuading themselves. Cut instead:
+     one line of thesis, one compact proof strip, and a chart that
+     argues on its own. The two lines now run in genuinely different
+     colours, `--danger` (finally used, it sat unreferenced in :root
+     since the file's first draft) for the cost that never stops
+     growing and `--ink-accent` for the one that flattens, and
+     `breakevenMarker` fills the gap between them past the crossing
+     with a translucent wash of that same red: the reader does not
+     have to compute "the lines are spreading apart", they see a wedge
+     getting wider. No background image, still, for the same contrast
+     reason as before, everything here is drawn in canvas so a scrim
+     can never veil it per-pixel the way it veils DOM text. -->
 <section class="slide pale">
-  <!-- No background image on this one, deliberately. Its argument is the
-       chart, and a chart is drawn in hairlines onto a canvas: its axis
-       labels, legend and both cost lines are painted by Chart.js at fixed
-       colours, so nothing here can veil them per-pixel the way a scrim
-       veils DOM text. Measured with the mesh behind it, the caption came
-       to 4.25:1 against the 4.5 it needs, and the only tunings that fixed
-       it left the image 2% visible — an image in name only. The chart is
-       this slide's visual. -->
   <div class="eyebrow"><span class="act">02 /</span> The choice you keep making</div>
   <div class="body">
-    <div class="split">
+    <div class="split lean">
       <div>
-        <div class="statement">The fast fix wins every time. That's the problem.</div>
-        <p class="lead"><strong>An investment is decided once. A workaround is paid for every time.</strong> Only one of the two ever shows up in a meeting.</p>
+        <div class="statement" style="font-size:clamp(1.7rem,3.1vw,3.3rem);max-width:15ch">The fast fix wins every time. That's the problem.</div>
+        <p class="lead"><strong>An investment is decided once. A workaround is paid for every time.</strong></p>
+        <div class="hinge-proof">
+          <span class="pill solid">Measured, not modelled</span>
+          <span class="hinge-proof-figure">5 days &rarr; 1 day</span>
+          <span class="hinge-proof-caption">Baseline 5 days · today 3 · target same-day.</span>
+        </div>
       </div>
       <div>
-        <div class="chart-wrap"><canvas id="hingeChart"></canvas></div>
-        <div class="assumptions">The shape of the choice, not a quotation.</div>
+        <div class="chart-wrap tall"><canvas id="hingeChart"></canvas></div>
+        <div class="assumptions">Shape only, not measured data.</div>
       </div>
     </div>
   </div>
   <aside class="notes">
-    <b>The hinge of the deck — and the ground changes to mark it.</b> Everything before is the problem, everything after is the answer. Slow down.<br>
-    <b>Trace the crossing with your finger:</b> "Left of this point, doing nothing really is cheaper — that's why it keeps getting chosen. The question isn't whether automation pays. It's where this point sits for you, and whether you'll still be running this workflow when you reach it."<br>
-    <b>No numbers on the axes, deliberately.</b> If they ask for them, that's the buying signal — go to slide 8.
+    <b>The hinge of the deck: the ground changes to mark it.</b> Everything before is the problem, everything after is the answer. Slow down, and let this one land before you move on: it's the slide that has to convert "interesting" into "worth paying for."<br>
+    <b>Trace the widening red wedge with your finger, not just the crossing point.</b> "Left of this line, doing nothing really is cheaper. That's why it keeps getting chosen. But every month to the right, the red gets wider. That gap is what the workaround is costing you, right now, and it never stops growing. An investment is the one line that flattens."<br>
+    <b>Say the proof number exactly, never round it.</b> Baseline was 5 days, it is 3 today, the target is same-day. "We made it 5x faster" is a claim about the future dressed as the present; the honest version is what makes them believe the rest of the deck.<br>
+    <b>The line that never shows up in a meeting:</b> the workaround's cost is real but it's never itemised anywhere, which is exactly why it keeps winning against a number that is.<br>
+    <b>Ask:</b> "What's your equivalent number? How long from drawing to estimate?" Write down what they say. That is the input for slide 7.<br>
+    <b>No numbers on the chart's axes, deliberately.</b> If they ask what the red wedge is worth in dollars, that's the buying signal: go to slide 7.
   </aside>
 </section>
 
-<!-- ══ 06 · THE CHANGE ═══════════════════════════════════════════ -->
-<section class="slide">
-  <div class="bg" style="background-image:url('assets/vault-night.webp')"></div>
-  <div class="scrim dark"></div>
-  <div class="eyebrow"><span class="act">02 /</span> What changes</div>
-  <div class="body">
-    <div class="ba">
-      <div class="side">
-        <div class="cap">Before</div>
-        <div class="figure plain huge">5<span class="unit">days</span></div>
-        <div class="figure-sub">To turn a site drawing into a costed estimate</div>
-      </div>
-      <div class="arrow">→</div>
-      <div class="side">
-        <div class="cap">Target</div>
-        <div class="figure huge">1<span class="unit">day</span></div>
-        <div class="figure-sub">Same-day turnaround · 3 days today</div>
-      </div>
-    </div>
-    <p class="note" style="margin-top:clamp(20px,2.6vw,36px)">Measured on a live engagement, not modelled. The same drawing, the same estimator, the same output format.</p>
-  </div>
-  <aside class="notes">
-    <b>This is the single most persuasive number in the deck</b> — it is real, measured, and it converts straight into money on slide 8.<br>
-    <b>Be precise about status:</b> baseline was 5 days, it is 3 today, the target is same-day. Do not round it to "we made it 5x faster". The honesty is what makes them believe the rest.<br>
-    <b>Ask:</b> "What's your equivalent number — how long from drawing to estimate?" Write down what they say. That is the input for slide 8.
-  </aside>
-</section>
-
-<!-- ══ ACT III ══ 07 · PROOF ═════════════════════════════════════ -->
+<!-- ══ ACT III ══ 06 · PROOF ═════════════════════════════════════
+     The figure animates the four numbers beside it, and only the numbers.
+     Two earlier images here were wrong for the same reason: a photo of
+     someone else's built work, then a diagram of an actual model-generation
+     pipeline, which reads as a description of this client's own process,
+     exactly what the NDA keeps off screen. So nothing drawn is a building,
+     a tool or a labelled stage: 315 loose marks settle into 16 rules, 121
+     cells light, a chain of 16 nodes loses 4, a ring fills to 60%. Each
+     shape is the count itself, not the method that produced it. -->
 <section class="slide">
   <div class="eyebrow meta">A utility-scale energy client · under NDA</div>
   <div class="body">
@@ -817,39 +830,40 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
       <div>
         <h2>The numbers, not the name.</h2>
         <div class="cols c2" style="margin-top:clamp(18px,2.3vw,30px)">
-          <div class="col ruled">
+          <div class="col ruled" data-rec="0">
             <div class="figure">315<span class="unit"> vs </span>16</div>
             <div class="figure-sub">Layer conventions, same site</div>
           </div>
-          <div class="col ruled">
+          <div class="col ruled" data-rec="1">
             <div class="figure">121</div>
             <div class="figure-sub">Tests passing on real files</div>
           </div>
-          <div class="col ruled">
+          <div class="col ruled" data-rec="2">
             <div class="figure">16</div>
             <div class="figure-sub">Manual steps mapped · 4 gone</div>
           </div>
-          <div class="col ruled">
+          <div class="col ruled" data-rec="3">
             <div class="figure">~60<span class="unit">%</span></div>
             <div class="figure-sub">Pipeline built and tested</div>
           </div>
         </div>
       </div>
       <div>
-        <div class="inset-figure" style="aspect-ratio:1539/928;background-image:linear-gradient(rgba(45,42,38,0.34),rgba(45,42,38,0.34)),url('assets/lattice-mist.webp')" role="img" aria-label="A fine white lattice structure standing in mist on open ground."></div>
-        <p class="note" style="margin-top:14px">A drawing in, a coordinated model out — estimate, programme and 4D link from the same records.</p>
+        <div class="inset-figure records-figure" style="aspect-ratio:2/1" role="img" aria-label="An abstract animation of the four figures: 315 scattered marks settle into 16 aligned rules, 121 cells light one by one, a chain of 16 nodes loses 4, and a ring fills to 60 percent."><canvas class="records-canvas" aria-hidden="true"></canvas></div>
+        <p class="note" style="margin-top:14px">A drawing in, a coordinated model out: estimate, programme and 4D link from the same records.</p>
       </div>
     </div>
   </div>
   <aside class="notes">
-    <b>NDA discipline: no name, no country, no plant type beyond "utility-scale energy".</b> If pressed, that is the answer — and holding the line is itself the pitch: "I'll be this careful with yours."<br>
-    <b>315 vs 16 is the one engineers react to</b> — the same site arriving as two incompatible drawings is something all of them recognise.<br>
+    <b>NDA discipline: no name, no country, no plant type beyond "utility-scale energy".</b> If pressed, that is the answer, and holding the line is itself the pitch: "I'll be this careful with yours."<br>
+    <b>315 vs 16 is the one engineers react to.</b> The same site arriving as two incompatible drawings is something all of them recognise.<br>
     <b>The strongest technical line, if it comes up:</b> the writers refuse to save if the two totals disagree. It says we assume our own output can be wrong.<br>
-    <b>The image is our own research work</b> (IAAC Barcelona) — say so if asked. It is not this client's project.
+    <b>The figure walks the four numbers in order, and the rule above each one lights as its turn comes.</b> Let it run once before you speak to it; it restarts from 315 every time you land on the slide.<br>
+    <b>It draws counts, never method.</b> No building, no tool, no stage names, so nothing on screen describes this client's process, which the NDA does not let us show.
   </aside>
 </section>
 
-<!-- ══ 08 · YOUR NUMBERS ═════════════════════════════════════════ -->
+<!-- ══ 07 · YOUR NUMBERS ═════════════════════════════════════════ -->
 <section class="slide">
   <div class="eyebrow"><span class="act">03 /</span> What you get</div>
   <div class="body">
@@ -888,12 +902,12 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   <aside class="notes">
     <b>Hand them the laptop.</b> This slide works when they move the sliders, not when you do. The moment they type their own rate, the number stops being yours.<br>
     <b>Set the build investment live, in the room.</b> Nothing is pre-quoted, on purpose.<br>
-    <b>Defend the assumptions before they're questioned:</b> 80% not 100% (there is always an exception path), 46 weeks not 52, maintenance charged against us rather than hidden. A model that flatters itself falls over at the first engineer's question — and the engineer decides.<br>
+    <b>Defend the assumptions before they're questioned:</b> 80% not 100% (there is always an exception path), 46 weeks not 52, maintenance charged against us rather than hidden. A model that flatters itself falls over at the first engineer's question, and the engineer decides.<br>
     <b>If payback lands past 24 months, say so and walk it back.</b> "On these numbers I wouldn't build this yet." That sentence sells more work than any slide here.
   </aside>
 </section>
 
-<!-- ══ 09 · WHAT YOU KEEP ════════════════════════════════════════ -->
+<!-- ══ 08 · WHAT YOU KEEP ════════════════════════════════════════ -->
 <section class="slide">
   <div class="bg" style="background-image:url('assets/tower-night.webp');background-position:right center"></div>
   <div class="scrim dark"></div>
@@ -901,27 +915,27 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   <div class="body">
     <h2>You keep it when we leave.</h2>
     <ul class="dash roomy" style="margin-top:clamp(18px,2.3vw,32px);max-width:46ch">
-      <li>The code transfers to you <span>— no licence retained, nothing rented back</span></li>
-      <li>Documented, versioned, testable <span>— your team extends it without us</span></li>
-      <li>Fixed scope, milestone billing <span>— results, not hours</span></li>
-      <li>Training and handover <span>— included, never an upsell</span></li>
+      <li>The code transfers to you<span>: no licence retained, nothing rented back</span></li>
+      <li>Documented, versioned, testable<span>: your team extends it without us</span></li>
+      <li>Fixed scope, milestone billing<span>: results, not hours</span></li>
+      <li>Training and handover<span>: included, never an upsell</span></li>
     </ul>
   </div>
   <aside class="notes">
-    <b>"We retain no licence and nothing is rented back" is a contractual position, not a slogan</b> — it is written into the current engagement. Say it as the fact it is.<br>
+    <b>"We retain no licence and nothing is rented back" is a contractual position, not a slogan.</b> It is written into the current engagement. Say it as the fact it is.<br>
     <b>This kills the lock-in objection,</b> which in this industry is usually the unspoken reason a proposal dies in procurement. Get it said before they have to ask.<br>
     <b>If they push on maintenance:</b> we'd rather you never needed us again and called us for the next tool than pay us rent for this one.
   </aside>
 </section>
 
-<!-- ══ 10 · NEXT ═════════════════════════════════════════════════ -->
+<!-- ══ 09 · NEXT ═════════════════════════════════════════════════ -->
 <section class="slide pale">
   <div class="bg object" style="background-image:url('assets/geo-close.webp')"></div>
   <div class="scrim pale-veil"></div>
   <div class="eyebrow">Next step</div>
   <div class="body">
     <h2 style="font-size:var(--text-display);max-width:16ch">Tell us what should not be manual.</h2>
-    <p class="lead" style="max-width:46ch">Describe one workflow in three lines. We will tell you whether it is worth automating — <strong>and if the numbers don't work, we'll say so on the first call.</strong></p>
+    <p class="lead" style="max-width:46ch">Describe one workflow in three lines. We will tell you whether it is worth automating, <strong>and if the numbers don't work, we'll say so on the first call.</strong></p>
     <div class="cta-row">
       <span class="pill solid">r-xtech.com/contact</span>
     </div>
@@ -929,8 +943,8 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   </div>
   <aside class="notes">
     <b>Ask for one workflow, not for a meeting.</b> "Send me the three lines this week and I'll come back with whether the arithmetic works."<br>
-    <b>The second half of that sentence is the close.</b> Nobody in this industry offers to talk themselves out of a job — it is why they'll believe the rest of what you said.<br>
-    <b>Small, specific, low-risk</b> — and it puts you back on slide 8 with their real numbers, which is where this actually closes.
+    <b>The second half of that sentence is the close.</b> Nobody in this industry offers to talk themselves out of a job: it is why they'll believe the rest of what you said.<br>
+    <b>Small, specific, low-risk</b>, and it puts you back on slide 7 with their real numbers, which is where this actually closes.
   </aside>
 </section>
 
@@ -1001,15 +1015,8 @@ function go(n) {
   // Defined further down, after `slides` exists to locate its own index —
   // guarded because it isn't set yet on the very first go(1) call below.
   if (window.__syncParticles) window.__syncParticles(cur);
+  if (window.__syncRecords) window.__syncRecords(cur);
 }
-/* Note on the pipeline SVG: it animates on a 6.4s infinite CSS loop with
-   `animation-fill-mode: backwards`, so elements sit invisible until their
-   keyframe starts and the plate looks empty for the first moment of each
-   cycle. Restarting it on slide entry needs a cache-busting `src` — which
-   breaks the moment this file is opened from disk, where a query string
-   does not resolve. The loop is left to run natively instead: it repeats
-   on its own every six seconds, which is shorter than anyone spends on
-   the slide. */
 
 document.addEventListener('keydown', e => {
   if (e.target.matches('input')) return;
@@ -1121,12 +1128,295 @@ document.addEventListener('click', e => {
   };
 })();
 
+/* ── Slide 6: the records figure ───────────────────────────────────
+   315 particles morph through six formations, one per beat of the four
+   numbers on the slide. Every formation is authored in a fixed 800x400
+   space and scaled to the plate, so the geometry never depends on the
+   viewport. Same lifecycle as the particle fields: runs only while its
+   slide is on screen, restarts from the first beat on entry, and under
+   reduced motion draws one settled frame (315 resolved to 16) instead. */
+(function () {
+  const canvas = document.querySelector('.records-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const slide = canvas.closest('.slide');
+  const slideIndex = Array.prototype.indexOf.call(slides, slide) + 1;
+  const cols = slide.querySelectorAll('[data-rec]');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  const VW = 800, VH = 400, N = 315;
+  const MORPH = 1400, HOLD = 2400, SEG = MORPH + HOLD;
+  const BG = '#47423c', GRID = 'rgba(85,80,74,0.55)', EDGE = [150, 145, 138], AMBER = [232, 169, 74];
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  // Seeded, so the scatter is the same shape every time the deck opens.
+  let seed = 315;
+  const rnd = () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  const pt = (x, y, a, r, len = 0, ang = 0) => ({ x, y, a, r, len, ang });
+
+  const scatter = Array.from({ length: N }, () =>
+    pt(70 + rnd() * 660, 84 + rnd() * 256, 0.6, 1, 5 + rnd() * 6, rnd() * Math.PI));
+
+  const ROWS = 16, ROW_TOP = 92, ROW_BOTTOM = 332, RULE_X0 = 150, RULE_X1 = 650;
+  const layers = Array.from({ length: N }, (_, i) => {
+    const row = i % ROWS, k = Math.floor(i / ROWS);
+    const count = Math.ceil((N - row) / ROWS);
+    const step = (RULE_X1 - RULE_X0) / (count - 1);
+    return pt(RULE_X0 + k * step, ROW_TOP + row * (ROW_BOTTOM - ROW_TOP) / (ROWS - 1), 0.85, 1, step * 0.62, 0);
+  });
+
+  const G = 11, GS = 21, GCX = 400, GCY = 212, FRAME = (G - 1) * GS + 48;
+  const grid = Array.from({ length: N }, (_, i) => {
+    if (i < 121) return pt(GCX - (G - 1) * GS / 2 + (i % G) * GS, GCY - (G - 1) * GS / 2 + Math.floor(i / G) * GS, 0.95, 2.6);
+    const t = (i - 121) / (N - 121) * 4, x0 = GCX - FRAME / 2, y0 = GCY - FRAME / 2;
+    if (t < 1) return pt(x0 + FRAME * t, y0, 0.3, 1);
+    if (t < 2) return pt(x0 + FRAME, y0 + FRAME * (t - 1), 0.3, 1);
+    if (t < 3) return pt(x0 + FRAME * (3 - t), y0 + FRAME, 0.3, 1);
+    return pt(x0, y0 + FRAME * (4 - t), 0.3, 1);
+  });
+
+  const GONE = new Set([3, 7, 10, 13]);
+  const CHAIN_Y = 196, CHAIN_X0 = 110, CHAIN_X1 = 690, TRACK_Y = 262;
+  const chain = removed => {
+    const kept = [...Array(16).keys()].filter(k => !removed || !GONE.has(k));
+    return Array.from({ length: N }, (_, i) => {
+      if (i < 16) {
+        const slot = kept.indexOf(i);
+        if (slot === -1) return pt(CHAIN_X0 + i * (CHAIN_X1 - CHAIN_X0) / 15, CHAIN_Y + 22, 0, 4);
+        return pt(CHAIN_X0 + slot * (CHAIN_X1 - CHAIN_X0) / (kept.length - 1), CHAIN_Y, 1, 4);
+      }
+      return pt(CHAIN_X0 + (i - 16) / (N - 17) * (CHAIN_X1 - CHAIN_X0), TRACK_Y, 0.22, 0.9);
+    });
+  };
+
+  const RING_R = 118, RING_CX = 400, RING_CY = 214;
+  const ring = Array.from({ length: N }, (_, i) => {
+    const f = i / N, a = -Math.PI / 2 + f * Math.PI * 2, built = f < 0.6;
+    return pt(RING_CX + Math.cos(a) * RING_R, RING_CY + Math.sin(a) * RING_R, built ? 0.95 : 0.24, built ? 1.8 : 1.1);
+  });
+
+  // Hold progress drives the counting beats: cells light and the ring fills
+  // over the first 70% of the hold, leaving the finished state on screen.
+  const lit = p => clamp(p / 0.7, 0, 1);
+  const PHASES = [
+    { f: scatter, kind: 'scatter', col: 0, label: '315 layer conventions', read: () => '315' },
+    { f: layers, kind: 'layers', col: 0, label: 'Resolved to 16', read: rp => String(Math.round(lerp(315, 16, easeOut(rp)))) },
+    { f: grid, kind: 'grid', col: 1, label: 'Tests on real files', read: (rp, hp) => Math.floor(lit(hp) * 121) + ' / 121',
+      hot: (i, hp) => (i < 121 ? clamp(lit(hp) * 121 - i, 0, 1) : 0) },
+    { f: chain(false), kind: 'chain', col: 2, label: 'Manual steps mapped', read: () => '16', hot: i => (i < 16 ? 1 : 0) },
+    { f: chain(true), kind: 'chain', col: 2, label: 'Four of them gone', read: rp => '16 → ' + Math.round(lerp(16, 12, easeOut(rp))),
+      hot: i => (i < 16 ? 1 : 0) },
+    { f: ring, kind: 'ring', col: 3, label: 'Built and tested', read: (rp, hp) => '~' + Math.round(60 * lit(hp)) + '%',
+      hot: (i, hp) => (i / N < 0.6 && lit(hp) * 0.6 >= i / N ? 1 : 0) }
+  ];
+
+  const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+  const mix = (h, a) => rgba([lerp(EDGE[0], AMBER[0], h), lerp(EDGE[1], AMBER[1], h), lerp(EDGE[2], AMBER[2], h)], a);
+  const pad = n => String(n).padStart(2, '0');
+
+  function size() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  }
+
+  function reference() {
+    ctx.strokeStyle = GRID;
+    ctx.lineWidth = 0.75;
+    ctx.beginPath();
+    for (let x = 40; x < VW; x += 40) { ctx.moveTo(x, 0); ctx.lineTo(x, VH); }
+    for (let y = 40; y < VH; y += 40) { ctx.moveTo(0, y); ctx.lineTo(VW, y); }
+    ctx.stroke();
+    ctx.strokeStyle = rgba(EDGE, 0.7);
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    [[14, 14, 1, 1], [VW - 14, 14, -1, 1], [14, VH - 14, 1, -1], [VW - 14, VH - 14, -1, -1]].forEach(([x, y, sx, sy]) => {
+      ctx.moveTo(x, y + 12 * sy); ctx.lineTo(x, y); ctx.lineTo(x + 12 * sx, y);
+    });
+    ctx.stroke();
+  }
+
+  function render(pi, ci, tau, now) {
+    const w = canvas.width, s = w / VW;
+    ctx.setTransform(s, 0, 0, s, 0, 0);
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, VW, VH);
+    reference();
+
+    const A = PHASES[pi], B = PHASES[ci];
+    const e = ease(clamp(tau / MORPH, 0, 1));
+    const hp = clamp((tau - MORPH) / HOLD, 0, 1);
+    const rp = clamp(tau / (MORPH + HOLD * 0.5), 0, 1);
+    const weight = kind => (A.kind === kind ? 1 - e : 0) + (B.kind === kind ? e : 0);
+
+    const xs = new Float32Array(N), ys = new Float32Array(N), as = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+      const p = A.f[i], q = B.f[i];
+      xs[i] = lerp(p.x, q.x, e) + Math.sin(now * 0.0007 + i * 1.7) * 0.8;
+      ys[i] = lerp(p.y, q.y, e) + Math.cos(now * 0.0006 + i * 2.3) * 0.8;
+      as[i] = lerp(p.a, q.a, e);
+    }
+
+    const wLayers = weight('layers');
+    if (wLayers > 0.01) {
+      ctx.strokeStyle = rgba(EDGE, 0.5 * wLayers);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(RULE_X0 - 18, ROW_TOP - 10); ctx.lineTo(RULE_X0 - 18, ROW_BOTTOM + 10);
+      ctx.moveTo(RULE_X1 + 18, ROW_TOP - 10); ctx.lineTo(RULE_X1 + 18, ROW_BOTTOM + 10);
+      for (let r = 0; r < ROWS; r++) {
+        const y = ROW_TOP + r * (ROW_BOTTOM - ROW_TOP) / (ROWS - 1);
+        ctx.moveTo(RULE_X0 - 24, y); ctx.lineTo(RULE_X0 - 18, y);
+      }
+      ctx.stroke();
+    }
+
+    const wChain = Math.pow(weight('chain'), 3);
+    if (wChain > 0.01) {
+      ctx.strokeStyle = rgba(AMBER, 0.55 * wChain);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      for (let i = 0; i < 16; i++) {
+        let x = xs[i], y = ys[i];
+        // A node that is fading out pulls its vertex onto the line between its
+        // neighbours, so the chain closes up instead of kinking toward a ghost.
+        if (GONE.has(i)) {
+          const g = clamp(1 - as[i], 0, 1);
+          x = lerp(x, (xs[i - 1] + xs[i + 1]) / 2, g);
+          y = lerp(y, (ys[i - 1] + ys[i + 1]) / 2, g);
+        }
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    const wRing = weight('ring');
+    if (wRing > 0.01) {
+      ctx.strokeStyle = rgba(EDGE, 0.35 * wRing);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(RING_CX, RING_CY, RING_R - 16, 0, Math.PI * 2);
+      for (let k = 0; k < 10; k++) {
+        const a = -Math.PI / 2 + k / 10 * Math.PI * 2;
+        ctx.moveTo(RING_CX + Math.cos(a) * (RING_R + 8), RING_CY + Math.sin(a) * (RING_R + 8));
+        ctx.lineTo(RING_CX + Math.cos(a) * (RING_R + (k === 6 ? 20 : 14)), RING_CY + Math.sin(a) * (RING_R + (k === 6 ? 20 : 14)));
+      }
+      ctx.moveTo(RING_CX - 9, RING_CY); ctx.lineTo(RING_CX + 9, RING_CY);
+      ctx.moveTo(RING_CX, RING_CY - 9); ctx.lineTo(RING_CX, RING_CY + 9);
+      ctx.stroke();
+    }
+
+    ctx.lineCap = 'round';
+    for (let i = 0; i < N; i++) {
+      const p = A.f[i], q = B.f[i];
+      const a = as[i];
+      if (a < 0.01) continue;
+      const hot = lerp(A.hot ? A.hot(i, 1) : 0, B.hot ? B.hot(i, hp) : 0, e);
+      const r = lerp(p.r, q.r, e), len = lerp(p.len, q.len, e), ang = lerp(p.ang, q.ang, e);
+      if (len > 0.6) {
+        const dx = Math.cos(ang) * len / 2, dy = Math.sin(ang) * len / 2;
+        ctx.strokeStyle = mix(hot, a);
+        ctx.lineWidth = r * 1.3;
+        ctx.beginPath(); ctx.moveTo(xs[i] - dx, ys[i] - dy); ctx.lineTo(xs[i] + dx, ys[i] + dy); ctx.stroke();
+      } else {
+        ctx.fillStyle = mix(hot, a);
+        ctx.beginPath(); ctx.arc(xs[i], ys[i], r, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    ctx.textBaseline = 'alphabetic';
+    const label = (ph, alpha, dy) => {
+      if (alpha < 0.01) return;
+      ctx.textAlign = 'left';
+      ctx.font = '500 13px "JetBrains Mono", monospace';
+      ctx.fillStyle = rgba(AMBER, alpha);
+      ctx.fillText(pad(ph.col + 1) + ' / 04', 30, 44 + dy);
+      ctx.fillStyle = `rgba(242,244,240,${alpha * 0.85})`;
+      ctx.fillText(ph.label.toUpperCase(), 100, 44 + dy);
+    };
+    const readout = (text, alpha, dy) => {
+      if (alpha < 0.01) return;
+      ctx.textAlign = 'right';
+      ctx.font = '500 24px "JetBrains Mono", monospace';
+      ctx.fillStyle = rgba(AMBER, alpha);
+      ctx.fillText(text, VW - 30, 50 + dy);
+    };
+    // Out, then in, never both at once: two strings crossfading in the same
+    // spot read as one garbled word ("315" over "300" came out as "335").
+    const m = clamp(tau / MORPH, 0, 1);
+    if (pi === ci || m >= 0.5) {
+      const inT = pi === ci ? 1 : easeOut((m - 0.5) * 2);
+      label(B, inT, (1 - inT) * 6);
+      readout(B.read(rp, hp), inT, (1 - inT) * 6);
+    } else {
+      const outT = 1 - m * 2;
+      label(A, outT, (outT - 1) * 6);
+      readout(A.read(1, 1), outT, (outT - 1) * 6);
+    }
+
+    for (let k = 0; k < 4; k++) {
+      ctx.fillStyle = k === B.col ? rgba(AMBER, 1) : rgba(EDGE, 0.45);
+      ctx.fillRect(30 + k * 26, VH - 34, 18, 2);
+    }
+  }
+
+  let raf = null, t0 = 0, liveCol = -1;
+  function setLive(col) {
+    if (col === liveCol) return;
+    liveCol = col;
+    cols.forEach(c => c.classList.toggle('live', +c.dataset.rec === col));
+  }
+
+  function frame(now) {
+    if (!t0) t0 = now;
+    const T = now - t0;
+    const k = Math.floor(T / SEG);
+    const ci = k % PHASES.length;
+    const pi = k === 0 ? 0 : (ci + PHASES.length - 1) % PHASES.length;
+    render(pi, ci, T - k * SEG, now);
+    setLive(PHASES[ci].col);
+    raf = requestAnimationFrame(frame);
+  }
+
+  const settled = () => render(1, 1, SEG, 0);
+
+  function start() {
+    if (reduceMotion) { settled(); return; }
+    if (raf) return;
+    t0 = 0;
+    raf = requestAnimationFrame(frame);
+  }
+
+  function stop() {
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+    setLive(-1);
+  }
+
+  size();
+  settled();
+  window.addEventListener('resize', () => { size(); if (!raf) settled(); });
+
+  window.__syncRecords = function (activeIndex) {
+    if (activeIndex === slideIndex) start(); else stop();
+  };
+})();
+
 go(1);
 
 /* ── Charts ─────────────────────────────────────────────────────── */
 const ACCENT = '#e8a94a';
 const WARM_MUTED = '#b4aea5', WARM_LINE = '#55504a', WARM_EDGE = '#96918a';
 const PALE_INK = '#2a2826', PALE_MUTED = '#4a4642', PALE_EDGE = '#625d57';
+const PALE_DANGER = '#900e0e'; // mirrors --danger in the .pale scope, see the CSS comment
 
 Chart.defaults.font.family = "'JetBrains Mono', monospace";
 Chart.defaults.font.size = 10;
@@ -1136,7 +1426,14 @@ const months = Array.from({ length: 37 }, (_, i) => i);
 /* The crossing is the point of both charts, so mark it. The x axis runs 0–36
    evenly, so the pixel position interpolates linearly — no plugin library
    needed. Colour is passed in: on the greige plate amber is invisible and
-   the marker has to be charcoal. */
+   the marker has to be charcoal.
+
+   `fillColor` is opt-in (only the hinge chart passes it): past the crossing,
+   it fills the area between dataset 0 and dataset 1 with a translucent wash,
+   turning "the lines are drifting apart" into a wedge that visibly widens.
+   It walks the two datasets' own rendered points rather than recomputing
+   the line's equation, so it stays correct if either dataset's data ever
+   stops being perfectly linear. */
 const breakevenMarker = {
   id: 'breakeven',
   afterDatasetsDraw(chart, args, opts) {
@@ -1145,14 +1442,46 @@ const breakevenMarker = {
     const { left, right, top, bottom } = chart.chartArea;
     const x = left + (m / 36) * (right - left);
     const ctx = chart.ctx;
+
+    if (opts.fillColor) {
+      const upper = chart.getDatasetMeta(0).data;
+      const lower = chart.getDatasetMeta(1).data;
+      const start = Math.round(m);
+      if (upper.length > start && lower.length > start) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(upper[start].x, upper[start].y);
+        for (let i = start + 1; i < upper.length; i++) ctx.lineTo(upper[i].x, upper[i].y);
+        for (let i = lower.length - 1; i >= start; i--) ctx.lineTo(lower[i].x, lower[i].y);
+        ctx.closePath();
+        ctx.fillStyle = opts.fillColor;
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
     ctx.save();
     ctx.strokeStyle = opts.color;
     ctx.lineWidth = 1;
     ctx.setLineDash([3, 3]);
     ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
     ctx.setLineDash([]);
+
+    /* Gated on fillColor too: only the hinge chart's crossing lands on an
+       exact integer month, so this is the one case a rounded data-point
+       lookup is pixel-accurate rather than a nearby approximation. */
+    if (opts.fillColor) {
+      const crossing = chart.getDatasetMeta(1).data[Math.round(m)];
+      if (crossing) {
+        ctx.beginPath();
+        ctx.arc(crossing.x, crossing.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = opts.color;
+        ctx.fill();
+      }
+    }
+
     ctx.fillStyle = opts.color;
-    ctx.font = '10px "JetBrains Mono", monospace';
+    ctx.font = '500 10px "JetBrains Mono", monospace';
     const flip = x > right - 90;
     ctx.textAlign = flip ? 'right' : 'left';
     ctx.fillText('break-even', x + (flip ? -6 : 6), top + 11);
@@ -1160,7 +1489,10 @@ const breakevenMarker = {
   }
 };
 
-/* Slide 5 sits on the greige plate — charcoal ink, never amber. */
+/* Slide 5 sits on the greige plate. Two real colours now, not two greys:
+   danger red for the cost that never stops climbing, charcoal ink for the
+   one that flattens, and the plugin fills the gap between them past the
+   crossing so the growing loss reads as a shape, not a mental subtraction. */
 new Chart(document.getElementById('hingeChart'), {
   plugins: [breakevenMarker],
   type: 'line',
@@ -1169,8 +1501,8 @@ new Chart(document.getElementById('hingeChart'), {
     // Slopes chosen so the crossing lands at month 12 — a third of the way
     // in, where it reads as a real turn rather than a rounding error.
     datasets: [
-      { label: 'Keep doing it by hand', data: months.map(m => m * 100), borderColor: PALE_EDGE, borderWidth: 1.5, pointRadius: 0, tension: 0 },
-      { label: 'Build it once', data: months.map(m => 900 + m * 25), borderColor: PALE_INK, borderWidth: 2.5, pointRadius: 0, tension: 0 }
+      { label: 'Keep doing it by hand', data: months.map(m => m * 100), borderColor: PALE_DANGER, borderWidth: 2, pointRadius: 0, tension: 0 },
+      { label: 'Build it once', data: months.map(m => 900 + m * 25), borderColor: PALE_INK, borderWidth: 3, pointRadius: 0, tension: 0 }
     ]
   },
   options: {
@@ -1178,7 +1510,7 @@ new Chart(document.getElementById('hingeChart'), {
     maintainAspectRatio: false,
     interaction: { intersect: false },
     plugins: {
-      breakeven: { month: 12, color: PALE_INK },
+      breakeven: { month: 12, color: PALE_INK, fillColor: 'rgba(144, 14, 14, 0.16)' },
       legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 2, padding: 14, color: PALE_MUTED } },
       tooltip: { enabled: false }
     },
