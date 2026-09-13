@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R²XTECH — Why computational design pays</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Tokens lifted verbatim from src/app/globals.css @theme.
+   One accent, everywhere. The lime from the original mockup is
+   retired on purpose — do not reintroduce a second accent.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --carbon:      #0a0c0b;
+  --graphite:    #14171a;
+  --graphite-hi: #1c2024;
+  --line:        #262b2e;
+  --line-soft:   #1a1e21;
+  --accent:      #e8a94a;
+  --accent-dim:  #c8913a;
+  --on-accent:   #2a2826;
+  --edge:        #5e686d;
+  --fg:          #f2f4f0;
+  --fg-muted:    #8a918c;
+  --danger:      #d25854;
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --radius-surface: 0.25rem;
+  --radius-control: 9999px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--carbon);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  height: 100%;
+}
+
+.deck {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 100vw;
+  height: 100vh;
+}
+@media (min-width: 769px) {
+  .deck {
+    max-width: calc(100vh * 16 / 9);
+    max-height: calc(100vw * 9 / 16);
+  }
+}
+
+/* Hidden with visibility, never `display: none`. A chart initialised inside a
+   display:none slide measures a zero-height container, fixes its canvas at
+   0x0, and renders squashed into the corner once revealed. visibility keeps
+   every slide measurable from first paint, and still removes the hidden ones
+   from the tab order. */
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: clamp(28px, 4.2vw, 68px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: var(--carbon);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.32s ease;
+}
+.slide.active { opacity: 1; visibility: visible; }
+
+/* Auto margins centre while there is room and collapse to zero when there
+   is not, so an oversized body can only ever clip its end — never its
+   opening. Same reasoning as PanelSection on the site. */
+.body { margin: auto 0; width: 100%; }
+
+/* ── Type ───────────────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(9px, 0.78vw, 12px);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-muted);
+  margin-bottom: clamp(14px, 2vw, 28px);
+  flex-shrink: 0;
+}
+.eyebrow .idx { color: var(--accent); }
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 4.6vw, 4.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.9vw, 2.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  max-width: 22ch;
+}
+h2.wide { max-width: 30ch; }
+
+.lead {
+  font-size: clamp(0.95rem, 1.22vw, 1.35rem);
+  line-height: 1.55;
+  color: var(--fg-muted);
+  max-width: 62ch;
+  margin-top: clamp(14px, 1.8vw, 26px);
+}
+.lead strong { color: var(--fg); font-weight: 500; }
+
+p.note {
+  font-size: clamp(0.82rem, 0.98vw, 1.02rem);
+  line-height: 1.6;
+  color: var(--fg-muted);
+  max-width: 66ch;
+}
+
+.mono { font-family: var(--font-mono); }
+
+/* ── Source attribution ─────────────────────────────────────── */
+.source {
+  font-family: var(--font-mono);
+  font-size: clamp(8px, 0.72vw, 11px);
+  color: var(--fg-muted);
+  letter-spacing: 0.04em;
+  margin-top: clamp(16px, 2.2vw, 30px);
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+/* ── Metric row ─────────────────────────────────────────────── */
+.metrics {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-surface);
+  overflow: hidden;
+}
+.metrics.c2 { grid-template-columns: repeat(2, 1fr); }
+.metrics.c3 { grid-template-columns: repeat(3, 1fr); }
+.metrics.c4 { grid-template-columns: repeat(4, 1fr); }
+.metrics.c5 { grid-template-columns: repeat(5, 1fr); }
+
+.metric {
+  background: var(--graphite);
+  padding: clamp(16px, 1.9vw, 30px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.metric .val {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 3.1vw, 3rem);
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+.metric .val.plain { color: var(--fg); }
+.metric .lbl {
+  font-size: clamp(0.76rem, 0.9vw, 0.95rem);
+  line-height: 1.4;
+  color: var(--fg-muted);
+}
+.metric .sub {
+  font-family: var(--font-mono);
+  font-size: clamp(8px, 0.7vw, 10px);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--edge);
+}
+
+/* ── Split layout ───────────────────────────────────────────── */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 3.4vw, 56px);
+  align-items: center;
+}
+.split.narrow-left { grid-template-columns: 0.85fr 1.15fr; }
+
+/* ── Lists ──────────────────────────────────────────────────── */
+ul.ticks { list-style: none; display: flex; flex-direction: column; gap: clamp(9px, 1.1vw, 15px); }
+ul.ticks li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+  font-size: clamp(0.85rem, 1.04vw, 1.12rem);
+  line-height: 1.5;
+  color: var(--fg);
+}
+ul.ticks li::before {
+  content: "";
+  width: 7px; height: 7px;
+  margin-top: 0.55em;
+  border-radius: var(--radius-control);
+  background: var(--accent);
+  flex-shrink: 0;
+}
+ul.ticks li span { color: var(--fg-muted); }
+/* Two long items with a lead underneath: the default measure runs the slide
+   past its stage at short desktop heights. */
+ul.ticks.tight li { font-size: clamp(0.8rem, 0.96vw, 1.04rem); line-height: 1.45; }
+
+/* ── Steps (numbered) ───────────────────────────────────────── */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-surface); overflow: hidden; }
+.step { background: var(--graphite); padding: clamp(16px, 1.9vw, 28px); display: flex; flex-direction: column; gap: 10px; }
+.step .num { font-family: var(--font-mono); font-size: clamp(9px, 0.78vw, 12px); letter-spacing: 0.16em; color: var(--accent); }
+.step h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(0.95rem, 1.2vw, 1.32rem); line-height: 1.2; }
+.step p { font-size: clamp(0.76rem, 0.9vw, 0.96rem); line-height: 1.5; color: var(--fg-muted); }
+
+/* ── Barrier table ──────────────────────────────────────────── */
+.barriers { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-surface); overflow: hidden; }
+.barrier { background: var(--graphite); display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(14px, 2vw, 32px); padding: clamp(8px, 1vw, 16px) clamp(16px, 1.9vw, 28px); align-items: center; }
+.barrier .what { font-size: clamp(0.8rem, 0.98vw, 1.06rem); line-height: 1.4; }
+.barrier .what em { font-style: normal; color: var(--fg-muted); font-size: 0.88em; display: block; margin-top: 3px; font-family: var(--font-mono); letter-spacing: 0.02em; }
+.barrier .fix { font-size: clamp(0.76rem, 0.9vw, 0.98rem); line-height: 1.45; color: var(--fg-muted); border-left: 2px solid var(--accent); padding-left: clamp(12px, 1.3vw, 18px); }
+.barrier .fix b { color: var(--accent); font-weight: 500; font-family: var(--font-mono); font-size: 0.88em; letter-spacing: 0.04em; display: block; margin-bottom: 3px; }
+
+/* ── Service cards ──────────────────────────────────────────── */
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-surface); overflow: hidden; }
+.card { background: var(--graphite); padding: clamp(15px, 1.8vw, 26px); display: flex; flex-direction: column; gap: 10px; }
+.card h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(0.9rem, 1.12vw, 1.22rem); line-height: 1.2; }
+.card > p { font-size: clamp(0.74rem, 0.88vw, 0.94rem); line-height: 1.45; color: var(--fg-muted); }
+.card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--line); }
+.card ul li { font-family: var(--font-mono); font-size: clamp(0.62rem, 0.73vw, 0.8rem); line-height: 1.4; color: var(--edge); }
+
+/* ── Pipeline strip ─────────────────────────────────────────── */
+.pipeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-surface); overflow: hidden; }
+.stage { background: var(--graphite); padding: clamp(10px, 1.2vw, 18px) clamp(8px, 0.9vw, 14px); display: flex; flex-direction: column; gap: 6px; }
+.stage.api { background: var(--graphite-hi); box-shadow: inset 0 2px 0 var(--accent); }
+.stage .n { font-family: var(--font-mono); font-size: clamp(8px, 0.68vw, 10px); letter-spacing: 0.14em; color: var(--edge); }
+.stage .t { font-family: var(--font-mono); font-size: clamp(0.63rem, 0.76vw, 0.85rem); line-height: 1.3; color: var(--fg); }
+
+/* ── Calculator ─────────────────────────────────────────────── */
+.calc { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: clamp(20px, 2.6vw, 42px); align-items: start; }
+.controls { display: flex; flex-direction: column; gap: clamp(11px, 1.35vw, 19px); }
+.ctrl { display: flex; flex-direction: column; gap: 7px; }
+.ctrl .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.ctrl label { font-family: var(--font-mono); font-size: clamp(9px, 0.75vw, 11px); text-transform: uppercase; letter-spacing: 0.13em; color: var(--fg-muted); }
+.ctrl output { font-family: var(--font-mono); font-size: clamp(0.85rem, 1.02vw, 1.1rem); color: var(--accent); font-weight: 500; }
+
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 2px; background: var(--edge); border-radius: var(--radius-control); outline: none; cursor: pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 15px; height: 15px; border-radius: var(--radius-control); background: var(--accent); cursor: pointer; border: none; }
+input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border-radius: var(--radius-control); background: var(--accent); cursor: pointer; border: none; }
+input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+input[type=number] {
+  background: var(--graphite);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius-surface);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 1.02vw, 1.1rem);
+  padding: 8px 11px;
+  width: 100%;
+}
+input[type=number]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+
+.readout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-surface); overflow: hidden; margin-bottom: clamp(12px, 1.5vw, 20px); }
+.readout div { background: var(--graphite); padding: clamp(11px, 1.3vw, 18px); }
+.readout .v { font-family: var(--font-mono); font-weight: 500; font-size: clamp(1.05rem, 1.95vw, 1.9rem); line-height: 1; color: var(--accent); letter-spacing: -0.01em; }
+.readout .k { font-size: clamp(0.68rem, 0.8vw, 0.86rem); color: var(--fg-muted); margin-top: 7px; line-height: 1.35; }
+
+.chart-wrap { position: relative; width: 100%; height: clamp(150px, 21vh, 250px); }
+.assumptions { font-family: var(--font-mono); font-size: clamp(8px, 0.7vw, 10px); line-height: 1.6; color: var(--edge); letter-spacing: 0.03em; margin-top: 12px; }
+
+/* ── Title slide ────────────────────────────────────────────── */
+.title-slide { justify-content: center; }
+.wordmark { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.1rem, 1.6vw, 1.7rem); letter-spacing: -0.01em; }
+.wordmark sup { font-size: 0.6em; }
+.positioning { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.6rem, 6.4vw, 6rem); line-height: 1; letter-spacing: -0.03em; margin-top: clamp(26px, 4vw, 58px); }
+.outcome { font-family: var(--font-mono); font-size: clamp(0.9rem, 1.32vw, 1.5rem); color: var(--accent); letter-spacing: 0.01em; margin-top: clamp(16px, 2.2vw, 30px); }
+.title-meta { font-family: var(--font-mono); font-size: clamp(9px, 0.76vw, 11px); text-transform: uppercase; letter-spacing: 0.17em; color: var(--edge); margin-top: clamp(30px, 4.6vw, 66px); }
+
+/* ── CTA slide ──────────────────────────────────────────────── */
+.cta-line { display: inline-flex; align-items: center; gap: 12px; margin-top: clamp(24px, 3.2vw, 44px); padding: clamp(10px, 1.1vw, 15px) clamp(20px, 2.2vw, 30px); background: var(--accent); color: var(--on-accent); border-radius: var(--radius-control); font-family: var(--font-mono); font-size: clamp(0.8rem, 0.98vw, 1.05rem); font-weight: 500; letter-spacing: 0.02em; }
+
+/* ── Presenter notes ────────────────────────────────────────── */
+.notes { display: none; }
+body.notes-on .slide.active .notes {
+  display: block;
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--graphite-hi);
+  border-top: 1px solid var(--accent);
+  padding: 16px clamp(28px, 4.2vw, 68px) 54px;
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 0.8vw, 12px);
+  line-height: 1.65;
+  color: var(--fg-muted);
+  max-height: 34%;
+  overflow-y: auto;
+}
+body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
+
+/* ── Chrome ─────────────────────────────────────────────────── */
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: var(--accent); transition: width 0.3s ease; z-index: 100; }
+.nav { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; z-index: 100; }
+.nav button { background: var(--graphite); border: 1px solid var(--line); color: var(--fg-muted); width: 32px; height: 32px; border-radius: var(--radius-control); cursor: pointer; font-size: 14px; line-height: 1; display: grid; place-items: center; font-family: var(--font-mono); }
+.nav button:hover { color: var(--accent); border-color: var(--edge); }
+.nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.counter { font-family: var(--font-mono); font-size: 11px; color: var(--edge); letter-spacing: 0.1em; }
+.hint { position: fixed; bottom: 22px; right: 22px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--edge); z-index: 100; }
+
+/* ── Short viewports ────────────────────────────────────────── */
+/* The type scale is width-driven, so a 1440x675 laptop gets the same sizes
+   as a 1440x900 monitor and the three dense slides (6, 9, 12) run past the
+   stage. Where the constraint is vertical, size for it: padding first, since
+   it is the largest single lever and costs nothing in legibility. */
+@media (max-height: 780px) {
+  .slide { padding: clamp(18px, 2.6vw, 30px) clamp(28px, 4.2vw, 60px); }
+  .eyebrow { margin-bottom: clamp(9px, 1.3vw, 17px); }
+  h2 { font-size: clamp(1.3rem, 2.35vw, 2.2rem); }
+  .lead { font-size: clamp(0.86rem, 1.02vw, 1.08rem); line-height: 1.5; margin-top: clamp(9px, 1.2vw, 16px); }
+  p.note { font-size: clamp(0.78rem, 0.9vw, 0.94rem); line-height: 1.5; }
+  .metric { padding: clamp(11px, 1.35vw, 18px); gap: 6px; }
+  .metric .val { font-size: clamp(1.3rem, 2.4vw, 2.2rem); }
+  .barrier { padding: clamp(6px, 0.8vw, 11px) clamp(14px, 1.7vw, 22px); }
+  .step, .card { padding: clamp(11px, 1.35vw, 18px); }
+  .stage { padding: clamp(7px, 0.9vw, 12px) clamp(7px, 0.8vw, 11px); }
+  .source { margin-top: clamp(9px, 1.3vw, 17px); padding-top: 9px; }
+  .chart-wrap { height: clamp(130px, 19vh, 200px); }
+}
+
+/* ── Print: every slide on its own page, notes visible ──────── */
+@media print {
+  @page { size: landscape; margin: 12mm; }
+  html, body { overflow: visible; height: auto; background: #fff; }
+  .deck { position: static; max-width: none; max-height: none; width: auto; height: auto; }
+  .slide { position: static; opacity: 1 !important; visibility: visible !important; page-break-after: always; break-after: page; min-height: 170mm; border: 1px solid #ccc; margin-bottom: 8mm; }
+  .notes { display: block !important; position: static !important; margin-top: 16px; padding: 12px 0 0 !important; border-top: 1px solid var(--line) !important; max-height: none !important; font-family: var(--font-mono); font-size: 10px; line-height: 1.6; color: var(--fg-muted); }
+  .nav, .progress, .hint { display: none; }
+}
+
+/* ── Small screens: readable, not presentable ───────────────── */
+@media (max-width: 900px) {
+  .split, .split.narrow-left, .calc { grid-template-columns: 1fr; }
+  .steps, .cards { grid-template-columns: repeat(2, 1fr); }
+  .metrics.c4, .metrics.c5 { grid-template-columns: repeat(2, 1fr); }
+  .pipeline { grid-template-columns: repeat(2, 1fr); }
+  .barrier { grid-template-columns: 1fr; gap: 10px; }
+  .slide { overflow-y: auto; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- ══ 01 · TITLE ══════════════════════════════════════════════ -->
+<section class="slide title-slide active">
+  <div class="body">
+    <div class="wordmark">R<sup>2</sup>χTECH</div>
+    <div class="positioning">Architecture,<br>computed.</div>
+    <div class="outcome">We automate AEC. You ship faster.</div>
+    <div class="title-meta">Computational automation for AEC · Remote · Worldwide</div>
+  </div>
+  <aside class="notes">
+    <b>Open here, don't rush past it.</b> Two lines, two jobs — "Architecture, computed" is what people repeat; "We automate AEC, you ship faster" is what convinces someone with a budget. Say both. Never merge them.<br>
+    <b>One sentence of framing before slide 2:</b> "I'm not going to explain computational design. I'm going to show you the arithmetic, and you tell me whether it holds for your projects."
+  </aside>
+</section>
+
+<!-- ══ 02 · THE BASELINE ═══════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">01</span> &nbsp;/&nbsp; The baseline</div>
+  <div class="body">
+    <h2 class="wide">Every other industry got faster. Construction didn't.</h2>
+    <div class="metrics c3" style="margin-top: clamp(20px,2.8vw,38px)">
+      <div class="metric">
+        <div class="val">1.0%</div>
+        <div class="lbl">Construction</div>
+        <div class="sub">Annual labour productivity</div>
+      </div>
+      <div class="metric">
+        <div class="val plain">2.8%</div>
+        <div class="lbl">Total world economy</div>
+        <div class="sub">Same two decades</div>
+      </div>
+      <div class="metric">
+        <div class="val plain">3.6%</div>
+        <div class="lbl">Manufacturing</div>
+        <div class="sub">Same two decades</div>
+      </div>
+    </div>
+    <p class="lead">Construction ranks among the <strong>least digitised sectors measured anywhere</strong>. That gap is not a tooling problem — the software exists and your teams already hold licences for most of it. The gap is in what happens between the licences.</p>
+  </div>
+  <div class="source">McKinsey Global Institute — <i>Reinventing Construction: A Route to Higher Productivity</i></div>
+  <aside class="notes">
+    <b>The point of this slide is calibration, not shock.</b> Don't editorialise the numbers — read them and stop. The 3.6% manufacturing figure is the one that lands with industrial clients, because they know that world.<br>
+    <b>If asked "is that still current?"</b> — the study is the standing reference; the gap has narrowed in pockets, not in aggregate. Don't oversell freshness you can't defend.
+  </aside>
+</section>
+
+<!-- ══ 03 · THE BOTTLENECK ═════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">02</span> &nbsp;/&nbsp; The bottleneck</div>
+  <div class="body">
+    <div class="split narrow-left">
+      <div>
+        <h2>AEC teams lose their best hours to work that software should be doing.</h2>
+        <p class="lead">Not the hard parts. The parts that repeat.</p>
+      </div>
+      <ul class="ticks">
+        <li>Re-drawing the same site layout at every revision</li>
+        <li>Hand-counting quantities off a drawing set <span>— then again after the set changes</span></li>
+        <li>Rebuilding an estimate workbook <span>because a layer naming convention shifted</span></li>
+        <li>Chasing which model version a schedule was built from</li>
+        <li>Re-issuing a construction programme <span>after one late equipment change</span></li>
+      </ul>
+    </div>
+    <p class="note" style="margin-top: clamp(20px,2.6vw,34px)">None of these need judgement. All of them need a person today — usually your most expensive one, because they're the only one who knows where the exceptions are.</p>
+  </div>
+  <aside class="notes">
+    <b>Stop talking here and ask.</b> "Which of these five happens in your office?" You want them naming the sixth one you didn't list — that is the project.<br>
+    <b>The last line is the hook:</b> the senior person is doing the repetitive work precisely because they hold the exceptions. Automation doesn't replace them, it captures what only they know.
+  </aside>
+</section>
+
+<!-- ══ 04 · THE BILL ═══════════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">03</span> &nbsp;/&nbsp; What the status quo costs</div>
+  <div class="body">
+    <h2 class="wide">The cost is already in your budget. It just isn't on a line.</h2>
+    <div class="metrics c3" style="margin-top: clamp(20px,2.8vw,38px)">
+      <div class="metric">
+        <div class="val">$1.85T</div>
+        <div class="lbl">Global cost of bad project data, 2020</div>
+        <div class="sub">Inaccurate · incomplete · inaccessible</div>
+      </div>
+      <div class="metric">
+        <div class="val">14%</div>
+        <div class="lbl">Of all rework traced directly to bad data</div>
+        <div class="sub">$88.7 bn in one year</div>
+      </div>
+      <div class="metric">
+        <div class="val">$7.1M</div>
+        <div class="lbl">Avoidable rework per $1 bn of revenue</div>
+        <div class="sub">From data problems alone</div>
+      </div>
+    </div>
+    <p class="lead">Rework doesn't arrive as an invoice labelled <i>rework</i>. It arrives as overtime, as a change order, as a programme that slipped for reasons nobody logged. <strong>Which is exactly why it never gets a budget line to defend.</strong></p>
+  </div>
+  <div class="source">FMI &amp; Autodesk — <i>Harnessing the Data Advantage in Construction</i></div>
+  <aside class="notes">
+    <b>Scale the $7.1M to them out loud.</b> If they turn over $200M, that's roughly $1.4M a year. Do the division in front of them — it makes the number theirs instead of an industry statistic.<br>
+    <b>Expect the pushback:</b> "our rework isn't from data." Good — ask what it <i>is</i> from. Either they know (and it's a process you can automate) or they don't (and that's the measurement problem step 01 of our method exists to fix).
+  </aside>
+</section>
+
+<!-- ══ 05 · THE FALSE CHOICE (hinge) ═══════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">04</span> &nbsp;/&nbsp; The false choice</div>
+  <div class="body">
+    <div class="split">
+      <div>
+        <h2>The fast fix wins every time. That's the problem.</h2>
+        <p class="lead">Each manual workaround is cheap on its own. That is precisely why it gets chosen again at the next revision, and the one after that.</p>
+        <p class="lead"><strong>An investment is decided once. A workaround is paid for every time.</strong> Only one of the two ever shows up in a meeting.</p>
+      </div>
+      <div>
+        <div class="chart-wrap"><canvas id="hingeChart"></canvas></div>
+        <div class="assumptions">Shape of the curves, not a quotation. Your own figures are on slide 10.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <b>This is the hinge of the whole deck.</b> Everything before it is setup; everything after is response. Slow down.<br>
+    <b>Trace the crossing with your finger.</b> "Left of this point, doing nothing is genuinely cheaper — and that is why it keeps getting chosen. The question isn't whether automation pays. It's where this point sits for you, and whether you'll still be running this workflow when you reach it."<br>
+    <b>Deliberately no numbers on the axis.</b> If someone asks for them, that is the buying signal — go straight to slide 10.
+  </aside>
+</section>
+
+<!-- ══ 06 · WHY IT DOESN'T STICK ═══════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">05</span> &nbsp;/&nbsp; Why it doesn't stick</div>
+  <div class="body">
+    <h2 class="wide">Five reasons automation fails in this industry.</h2>
+    <div class="barriers" style="margin-top: clamp(11px,1.5vw,22px)">
+      <div class="barrier">
+        <div class="what">Hourly fees punish efficiency<em>Firms target 80–82% billable utilisation</em></div>
+        <div class="fix"><b>Fixed scope, milestone billing</b>We are not paid by the hour, so we are not paid to be slow.</div>
+      </div>
+      <div class="barrier">
+        <div class="what">Pilot purgatory<em>88% of proofs of concept never reach production</em></div>
+        <div class="fix"><b>Prototype in days</b>A working version in the first sprint, run against your real files — not a demo dataset.</div>
+      </div>
+      <div class="barrier">
+        <div class="what">One person holds the script<em>They leave, the tool dies with them</em></div>
+        <div class="fix"><b>Build for handover</b>Documented, versioned and testable. The code is yours.</div>
+      </div>
+      <div class="barrier">
+        <div class="what">Fear of disrupting productivity<em>The most documented human barrier to BIM adoption</em></div>
+        <div class="fix"><b>Map the bottleneck</b>We measure where hours go before we touch anything.</div>
+      </div>
+      <div class="barrier">
+        <div class="what">No dependency management in CAD<em>Parametric debt accumulates invisibly</em></div>
+        <div class="fix"><b>Measure and iterate</b>Instrumented, so drift is visible before it is expensive.</div>
+      </div>
+    </div>
+  </div>
+  <div class="source">AIA · IDC · MIT NANDA · BIM adoption literature</div>
+  <aside class="notes">
+    <b>Row one is the honest one, and it buys you enormous credibility.</b> Say it plainly: "If your design consultant bills by the hour, automation cuts their own invoice. That's a structural conflict, not laziness." You are naming the thing nobody says out loud — and you are not the one with that conflict.<br>
+    <b>The left column is the industry's record. The right column is our method.</b> Don't read all ten cells; pick the two that match what they said on slide 3.
+  </aside>
+</section>
+
+<!-- ══ 07 · HOW WE WORK ════════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">06</span> &nbsp;/&nbsp; How we work</div>
+  <div class="body">
+    <h2 class="wide">Four steps. The third one is the one that matters.</h2>
+    <div class="steps" style="margin-top: clamp(18px,2.4vw,32px)">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Map the bottleneck</h3>
+        <p>We sit with the people doing the work and trace where hours actually go. No tooling decisions until the constraint is on paper.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>Prototype in days</h3>
+        <p>A rough working version lands within the first sprint. It is faster to argue with something real than with a specification.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>Build for handover</h3>
+        <p>Tools ship documented, versioned and testable, so your team can extend them without calling us back for every change.</p>
+      </div>
+      <div class="step">
+        <div class="num">04</div>
+        <h3>Measure and iterate</h3>
+        <p>We instrument what we build. If a workflow is not measurably faster, it is not finished.</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top: clamp(18px,2.4vw,30px)">Step 03 is where most consultancies protect their position and we give ours up. That is deliberate: a tool you can't maintain without us isn't an asset, it's a subscription you didn't agree to.</p>
+  </div>
+  <aside class="notes">
+    <b>Step 04 is the promise to hold yourself to.</b> "If a workflow is not measurably faster, it is not finished" — expect them to test it. Answer: we agree the baseline in step 01, before we build, so neither of us can move the goalposts afterwards.<br>
+    <b>The closing line pre-empts the lock-in objection</b> before they raise it. Better said by you first.
+  </aside>
+</section>
+
+<!-- ══ 08 · WHAT WE BUILD ══════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">07</span> &nbsp;/&nbsp; What we build</div>
+  <div class="body">
+    <h2 class="wide">Four kinds of work. Most projects are two of them.</h2>
+    <div class="cards" style="margin-top: clamp(16px,2.2vw,28px)">
+      <div class="card">
+        <h3>Computational design</h3>
+        <p>Design logic encoded once, reused across every revision.</p>
+        <ul>
+          <li>Grasshopper &amp; Dynamo, built for handover</li>
+          <li>Headless geometry services</li>
+          <li>Option studies &amp; browser configurators</li>
+          <li>Fabrication &amp; CNC-ready export</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Design automation</h3>
+        <p>Model work that runs on its own, overnight and unattended.</p>
+        <ul>
+          <li>Revit &amp; IFC tooling via API</li>
+          <li>Automated model quality audits</li>
+          <li>Parameter &amp; classification management</li>
+          <li>Drawing &amp; schedule generation</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>AI-driven tools</h3>
+        <p>AI where it earns its place: document-heavy, judgement-light, reviewed by a human.</p>
+        <ul>
+          <li>Document &amp; drawing extraction</li>
+          <li>Retrieval over standards &amp; archives</li>
+          <li>Take-off, compliance &amp; review support</li>
+          <li>Evaluation harnesses for measurable quality</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Custom software</h3>
+        <p>Bespoke tooling, and the connective work that moves data between your systems.</p>
+        <ul>
+          <li>Custom connectors &amp; ETL</li>
+          <li>Project dashboards &amp; reporting</li>
+          <li>Common data environment integration</li>
+          <li>Cost, programme &amp; model data joined</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <b>Don't read the cards.</b> Name the two that fit what they told you on slide 3, and skip the rest. Reading sixteen bullets aloud is how you lose the room.<br>
+    <b>On the AI card, lead with the constraint, not the capability:</b> "document-heavy, judgement-light, reviewed by a human." Industrial clients have been pitched AI badly and often — the limit is what makes it credible.
+  </aside>
+</section>
+
+<!-- ══ 09 · IN PRACTICE ════════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">08</span> &nbsp;/&nbsp; In practice</div>
+  <div class="body">
+    <h2 class="wide">A utility-scale energy client. Under NDA — so, the numbers, not the name.</h2>
+    <p class="lead">A continuous pipeline: 2D site drawing in, coordinated Revit model out, with the cost estimate, the construction programme and the 4D link generated from the same records.</p>
+
+    <div class="metrics c5" style="margin-top: clamp(16px,2.1vw,26px)">
+      <div class="metric">
+        <div class="val">315<span style="color:var(--fg-muted);font-size:0.5em"> vs </span>16</div>
+        <div class="lbl">Layer conventions for the same site</div>
+        <div class="sub">Two incompatible exports</div>
+      </div>
+      <div class="metric">
+        <div class="val">121</div>
+        <div class="lbl">Automated tests passing</div>
+        <div class="sub">Against real client files</div>
+      </div>
+      <div class="metric">
+        <div class="val">16</div>
+        <div class="lbl">Manual steps mapped in discovery</div>
+        <div class="sub">4 removed so far</div>
+      </div>
+      <div class="metric">
+        <div class="val">5 → 1</div>
+        <div class="lbl">Estimate cycle, days</div>
+        <div class="sub">Baseline 5 · now 3 · target same-day</div>
+      </div>
+      <div class="metric">
+        <div class="val">~60%</div>
+        <div class="lbl">Of the pipeline built and tested</div>
+        <div class="sub">Phase 1 of 3</div>
+      </div>
+    </div>
+
+    <div class="pipeline" style="margin-top: clamp(10px,1.3vw,18px)">
+      <div class="stage"><div class="n">01</div><div class="t">Layer preflight</div></div>
+      <div class="stage"><div class="n">02</div><div class="t">Drawing parse</div></div>
+      <div class="stage"><div class="n">03</div><div class="t">Placement engine</div></div>
+      <div class="stage api"><div class="n">04</div><div class="t">Model read · API</div></div>
+      <div class="stage"><div class="n">05</div><div class="t">Costing</div></div>
+      <div class="stage"><div class="n">06</div><div class="t">Estimate + programme</div></div>
+      <div class="stage"><div class="n">07</div><div class="t">4D link</div></div>
+    </div>
+    <p class="note" style="margin-top: clamp(9px,1.1vw,15px)"><strong style="color:var(--accent)">Only stage 04 touches the Revit API.</strong> Everything after it runs as plain Python against a documented data structure — so the costing engine and both writers are built and verified without opening Revit. And the writers refuse to save if the two totals disagree.</p>
+  </div>
+  <aside class="notes">
+    <b>NDA discipline: no name, no country, no plant type beyond "utility-scale energy".</b> If pressed, that is the answer — and the fact that you hold the line is itself a selling point. Say so: "I'll be this careful with yours."<br>
+    <b>The strongest number here is 5 → 1 days,</b> because it converts straight to money on slide 10. The strongest <i>technical</i> point is 315 vs 16 — the same site arriving as two incompatible drawings is a problem every one of them recognises instantly.<br>
+    <b>"Refuses to save if the totals disagree"</b> is the line that convinces engineers. It says we assume our own output can be wrong.
+  </aside>
+</section>
+
+<!-- ══ 10 · CALCULATOR ═════════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">09</span> &nbsp;/&nbsp; Run your own numbers</div>
+  <div class="body">
+    <div class="calc">
+      <div class="controls">
+        <h2 style="font-size:clamp(1.2rem,2vw,1.9rem);max-width:18ch">Your workflow. Your rates.</h2>
+        <div class="ctrl">
+          <div class="row"><label for="people">People on the task</label><output id="peopleOut">2</output></div>
+          <input type="range" id="people" min="1" max="20" step="1" value="2">
+        </div>
+        <div class="ctrl">
+          <div class="row"><label for="hours">Hours / week each</label><output id="hoursOut">6</output></div>
+          <input type="range" id="hours" min="1" max="30" step="1" value="6">
+        </div>
+        <div class="ctrl">
+          <div class="row"><label for="rate">Loaded hourly rate</label><output id="rateOut">$55</output></div>
+          <input type="range" id="rate" min="15" max="200" step="5" value="55">
+        </div>
+        <div class="ctrl">
+          <label for="cost">Build investment (USD)</label>
+          <input type="number" id="cost" min="500" max="200000" step="500" value="15000">
+        </div>
+      </div>
+
+      <div>
+        <div class="readout">
+          <div><div class="v" id="annual">—</div><div class="k">Spent per year on this task today</div></div>
+          <div><div class="v" id="payback">—</div><div class="k">Months to break even</div></div>
+          <div><div class="v" id="net36">—</div><div class="k">Net position after 3 years</div></div>
+        </div>
+        <div class="chart-wrap"><canvas id="roiChart"></canvas></div>
+        <div class="assumptions">
+          Assumes the tool removes 80% of the task, not all of it · 46 working weeks · 15% of build cost per year for maintenance · no discounting.
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <b>Hand them the laptop.</b> Seriously — this slide works when they move the sliders, not when you do. The moment they type their own rate, the number stops being yours.<br>
+    <b>Set the build investment live, in the room.</b> Nothing is pre-quoted on purpose. Anchor it to the scope you've just discussed.<br>
+    <b>Defend the assumptions before they're questioned:</b> 80% not 100% (there is always an exception path), 46 weeks not 52, and maintenance is charged against us, not hidden. A model that flatters itself falls over at the first engineer's question — and the engineer is the one who decides.<br>
+    <b>If payback comes out past 24 months, say so and walk it back.</b> "On these numbers I wouldn't build this yet." That sentence sells more work than any slide here.
+  </aside>
+</section>
+
+<!-- ══ 11 · WHERE IT PAYS ══════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">10</span> &nbsp;/&nbsp; Where this pays fastest</div>
+  <div class="body">
+    <h2 class="wide">Repetition plus consequence. That's the whole filter.</h2>
+    <div class="metrics c3" style="margin-top: clamp(18px,2.4vw,32px)">
+      <div class="metric">
+        <div class="val">~75%</div>
+        <div class="lbl"><strong style="color:var(--fg)">Data centres.</strong> MEP and controls as a share of GMP on 2026 AI-facility bids — and 30–50% of planned capacity is slipping to 2028 on build bottlenecks.</div>
+        <div class="sub">Speed to market is the product</div>
+      </div>
+      <div class="metric">
+        <div class="val">41%</div>
+        <div class="lbl"><strong style="color:var(--fg)">Water &amp; process.</strong> Of new industrial plants with zero-liquid-discharge plans now specify a digital twin from the planning stage.</div>
+        <div class="sub">The model is already expected</div>
+      </div>
+      <div class="metric">
+        <div class="val plain">3</div>
+        <div class="lbl"><strong style="color:var(--fg)">Industrial plant.</strong> Layout, take-off and programme — the three workflows that repeat on every revision of every project, on every site.</div>
+        <div class="sub">Highest frequency, lowest judgement</div>
+      </div>
+    </div>
+    <p class="lead">The common factor isn't the sector. It's that the same person who pays for the rework is the person who buys the tool. When those two are the same, the saving lands where the decision is made.</p>
+  </div>
+  <div class="source">Data Center Knowledge · Elemental 2026 bid analysis · Global Water Intelligence</div>
+  <aside class="notes">
+    <b>Lead with whichever of the three they are.</b> Skip the other two entirely — a deck that covers everything persuades nobody.<br>
+    <b>The last paragraph is the real qualification criterion,</b> and it sets up slide 12. Say it slowly.
+  </aside>
+</section>
+
+<!-- ══ 12 · WHERE IT DOESN'T ═══════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">11</span> &nbsp;/&nbsp; Where it doesn't — yet</div>
+  <div class="body">
+    <h2 class="wide">Two cases where we'd tell you not to do this.</h2>
+    <ul class="ticks tight" style="margin-top: clamp(12px,1.6vw,24px); gap: clamp(10px,1.3vw,18px)">
+      <li><strong>When the workflow runs twice a year.</strong> <span>Frequency is most of the arithmetic on slide 9. Below a threshold, manual is simply correct — and we'd rather say that in the first call than in month three.</span></li>
+      <li><strong>When you bill your own clients by the hour.</strong> <span>Then automation cuts your invoice, not your cost, and the saving lands with your client instead of you. The case there is a different one — work you couldn't have bid on before, turned around inside a deadline you'd have declined — and we'd make that case rather than this one.</span></li>
+    </ul>
+    <p class="lead">We'd rather lose a project on the first call than deliver one that measures out at nothing. <strong>Step 04 of our method commits us to reporting that number either way.</strong></p>
+  </div>
+  <aside class="notes">
+    <b>Counter-intuitive, and it is the highest-trust slide in the deck.</b> Nobody in this industry disqualifies themselves out loud. Doing it makes every claim on the previous eleven slides more believable.<br>
+    <b>If they're an hourly-billing firm,</b> this is not a dead end — pivot to capacity: "you take on the job with the impossible deadline." Different sale, same tooling.<br>
+    <b>Don't soften this.</b> The moment you hedge it, it becomes a sales technique instead of a position.
+  </aside>
+</section>
+
+<!-- ══ 13 · HANDOVER ═══════════════════════════════════════════ -->
+<section class="slide">
+  <div class="eyebrow"><span class="idx">12</span> &nbsp;/&nbsp; What you're left holding</div>
+  <div class="body">
+    <div class="split">
+      <div>
+        <h2>You keep it when we leave.</h2>
+        <p class="lead">Every tool ships <strong>documented, versioned and testable</strong>. The code transfers to you. We retain no licence over it and nothing is rented back.</p>
+        <p class="lead">If your team can't extend it without calling us, we haven't finished — that's a defect, not a support contract.</p>
+      </div>
+      <div class="metrics c2">
+        <div class="metric">
+          <div class="val plain" style="font-size:clamp(0.95rem,1.35vw,1.35rem);line-height:1.35">Fixed scope,<br>milestone billing</div>
+          <div class="lbl">You pay for results, not for hours logged. No open-ended discovery.</div>
+        </div>
+        <div class="metric">
+          <div class="val plain" style="font-size:clamp(0.95rem,1.35vw,1.35rem);line-height:1.35">Your stack,<br>your licences</div>
+          <div class="lbl">Built on what you already run. Open-source libraries where possible, named and versioned.</div>
+        </div>
+        <div class="metric">
+          <div class="val plain" style="font-size:clamp(0.95rem,1.35vw,1.35rem);line-height:1.35">Baseline agreed<br>before we build</div>
+          <div class="lbl">So neither side can move the goalposts once the numbers come in.</div>
+        </div>
+        <div class="metric">
+          <div class="val plain" style="font-size:clamp(0.95rem,1.35vw,1.35rem);line-height:1.35">Training and<br>handover session</div>
+          <div class="lbl">Part of the final phase, not an upsell afterwards.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <b>"We retain no licence and nothing is rented back" is a real contractual position, not a slogan</b> — it's written into the current engagement. Say it as a fact, because it is one.<br>
+    <b>This slide exists to kill the lock-in objection,</b> which in this industry is usually the unspoken reason a proposal dies in procurement. Get it said before they have to ask.
+  </aside>
+</section>
+
+<!-- ══ 14 · NEXT ═══════════════════════════════════════════════ -->
+<section class="slide title-slide">
+  <div class="body">
+    <div class="eyebrow" style="margin-bottom:0"><span class="idx">13</span> &nbsp;/&nbsp; Next step</div>
+    <h1 style="margin-top:clamp(20px,2.8vw,38px);max-width:20ch">Tell us what should not be manual.</h1>
+    <p class="lead" style="max-width:52ch">Describe the workflow in three lines. We'll tell you whether it's worth automating and what the first step looks like — no pitch deck, no discovery phase that never ends.</p>
+    <div class="cta-line">r-xtech.com/contact</div>
+    <div class="title-meta">R<sup>2</sup>χTECH · Architecture, computed.</div>
+  </div>
+  <aside class="notes">
+    <b>Ask for one workflow, not for a meeting.</b> "Send me the three lines this week and I'll come back with whether the arithmetic works. If it doesn't, I'll tell you."<br>
+    <b>That's a small, specific, low-risk ask</b> — and it puts you back on slide 10 with their real numbers, which is where this closes.
+  </aside>
+</section>
+
+</div>
+
+<div class="nav">
+  <button onclick="go(cur-1)" aria-label="Previous slide">←</button>
+  <span class="counter"><span id="cur">1</span> / <span id="tot">14</span></span>
+  <button onclick="go(cur+1)" aria-label="Next slide">→</button>
+</div>
+<div class="hint">N · notes</div>
+
+<script>
+/* ── Navigation ───────────────────────────────────────────── */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 1;
+document.getElementById('tot').textContent = total;
+
+function go(n) {
+  cur = Math.max(1, Math.min(total, n));
+  slides.forEach((s, i) => s.classList.toggle('active', i === cur - 1));
+  document.getElementById('cur').textContent = cur;
+  document.getElementById('progress').style.width = (cur / total * 100) + '%';
+
+  // A chart built while its slide is display:none measures a zero-height
+  // container and keeps that bitmap once shown — the curves render squashed
+  // into the corner. Resize on reveal, when the container finally has a size.
+  if (window.Chart) {
+    slides[cur - 1].querySelectorAll('canvas').forEach(c => {
+      const chart = Chart.getChart(c);
+      if (chart) chart.resize();
+    });
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input')) return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(cur + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+  if (e.key === 'n' || e.key === 'N') document.body.classList.toggle('notes-on');
+});
+
+document.addEventListener('click', e => {
+  if (e.target.closest('.nav, input, .notes, canvas')) return;
+  go(cur + 1);
+});
+
+go(1);
+
+/* ── Shared chart styling ─────────────────────────────────── */
+const FG_MUTED = '#8a918c', LINE = '#262b2e', ACCENT = '#e8a94a', EDGE = '#5e686d';
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
+Chart.defaults.font.size = 10;
+Chart.defaults.color = FG_MUTED;
+
+/* ── Slide 5: the shape of the choice (no figures on purpose) ─ */
+const months = Array.from({length: 37}, (_, i) => i);
+new Chart(document.getElementById('hingeChart'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      {
+        label: 'Keep doing it by hand',
+        data: months.map(m => m * 100),
+        borderColor: EDGE,
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0
+      },
+      {
+        label: 'Build it once',
+        data: months.map(m => 900 + m * 25),
+        borderColor: ACCENT,
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false },
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 2, padding: 14 } },
+      tooltip: { enabled: false }
+    },
+    scales: {
+      // No grid at all: this chart argues a shape, and one gridline per month
+      // reads as data the slide is deliberately not showing.
+      x: {
+        title: { display: true, text: 'TIME →', color: EDGE, font: { size: 9 } },
+        grid: { display: false }, border: { color: LINE }, ticks: { display: false }
+      },
+      y: {
+        title: { display: true, text: 'CUMULATIVE COST →', color: EDGE, font: { size: 9 } },
+        grid: { display: false }, border: { color: LINE }, ticks: { display: false }
+      }
+    }
+  }
+});
+
+/* ── Slide 10: the calculator ─────────────────────────────── */
+const WEEKS = 46;          // working weeks, not 52 — holidays and leave
+const REDUCTION = 0.8;     // the tool removes 80% of the task, never all of it
+const MAINT = 0.15;        // annual maintenance as a share of build cost
+
+const el = id => document.getElementById(id);
+const usd = n => '$' + Math.round(n).toLocaleString('en-US');
+
+/* The crossing is the whole point of the chart, so mark it. The x axis runs
+   0–36 evenly, so the pixel position interpolates linearly across the plot
+   area — no annotation plugin needed. */
+const breakevenMarker = {
+  id: 'breakeven',
+  afterDatasetsDraw(chart, args, opts) {
+    const m = opts.month;
+    if (!m || !isFinite(m) || m > 36) return;
+    const { left, right, top, bottom } = chart.chartArea;
+    const x = left + (m / 36) * (right - left);
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.strokeStyle = ACCENT;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(x, top);
+    ctx.lineTo(x, bottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = ACCENT;
+    ctx.font = '10px "JetBrains Mono", monospace';
+    ctx.textAlign = x > right - 90 ? 'right' : 'left';
+    ctx.fillText('break-even', x + (x > right - 90 ? -6 : 6), top + 11);
+    ctx.restore();
+  }
+};
+
+const roiChart = new Chart(el('roiChart'), {
+  plugins: [breakevenMarker],
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      { label: 'Do nothing', data: [], borderColor: EDGE, borderWidth: 2, pointRadius: 0, tension: 0 },
+      { label: 'Build the tool', data: [], borderColor: ACCENT, borderWidth: 2, pointRadius: 0, tension: 0 }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      breakeven: { month: null },
+      legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 2, padding: 12 } },
+      tooltip: {
+        backgroundColor: '#1c2024',
+        borderColor: LINE,
+        borderWidth: 1,
+        titleColor: '#f2f4f0',
+        bodyColor: FG_MUTED,
+        callbacks: {
+          title: items => 'Month ' + items[0].label,
+          label: c => c.dataset.label + ': ' + usd(c.parsed.y)
+        }
+      }
+    },
+    scales: {
+      x: { title: { display: true, text: 'MONTHS', color: EDGE, font: { size: 9 } }, grid: { color: LINE }, ticks: { maxTicksLimit: 7 } },
+      y: { title: { display: true, text: 'CUMULATIVE COST (USD)', color: EDGE, font: { size: 9 } }, grid: { color: LINE }, ticks: { callback: v => '$' + (v / 1000) + 'k' } }
+    }
+  }
+});
+
+function recalc() {
+  const people = +el('people').value;
+  const hours  = +el('hours').value;
+  const rate   = +el('rate').value;
+  const build  = Math.max(0, +el('cost').value || 0);
+
+  el('peopleOut').textContent = people;
+  el('hoursOut').textContent  = hours;
+  el('rateOut').textContent   = '$' + rate;
+
+  // What the task costs today, per year.
+  const annual = people * hours * WEEKS * rate;
+
+  // What survives automation: the 20% the tool doesn't remove, plus upkeep.
+  const residualAnnual = annual * (1 - REDUCTION);
+  const maintAnnual    = build * MAINT;
+  const netAnnualSaving = annual - residualAnnual - maintAnnual;
+
+  el('annual').textContent = usd(annual);
+
+  // Break-even: build cost divided by what is actually saved each month.
+  let breakevenMonths = null;
+  if (netAnnualSaving > 0) {
+    breakevenMonths = build / (netAnnualSaving / 12);
+    el('payback').textContent = breakevenMonths < 1 ? '<1' : breakevenMonths.toFixed(1);
+  } else {
+    el('payback').textContent = 'never';
+  }
+  roiChart.options.plugins.breakeven.month = breakevenMonths;
+
+  // Net position at 36 months: saved minus spent.
+  const net36 = netAnnualSaving * 3 - build;
+  el('net36').textContent = (net36 >= 0 ? '+' : '−') + usd(Math.abs(net36));
+  el('net36').style.color = net36 >= 0 ? ACCENT : '#d25854';
+
+  roiChart.data.datasets[0].data = months.map(m => (annual / 12) * m);
+  roiChart.data.datasets[1].data = months.map(m => build + ((residualAnnual + maintAnnual) / 12) * m);
+  roiChart.update('none');
+}
+
+['people', 'hours', 'rate', 'cost'].forEach(id => {
+  el(id).addEventListener('input', recalc);
+});
+recalc();
+</script>
+</body>
+</html>
