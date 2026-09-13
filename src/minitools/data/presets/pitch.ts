@@ -16,7 +16,7 @@ export const pitchPreset: PitchSpec = {
     {
       title: "Read the four exports as they actually arrive",
       detail:
-        "We open your last two issues of each model with IfcOpenShell and record what is really in them — the property sets that are populated, the ones that are empty, and where the naming diverges between consultants. This is the step that decides whether the rest is a week or a month.",
+        "We open your last two issues of each model with IfcOpenShell and record what is really in them: the property sets that are populated, the ones that are empty, and where the naming diverges between consultants. This is the step that decides whether the rest is a week or a month.",
     },
     {
       title: "Normalise into one federated model",
@@ -31,7 +31,7 @@ export const pitchPreset: PitchSpec = {
     {
       title: "Publish the report the meeting needs",
       detail:
-        "A dated delta against the previous issue — new, resolved, still open — as BCF for the consultants and a short PDF for the client. The point is that nobody rebuilds it by hand.",
+        "A dated delta against the previous issue (new, resolved, still open) as BCF for the consultants and a short PDF for the client. The point is that nobody rebuilds it by hand.",
     },
   ],
   stack: ["IfcOpenShell", "Python", "BCF 3.0", "Speckle", "GitHub Actions"],
@@ -46,6 +46,6 @@ export const pitchPreset: PitchSpec = {
     title: "Automated IFC clash coordination",
     tagline: "Four consultant models federated and clash-checked on every issue, without a manual rebuild.",
     pitch:
-      "This one needs your actual IFC files to demonstrate — the interesting part is the mismatch between the four exports, and that is not something a browser can invent. So this is a scope instead: what we would read first, what we would automate, and what lands in your hands at the end of each cycle.",
+      "This one needs your actual IFC files to demonstrate: the interesting part is the mismatch between the four exports, and that is not something a browser can invent. So this is a scope instead: what we would read first, what we would automate, and what lands in your hands at the end of each cycle.",
   },
 };

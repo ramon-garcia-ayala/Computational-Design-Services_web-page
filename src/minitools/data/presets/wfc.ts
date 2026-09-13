@@ -16,7 +16,7 @@ export const wfcPreset: WfcSpec = {
     title: "Masterplan block aggregation",
     tagline: "A nine-by-nine site collapsed under adjacency rules that keep towers apart.",
     pitch:
-      "Nothing here is drawn. The rules say a tower may only meet mid-rise or open ground, and the field is whatever satisfies them — so the seed is the control worth moving first, because every value of it is a different valid answer to the same brief.",
+      "Nothing here is drawn. The rules say a tower may only meet mid-rise or open ground, and the field is whatever satisfies them, so the seed is the control worth moving first, because every value of it is a different valid answer to the same brief.",
   },
   params: {
     rules: "city",

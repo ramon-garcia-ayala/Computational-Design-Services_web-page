@@ -119,7 +119,7 @@ export const projects: Project[] = [
     summary:
       "A climate-responsive modular system for Jeddah, where solar and wind data drive the massing directly.",
     intro:
-      "Densifying a hot–humid coastal city means fighting the climate or working with it. Morphing Sands reads Al-Balad's vernacular logic — courtyards, shaded streets, layered façades — as a rule set, then lets solar and wind data resolve it into built form.",
+      "Densifying a hot–humid coastal city means fighting the climate or working with it. Morphing Sands reads Al-Balad's vernacular logic (courtyards, shaded streets, layered façades) as a rule set, then lets solar and wind data resolve it into built form.",
     brief: [
       "Featured on the official website of MONOCEROS: https://www.monoceros.tools/project23/",
       "Morphing Sands is a climate-responsive mixed-use architectural system developed for Jeddah, Saudi Arabia, addressing urban densification in a hot–humid coastal environment. Inspired by the historic fabric of Al-Balad, the project reinterprets Hijazi principles—such as courtyards, shaded streets, and layered façades—through a modular and computational design approach.",
@@ -171,7 +171,7 @@ export const projects: Project[] = [
     summary:
       "Two custom-trained LoRA models and an interface that takes Archigram's visual language from prompt to 3D mesh.",
     intro:
-      "Generative image tools stop at the picture. Flat Dream trains its own models on a specific architectural language, then keeps going — into a magazine builder, a mesh converter and a model viewer, so the output stays usable.",
+      "Generative image tools stop at the picture. Flat Dream trains its own models on a specific architectural language, then keeps going, into a magazine builder, a mesh converter and a model viewer, so the output stays usable.",
     brief: [
       "FlatDream is an interface inspired by the book Learning from Las Vegas, built on 2 custom-trained LoRA models, fine-tuned on the visual language of the Archigram movement. It connects directly to ComfyUI and LM Studio to generate architectural imagery from text, image references, and multi-input compositions, with outputs that feed into a magazine builder, 3D mesh converter, and model viewer.",
     ],
@@ -181,7 +181,7 @@ export const projects: Project[] = [
         id: "context",
         kicker: "01 · Context",
         title: "Learning from Las Vegas, by way of Archigram",
-        body: "A general image model has no particular architecture in it. Flat Dream starts from a stated position — Archigram's visual language, read through Learning from Las Vegas — and fine-tunes two LoRA models on it, so the output argues from somewhere.",
+        body: "A general image model has no particular architecture in it. Flat Dream starts from a stated position (Archigram's visual language, read through Learning from Las Vegas) and fine-tunes two LoRA models on it, so the output argues from somewhere.",
         media: assetRange(0, 5),
       },
       {
@@ -206,14 +206,14 @@ export const projects: Project[] = [
   },
   {
     slug: "nyc-urban-land-use",
-    title: "NYC — Urban Land Use",
+    title: "NYC · Urban Land Use",
     context: "IAAC · Barcelona",
     year: "2026",
     tags: ["Machine learning", "Python", "GIS", "Urban data"],
     summary:
       "Can a model tell commercial from residential using built form alone? A grid-classification study across New York.",
     intro:
-      "Land use is recorded, but slowly and unevenly. This project asks whether built-form morphology, environmental data and proximity to city features carry enough signal to predict it — and how much data a model needs before it starts being right.",
+      "Land use is recorded, but slowly and unevenly. This project asks whether built-form morphology, environmental data and proximity to city features carry enough signal to predict it, and how much data a model needs before it starts being right.",
     brief: [
       "NYC – Urban Land Use investigates whether machine learning can classify urban areas as commercial or residential using built-form morphology, environmental data, and proximity to surrounding city features. The project reframes land-use prediction as a spatial grid-classification problem, combining expanded urban datasets to identify the conditions required for accurate prediction at the city scale.",
       "“Can we predict the land use of a space based on existing environmental information from official and unofficial sources?”",
@@ -256,7 +256,7 @@ export const projects: Project[] = [
     summary:
       "Le Corbusier's Unité d'Habitation converted into spatial graphs, to test whether a room's function is predictable from its position.",
     intro:
-      "A famously modular building is a good place to ask what modularity actually does to circulation. Floor plans become graphs, and the graph gets interrogated at three scales — many floors, one floor, one apartment.",
+      "A famously modular building is a good place to ask what modularity actually does to circulation. Floor plans become graphs, and the graph gets interrogated at three scales: many floors, one floor, one apartment.",
     brief: [
       "La Cité Radieuse investigates how the spatial organization of Le Corbusier’s Unité d’Habitation shapes circulation, accessibility, and connectivity between apartments and rooms. Floor plans are converted into spatial graphs and examined at three scales: multiple floors, a single floor, and an individual apartment. Graph-based measurements reveal recurring patterns within the building’s modular organization, while machine-learning models test whether room functions can be predicted from their position, connectivity, and relationships within the overall spatial network.",
     ],
@@ -290,14 +290,14 @@ export const projects: Project[] = [
   },
   {
     slug: "breathing-mass-hb01-structural-facade",
-    title: "Breathing Mass — HB01",
+    title: "Breathing Mass · HB01",
     context: "IAAC · Barcelona",
     year: "2026",
     tags: ["Topology optimisation", "Alpaca", "Grasshopper", "Radiation analysis"],
     summary:
       "A Santiago tower whose core cleans the city's air, with a lattice grown by stress analysis rather than drawn.",
     intro:
-      "The Hyper Lung takes the tower's least interesting element — the core — and gives it the building's main job. Around it, a topology-optimised skeleton thickens where load demands and thins where it does not.",
+      "The Hyper Lung takes the tower's least interesting element (the core) and gives it the building's main job. Around it, a topology-optimised skeleton thickens where load demands and thins where it does not.",
     brief: [
       "A vertical ecosystem in Santiago where architecture, wind, and energy converge. The Hyper Lung captures, cleans, and redistributes polluted air through a breathing core, transforming the tower into living infrastructure that breathes with the city.",
     ],
@@ -325,14 +325,14 @@ export const projects: Project[] = [
         id: "outcome",
         kicker: "03 · Outcome",
         title: "Three cores, one self-braced system",
-        body: "Load runs from volume to core to foundation, with three cores forming a triangle that turns vertical mass into a self-braced structural system — the arrangement the whole geometry is organised to make possible.",
+        body: "Load runs from volume to core to foundation, with three cores forming a triangle that turns vertical mass into a self-braced structural system: the arrangement the whole geometry is organised to make possible.",
         media: assetRange(7, 10),
       },
     ],
   },
   {
     slug: "collaborative-workflow-structure-facade-hb01",
-    title: "Collaborative Workflow — Structure/Facade",
+    title: "Collaborative Workflow · Structure/Facade",
     context: "IAAC · Barcelona",
     year: "2026",
     tags: ["Automation", "Speckle", "Grasshopper", "Interoperability"],
@@ -378,7 +378,7 @@ export const projects: Project[] = [
     year: "2026",
     tags: ["Parametric design", "Rhino", "Grasshopper", "Adaptive reuse"],
     summary:
-      "A new system inserted into an existing structure like a parasite — monstrous outside, controlled and humane within.",
+      "A new system inserted into an existing structure like a parasite: monstrous outside, controlled and humane within.",
     intro:
       "The name carries the argument. A form that reads as complex, almost monstrous from outside produces a delicate and controlled interior, and it does so by adapting to the existing building rather than clearing it.",
     brief: [
@@ -389,7 +389,7 @@ export const projects: Project[] = [
         id: "duality",
         kicker: "01 · Duality",
         title: "Monstrous outside, humane inside",
-        body: "The exterior is deliberately difficult — complex, almost monstrous. What it produces internally is the opposite: delicate, controlled, humane. The project treats that contradiction as the design rather than a problem to resolve.",
+        body: "The exterior is deliberately difficult: complex, almost monstrous. What it produces internally is the opposite: delicate, controlled, humane. The project treats that contradiction as the design rather than a problem to resolve.",
         media: assetRange(0, 4),
       },
       {
@@ -403,7 +403,7 @@ export const projects: Project[] = [
         id: "outcome",
         kicker: "03 · Outcome",
         title: "Two logics, one building",
-        body: "What results reads as a single building carrying two structural arguments at once — the original's hierarchy still legible beneath a geometry that could not have been drawn without it.",
+        body: "What results reads as a single building carrying two structural arguments at once: the original's hierarchy still legible beneath a geometry that could not have been drawn without it.",
         media: assetRange(7, 10),
       },
     ],
@@ -426,7 +426,7 @@ export const projects: Project[] = [
         id: "vision",
         kicker: "01 · Vision",
         title: "Vertical communities, quantified",
-        body: "The industry is obsessed with the final render and has been ignoring the space between the sketch and the BIM model. Hyper Builder bridges that gap with a real-time, cloud-based environment where data doesn't just follow the design — it drives it.",
+        body: "The industry is obsessed with the final render and has been ignoring the space between the sketch and the BIM model. Hyper Builder bridges that gap with a real-time, cloud-based environment where data doesn't just follow the design: it drives it.",
         media: assetRange(0, 3),
       },
       {
@@ -444,7 +444,7 @@ export const projects: Project[] = [
         id: "analytics",
         kicker: "03 · Analytics",
         title: "The dashboard that catches the ratio before export",
-        body: "A donut chart tracks the overall program split; bar charts break it down tower by tower. If the retail-to-residential ratio is off, it shows up on screen long before anyone hits export — and a version history panel keeps every iteration browsable and reversible.",
+        body: "A donut chart tracks the overall program split; bar charts break it down tower by tower. If the retail-to-residential ratio is off, it shows up on screen long before anyone hits export, and a version history panel keeps every iteration browsable and reversible.",
         media: assetRange(5, 7),
       },
     ],
@@ -458,7 +458,7 @@ export const projects: Project[] = [
     summary:
       "Hyper Building One's geometry stops being a shape and becomes a carrier of over ten embedded metadata points.",
     intro:
-      "A one-million-square-metre tower can't stay agile if its blueprint is a static snapshot that starts ageing the moment it's drawn. This phase of HB-01 asks how raw geometry becomes live data — and answers it capsule by capsule.",
+      "A one-million-square-metre tower can't stay agile if its blueprint is a static snapshot that starts ageing the moment it's drawn. This phase of HB-01 asks how raw geometry becomes live data, and answers it capsule by capsule.",
     brief: [
       "Hyperbuilding One is a data-driven ecosystem that achieves seamless connectivity between Static and Kinetic spaces through an optimized large-scale integrated environment.",
     ],
@@ -467,14 +467,14 @@ export const projects: Project[] = [
         id: "system",
         kicker: "01 · System",
         title: "Static body, kinetic cells",
-        body: "The tower splits into two systems in constant dialogue: a permanent infrastructural body carrying the skeletal and circulatory logic, and a series of hexagonal plug-in capsules — the Abyss, the Groot, the Recycler, the Boss — that exchange air, water and energy. Hexagonal packing keeps it gapless and maximises sunlight.",
+        body: "The tower splits into two systems in constant dialogue: a permanent infrastructural body carrying the skeletal and circulatory logic, and a series of hexagonal plug-in capsules (the Abyss, the Groot, the Recycler, the Boss) that exchange air, water and energy. Hexagonal packing keeps it gapless and maximises sunlight.",
         media: assetRange(0, 3),
       },
       {
         id: "metadata",
         kicker: "02 · Metadata",
         title: "Every capsule carries its own dataset",
-        body: "Generated through the Grasshopper and Speckle pipeline, a capsule is never just a 3D model — it's a container for over ten metadata points: programmatic function, precise weight and embodied carbon, and its spatial relationship to the core and to its neighbours.",
+        body: "Generated through the Grasshopper and Speckle pipeline, a capsule is never just a 3D model: it's a container for over ten metadata points, among them programmatic function, precise weight and embodied carbon, and its spatial relationship to the core and to its neighbours.",
         facts: [
           { label: "Metadata points per capsule", value: "10+" },
           { label: "Pipeline", value: "Grasshopper → Speckle" },
@@ -485,21 +485,21 @@ export const projects: Project[] = [
         id: "validation",
         kicker: "03 · Validation",
         title: "KPIs instead of guesses",
-        body: "Space utilisation against the one-million-square-metre target, spatial proximity between interdependent functions, and the exact energy demand of each cluster — validated in real time rather than assumed, and checked against the city below through shadow and daylight analysis so the tower stays a good neighbour.",
+        body: "Space utilisation against the one-million-square-metre target, spatial proximity between interdependent functions, and the exact energy demand of each cluster, validated in real time rather than assumed, and checked against the city below through shadow and daylight analysis so the tower stays a good neighbour.",
         media: assetRange(5, 6),
       },
     ],
   },
   {
     slug: "automated-metadata-extraction-hb01",
-    title: "Automated Metadata Extraction — HB01",
+    title: "Automated Metadata Extraction · HB01",
     context: "IAAC · Barcelona",
     year: "2026",
     tags: ["Speckle", "Automation", "Data pipelines", "BIM"],
     summary:
       "A Speckle automation that turns a newly published model into a structured spreadsheet of KPIs, with no one exporting a file by hand.",
     intro:
-      "Coordination across a large design team breaks down at data translation — too many file formats, too much room for miscommunication. This pipeline extracts a model's KPIs the moment a new version is published and pushes them into one format every team can read.",
+      "Coordination across a large design team breaks down at data translation: too many file formats, too much room for miscommunication. This pipeline extracts a model's KPIs the moment a new version is published and pushes them into one format every team can read.",
     brief: [
       "An automated pipeline that transforms raw 3D model metadata into structured cloud spreadsheets. This makes complex geometric data easily accessible and adaptable for various end-uses, from simple data reading to feeding live web platforms.",
     ],
@@ -508,14 +508,14 @@ export const projects: Project[] = [
         id: "problem",
         kicker: "01 · Problem",
         title: "The bottleneck is translation, not measurement",
-        body: "The geometric, textual and numerical data a design team generates is enormous, and the missing link isn't better analysis — it's a single, legible format everyone downstream can actually use. The Studio's Data Team needed raw geometry to arrive already structured for its KPI database.",
+        body: "The geometric, textual and numerical data a design team generates is enormous, and the missing link isn't better analysis: it's a single, legible format everyone downstream can actually use. The Studio's Data Team needed raw geometry to arrive already structured for its KPI database.",
         media: assetRange(0, 1),
       },
       {
         id: "pipeline",
         kicker: "02 · Pipeline",
         title: "Speckle extracts, the report writes itself",
-        body: "The automation pulls architectural KPIs — areas, use ratios, evacuation distances — straight from the 3D model and processes them into a structured Excel or Google Sheet, with summary matrices by tower, level and program ready for immediate validation.",
+        body: "The automation pulls architectural KPIs (areas, use ratios, evacuation distances) straight from the 3D model and processes them into a structured Excel or Google Sheet, with summary matrices by tower, level and program ready for immediate validation.",
         facts: [
           { label: "Extracted", value: "Areas · use ratios · evacuation distances" },
           { label: "Output", value: "Structured spreadsheet, by tower/level/program" },
@@ -526,7 +526,7 @@ export const projects: Project[] = [
         id: "validation",
         kicker: "03 · Validation",
         title: "Every version checked against the last",
-        body: "The tables run from a per-geometry summary to validation tables that flag errors and version-to-version changes — matching, missing or modified — so a stale export is caught before it reaches anyone who'd act on it.",
+        body: "The tables run from a per-geometry summary to validation tables that flag errors and version-to-version changes (matching, missing or modified) so a stale export is caught before it reaches anyone who'd act on it.",
         media: assetRange(4, 5),
       },
     ],
@@ -538,7 +538,7 @@ export const projects: Project[] = [
     year: "2025",
     tags: ["Monoceros / WFC", "Grasshopper", "Environmental analysis", "3D-printed adobe"],
     summary:
-      "Chihuahua's informal barrio, encoded as an aggregation system — dignifying its survival logic rather than replacing it with a grid.",
+      "Chihuahua's informal barrio, encoded as an aggregation system: dignifying its survival logic rather than replacing it with a grid.",
     intro:
       "The barrio in Chihuahua's rugged topography isn't just housing; it's a morphological catalyst, a vernacular intelligence of incremental growth built to survive an extreme desert climate. Terrascape reads that logic as a rule set and lets Monoceros grow from it, rather than imposing an order from outside.",
     brief: [
@@ -549,14 +549,14 @@ export const projects: Project[] = [
         id: "strategy",
         kicker: "01 · Strategy",
         title: "Encoding the barrio, not erasing it",
-        body: "Three computational concepts translate the barrio's spontaneous survival logic: Wave Function Collapse for rule-based rather than gridded growth, a topographical agent that interweaves with Chihuahua's hills, and modular dignification — structural safety and climate resilience without losing the self-built essence.",
+        body: "Three computational concepts translate the barrio's spontaneous survival logic: Wave Function Collapse for rule-based rather than gridded growth, a topographical agent that interweaves with Chihuahua's hills, and modular dignification (structural safety and climate resilience without losing the self-built essence).",
         media: assetRange(0, 3),
       },
       {
         id: "typology",
         kicker: "02 · Typology",
         title: "The Tianguis: a little bit of everything",
-        body: "Organised like the traditional open-air market, clusters stay under six modules to hold a human scale. Housing modules go subterranean for thermal inertia or open to voids above for ventilation; functional modules carry commerce and rainwater harvesting; circulation modules — cores and bridges — adapt to the slope.",
+        body: "Organised like the traditional open-air market, clusters stay under six modules to hold a human scale. Housing modules go subterranean for thermal inertia or open to voids above for ventilation; functional modules carry commerce and rainwater harvesting; circulation modules (cores and bridges) adapt to the slope.",
         media: assetRange(3, 6),
       },
       {
@@ -574,7 +574,7 @@ export const projects: Project[] = [
         id: "validation",
         kicker: "04 · Validation",
         title: "Stress-tested across five sites",
-        body: "From a steep mountain periphery demanding an organic response to a flat urban lot suited to grid logic, the aggregation was tested across five extreme topographical conditions — proving the system holds regardless of slope or scale.",
+        body: "From a steep mountain periphery demanding an organic response to a flat urban lot suited to grid logic, the aggregation was tested across five extreme topographical conditions, proving the system holds regardless of slope or scale.",
         media: assetRange(9, 15),
       },
     ],
@@ -586,7 +586,7 @@ export const projects: Project[] = [
     year: "2025",
     tags: ["Kangaroo", "Crystallon", "Alpaca FEA", "Galapagos"],
     summary:
-      "A lattice pavilion that weighs 202 kg and displaces 0.16 mm — engineering the memory of a form rather than its mass.",
+      "A lattice pavilion that weighs 202 kg and displaces 0.16 mm: engineering the memory of a form rather than its mass.",
     intro:
       "What happens when a pavilion is designed for the memory of a building instead of the building itself? Materia Assente reconstructs an architectural volume as a wire-mesh lattice: poetic in concept, resolved entirely through finite element analysis and evolutionary optimisation.",
     brief: [
@@ -622,7 +622,7 @@ export const projects: Project[] = [
         id: "tradeoff",
         kicker: "04 · Trade-off",
         title: "Density against transparency",
-        body: "Galapagos found the densest configurations were also the strongest — and the least habitable, closing off both circulation and the ghost aesthetic the project is named for. The final geometry negotiates that trade-off rather than maximising either side of it.",
+        body: "Galapagos found the densest configurations were also the strongest and the least habitable, closing off both circulation and the ghost aesthetic the project is named for. The final geometry negotiates that trade-off rather than maximising either side of it.",
         media: assetRange(5, 7),
       },
     ],
@@ -634,7 +634,7 @@ export const projects: Project[] = [
     year: "2025",
     tags: ["Kangaroo", "Digital fabrication", "Panelisation", "Adaptive reuse"],
     summary:
-      "Inflated pneumatic forms grafted onto a decaying market's existing grid — soft geometry defining a space traditionally held by solid walls.",
+      "Inflated pneumatic forms grafted onto a decaying market's existing grid: soft geometry defining a space traditionally held by solid walls.",
     intro:
       "How can something low in inherent solidity still be structurally present and define architectural space? Developed for the Complex Forming Seminar, the project pushes that question through Cairo's Bab El-Louk market, using the site's own structural grid as the foundation for a soft, inflated transformation.",
     brief: [
@@ -645,7 +645,7 @@ export const projects: Project[] = [
         id: "challenge",
         kicker: "01 · Challenge",
         title: "From free-form simulation to a panelisable system",
-        body: "Early Kangaroo explorations produced compelling free-form geometry that couldn't be standardised for construction. The fix was a pseudo-code membrane that hangs downward into columns while simultaneously inflating upward into domes — complexity traded for quantifiability.",
+        body: "Early Kangaroo explorations produced compelling free-form geometry that couldn't be standardised for construction. The fix was a pseudo-code membrane that hangs downward into columns while simultaneously inflating upward into domes: complexity traded for quantifiability.",
         media: assetRange(0, 2),
       },
       {
@@ -682,7 +682,7 @@ export const projects: Project[] = [
     year: "2026",
     tags: ["Parametric design", "Grasshopper", "Fabrication"],
     summary:
-      "One triangulated steel module, repeated — shifts in height and density do the rest.",
+      "One triangulated steel module, repeated: shifts in height and density do the rest.",
     intro:
       "A single repeated module is a constraint that pays for itself in fabrication. The pavilion spends its variation elsewhere: in height and density, which is where it changes how the space is read.",
     brief: [
@@ -700,7 +700,7 @@ export const projects: Project[] = [
         id: "variation",
         kicker: "02 · Variation",
         title: "Height and density carry the design",
-        body: "With the part fixed, the remaining variables are how tall and how dense. Those two shifts shape circulation, light and spatial perception — the whole experience, from a component that never changes.",
+        body: "With the part fixed, the remaining variables are how tall and how dense. Those two shifts shape circulation, light and spatial perception: the whole experience, from a component that never changes.",
         facts: [
           { label: "Distinct parts", value: "One module, repeated" },
           { label: "Varied by", value: "Height and density" },

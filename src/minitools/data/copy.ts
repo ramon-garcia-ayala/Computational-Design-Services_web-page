@@ -36,7 +36,7 @@ export const widgetCopy = {
     lead: "Ready to build",
     build: "Build it now",
     refine: "Keep refining",
-    declined: "No problem — tell me what to adjust.",
+    declined: "No problem, tell me what to adjust.",
   },
   errors: {
     offline: "The assistant is offline right now. Get in touch and we will answer in person.",
@@ -47,7 +47,7 @@ export const widgetCopy = {
        click away, and a visitor who never takes that click would otherwise
        read someone else's worked example as their own. */
     fellBack:
-      "That build did not come through. The link below is our worked example of the same kind of tool — press build again whenever you like.",
+      "That build did not come through. The link below is our worked example of the same kind of tool. Press build again whenever you like.",
   },
 } as const;
 
@@ -90,7 +90,7 @@ export const viewerCopy = {
     withinAllowable: "within allowable",
     overAllowable: "over allowable",
   },
-  emptyParameters: "This one has no dials — drag to orbit and look around.",
+  emptyParameters: "This one has no dials. Drag to orbit and look around.",
   orbitHint: "Drag to orbit · scroll to zoom",
   shareHint: "Every change is in the address bar. Copy it to share this exact version.",
   contactSubject: "About the tool your assistant built",
@@ -124,8 +124,8 @@ export const inquiryCopy = {
   emailPlaceholder: "you@studio.com",
   /* Literally true, which is what makes it work as reassurance without
      asking for anyone's trust. */
-  trust: "Both optional. Nothing leaves this page — these only fill in the draft your own mail app opens.",
-  emailNudge: "That doesn't look like an address — we'll reply to whatever you send from.",
+  trust: "Both optional. Nothing leaves this page. These only fill in the draft your own mail app opens.",
+  emailNudge: "That doesn't look like an address. We'll reply to whatever you send from.",
 
   /**
    * The prewritten email itself. Short on purpose — a starting point, not a
@@ -134,14 +134,14 @@ export const inquiryCopy = {
    */
   mail: {
     draftNote:
-      "[This is a draft based on your conversation with the assistant — edit it however you like before sending.]",
+      "[This is a draft based on your conversation with the assistant. Edit it however you like before sending.]",
     settingsLabel: "Settings:",
     planLabel: "Plan:",
     stackLabel: "Stack:",
     deliverablesLabel: "Deliverables:",
     timelineLabel: "Timeline:",
     linkLabel: "Link:",
-    linkOmitted: "(The link is too long for an email — it's in my address bar, I'll paste it separately.)",
+    linkOmitted: "(The link is too long for an email. It's in my address bar, I'll paste it separately.)",
     moreParams: (n: number) => `…and ${n} more`,
     signoffEmail: (email: string) => `Best reached at ${email}`,
   },
@@ -150,7 +150,7 @@ export const inquiryCopy = {
 /** The words that only surface when a preset stands in for a generated spec. */
 export const presetCopy = {
   fallbackTagline:
-    "An example of this tool — the build from your brief did not come through, so this is the reference one.",
+    "An example of this tool. The build from your brief did not come through, so this is the reference one.",
 } as const;
 
 /** What the confirmation card says is about to be built. */
@@ -222,7 +222,7 @@ export function closingLine(
     headlineAccent: "Now build the real one.",
     body:
       template === "pitch"
-        ? "That is a scope, a stack and a plan, from a few sentences you typed. Bring us the real constraints — the standards, the file formats, the deadline — and the first working version lands just as fast."
+        ? "That is a scope, a stack and a plan, from a few sentences you typed. Bring us the real constraints (the standards, the file formats, the deadline) and the first working version lands just as fast."
         : "This came from a short conversation and a handful of parameters. Your real project has drawings, standards and a deadline attached. That is the interesting version, and it is the one we build.",
     cta: "Let's build the real one",
   };

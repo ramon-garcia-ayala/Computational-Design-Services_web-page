@@ -25,7 +25,7 @@ export const ecogen20260629: Proposal = {
     kicker: "Commercial proposal",
     title: "From a 2D site plan to a coordinated BIM model in minutes",
     accent: "in minutes",
-    lead: "Parametric automation for Solar+BESS site design. We propose a system that reads your 2D layout and generates the 3D Revit model automatically — no manual modelling, no re-work between design iterations.",
+    lead: "Parametric automation for Solar+BESS site design. We propose a system that reads your 2D layout and generates the 3D Revit model automatically. No manual modelling, no re-work between design iterations.",
   },
 
   blocks: [
@@ -35,7 +35,7 @@ export const ecogen20260629: Proposal = {
       kicker: "Summary",
       title: "What we propose to build",
       body: [
-        "We propose building an automation system that takes a 2D site layout — such as Ecogen's Solar+BESS installation drawings — and generates a conceptual 3D Revit model automatically. The system identifies repeatable battery module footprints from the input drawing, places parametric Revit families at the correct positions, and produces a structured BIM model ready for coordination and client presentations.",
+        "We propose building an automation system that takes a 2D site layout (such as Ecogen's Solar+BESS installation drawings) and generates a conceptual 3D Revit model automatically. The system identifies repeatable battery module footprints from the input drawing, places parametric Revit families at the correct positions, and produces a structured BIM model ready for coordination and client presentations.",
         "No manual 3D modelling. No re-work between design iterations.",
       ],
     },
@@ -46,7 +46,7 @@ export const ecogen20260629: Proposal = {
       kicker: "The problem",
       title: "Every iteration rebuilds the model by hand",
       body: [
-        "Solar+BESS site design involves placing dozens of identical battery capsule units in precise spatial configurations. Every design iteration requires manually rebuilding the 3D Revit model from scratch — a process that is slow, error-prone, and creates persistent discrepancies between the 2D CAD layout and the 3D BIM representation.",
+        "Solar+BESS site design involves placing dozens of identical battery capsule units in precise spatial configurations. Every design iteration requires manually rebuilding the 3D Revit model from scratch: a process that is slow, error-prone, and creates persistent discrepancies between the 2D CAD layout and the 3D BIM representation.",
       ],
     },
 
@@ -91,7 +91,7 @@ export const ecogen20260629: Proposal = {
         {
           number: "01",
           title: "2D site plan",
-          body: "The input: a DWG, a PDF, or a structured set of coordinates — the drawing already produced during design.",
+          body: "The input: a DWG, a PDF, or a structured set of coordinates (the drawing already produced during design).",
         },
         {
           number: "02",
@@ -122,19 +122,19 @@ export const ecogen20260629: Proposal = {
           title: "Primary",
           tone: "solid",
           items: [
-            "Python 3 — the language of the pipeline",
-            "pyRevit — runs the automation from the Revit ribbon, open source",
-            "Revit API — creates and places the model elements",
-            "ezdxf — reads the 2D drawing and its layers, open source",
+            "Python 3: the language of the pipeline",
+            "pyRevit: runs the automation from the Revit ribbon, open source",
+            "Revit API: creates and places the model elements",
+            "ezdxf: reads the 2D drawing and its layers, open source",
           ],
         },
         {
           title: "Alternatives on request",
           tone: "dashed",
           items: [
-            "Grasshopper — visual programming, if preferred over scripts",
-            "Rhino.Inside.Revit — Grasshopper driving Revit directly",
-            "Dynamo — Revit's own visual environment",
+            "Grasshopper: visual programming, if preferred over scripts",
+            "Rhino.Inside.Revit: Grasshopper driving Revit directly",
+            "Dynamo: Revit's own visual environment",
           ],
         },
       ],
@@ -155,7 +155,7 @@ export const ecogen20260629: Proposal = {
         {
           icon: "cube",
           title: "Parametric BIM family creation",
-          body: "Custom Revit families for Solar+BESS modules — battery capsules, inverters, step-up transformers — with adjustable parameters for dimensions and configurations.",
+          body: "Custom Revit families for Solar+BESS modules (battery capsules, inverters, step-up transformers) with adjustable parameters for dimensions and configurations.",
         },
         {
           icon: "layers",
@@ -259,18 +259,18 @@ export const ecogen20260629: Proposal = {
       total: {
         amount: "15,000",
         currency: "USD",
-        note: "Billed in three milestone payments. No hourly billing, no surprises — you pay for results, not time logged. Each payment is tied to a concrete deliverable, so you always know what you are getting before the next invoice.",
+        note: "Billed in three milestone payments. No hourly billing, no surprises: you pay for results, not time logged. Each payment is tied to a concrete deliverable, so you always know what you are getting before the next invoice.",
         breakdown: [
           {
-            label: "Phase 01 — Kickoff & foundation, due on contract signing",
+            label: "Phase 01 · Kickoff & foundation, due on contract signing",
             amount: "USD 4,500",
           },
           {
-            label: "Phase 02 — MVP delivery, due at end of month 2",
+            label: "Phase 02 · MVP delivery, due at end of month 2",
             amount: "USD 5,250",
           },
           {
-            label: "Phase 03 — Final delivery & handover",
+            label: "Phase 03 · Final delivery & handover",
             amount: "USD 5,250",
           },
         ],

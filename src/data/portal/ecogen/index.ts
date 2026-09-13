@@ -15,7 +15,7 @@ export const ecogenPortal: PortalClient = {
     {
       id: "revit-automation",
       name: "Automation Pipeline for Revit",
-      phase: "Phase 1 — Discovery",
+      phase: "Phase 1 · Discovery",
       state: "active",
       summary:
         "A continuous pipeline from site layout to cost and schedule, replacing the manual handoffs between design, take-off and estimating.",
@@ -125,9 +125,9 @@ export const ecogenPortal: PortalClient = {
         paid: "8,000",
         note: "Phase 1 (Discovery) is billed on delivery of the findings document.",
         breakdown: [
-          { label: "Phase 1 — Discovery", amount: "8,000", state: "active" },
-          { label: "Phase 2 — Pipeline build", amount: "12,000", state: "next" },
-          { label: "Phase 3 — Rollout", amount: "4,000", state: "next" },
+          { label: "Phase 1 · Discovery", amount: "8,000", state: "active" },
+          { label: "Phase 2 · Pipeline build", amount: "12,000", state: "next" },
+          { label: "Phase 3 · Rollout", amount: "4,000", state: "next" },
         ],
       },
 

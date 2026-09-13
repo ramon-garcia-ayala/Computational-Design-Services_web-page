@@ -53,10 +53,10 @@ export const site = {
  * declaring them here as well duplicates every tag. See `scripts/favicon.mjs`.
  */
 export const seo = {
-  title: "R²XTECH — Computational Design & Automation for AEC",
+  title: "R²XTECH · Computational Design & Automation for AEC",
   description:
-    "R²XTECH is a computational studio for architecture, engineering, and construction — parametric design, automation, and AI-driven systems.",
-  ogTitle: "R²XTECH — Architecture, computed.",
+    "R²XTECH is a computational studio for architecture, engineering, and construction: parametric design, automation, and AI-driven systems.",
+  ogTitle: "R²XTECH · Architecture, computed.",
   ogDescription:
     "A computational studio embedded in architecture, engineering, and construction. We build the parametric pipelines, model automations, and AI-driven systems.",
   /**

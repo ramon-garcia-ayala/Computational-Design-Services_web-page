@@ -16,7 +16,7 @@ export const structurePreset: StructureSpec = {
     title: "Long-span roof truss check",
     tagline: "A 24 m warehouse bay carrying snow and services on 1.4 m of depth.",
     pitch:
-      "Colour along each member is its utilisation, so the gradient you see is the bending diagram — chords work hardest at mid-span, webs at the supports. Pull the depth down first: it is the one number you actually get to choose on site, and it is the one the deflection reacts to fastest.",
+      "Colour along each member is its utilisation, so the gradient you see is the bending diagram: chords work hardest at mid-span, webs at the supports. Pull the depth down first: it is the one number you actually get to choose on site, and it is the one the deflection reacts to fastest.",
   },
   params: {
     system: "truss",
