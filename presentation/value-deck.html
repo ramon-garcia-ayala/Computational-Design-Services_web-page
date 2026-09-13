@@ -113,6 +113,7 @@ html, body {
 /* Auto margins centre while there is room and collapse to zero when there
    is not, so overflow can only clip the end — never the opening. */
 .body { margin: auto 0; width: 100%; position: relative; z-index: 2; }
+.body.center { text-align: center; }
 .eyebrow, .source { position: relative; z-index: 2; }
 
 /* ── Background images ────────────────────────────────────────────
@@ -127,6 +128,30 @@ html, body {
   background-position: center;
   background-repeat: no-repeat;
   z-index: 0;
+}
+
+/* The three plain-cover photo slides (terrace-dusk, vault-night,
+   tower-night) sit inside `.deck`'s 16:9 frame, and syncChrome() paints
+   the browser's own letterbox — everything outside that frame — to
+   match `--carbon` exactly. It has to: at any window ratio other than a
+   perfect 16:9 match, the deck is letterboxed, and these photos run
+   edge-to-edge with their own sky and rock tones, nothing like flat
+   carbon. The seam between "photo's real edge" and "letterbox painted
+   to look like more slide" reads as a hard border around the image —
+   sharper than a design choice, closer to a seam nobody drew. Feathering
+   the photo into --carbon at its own boundary closes that gap at any
+   viewport ratio, the same move `.bg.object`'s mask makes for its one
+   seam, just on all four edges here since letterboxing can run either
+   axis. `.bg.object` keeps its own mask instead — this would fight it
+   on the one edge that's already handled. */
+.bg:not(.object)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, var(--carbon), transparent 6%, transparent 94%, var(--carbon)),
+    linear-gradient(to bottom, var(--carbon), transparent 6%, transparent 94%, var(--carbon));
 }
 
 /* Two fit modes, because the two kinds of asset fail in opposite ways.
@@ -176,7 +201,70 @@ html, body {
    drawn in hairlines on the same greige, so whatever the mesh keeps reads
    as another line on the same plane. */
 .bg.quiet { opacity: 0.26; }
+
+/* The canvas backgrounds (slides 2 and 3) — a drifting node field,
+   dark. Absolute + inset:0 like `.bg`, but it paints itself rather
+   than loading a file, so there is no aspect ratio to fit. Each slide
+   gets its own canvas and its own independent field — see the JS
+   below for why that's simpler than sharing one across a cut. */
+.bg-particles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; pointer-events: none; }
+
 .scrim { position: absolute; inset: 0; z-index: 1; }
+/* Pulls the eye back to centre without a hard edge — the field stays
+   visible at the frame's border, where the text never reaches. */
+.scrim.vignette { background: radial-gradient(ellipse at center, rgba(61,57,58,0) 38%, rgba(45,42,38,0.6) 100%); }
+
+/* ── Floating reveals (slides 2 and 3) ─────────────────────────────
+   Shared contract for both: JS toggles `.reveal-in` on the slide a
+   beat after it becomes active, and each item's own `--fd` staggers it
+   further so they settle in one at a time rather than as a block.
+   Nothing loops once shown — see `syncReveals()`. */
+.slide.reveal-in .float-word, .slide.reveal-in .float-diagram { opacity: var(--reveal-op, 1); transform: translateY(0); }
+
+/* Slide 2: prompts, in the `.eyebrow` register — mono, tracked,
+   scattered instead of anchored. */
+.float-words { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.float-word {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 0.86vw, 0.94rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  max-width: 15ch;
+  opacity: 0;
+  --reveal-op: 0.82;
+  transform: translateY(10px);
+  transition: opacity 1s ease, transform 1s ease;
+  transition-delay: var(--fd, 0s);
+}
+.float-word.right { text-align: right; }
+.float-word.accent { color: var(--accent); }
+
+/* Slide 3: the answer, in pictures — four vector marks, each carrying
+   its own caption and the one line of copy that used to live on a
+   separate "what we build" slide. Vector, not screenshots, so they
+   stay crisp at any size. */
+.float-diagrams { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.float-diagram {
+  position: absolute;
+  width: clamp(96px, 11vw, 148px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, 0.8vw, 10px);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1.1s ease, transform 1.1s ease;
+  transition-delay: var(--fd, 0s);
+}
+.float-diagram svg { width: 100%; height: auto; overflow: visible; }
+.float-diagram svg line, .float-diagram svg polyline { stroke: var(--accent-dim); stroke-width: 1; fill: none; }
+.float-diagram svg circle { fill: var(--accent); }
+.float-diagram .cap { font-family: var(--font-mono); font-size: clamp(0.62rem, 0.7vw, 0.72rem); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-muted); text-align: center; }
+/* The line each category used to get on its own slide, carried over
+   rather than dropped — see the note above this slide's markup. */
+.float-diagram .sub { font-family: var(--font-sans); font-size: clamp(0.64rem, 0.72vw, 0.74rem); line-height: 1.3; color: var(--fg-muted); opacity: 0.75; text-align: center; }
 /* Dark grounds: a heavy warm veil, so white type clears 4.5:1 over the
    brightest part of the photograph rather than only over its shadows. */
 /* The right-hand end used to run to 0.55, and the "what changes" slide sets
@@ -293,6 +381,12 @@ p.note strong { color: var(--ink-accent); font-weight: 500; }
   line-height: 1.5;
 }
 
+/* Macro/micro scale labels — same register as .ba .side .cap, reused
+   wherever a figure needs to say which scale it's read at before the
+   number itself lands. */
+.scale-tag { font-family: var(--font-mono); font-size: var(--text-mono-sm); text-transform: uppercase; letter-spacing: 0.16em; color: var(--fg-muted); }
+.scale-tag.accent { color: var(--ink-accent); }
+
 /* ── Dash lists ───────────────────────────────────────────────────
    The dash hangs from an absolutely positioned ::before, NOT from a
    grid column. With `display:grid; grid-template-columns:auto 1fr`, a
@@ -320,44 +414,6 @@ ul.dash li::before {
 ul.dash li span { color: var(--fg-muted); }
 ul.dash.roomy { gap: clamp(12px, 1.5vw, 20px); }
 ul.dash.roomy li { font-size: var(--text-lead); line-height: 1.5; }
-
-/* ── Service motif — the abstract amber diagram the site draws ────── */
-.motif { height: clamp(34px, 4.6vh, 56px); width: 100%; }
-.motif line, .motif polyline { stroke: var(--accent-dim); stroke-width: 1; fill: none; }
-.motif circle { fill: var(--accent); }
-.pale .motif line, .pale .motif polyline { stroke: var(--edge); }
-.pale .motif circle { fill: var(--fg); }
-
-/* ── White plate for the generated pipeline animation ─────────────
-   The diagram is drawn on white and the slide is charcoal, so dropped
-   in raw it reads as a hole punched in the sheet. FigureBlock on the
-   site solves it the same way. */
-.plate {
-  /* The plate itself stays: the diagram is drawn light and the slide is
-     charcoal, and FigureBlock on the site answers that the same way. What
-     was wrong was the tone. Pure #fff against a warm charcoal reads as a
-     light leak rather than a sheet of paper, so both the plate and the
-     SVG's own ground are now #f1eeea — one surface in the deck's own
-     warm family, not two.
-
-     The padding is cut to a hairline because the drawing already carried
-     its own margin: content measured x 40..761 and y 20.5..372.5 inside a
-     declared 800x400 box, and the plate's 26px then doubled it. The
-     viewBox is cropped to 28 8 744 378 and the ratio below follows it, so
-     what is left is the drawing. */
-  background: #f1eeea;
-  border-radius: var(--radius-surface);
-  padding: clamp(5px, 0.6vw, 10px);
-  display: grid;
-  place-items: center;
-  box-shadow: 0 0 0 1px rgba(20, 17, 14, 0.14);
-}
-.plate img { width: 100%; height: auto; display: block; }
-/* aspect-ratio mirrors the cropped viewBox exactly. Any other value and
-   preserveAspectRatio letterboxes the drawing, which puts the dead margin
-   straight back. pointer-events:none so a click on the plate still advances
-   the deck rather than being swallowed by the embedded document. */
-.plate object { width: 100%; aspect-ratio: 744 / 378; display: block; pointer-events: none; border: 0; }
 
 /* An image placed in the flow rather than behind it. The ratio is the
    asset's own, so nothing is cropped — the lattice used to sit in a box
@@ -492,7 +548,6 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   .chart-wrap { height: clamp(128px, 19vh, 198px); }
   .statement { font-size: clamp(1.1rem, 1.95vw, 2.1rem); }
   .motif { height: clamp(26px, 3.6vh, 42px); }
-  .plate { padding: clamp(4px, 0.5vw, 7px); }
 }
 
 /* ── Print ───────────────────────────────────────────────────────── */
@@ -514,6 +569,9 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   .slide { overflow-y: auto; }
   .scrim.dark, .scrim.pale-veil { background: rgba(45,42,38,0.92); }
   .pale .scrim.pale-veil { background: rgba(184,180,177,0.92); }
+  /* Scattered at 15ch max-width each, these only have room on a wide
+     frame — stacked, they'd overlap the headline or run off both edges. */
+  .float-words, .float-diagrams { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -543,95 +601,123 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   </aside>
 </section>
 
-<!-- ══ ACT I ══ 02 · WHAT WE DO ══════════════════════════════════ -->
+<!-- ══ 02 · WHY ARE YOU HERE ═══════════════════════════════════════
+     One question, nothing else. The particle field is drawn on canvas
+     rather than baked into an image or GIF: it is the same generative,
+     node-and-edge language as the cover's geodesic, just abstracted to
+     a point, and a canvas can settle to a single static frame under
+     reduced motion instead of freezing mid-loop like a video would. -->
 <section class="slide">
-  <div class="body">
-    <div class="split lean">
-      <div>
-        <div class="eyebrow"><span class="act">01 /</span> What we do</div>
-        <h2>We build the tools that do the work your team shouldn't.</h2>
-        <p class="lead">Parametric pipelines, model automation, AI systems. Built on your stack, handed over documented.</p>
-      </div>
-      <!-- `object`, not `img`. The diagram animates with CSS @keyframes and
-           `animation-fill-mode: backwards`, so every animated element sits at
-           its first keyframe — invisible — until the animation starts. Loaded
-           through `img` those animations never run and the plate renders
-           blank; `object` renders the SVG as a document, where they do. The
-           accessible name comes from the SVG's own role="img" + aria-label. -->
-      <div class="plate">
-        <object type="image/svg+xml" data="assets/pipeline.svg" tabindex="-1">
-          Animated diagram: flat plates appear one by one across an isometric
-          site grid, then rise into three-dimensional volumes of varying height.
-        </object>
-      </div>
-    </div>
+  <canvas class="bg-particles" id="introParticles" aria-hidden="true"></canvas>
+  <div class="scrim vignette"></div>
+  <div class="body center">
+    <h1 style="max-width:20ch;margin:0 auto">What brought you here today?</h1>
+  </div>
+  <!-- Settle in a few seconds after the slide starts, staggered per word
+       via --fd — never a loop, so they hold once shown and stop
+       competing with whatever the presenter is saying. Kept out of the
+       centre band the headline and particle knot already own, and out
+       of the two fixed corners the nav chrome sits in. -->
+  <div class="float-words" aria-hidden="true">
+    <span class="float-word" style="left:7%;top:15%;--fd:0.9s">BIM Automation</span>
+    <span class="float-word right" style="right:6%;top:13%;--fd:1.4s">Automated Cost Systems</span>
+    <span class="float-word accent" style="left:5%;top:47%;--fd:1.15s">AI Agents</span>
+    <span class="float-word right" style="right:5%;top:45%;--fd:1.65s">Facade Panelization</span>
+    <span class="float-word" style="left:30%;top:19%;--fd:1.9s">Parametric Drawings</span>
+    <span class="float-word" style="left:9%;top:79%;--fd:2.15s">Generative Massing</span>
+    <span class="float-word right" style="right:7%;top:77%;--fd:2.4s">Clash Detection, Automated</span>
+    <span class="float-word right accent" style="right:26%;top:84%;--fd:2.65s">Digital Twins</span>
   </div>
   <aside class="notes">
-    <b>Point at the animation and describe it in one line:</b> "A 2D site drawing goes in. The model comes out. Nobody drew it."<br>
-    <b>That is the whole answer to 'what do you do'</b> — do not add to it. If they want detail they will ask, and the next slide has it.<br>
-    <b>This diagram is real output</b>, generated from a spec file in our own toolchain — not an illustration made for this deck.
+    <b>Ask it for real and let it sit — five seconds of quiet is fine.</b> It isn't a rhetorical opener: whatever they answer is the thread for the next nine slides.<br>
+    <b>The words that drift in are prompts, not a list to read aloud.</b> If one of them is why they took the call, let them say so — then slide 3 is the direct answer to it.<br>
+    <b>Write down the word they use.</b> A number (cost, hours, a named project) is slide 8's input. A frustration (manual work, a missed handoff) is where slide 3 should land.
   </aside>
 </section>
 
-<!-- ══ 03 · WHAT WE BUILD ════════════════════════════════════════ -->
+<!-- ══ ACT I ══ 03 · WHAT WE DO ══════════════════════════════════
+     Deliberately built as slide 2's twin, not a new template: same
+     particle field, same centred statement, so the cut from "what
+     brought you here" to "you're in the right place" reads as one
+     thought continuing rather than a deck resetting. Where slide 2
+     scattered the client's own possible reasons as words, this one
+     scatters the answer as pictures. No white plate: everything here
+     stays inside the dark, particle-lit register the two slides now
+     share — a plate would have punched a hole back into it.
+
+     This slide used to hand off to a fifth, "What we build", that
+     named these same four categories again in a static grid with a
+     line of copy each. Folding that copy into each mark's own caption
+     here — instead of opening a second slide to say it — is what let
+     that slide go without losing the sentence that made AI credible
+     ("document-heavy, judgement-light, human-reviewed" survives
+     below). This is the hinge of the whole deck: everything before it
+     is "why you might be here", everything after is "here is exactly
+     that, built". -->
 <section class="slide">
-  <div class="eyebrow"><span class="act">01 /</span> What we build</div>
-  <div class="body">
-    <h2 class="wide">Four kinds of work. Most projects are two of them.</h2>
-    <div class="cols c4" style="margin-top:clamp(20px,2.6vw,38px)">
-      <div class="col">
-        <svg class="motif" viewBox="0 0 200 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
-          <polyline points="8,28 34,11 56,23 88,33 116,15 146,26 176,12 194,21"/>
-          <circle cx="8" cy="28" r="2.6"/><circle cx="34" cy="11" r="2.6"/><circle cx="88" cy="33" r="2.6"/><circle cx="146" cy="26" r="2.6"/><circle cx="194" cy="21" r="2.6"/>
-        </svg>
-        <div class="col ruled">
-          <h3>Computational design</h3>
-          <p class="note">Design logic encoded once, reused at every revision.</p>
-        </div>
-      </div>
-      <div class="col">
-        <svg class="motif" viewBox="0 0 200 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
-          <line x1="8" y1="20" x2="192" y2="20"/>
-          <circle cx="8" cy="20" r="2.6"/><circle cx="54" cy="20" r="2.6"/><circle cx="100" cy="20" r="2.6"/><circle cx="146" cy="20" r="2.6"/><circle cx="192" cy="20" r="2.6"/>
-        </svg>
-        <div class="col ruled">
-          <h3>Design automation</h3>
-          <p class="note">Model work that runs overnight, unattended.</p>
-        </div>
-      </div>
-      <div class="col">
-        <svg class="motif" viewBox="0 0 200 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
-          <line x1="10" y1="7" x2="184" y2="20"/><line x1="10" y1="16" x2="184" y2="20"/>
-          <line x1="10" y1="25" x2="184" y2="20"/><line x1="10" y1="34" x2="184" y2="20"/>
-          <circle cx="10" cy="7" r="2.4"/><circle cx="10" cy="16" r="2.4"/><circle cx="10" cy="25" r="2.4"/><circle cx="10" cy="34" r="2.4"/><circle cx="184" cy="20" r="3.6"/>
-        </svg>
-        <div class="col ruled">
-          <h3>AI-driven tools</h3>
-          <p class="note">Document-heavy work, judgement-light, human-reviewed.</p>
-        </div>
-      </div>
-      <div class="col">
-        <svg class="motif" viewBox="0 0 200 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
-          <line x1="10" y1="14" x2="190" y2="14"/><line x1="10" y1="14" x2="10" y2="32"/>
-          <line x1="10" y1="32" x2="190" y2="32"/><line x1="190" y1="14" x2="190" y2="32"/>
-          <line x1="70" y1="14" x2="70" y2="32"/><line x1="130" y1="14" x2="130" y2="32"/>
-          <circle cx="10" cy="7" r="2.4"/><circle cx="70" cy="7" r="2.4"/>
-        </svg>
-        <div class="col ruled">
-          <h3>Custom software</h3>
-          <p class="note">Your systems, finally talking to each other.</p>
-        </div>
-      </div>
+  <canvas class="bg-particles" id="doParticles" aria-hidden="true"></canvas>
+  <div class="scrim vignette"></div>
+  <div class="body center">
+    <h1 style="max-width:22ch;margin:0 auto">You're in the right place. We build the tools that do that work.</h1>
+    <p class="lead" style="max-width:44ch;margin:clamp(14px,1.8vw,22px) auto 0">Parametric pipelines, model automation, AI systems. Built on your stack, handed over documented.</p>
+  </div>
+  <div class="float-diagrams" aria-hidden="true">
+    <div class="float-diagram" style="left:6%;top:11%;--fd:0.9s">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
+        <polyline points="8,28 34,11 56,23 88,33 116,15 146,26 176,12 194,21"/>
+        <circle cx="8" cy="28" r="2.6"/><circle cx="34" cy="11" r="2.6"/><circle cx="88" cy="33" r="2.6"/><circle cx="146" cy="26" r="2.6"/><circle cx="194" cy="21" r="2.6"/>
+      </svg>
+      <div class="cap">Computational design</div>
+      <div class="sub">Design logic, encoded once</div>
+    </div>
+    <div class="float-diagram" style="right:6%;top:13%;--fd:1.15s">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
+        <line x1="8" y1="20" x2="192" y2="20"/>
+        <circle cx="8" cy="20" r="2.6"/><circle cx="54" cy="20" r="2.6"/><circle cx="100" cy="20" r="2.6"/><circle cx="146" cy="20" r="2.6"/><circle cx="192" cy="20" r="2.6"/>
+      </svg>
+      <div class="cap">Design automation</div>
+      <div class="sub">Runs overnight, unattended</div>
+    </div>
+    <div class="float-diagram" style="left:8%;top:78%;--fd:1.4s">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
+        <line x1="10" y1="7" x2="184" y2="20"/><line x1="10" y1="16" x2="184" y2="20"/>
+        <line x1="10" y1="25" x2="184" y2="20"/><line x1="10" y1="34" x2="184" y2="20"/>
+        <circle cx="10" cy="7" r="2.4"/><circle cx="10" cy="16" r="2.4"/><circle cx="10" cy="25" r="2.4"/><circle cx="10" cy="34" r="2.4"/><circle cx="184" cy="20" r="3.6"/>
+      </svg>
+      <div class="cap">AI-driven tools</div>
+      <div class="sub">Judgement-light, human-reviewed</div>
+    </div>
+    <div class="float-diagram" style="right:8%;top:78%;--fd:1.65s">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
+        <line x1="10" y1="14" x2="190" y2="14"/><line x1="10" y1="14" x2="10" y2="32"/>
+        <line x1="10" y1="32" x2="190" y2="32"/><line x1="190" y1="14" x2="190" y2="32"/>
+        <line x1="70" y1="14" x2="70" y2="32"/><line x1="130" y1="14" x2="130" y2="32"/>
+        <circle cx="10" cy="7" r="2.4"/><circle cx="70" cy="7" r="2.4"/>
+      </svg>
+      <div class="cap">Custom software</div>
+      <div class="sub">Your systems, talking at last</div>
     </div>
   </div>
   <aside class="notes">
-    <b>Name the two that fit what they do, skip the other two.</b> A deck that covers everything persuades nobody.<br>
-    <b>On AI, lead with the limit, not the capability</b> — "document-heavy, judgement-light, human-reviewed". Industrial clients have been pitched AI badly and often; the constraint is what makes it credible.<br>
-    <b>If they ask for specifics:</b> Grasshopper, Dynamo, Revit and IFC via API, model audits, drawing and schedule generation, connectors and ETL, dashboards. Say it, don't put it on the slide.
+    <b>The headline is the payoff to the last slide — land it that way.</b> Whatever they said brought them here, this is "good, because that's exactly what we do." Don't rush past it to the marks around it.<br>
+    <b>Name the two that fit what they said, skip the other two.</b> A slide that explains all four persuades nobody — the marks are there so all four exist, not so all four get read aloud.<br>
+    <b>On AI, lead with the limit on the mark itself, not just the name:</b> "judgement-light, human-reviewed" is doing real work in that caption. Industrial clients have been pitched AI badly and often; the constraint is what makes it credible.<br>
+    <b>If they ask for specifics:</b> Grasshopper, Dynamo, Revit and IFC via API, model audits, drawing and schedule generation, connectors and ETL, dashboards. Say it, don't put it on the slide.<br>
+    <b>"A 2D site drawing goes in. The model comes out. Nobody drew it."</b> That's the whole answer to 'what do you do' — say it here, the marks are the visual, not a diagram.
   </aside>
 </section>
 
-<!-- ══ ACT II ══ 04 · WHAT IT COSTS TODAY ════════════════════════ -->
+<!-- ══ ACT II ══ 04 · WHAT IT COSTS TODAY ════════════════════════
+     Two scales, read left to right: the industry ratio first
+     (macro — this is true of the sector, not of them yet), then that
+     same ratio applied live to the client's own revenue (micro — now
+     it's theirs). The slide does the arithmetic in front of them
+     instead of leaving "scale it to them" to the presenter's mental
+     math, which is what the old single-column version depended on.
+     The right-hand figure reuses .figure's existing accent colour and
+     the calculator's own .ctrl/range styling from slide 8, so this
+     reads as one interactive language across the deck rather than a
+     one-off widget. -->
 <section class="slide">
   <div class="bg" style="background-image:url('assets/terrace-dusk.webp')"></div>
   <div class="scrim even"></div>
@@ -639,20 +725,29 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   <div class="body">
     <div class="split">
       <div>
-        <div class="figure huge">14<span class="unit">%</span></div>
-        <div class="figure-label" style="margin-top:14px;max-width:24ch">Of all construction rework traces back to bad project data.</div>
+        <div class="scale-tag">Industry-wide</div>
+        <div class="figure huge" style="margin-top:10px">14<span class="unit">%</span></div>
+        <div class="figure-label" style="margin-top:14px;max-width:26ch">Of all construction rework traces back to bad project data.</div>
+        <p class="lead" style="margin-top:clamp(14px,1.8vw,22px)"><strong>$7.1M of avoidable rework for every $1bn of revenue.</strong></p>
+        <p class="lead">It never arrives as an invoice marked <em>rework</em>. It arrives as overtime, a change order, a slipped programme — so it never gets a line to defend.</p>
       </div>
       <div>
-        <p class="lead"><strong>$7.1M of avoidable rework for every $1bn of revenue.</strong></p>
-        <p class="lead">It never arrives as an invoice marked <em>rework</em>. It arrives as overtime, a change order, a slipped programme — so it never gets a line to defend.</p>
+        <div class="scale-tag accent">Your firm, same ratio</div>
+        <div class="ctrl" style="margin-top:14px">
+          <div class="row"><label for="revenue">Annual revenue</label><output id="revenueOut">$50M</output></div>
+          <input type="range" id="revenue" min="5000000" max="1000000000" step="5000000" value="50000000" aria-label="Annual revenue">
+        </div>
+        <div class="figure huge" id="reworkCost" style="margin-top:clamp(14px,1.8vw,22px)">$355K<span class="unit">/yr</span></div>
+        <div class="figure-label" style="margin-top:14px;max-width:28ch">What's already leaving the business on the industry ratio alone — before anyone builds anything.</div>
       </div>
     </div>
   </div>
   <div class="source">FMI &amp; Autodesk — Harnessing the Data Advantage in Construction</div>
   <aside class="notes">
-    <b>Scale the $7.1M to them, out loud.</b> $200M of turnover is roughly $1.4M a year. Do the division in front of them — it turns an industry statistic into their number.<br>
+    <b>Move the slider to their real revenue, live.</b> This used to be mental math done out loud ("$200M is roughly $1.4M a year") — now the slide computes it, and it lands harder because they watched the number move under their own figure, not yours.<br>
     <b>Expect "our rework isn't from data".</b> Good — ask what it <i>is</i> from. Either they know, and it's a process we can automate, or they don't, and that measurement gap is the first thing we'd fix.<br>
-    <b>Backup figure if they want the macro:</b> construction labour productivity grew 1% a year for two decades against 2.8% for the world economy and 3.6% for manufacturing (McKinsey). Kept off the slide on purpose — it's context, not their problem.
+    <b>Backup figure if they want the macro behind the macro:</b> construction labour productivity grew 1% a year for two decades against 2.8% for the world economy and 3.6% for manufacturing (McKinsey). Kept off the slide on purpose — it's context, not their problem.<br>
+    <b>This right-hand number is the seed for slide 8.</b> Here is what inaction already costs; slide 8 is what the fix costs and when it pays back. If the thread is still live, say so explicitly: "hold that number — we'll come back to it."
   </aside>
 </section>
 
@@ -869,18 +964,43 @@ function syncChrome() {
   document.querySelector('.hint').style.color = fg;
 }
 
+/* Shared by slides 2 and 3 — either's `.float-words` or `.float-diagrams`
+   triggers the same settle-in. Re-triggers only on an actual slide
+   change, including a revisit — `revealShownFor` is the guard, not a
+   one-time flag — so leaving and coming back replays it rather than
+   leaving it however it was left. */
+let revealTimer = null;
+let revealShownFor = null;
+function syncReveals() {
+  if (cur === revealShownFor) return;
+  if (revealTimer) { clearTimeout(revealTimer); revealTimer = null; }
+  slides.forEach(s => { if (s.querySelector('.float-words, .float-diagrams')) s.classList.remove('reveal-in'); });
+  const activeSlide = slides[cur - 1];
+  if (activeSlide.querySelector('.float-words, .float-diagrams')) {
+    revealTimer = setTimeout(() => {
+      activeSlide.classList.add('reveal-in');
+      revealTimer = null;
+    }, 550);
+  }
+  revealShownFor = cur;
+}
+
 function go(n) {
   cur = Math.max(1, Math.min(total, n));
   slides.forEach((s, i) => s.classList.toggle('active', i === cur - 1));
   document.getElementById('cur').textContent = cur;
   document.getElementById('progress').style.width = (cur / total * 100) + '%';
   syncChrome();
+  syncReveals();
   if (window.Chart) {
     slides[cur - 1].querySelectorAll('canvas').forEach(c => {
       const chart = Chart.getChart(c);
       if (chart) chart.resize();
     });
   }
+  // Defined further down, after `slides` exists to locate its own index —
+  // guarded because it isn't set yet on the very first go(1) call below.
+  if (window.__syncParticles) window.__syncParticles(cur);
 }
 /* Note on the pipeline SVG: it animates on a 6.4s infinite CSS loop with
    `animation-fill-mode: backwards`, so elements sit invisible until their
@@ -902,6 +1022,104 @@ document.addEventListener('click', e => {
   if (e.target.closest('.nav, input, .notes, canvas')) return;
   go(cur + 1);
 });
+
+/* ── Particle fields (slides 2 and 3) ──────────────────────────────
+   One field per `.bg-particles` canvas, each keyed to its own slide's
+   index. Runs only while that slide is on screen: `__syncParticles`,
+   called from `go()` above, starts a field's rAF loop on entry and
+   cancels it on exit, so the deck never animates a canvas nobody can
+   see. Under reduced motion each field draws one settled frame and
+   never loops — the same "write the end state" rule the site's own
+   GSAP work follows. */
+(function () {
+  const canvases = document.querySelectorAll('.bg-particles');
+  if (!canvases.length) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const LINK_DIST = 130;
+  const fields = [];
+
+  canvases.forEach(canvas => {
+    const ctx = canvas.getContext('2d');
+    const slide = canvas.closest('.slide');
+    const slideIndex = Array.prototype.indexOf.call(slides, slide) + 1;
+    let particles = [];
+    let raf = null;
+
+    function size() {
+      const rect = slide.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function seed() {
+      const w = canvas.width / dpr, h = canvas.height / dpr;
+      const count = Math.round(Math.max(36, Math.min(80, (w * h) / 16000)));
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.16,
+        vy: (Math.random() - 0.5) * 0.16,
+        accent: Math.random() < 0.08
+      }));
+    }
+
+    function draw() {
+      const w = canvas.width / dpr, h = canvas.height / dpr;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i], b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DIST) {
+            ctx.strokeStyle = `rgba(150,145,138,${(1 - dist / LINK_DIST) * 0.32})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+      }
+      particles.forEach(p => {
+        ctx.fillStyle = p.accent ? 'rgba(232,169,74,0.85)' : 'rgba(180,174,165,0.75)';
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.accent ? 2.1 : 1.5, 0, Math.PI * 2); ctx.fill();
+      });
+    }
+
+    function step() {
+      const w = canvas.width / dpr, h = canvas.height / dpr;
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+      });
+      draw();
+      raf = requestAnimationFrame(step);
+    }
+
+    function start() {
+      if (reduceMotion) { draw(); return; }
+      if (raf) return;
+      raf = requestAnimationFrame(step);
+    }
+
+    function stop() {
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    }
+
+    size();
+    seed();
+    draw();
+
+    window.addEventListener('resize', () => { size(); seed(); draw(); });
+
+    fields.push({ slideIndex, start, stop });
+  });
+
+  window.__syncParticles = function (activeIndex) {
+    fields.forEach(f => { if (f.slideIndex === activeIndex) f.start(); else f.stop(); });
+  };
+})();
 
 go(1);
 
@@ -978,6 +1196,17 @@ const MAINT = 0.15;      // annual maintenance as a share of build cost
 
 const el = id => document.getElementById(id);
 const usd = n => '$' + Math.round(n).toLocaleString('en-US');
+const usdCompact = n => n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : '$' + Math.round(n / 1e3) + 'K';
+
+/* ── Slide 4: industry ratio scaled to the client's own revenue ──── */
+const REWORK_RATIO = 0.0071; // $7.1M avoidable rework per $1bn revenue, from the slide's own source
+function reworkRecalc() {
+  const revenue = +el('revenue').value;
+  el('revenueOut').textContent = usdCompact(revenue);
+  el('reworkCost').innerHTML = usdCompact(revenue * REWORK_RATIO) + '<span class="unit">/yr</span>';
+}
+el('revenue').addEventListener('input', reworkRecalc);
+reworkRecalc();
 
 const roiChart = new Chart(el('roiChart'), {
   plugins: [breakevenMarker],
