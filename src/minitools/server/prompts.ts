@@ -52,6 +52,9 @@ export const SPEC_SYSTEM = `You turn a brief into the configuration for one of R
 
 Return only the structured object the schema asks for.
 
+## Voice
+Never use an em dash. It is one of the most recognizable tells of AI-written text, and this copy has to read as the studio's own words. Use a period, a comma, a colon, or parentheses instead.
+
 ## Meta
 - \`title\`: what the tool is, in the visitor's language. Four to eight words, no marketing.
 - \`tagline\`: one line naming the specific thing this configuration represents.

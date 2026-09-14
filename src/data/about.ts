@@ -22,7 +22,7 @@ export const about = {
      which was invented and wrong. */
   story: [
     "R²XTECH was founded by two architects who met at IAAC in Barcelona, studying computational design. They came from the same kind of practice, and had been fighting the same thing: the hours a studio loses to work a machine should have done.",
-    "They saw an industry where automation and AI were still on the sidelines — a pilot project, a plugin nobody could maintain, research that never left the presentation. So they built a studio to put them at the center instead.",
+    "They saw an industry where automation and AI were still on the sidelines: a pilot project, a plugin nobody could maintain, research that never left the presentation. So they built a studio to put them at the center instead.",
   ],
 
   /* Stated outright rather than hidden behind a hover, unlike Home's version:

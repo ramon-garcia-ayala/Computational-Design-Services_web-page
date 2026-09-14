@@ -1,0 +1,51 @@
+{
+  "skill_name": "client-deck",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We just wrapped discovery with Halden Structural. The analysis is in evals/files/halden-structural-analysis.md. Build the client deck for Thursday's meeting with their engineering director (2026-09-24). Keep it tight, she has 30 minutes.",
+      "expected_output": "An English deck of 7 to 11 slides in the R²XTECH design system (pale cover and closing with the geodesic, warm argument slides), leading with the revision or connection-check finding, proposing the Connection Pipeline as a named program with at most three parts, the pilot and open questions surfaced, every figure traceable to the analysis with a confidence label, no em dashes, presenter notes on every slide.",
+      "files": ["evals/files/halden-structural-analysis.md"],
+      "expectations": [
+        "The deck is a single deck.html in the outputs folder",
+        "The static check reports no FAIL (em dashes, notes, placeholders, assets, script)",
+        "Every slide has presenter notes",
+        "No em dash anywhere in copy, notes or labels",
+        "Between 7 and 11 slides",
+        "No slide carries more than 90 words on screen",
+        "Every number on screen appears in the analysis",
+        "Uses the R²XTECH design system (warm tokens plus at least two pale slides)",
+        "Cover and closing play the geodesic from the shared frames",
+        "Names the proposed program (Connection Pipeline) on screen",
+        "Figures carry confidence labels (Measured / Reported)",
+        "Surfaces the pilot and the IDEA StatiCa API question",
+        "Deck is in English (html lang=en)",
+        "A report.md was written for the user"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Te paso el análisis que hicimos de Monterra Prefabricados (evals/files/monterra-prefabricados-analisis.md). Arma la presentación para ellos, en español; se la presentamos al director general el 2 de octubre. Ojo: no tenemos cifras de costo ni de horas, solo lo que vimos en planta y en la oficina técnica.",
+      "expected_output": "A Spanish deck (lang es, copy and notes in Spanish) in the R²XTECH design system, with no money and no invented hours or error rates, the consequence told qualitatively (errors surfacing in the plant, one person as the bottleneck, double capture), the parametric piece library as the program with the Intelisis CSV constraint respected, the single-project-type pilot and open questions surfaced, no em dashes, presenter notes on every slide.",
+      "files": ["evals/files/monterra-prefabricados-analisis.md"],
+      "expectations": [
+        "The deck is a single deck.html in the outputs folder",
+        "The static check reports no FAIL (em dashes, notes, placeholders, assets, script)",
+        "Every slide has presenter notes",
+        "No em dash anywhere in copy, notes or labels",
+        "Between 7 and 11 slides",
+        "No slide carries more than 90 words on screen",
+        "Every number on screen appears in the analysis",
+        "Uses the R²XTECH design system (warm tokens plus at least two pale slides)",
+        "Cover and closing play the geodesic from the shared frames",
+        "Names the proposed program (Biblioteca de piezas paramétricas) on screen",
+        "Deck is in Spanish (html lang=es, notes in Spanish)",
+        "No money figures on screen",
+        "No percentages or hour figures on screen, since the analysis has none",
+        "Respects the Intelisis CSV constraint (mentioned on screen or in notes)",
+        "Surfaces the single-project-type pilot",
+        "A report.md was written for the user"
+      ]
+    }
+  ]
+}

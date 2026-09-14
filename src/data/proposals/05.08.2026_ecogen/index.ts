@@ -14,7 +14,7 @@ export const ecogenFluence: Proposal = {
   slug: "05.08.2026_ecogen",
   client: "EcoGen / Fluence",
   project: "Automation Pipeline for Revit",
-  phase: "Phase 1 — Discovery",
+  phase: "Phase 1 · Discovery",
   dateLabel: "August 5, 2026",
   reviewLabel: "Final delivery · August 7, 2026",
   confidential: true,
@@ -22,11 +22,11 @@ export const ecogenFluence: Proposal = {
     "Discovery findings, the technical process, and the open questions for the automated pipeline from 2D site layout to cost estimate and construction schedule.",
 
   hero: {
-    kicker: "Phase 1 — Discovery",
+    kicker: "Phase 1 · Discovery",
     title:
-      "From site layout to cost and schedule — one continuous pipeline",
+      "From site layout to cost and schedule: one continuous pipeline",
     accent: "one continuous pipeline",
-    lead: "A technical exploration into automating the path from a 2D site drawing to a coordinated 3D model, and from that model directly into cost and schedule deliverables — all of it driven from a tab inside Revit 2027. Prepared for review with EcoGen and Fluence.",
+    lead: "A technical exploration into automating the path from a 2D site drawing to a coordinated 3D model, and from that model directly into cost and schedule deliverables, all of it driven from a tab inside Revit 2027. Prepared for review with EcoGen and Fluence.",
   },
 
   blocks: [
@@ -40,27 +40,27 @@ export const ecogenFluence: Proposal = {
       checklist: [
         {
           label:
-            "Concrete research on the process to be automated — see Research and Findings.",
+            "Concrete research on the process to be automated: see Research and Findings.",
           href: "#research",
         },
         {
           label:
-            "A website documenting the process, with the tools, licenses and software involved — this document, and the Stack section.",
+            "A website documenting the process, with the tools, licenses and software involved: this document, and the Stack section.",
           href: "#stack",
         },
         {
           label:
-            "A precise definition of the technical process to be developed in the following phases — see Technical process and Roadmap.",
+            "A precise definition of the technical process to be developed in the following phases: see Technical process and Roadmap.",
           href: "#pipeline",
         },
         {
           label:
-            "The open items that have to be closed before Phase 2 can start — see Open questions.",
+            "The open items that have to be closed before Phase 2 can start: see Open questions.",
           href: "#questions",
         },
       ],
       body: [
-        "Discovery was not a paper exercise. Roughly 60% of the pipeline — layer validation, model data extraction, cost decomposition and both Excel writers — is already built and tested against real files. What is documented here is therefore a working system with two known gaps, not a proposal for one.",
+        "Discovery was not a paper exercise. Roughly 60% of the pipeline (layer validation, model data extraction, cost decomposition and both Excel writers) is already built and tested against real files. What is documented here is therefore a working system with two known gaps, not a proposal for one.",
       ],
     },
 
@@ -137,7 +137,7 @@ export const ecogenFluence: Proposal = {
         {
           icon: "cube",
           title: "One instance is not one estimate line",
-          body: "A single placed component routinely produces several priced lines — a grade beam is concrete, rebar and formwork at once. Any schema that assumes one element equals one line breaks immediately, which is why the model carries raw measurements only.",
+          body: "A single placed component routinely produces several priced lines: a grade beam is concrete, rebar and formwork at once. Any schema that assumes one element equals one line breaks immediately, which is why the model carries raw measurements only.",
         },
         {
           icon: "route",
@@ -159,7 +159,7 @@ export const ecogenFluence: Proposal = {
         {
           number: "01",
           title: "Site layout",
-          body: "The starting point is the 2D site drawing produced during design — the same drawing already used across the project today.",
+          body: "The starting point is the 2D site drawing produced during design: the same drawing already used across the project today.",
         },
         {
           number: "02",
@@ -174,7 +174,7 @@ export const ecogenFluence: Proposal = {
         {
           number: "04",
           title: "Metadata extraction",
-          body: "The finished model becomes the single source of truth — everything downstream is read from it, not re-entered.",
+          body: "The finished model becomes the single source of truth: everything downstream is read from it, not re-entered.",
         },
         {
           number: "05",
@@ -191,7 +191,7 @@ export const ecogenFluence: Proposal = {
       kicker: "Technical process",
       title: "The pipeline, stage by stage",
       lead: "The same process in engineering terms: six modules, the configuration each one reads, and what it hands to the next.",
-      note: "Stage 04 is the only code that touches the Revit API. Everything after it runs as plain Python against a documented data structure, so costing and both writers can be developed and verified without opening Revit — which also means a change to the pricing rules never risks the model.",
+      note: "Stage 04 is the only code that touches the Revit API. Everything after it runs as plain Python against a documented data structure, so costing and both writers can be developed and verified without opening Revit, which also means a change to the pricing rules never risks the model.",
       nodes: [
         {
           id: "input",
@@ -318,7 +318,7 @@ export const ecogenFluence: Proposal = {
           meta: "revit_output/ + TimeLiner",
           status: "stage",
           detail:
-            "Saves the coordinated model, exports the Navisworks cache and links it to the generated schedule, so the build sequence plays back against the model. It draws the model from stage 03 and the dates from stage 06 — the same records, so what runs on screen and what is in the workbook cannot drift apart.",
+            "Saves the coordinated model, exports the Navisworks cache and links it to the generated schedule, so the build sequence plays back against the model. It draws the model from stage 03 and the dates from stage 06: the same records, so what runs on screen and what is in the workbook cannot drift apart.",
         },
         {
           id: "fourd-out",
@@ -372,7 +372,7 @@ export const ecogenFluence: Proposal = {
         {
           icon: "window",
           title: "Shared parameter contract",
-          body: "Defines exactly which measurements each family carries — concrete volume, formwork area, rebar weight, surface area, fence length, and so on. It is authored as one new standard applied identically to every family, not inherited from the conventions each one happens to carry today, because a name or unit that varies between components lands as an inconsistency in the workbook. Deliberately raw quantities only: the model reports what it physically is, and classification, pricing and sequencing are decided downstream where they can be changed without touching the model.",
+          body: "Defines exactly which measurements each family carries: concrete volume, formwork area, rebar weight, surface area, fence length, and so on. It is authored as one new standard applied identically to every family, not inherited from the conventions each one happens to carry today, because a name or unit that varies between components lands as an inconsistency in the workbook. Deliberately raw quantities only: the model reports what it physically is, and classification, pricing and sequencing are decided downstream where they can be changed without touching the model.",
         },
         {
           icon: "spreadsheet",
@@ -388,7 +388,7 @@ export const ecogenFluence: Proposal = {
       id: "status",
       kicker: "Progress",
       title: "Where this stands today",
-      lead: "Solid lines mark what has already been tested against real data. Dashed lines mark what is planned next — the same convention a drawing itself uses for built versus proposed.",
+      lead: "Solid lines mark what has already been tested against real data. Dashed lines mark what is planned next, the same convention a drawing itself uses for built versus proposed.",
       columns: [
         {
           title: "Validated",
@@ -424,7 +424,7 @@ export const ecogenFluence: Proposal = {
       id: "deliverables",
       kicker: "Deliverables",
       title: "What the pipeline produces",
-      lead: "It all ships as one extension for Revit 2027 — the team works from a tab on the ribbon and never leaves Revit. The output formats were reverse-engineered from EcoGen's own reference files, so the results drop into the existing process rather than replacing it.",
+      lead: "It all ships as one extension for Revit 2027: the team works from a tab on the ribbon and never leaves Revit. The output formats were reverse-engineered from EcoGen's own reference files, so the results drop into the existing process rather than replacing it.",
       columns: 3,
       cards: [
         {
@@ -440,7 +440,7 @@ export const ecogenFluence: Proposal = {
         {
           icon: "calendar",
           title: "Construction schedule",
-          body: "A three-level work breakdown — project, construction phase, activity — with durations, calculated start and finish dates, and total float from a standard critical-path pass. Working calendar is configurable at five, six or seven days per week with an explicit holiday list.",
+          body: "A three-level work breakdown (project, construction phase, activity) with durations, calculated start and finish dates, and total float from a standard critical-path pass. Working calendar is configurable at five, six or seven days per week with an explicit holiday list.",
         },
         {
           icon: "cube",
@@ -455,7 +455,7 @@ export const ecogenFluence: Proposal = {
         {
           icon: "grid",
           title: "Fill-in templates",
-          body: "The values that change between projects — unit costs, crew rates, durations, the working calendar — live in plain templates your team edits, not in code. Blank versions ship with the extension, so updating a rate or a holiday list never needs a developer.",
+          body: "The values that change between projects (unit costs, crew rates, durations, the working calendar) live in plain templates your team edits, not in code. Blank versions ship with the extension, so updating a rate or a holiday list never needs a developer.",
         },
       ],
     },
@@ -522,7 +522,7 @@ export const ecogenFluence: Proposal = {
           license: "Open source (MIT)",
           cost: "Free",
           provider: "EcoGen / Fluence",
-          purpose: "Automated test suite — development only, not installed on EcoGen machines",
+          purpose: "Automated test suite: development only, not installed on EcoGen machines",
         },
         {
           component: "Autodesk Navisworks Manage",
@@ -542,7 +542,7 @@ export const ecogenFluence: Proposal = {
         },
         {
           component: "Git and a private repository",
-          version: "—",
+          version: "N/A",
           license: "Hosted service",
           cost: "Free",
           provider: "EcoGen / Fluence",
@@ -551,13 +551,13 @@ export const ecogenFluence: Proposal = {
         {
           component: "Automation pipeline code",
           version: "0.1.0",
-          license: "Proprietary — transferred to EcoGen",
+          license: "Proprietary: transferred to EcoGen",
           cost: "Included in the engagement",
           provider: "EcoGen / Fluence",
           purpose: "The automation itself: validation, extraction, costing and both writers",
         },
       ],
-      note: "On ownership: the subscriptions, the installed copies, the repository and everything produced for this engagement — pipeline code, Revit families, configuration files — belong to EcoGen. R²XTECH retains no licence over them and nothing is rented back. The open-source components stay under their own upstream licences, shown in the License column, which is what makes them free to use and to keep. Two technical constraints are worth noting now rather than at handover. First, the target is Revit 2027 — a release recent enough that pyRevit support for it needs to be confirmed before Phase 2 hardens; pyRevit support for a given Revit release usually arrives after that release ships, and this is the risk item to track. Second, pyRevit runs its own bundled Python interpreter, separate from the system installation, so the spreadsheet library has to be installed into that interpreter as part of the deployment step.",
+      note: "On ownership: the subscriptions, the installed copies, the repository and everything produced for this engagement (pipeline code, Revit families, configuration files) belong to EcoGen. R²XTECH retains no licence over them and nothing is rented back. The open-source components stay under their own upstream licences, shown in the License column, which is what makes them free to use and to keep. Two technical constraints are worth noting now rather than at handover. First, the target is Revit 2027, a release recent enough that pyRevit support for it needs to be confirmed before Phase 2 hardens; pyRevit support for a given Revit release usually arrives after that release ships, and this is the risk item to track. Second, pyRevit runs its own bundled Python interpreter, separate from the system installation, so the spreadsheet library has to be installed into that interpreter as part of the deployment step.",
     },
 
     /* ------------------------------------------------------------------ 10 */
@@ -566,7 +566,7 @@ export const ecogenFluence: Proposal = {
       id: "roadmap",
       kicker: "Roadmap",
       title: "The three phases of the engagement",
-      lead: "Seven weeks end to end. Phase 2 cannot start cleanly until the five blocking questions below are answered — everything after that is sequencing, not uncertainty.",
+      lead: "Seven weeks end to end. Phase 2 cannot start cleanly until the five blocking questions below are answered: everything after that is sequencing, not uncertainty.",
       phases: [
         {
           label: "Phase 1",
@@ -627,11 +627,11 @@ export const ecogenFluence: Proposal = {
             },
             {
               title: "The final production DXF, and a date for it",
-              body: "The drawing every future project will follow, covering every element type expected on a real site rather than only the most common ones. Everything downstream is standardised against it — the layer contract, the parser, the element mapping — so the sooner it is fixed, the sooner the workflow stops being written against a moving target.",
+              body: "The drawing every future project will follow, covering every element type expected on a real site rather than only the most common ones. Everything downstream is standardised against it (the layer contract, the parser, the element mapping), so the sooner it is fixed, the sooner the workflow stops being written against a moving target.",
             },
             {
               title: "Confirmation of drawing style",
-              body: "That future drawings are produced the same way — placed components, not raw exploded geometry.",
+              body: "That future drawings are produced the same way: placed components, not raw exploded geometry.",
             },
           ],
         },
@@ -659,7 +659,7 @@ export const ecogenFluence: Proposal = {
           items: [
             {
               title: "Your cost data, and where each figure comes from",
-              body: "The unit costs, crew rates, wastage and markups you actually bid with — and, alongside each one, its origin and the component it attaches to. That list is what lets a family be wired to the cost lines it produces, so every number in the workbook traces back to an object in the model instead of to figures we reverse-engineered from one reference sample.",
+              body: "The unit costs, crew rates, wastage and markups you actually bid with, together with the origin of each one and the component it attaches to. That list is what lets a family be wired to the cost lines it produces, so every number in the workbook traces back to an object in the model instead of to figures we reverse-engineered from one reference sample.",
             },
             {
               title: "Your sequencing data, and what drives each duration",
@@ -687,7 +687,7 @@ export const ecogenFluence: Proposal = {
               id: "Q-01",
               priority: "Blocking",
               question:
-                "When can we have the final production DXF — the one every future drawing will follow?",
+                "When can we have the final production DXF, the one every future drawing will follow?",
               why: "This is not a question of which sample is the better one. The layer contract, the parser and the element mapping are all standardised against a single format, and the whole workflow is written once against it. What we need is that file, and a date for it.",
             },
             {
@@ -714,7 +714,7 @@ export const ecogenFluence: Proposal = {
               id: "Q-04",
               priority: "High",
               question:
-                "Are the cabling rules ready — families, types and connection logic — or does that work start with us?",
+                "Are the cabling rules ready (families, types and connection logic), or does that work start with us?",
               why: "Phase 2 has to model connections, not only objects. If the routing rules, the cable and conduit types and the connection logic already exist, we implement them. If they do not, defining them becomes part of the phase and has to be planned as such.",
             },
             {
@@ -736,7 +736,7 @@ export const ecogenFluence: Proposal = {
               priority: "Medium",
               question:
                 "Can we treat the DXF as the single source of truth for the site?",
-              why: "That is the assumption the pipeline is built on: the drawing is read, and the model, the estimate and the schedule all follow from it. It works in our favour — one file drives everything — but it also means any change to the drawing convention, however small, propagates through the whole chain.",
+              why: "That is the assumption the pipeline is built on: the drawing is read, and the model, the estimate and the schedule all follow from it. It works in our favour (one file drives everything), but it also means any change to the drawing convention, however small, propagates through the whole chain.",
             },
           ],
         },
@@ -749,7 +749,7 @@ export const ecogenFluence: Proposal = {
               priority: "Blocking",
               question:
                 "Can you share the complete list of where each of your costs comes from?",
-              why: "Every figure in the cost book today was back-derived from a single reference workbook, and the book records one source for all of it. A list of the actual origins — price book, supplier quote, subcontractor bid, historical job — is what lets each figure be traced, updated and defended instead of inherited.",
+              why: "Every figure in the cost book today was back-derived from a single reference workbook, and the book records one source for all of it. A list of the actual origins (price book, supplier quote, subcontractor bid, historical job) is what lets each figure be traced, updated and defended instead of inherited.",
             },
             {
               id: "Q-09",
@@ -761,7 +761,7 @@ export const ecogenFluence: Proposal = {
               id: "Q-10",
               priority: "High",
               question:
-                "What does each of those costs attach to physically — which component, and measured how?",
+                "What does each of those costs attach to physically: which component, and measured how?",
               why: "This is the link the whole estimate is built on: object → measurement → cost line → row in the workbook. Once each cost is keyed to a component and a unit, every number in the output can be traced back to the thing in the model that produced it, and a price change becomes one edit rather than a re-derivation.",
             },
             {
@@ -795,14 +795,14 @@ export const ecogenFluence: Proposal = {
               id: "Q-14",
               priority: "High",
               question:
-                "What drives each activity's duration — which component, and which quantity?",
+                "What drives each activity's duration: which component, and which quantity?",
               why: "This closes the same loop the cost questions open: object → quantity → activity → row in the schedule. Without it, durations have to be typed in per project; with it, the schedule is generated from the model exactly like the estimate, and the two cannot drift apart.",
             },
             {
               id: "Q-15",
               priority: "Medium",
               question:
-                "What is the project start date, the site holiday list, and the working week — five, six or seven days?",
+                "What is the project start date, the site holiday list, and the working week (five, six or seven days)?",
               why: "Every date in the schedule is derived from the working calendar. There is no configuration file for this yet, so it has to be supplied on every run until it is fixed.",
             },
           ],
@@ -815,7 +815,7 @@ export const ecogenFluence: Proposal = {
               id: "Q-16",
               priority: "High",
               question:
-                "What are the real spacing and clearance rules between components — enclosure separation, fence offset, pole spacing?",
+                "What are the real spacing and clearance rules between components (enclosure separation, fence offset, pole spacing)?",
               why: "The placement engine has to enforce them when it positions families. Without them it can only reproduce whatever the drawing already shows, and cannot validate or derive anything.",
             },
           ],
@@ -845,7 +845,7 @@ export const ecogenFluence: Proposal = {
       lead: "One session, working through the questions above in priority order, and two days to fold the answers back in.",
       body: [
         "The five blocking items open Phase 2; the costing and schedule items convert the pipeline's provisional inputs into real ones. Answers to the rest can follow in writing afterwards without holding anything up.",
-        "If it is useful, we can run the current pipeline live during the session — from a sample drawing's layer validation through to both generated workbooks — so the discussion is about real output rather than description.",
+        "If it is useful, we can run the current pipeline live during the session (from a sample drawing's layer validation through to both generated workbooks) so the discussion is about real output rather than description.",
         "Whatever is settled on the 5th is incorporated into the final Phase 1 package delivered on August 7. Anything still open by then is carried into Phase 2 as a named assumption rather than left implicit.",
       ],
       cta: {

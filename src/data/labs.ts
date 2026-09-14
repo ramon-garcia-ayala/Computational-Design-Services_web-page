@@ -15,7 +15,7 @@
 export const labsCopy = {
   kicker: "Labs",
   title: "The studio's own playground",
-  lead: "Prototypes and small open tools land here as they're ready. The first one — a live parametric assistant — already has.",
+  lead: "Prototypes and small open tools land here as they're ready. The first one, a live parametric assistant, already has.",
   playground: {
     kicker: "Playground",
     title: "Try it yourself",

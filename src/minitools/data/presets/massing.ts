@@ -13,7 +13,7 @@ export const massingPreset: MassingSpec = {
     title: "Mixed-use tower massing",
     tagline: "Thirty-two floors over a retail base, tapering into residential at the top.",
     pitch:
-      "The program bands hold their proportions as the tower grows or shrinks, so the mix survives the question every client asks second: what if it were shorter? Start with the floor count, then the taper — the twist is the last thing to touch, not the first.",
+      "The program bands hold their proportions as the tower grows or shrinks, so the mix survives the question every client asks second: what if it were shorter? Start with the floor count, then the taper. The twist is the last thing to touch, not the first.",
   },
   params: {
     plan: "rect",

@@ -380,7 +380,7 @@ export const projectMedia: Record<string, ProjectMedia> = {
         "src": "/projects/projects-tabs/le-monstre-merveille/le-monstre-merveille-01.jpg",
         "width": 4785,
         "height": 3040,
-        "caption": "Design Concept & Computational Design System — The architectural concept is based on three main zones, organized along a central axis. The existing building envelope is preserved, while a new internal structure defines circulation, spatial separation, and visual continuity. A key design move is the central space, which acts as the heart of the project. This void allows light to penetrate deep into the space and organizes movement through ramps and bridges, creating a continuous architectural promenade rather than isolated floors."
+        "caption": "Design Concept & Computational Design System: The architectural concept is based on three main zones, organized along a central axis. The existing building envelope is preserved, while a new internal structure defines circulation, spatial separation, and visual continuity. A key design move is the central space, which acts as the heart of the project. This void allows light to penetrate deep into the space and organizes movement through ramps and bridges, creating a continuous architectural promenade rather than isolated floors."
       },
       {
         "kind": "image",
@@ -393,14 +393,14 @@ export const projectMedia: Record<string, ProjectMedia> = {
         "src": "/projects/projects-tabs/le-monstre-merveille/le-monstre-merveille-03.jpg",
         "width": 4961,
         "height": 2950,
-        "caption": "Computational Design Methodology & Form Finding Process — For the workflow, the 3 elements created follow the same form-finding using Kangaroo with slightly different setups. For the central area, the approach after using Kangaroo was to create a triangulated tiling that closes at the end and opens in the center of the space using the pull point and scale to get the final shape alongside the main structure using the multipipe. The side consists of the kangaroo and truncation approach. While the separator area follows the same architecture of the central roof, with a difference in the final tiling approach created using Perlin Noise in Python, followed by a cull pattern based on certain points to create a sort of gate to the balconies."
+        "caption": "Computational Design Methodology & Form Finding Process: For the workflow, the 3 elements created follow the same form-finding using Kangaroo with slightly different setups. For the central area, the approach after using Kangaroo was to create a triangulated tiling that closes at the end and opens in the center of the space using the pull point and scale to get the final shape alongside the main structure using the multipipe. The side consists of the kangaroo and truncation approach. While the separator area follows the same architecture of the central roof, with a difference in the final tiling approach created using Perlin Noise in Python, followed by a cull pattern based on certain points to create a sort of gate to the balconies."
       },
       {
         "kind": "image",
         "src": "/projects/projects-tabs/le-monstre-merveille/le-monstre-merveille-04.jpg",
         "width": 4961,
         "height": 3037,
-        "caption": "Computational Design Methodology & Form Finding Process — For the workflow, the 3 elements created follow the same form-finding using Kangaroo with slightly different setups. For the central area, the approach after using Kangaroo was to create a triangulated tiling that closes at the end and opens in the center of the space using the pull point and scale to get the final shape alongside the main structure using the multipipe. The side consists of the kangaroo and truncation approach. While the separator area follows the same architecture of the central roof, with a difference in the final tiling approach created using Perlin Noise in Python, followed by a cull pattern based on certain points to create a sort of gate to the balconies."
+        "caption": "Computational Design Methodology & Form Finding Process: For the workflow, the 3 elements created follow the same form-finding using Kangaroo with slightly different setups. For the central area, the approach after using Kangaroo was to create a triangulated tiling that closes at the end and opens in the center of the space using the pull point and scale to get the final shape alongside the main structure using the multipipe. The side consists of the kangaroo and truncation approach. While the separator area follows the same architecture of the central roof, with a difference in the final tiling approach created using Perlin Noise in Python, followed by a cull pattern based on certain points to create a sort of gate to the balconies."
       },
       {
         "kind": "image",

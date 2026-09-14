@@ -18,7 +18,7 @@ export const reparametrize20260629: Proposal = {
   reviewLabel: "Valid until July 20, 2026",
   confidential: true,
   summary:
-    "Embedded computational design expertise for parametric design, landscape automation and client-facing web tools — without the overhead of a full-time hire.",
+    "Embedded computational design expertise for parametric design, landscape automation and client-facing web tools, without the overhead of a full-time hire.",
 
   hero: {
     kicker: "Commercial proposal",
@@ -45,7 +45,7 @@ export const reparametrize20260629: Proposal = {
       kicker: "The problem",
       title: "Hiring is a commitment; freelancing loses context",
       body: [
-        "Hiring a computational designer in-house means salary, benefits, onboarding time and a long-term commitment — before you know whether the workload justifies it.",
+        "Hiring a computational designer in-house means salary, benefits, onboarding time and a long-term commitment, before you know whether the workload justifies it.",
         "At the same time, outsourcing project by project to freelancers means inconsistent quality, context loss between engagements, and no institutional knowledge of your studio's standards and toolset.",
       ],
     },
@@ -91,7 +91,7 @@ export const reparametrize20260629: Proposal = {
         {
           number: "05",
           title: "Delivery",
-          body: "Files, scripts and documentation — yours to keep and to extend.",
+          body: "Files, scripts and documentation: yours to keep and to extend.",
         },
       ],
     },
@@ -107,19 +107,19 @@ export const reparametrize20260629: Proposal = {
           title: "Primary",
           tone: "solid",
           items: [
-            "Grasshopper — parametric modelling and automation",
-            "Rhino 3D — geometry and presentation output",
-            "Python / GHPython — logic beyond what components cover",
-            "Next.js — client-facing web tools and configurators",
+            "Grasshopper: parametric modelling and automation",
+            "Rhino 3D: geometry and presentation output",
+            "Python / GHPython: logic beyond what components cover",
+            "Next.js: client-facing web tools and configurators",
           ],
         },
         {
           title: "As needed",
           tone: "dashed",
           items: [
-            "Revit API — when the deliverable has to land in BIM",
-            "Three.js — 3D in the browser for web configurators",
-            "Speckle — moving models between tools and stakeholders",
+            "Revit API: when the deliverable has to land in BIM",
+            "Three.js: 3D in the browser for web configurators",
+            "Speckle: moving models between tools and stakeholders",
           ],
         },
       ],
@@ -140,7 +140,7 @@ export const reparametrize20260629: Proposal = {
         {
           icon: "window",
           title: "Client-facing web tools",
-          body: "Interactive configurators and design explorers that let your clients participate in the design process — embedded in your website or delivered as a standalone URL.",
+          body: "Interactive configurators and design explorers that let your clients participate in the design process, embedded in your website or delivered as a standalone URL.",
         },
         {
           icon: "grid",
@@ -150,7 +150,7 @@ export const reparametrize20260629: Proposal = {
         {
           icon: "file",
           title: "Automated drawing & documentation",
-          body: "Scripts that generate plans, sections, schedules and presentation sheets directly from your Rhino or Revit model — eliminating manual redraw between design iterations.",
+          body: "Scripts that generate plans, sections, schedules and presentation sheets directly from your Rhino or Revit model, eliminating manual redraw between design iterations.",
         },
       ],
     },
@@ -197,7 +197,7 @@ export const reparametrize20260629: Proposal = {
             },
             {
               title: "Web tool mockup",
-              body: "Clickable prototype of the client configurator — design exploration or project presentation tool.",
+              body: "Clickable prototype of the client configurator: design exploration or project presentation tool.",
             },
           ],
         },
@@ -229,11 +229,11 @@ export const reparametrize20260629: Proposal = {
       id: "pricing",
       kicker: "Investment",
       title: "Three ways to engage",
-      lead: "One rule behind all three: more complexity and more parallel projects means more budget. Pick the one that matches your current pipeline — you can move between them as it changes.",
+      lead: "One rule behind all three: more complexity and more parallel projects means more budget. Pick the one that matches your current pipeline. You can move between them as it changes.",
       note: "Retainers are billed monthly and cancellable with 30 days notice. On a per-project engagement the price is locked at signing and does not change with iteration count; a change of scope produces a new quote rather than a silent overrun.",
       options: [
         {
-          tag: "Option A — Focus retainer",
+          tag: "Option A · Focus retainer",
           title: "Single-project retainer",
           subtitle: "One active deliverable at a time. Scope is ironclad.",
           price: "USD 2,000 / mo",
@@ -249,7 +249,7 @@ export const reparametrize20260629: Proposal = {
           ],
         },
         {
-          tag: "Option B — Recommended for active studios",
+          tag: "Option B · Recommended for active studios",
           title: "Studio retainer",
           subtitle: "Two concurrent deliverables. Full complexity included.",
           price: "USD 3,500 / mo",
@@ -266,7 +266,7 @@ export const reparametrize20260629: Proposal = {
           ],
         },
         {
-          tag: "Option C — Fixed scope",
+          tag: "Option C · Fixed scope",
           title: "Per project",
           subtitle: "One deliverable. Price locked at signing. No overruns.",
           price: "USD 1,500 – 12,000",
@@ -296,7 +296,7 @@ export const reparametrize20260629: Proposal = {
         },
         {
           number: "02",
-          body: "Share two or three active projects or pain points you want addressed in month 1 — we will scope the first sprint around those.",
+          body: "Share two or three active projects or pain points you want addressed in month 1. We will scope the first sprint around those.",
         },
         {
           number: "03",

@@ -25,7 +25,7 @@ export const capabilities: Capability[] = [
     id: "machine-learning",
     motif: "learning" as const,
     title: "Machine Learning",
-    body: "Models trained on your own project data — classification, prediction and pattern-finding over drawings, schedules and performance records.",
+    body: "Models trained on your own project data: classification, prediction and pattern-finding over drawings, schedules and performance records.",
   },
   {
     id: "bim-automation",

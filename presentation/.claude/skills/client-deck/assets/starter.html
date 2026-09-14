@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>{{CLIENT}} · R²XTECH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* Design system lifted from presentation/value-deck.html by the client-deck
+   skill's new-deck.mjs. Change the design there, not here; the comments that
+   explain each rule live in that file. */
+/*{{STYLE}}*/
+</style>
+<style>
+/* Client-deck additions, not part of the company deck. */
+.confidence { font-family: var(--font-mono); font-size: var(--text-mono-sm); text-transform: uppercase; letter-spacing: 0.14em; color: var(--fg-muted); }
+.stage.new { background: var(--graphite); box-shadow: inset 0 2px 0 var(--accent); }
+.stage.gone .t { color: var(--fg-muted); text-decoration: line-through; text-decoration-color: var(--danger); }
+.pipeline-key { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 12px; font-family: var(--font-mono); font-size: var(--text-mono-sm); text-transform: uppercase; letter-spacing: 0.14em; color: var(--fg-muted); }
+.pipeline-key .k::before { content: ''; display: inline-block; width: 16px; height: 2px; margin-right: 8px; vertical-align: middle; }
+.pipeline-key .gone::before { background: var(--danger); }
+.pipeline-key .new::before { background: var(--accent); }
+</style>
+</head>
+<body data-assets="{{ASSETS}}">
+
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- ══ 01 · COVER ═════════════════════════════════════════════════
+     Job: the lead finding and the program, in two lines, in the client's
+     own terms. The geodesic is the studio's mark; it plays. -->
+<section class="slide pale active">
+  <div class="bg object" data-geo-home="20" style="background-image:url('{{ASSETS}}geodesic-01/webp/frame-0020.webp')"><div class="geo-anim"><canvas aria-hidden="true"></canvas><canvas aria-hidden="true"></canvas></div></div>
+  <div class="scrim pale-veil strong"></div>
+  <div class="body">
+    <img class="wordmark" src="{{ASSETS}}logo/logo-mask.png" alt="R²XTECH">
+    <h1 style="margin-top:clamp(24px,3.4vw,50px);max-width:15ch">[[The lead finding, as one line a client would say about themselves]]</h1>
+    <div class="outcome">[[The program, as one line: what it does for them]]</div>
+    <div class="title-meta">{{PREPARED}} {{CLIENT}} · {{DATE_LABEL}}</div>
+  </div>
+  <aside class="notes">
+    <b>[[Cue: how to open]]</b> [[The sentence that frames the meeting: we looked at your operation, here is what we found and what we would build.]]<br>
+    <b>[[Who was in the sessions]]</b> [[Name the people we spoke to, so the room knows this came from them.]]
+  </aside>
+</section>
+
+<!-- ══ ACT I ══ 02 · YOUR INDUSTRY ════════════════════════════════
+     Job: the pattern this client shares with its industry (macro), so the
+     next slide lands as known and solvable rather than as blame. One claim,
+     sourced. No sourced claim that fits: use the studio's own observation,
+     say so in the notes, delete the source line. Short meeting: merge into
+     slide 3. -->
+<section class="slide">
+  <canvas class="bg-particles" aria-hidden="true"></canvas>
+  <div class="scrim vignette"></div>
+  <div class="eyebrow"><span class="act">01 /</span> {{ACT1}}</div>
+  <div class="body">
+    <div class="scale-tag">[[Across your industry]]</div>
+    <h2 class="wide" style="margin-top:12px">[[The shared pattern, stated as a claim]]</h2>
+    <p class="lead">[[One sentence that makes the pattern concrete]]</p>
+  </div>
+  <div class="source">[[Source of the claim]]</div>
+  <aside class="notes">
+    <b>[[Cue]]</b> [[Why this matters before we talk about them: it is not their fault, it is how the industry works.]]<br>
+    <b>[[Ask]]</b> [[A question that invites them to recognise the pattern.]]
+  </aside>
+</section>
+
+<!-- ══ 03 · IN YOUR FIRM ═══════════════════════════════════════════
+     Job: the lead finding in their operation, with its evidence (micro).
+     Figures only from the analysis, each with a confidence label. No figures
+     in the analysis: replace the grid with an observation list (components.md
+     section 8). -->
+<section class="slide">
+  <div class="eyebrow"><span class="act">01 /</span> {{ACT1}}</div>
+  <div class="body">
+    <div class="split lean">
+      <div>
+        <div class="scale-tag accent">[[In {{CLIENT}}]]</div>
+        <h2 style="margin-top:12px">[[The lead finding, stated plainly]]</h2>
+        <p class="lead">[[How we saw it: which sessions, files or measured task]]</p>
+      </div>
+      <div class="cols c2">
+        <div class="col ruled">
+          <div class="figure"><span data-count="[[number]]">[[number]]</span></div>
+          <div class="figure-sub">[[What the number counts]]</div>
+          <div class="confidence">[[Measured / Reported by your team / Our estimate / To validate]]</div>
+        </div>
+        <div class="col ruled">
+          <div class="figure"><span data-count="[[number]]">[[number]]</span></div>
+          <div class="figure-sub">[[What the number counts]]</div>
+          <div class="confidence">[[Confidence]]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <b>[[Cue]]</b> [[The sentence to say about the finding.]]<br>
+    <b>[[Where it came from]]</b> [[Who described it or how we measured it.]]<br>
+    <b>[[Do not overclaim]]</b> [[Which figures are reported rather than measured.]]
+  </aside>
+</section>
+
+<!-- ══ 04 · WHY IT MATTERS (hinge, greige) ═════════════════════════
+     Job: the consequence for them, in time, errors, risk, capacity or money,
+     and one proof. This slide turns "interesting" into "worth doing now".
+     Keep the chart only if a "keep doing it vs change it once" shape is
+     honest here; otherwise delete the right column. -->
+<section class="slide pale">
+  <div class="eyebrow"><span class="act">01 /</span> {{ACT1}}</div>
+  <div class="body">
+    <div class="split lean">
+      <div>
+        <div class="statement" style="font-size:clamp(1.7rem,3.1vw,3.3rem);max-width:16ch">[[Why it matters, as one sentence]]</div>
+        <p class="lead"><strong>[[The consequence in their terms]]</strong></p>
+        <div class="hinge-proof">
+          <span class="pill solid">[[Confidence label]]</span>
+          <span class="hinge-proof-figure">[[The strongest single figure]]</span>
+          <span class="hinge-proof-caption">[[What it is and where it came from]]</span>
+        </div>
+      </div>
+      <div>
+        <div class="chart-wrap tall"><canvas data-hinge data-grow="[[Keep doing it as today]]" data-flat="[[With the program]]" data-x="[[Time]]" data-y="[[What accumulates: hours, revisions, errors]]" data-cross-label="[[break-even]]"></canvas></div>
+        <div class="assumptions">[[Shape only, not measured data.]]</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <b>[[Cue: the hinge of the deck]]</b> [[Slow down here. Everything before is what we found, everything after is what we would build.]]<br>
+    <b>[[Say the proof exactly]]</b> [[The figure, its confidence, and what it is not.]]<br>
+    <b>[[Ask]]</b> [[A question about how this consequence shows up for them.]]
+  </aside>
+</section>
+
+<!-- ══ ACT II ══ 05 · THE PROGRAM ═════════════════════════════════
+     Job: name the program and what it does for them, in at most three parts.
+     What each part changes for their team, in their tools' names; never an
+     internal technique, and never another client's process. -->
+<section class="slide">
+  <canvas class="bg-particles" aria-hidden="true"></canvas>
+  <div class="scrim vignette"></div>
+  <div class="eyebrow"><span class="act">02 /</span> {{ACT2}}</div>
+  <div class="body">
+    <h2 class="wide">[[Program name: what it does, in one line]]</h2>
+    <div class="cols c3" style="margin-top:clamp(22px,2.8vw,40px)">
+      <div class="col ruled">
+        <div class="figure-sub">01</div>
+        <h3>[[Part one]]</h3>
+        <p class="note">[[What it changes for their team]]</p>
+      </div>
+      <div class="col ruled">
+        <div class="figure-sub">02</div>
+        <h3>[[Part two]]</h3>
+        <p class="note">[[What it changes for their team]]</p>
+      </div>
+      <div class="col ruled">
+        <div class="figure-sub">03</div>
+        <h3>[[Part three]]</h3>
+        <p class="note">[[What it changes for their team]]</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <b>[[Cue]]</b> [[How to introduce the program in one sentence.]]<br>
+    <b>[[What stays human]]</b> [[The judgement and sign-off that remain with their people.]]
+  </aside>
+</section>
+
+<!-- ══ 06 · YOUR WORKFLOW, BEFORE AND AFTER ════════════════════════
+     Job: their own steps, in their words, with what the program removes and
+     automates. Set repeat(N,1fr) to the step count. If the analysis does not
+     describe the workflow step by step, delete this slide. -->
+<section class="slide">
+  <div class="eyebrow"><span class="act">02 /</span> {{ACT2}}</div>
+  <div class="body">
+    <h2 class="wide">[[Their workflow, as a claim about what changes]]</h2>
+    <div class="pipeline" style="grid-template-columns:repeat(5,1fr);margin-top:clamp(22px,2.8vw,40px)">
+      <div class="stage"><span class="n">01</span><span class="t">[[A step that stays]]</span></div>
+      <div class="stage gone"><span class="n">02</span><span class="t">[[A step the program removes]]</span></div>
+      <div class="stage new"><span class="n">03</span><span class="t">[[A step the program automates]]</span></div>
+      <div class="stage gone"><span class="n">04</span><span class="t">[[A step the program removes]]</span></div>
+      <div class="stage"><span class="n">05</span><span class="t">[[Their final step, which stays theirs]]</span></div>
+    </div>
+    <div class="pipeline-key"><span class="k gone">[[Removed]]</span><span class="k new">[[Automated]]</span></div>
+    <p class="lead">[[What stays with their people, and why]]</p>
+  </div>
+  <aside class="notes">
+    <b>[[Cue]]</b> [[Walk the strip left to right in their words.]]<br>
+    <b>[[Ask]]</b> [[Is this how it really runs? Correct it live if not.]]
+  </aside>
+</section>
+
+<!-- ══ 07 · HOW WE WOULD START ════════════════════════════════════
+     Job: the pilot, what it proves, what we need from them. Open questions
+     from the analysis go here as things to confirm in week one. -->
+<section class="slide">
+  <div class="eyebrow"><span class="act">02 /</span> {{ACT2}}</div>
+  <div class="body">
+    <h2>[[How we would start]]</h2>
+    <ul class="dash roomy" style="margin-top:clamp(18px,2.3vw,32px);max-width:52ch">
+      <li>[[Pilot scope]]<span>: [[what it proves]]</span></li>
+      <li>[[Second step]]<span>: [[what it adds]]</span></li>
+      <li>[[Handover]]<span>: [[what they own]]</span></li>
+    </ul>
+    <p class="note" style="margin-top:clamp(16px,2vw,26px)"><strong>[[What we need from you:]]</strong> [[Files, access, a person's time]]</p>
+    <p class="note"><strong>[[To confirm in week one:]]</strong> [[The open questions from the analysis]]</p>
+  </div>
+  <aside class="notes">
+    <b>[[Cue]]</b> [[Why a small pilot first.]]<br>
+    <b>[[Be honest about the unknowns]]</b> [[Name them before they do.]]
+  </aside>
+</section>
+
+<!-- ══ ACT III ══ 08 · WHAT CHANGES, WHAT YOU KEEP ═════════════════
+     Job: outcomes for their team, in their terms (figures only if the
+     analysis supports them), and ownership, consistent with the company deck
+     and any written proposal. -->
+<section class="slide">
+  <div class="eyebrow"><span class="act">03 /</span> {{ACT3}}</div>
+  <div class="body">
+    <div class="split">
+      <div>
+        <h2>[[What changes for your team]]</h2>
+        <ul class="dash roomy" style="margin-top:clamp(18px,2.3vw,32px)">
+          <li>[[Outcome]]<span>: [[in their terms]]</span></li>
+          <li>[[Outcome]]<span>: [[in their terms]]</span></li>
+          <li>[[Outcome]]<span>: [[in their terms]]</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="scale-tag accent">[[What you keep]]</div>
+        <ul class="dash" style="margin-top:14px">
+          <li>[[The code and the rules transfer to you]]<span>: [[no licence retained, nothing rented back]]</span></li>
+          <li>[[Documented, versioned, testable]]<span>: [[your team extends it without us]]</span></li>
+          <li>[[Training and handover]]<span>: [[included, never an upsell]]</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <b>[[Cue]]</b> [[Tie each outcome back to the finding it answers.]]<br>
+    <b>[[Ownership is contractual]]</b> [[Say it as the fact it is.]]
+  </aside>
+</section>
+
+<!-- ══ 09 · NEXT STEP ═════════════════════════════════════════════
+     Job: one small, specific, low-risk ask tied to the lead finding, what
+     happens after yes, and the honest escape hatch. -->
+<section class="slide pale">
+  <div class="bg object" data-geo-home="77" data-geo-dir="back" style="background-image:url('{{ASSETS}}geodesic-01/webp/frame-0077.webp')"><div class="geo-anim"><canvas aria-hidden="true"></canvas><canvas aria-hidden="true"></canvas></div></div>
+  <div class="scrim pale-veil"></div>
+  <div class="eyebrow">{{NEXT}}</div>
+  <div class="body">
+    <h2 style="font-size:var(--text-display);max-width:16ch">[[The one concrete ask]]</h2>
+    <p class="lead" style="max-width:46ch">[[What happens after yes.]] <strong>[[The honest escape hatch.]]</strong></p>
+    <div class="cta-row">
+      <span class="pill solid">r-xtech.com/contact</span>
+    </div>
+    <div class="title-meta">Architecture, computed.</div>
+  </div>
+  <aside class="notes">
+    <b>[[Cue: ask for one thing]]</b> [[The ask, as you will say it.]]<br>
+    <b>[[What happens next]]</b> [[Who does what, by when.]]
+  </aside>
+</section>
+
+</div>
+
+<div class="nav">
+  <button data-go="prev" aria-label="{{PREV}}">←</button>
+  <span class="counter"><span id="cur">1</span> / <span id="tot">9</span></span>
+  <button data-go="next" aria-label="{{NEXTSLIDE}}">→</button>
+</div>
+<div class="hint">{{HINT}}</div>
+
+<script>
+/*{{ENGINE}}*/
+</script>
+</body>
+</html>

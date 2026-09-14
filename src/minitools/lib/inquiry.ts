@@ -51,7 +51,7 @@ function draftNoteSection(): Section {
 }
 
 function openingSection(spec: MinitoolSpec): string {
-  return `Hi ${site.nameFlat} — following up on "${spec.meta.title}".`;
+  return `Hi ${site.nameFlat}, following up on "${spec.meta.title}".`;
 }
 
 /** The single line of context: the tagline for a tool, the problem for a pitch. */
@@ -77,7 +77,7 @@ function detailSection(spec: MinitoolSpec): Section {
 
   const values = spec.params as Record<string, number | string>;
   const listed = defs.slice(0, MAX_LISTED_PARAMS);
-  const lines = listed.map((def) => `— ${def.label}: ${formatParamValue(def, values[def.key])}`);
+  const lines = listed.map((def) => `- ${def.label}: ${formatParamValue(def, values[def.key])}`);
 
   if (defs.length > MAX_LISTED_PARAMS) {
     lines.push(inquiryCopy.mail.moreParams(defs.length - MAX_LISTED_PARAMS));
@@ -106,7 +106,7 @@ function linkSection(shareUrl: string | null, keepLink: boolean): Section {
 
 function signoffSection(visitor: Visitor): Section {
   const lines: string[] = [];
-  if (visitor.name) lines.push(`— ${visitor.name}`);
+  if (visitor.name) lines.push(visitor.name);
   if (visitor.email) lines.push(inquiryCopy.mail.signoffEmail(visitor.email));
   return lines.length > 0 ? lines.join("\r\n") : null;
 }

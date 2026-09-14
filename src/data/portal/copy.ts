@@ -7,7 +7,7 @@ export const portalCopy = {
   login: {
     kicker: "Client access",
     title: "Track your project",
-    lead: "Enter the email we have on file and we'll send you a link to your project panel — no password to remember.",
+    lead: "Enter the email we have on file and we'll send you a link to your project panel. No password to remember.",
     fields: { email: "Email" },
     placeholders: { email: "you@company.com" },
     submit: "Send link",

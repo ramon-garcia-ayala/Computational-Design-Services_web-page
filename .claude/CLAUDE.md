@@ -5,6 +5,15 @@ Guidance for Claude Code (claude.ai/code) when working in this repository.
 **Write everything in this repo in English** — code, comments, docs, commit
 messages. The team does not read Spanish.
 
+**Never use an em dash (—) in copy that reaches a reader** — site copy in
+`src/data/`, proposal and portal content, the mini tools' generated text, and
+the sales presentation in `presentation/`. It is one of the most recognizable
+tells of AI-written text, and copy that reads as AI-written undermines a
+studio selling its own judgment. Rewrite the sentence instead: a period for
+two independent clauses, a comma for a trailing aside, a colon to introduce,
+or parentheses for a real aside. This rule is about copy only — it does not
+apply to code comments or this file's own documentation prose.
+
 ## Commands
 
 ```bash

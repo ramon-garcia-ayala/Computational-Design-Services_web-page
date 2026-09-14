@@ -178,7 +178,7 @@ export const designLab = {
       id: "problem",
       kicker: "The problem",
       lead: "AEC teams lose their best hours to work that software should be doing.",
-      body: "We build the pipelines, automations and AI systems that take that work off your team — and hand them over documented, so they keep running without us.",
+      body: "We build the pipelines, automations and AI systems that take that work off your team, and hand them over documented, so they keep running without us.",
     },
 
     /* DOCUMENT. Four cards, motif first.
@@ -277,7 +277,7 @@ export const designLab = {
           context: "IAAC · Barcelona",
           /* `projects.ts`, panel `outcome`, verbatim intent. */
           result:
-            "Several defensible layouts, and the reasoning behind each — a comparison, not a verdict.",
+            "Several defensible layouts, and the reasoning behind each: a comparison, not a verdict.",
           alt: "Generated industrial layouts cycling through machine, workstation and circulation arrangements as the agent searches for a better configuration.",
         },
         {

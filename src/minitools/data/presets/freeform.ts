@@ -25,7 +25,7 @@ export const freeformPreset: FreeformSpec = {
     title: "Timber pavilion frame",
     tagline: "A ring of columns under a shallow revolved canopy.",
     pitch:
-      "The canopy is a single revolution and the columns are one node repeated around the centre, so the whole pavilion is four numbers rather than a model to rebuild. Pull the span first — the column count is what stops it reading as a drum.",
+      "The canopy is a single revolution and the columns are one node repeated around the centre, so the whole pavilion is four numbers rather than a model to rebuild. Pull the span first: the column count is what stops it reading as a drum.",
   },
   scene: [
     {
