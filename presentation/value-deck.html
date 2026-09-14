@@ -202,6 +202,18 @@ html, body {
    as another line on the same plane. */
 .bg.quiet { opacity: 0.26; }
 
+/* Slides 1 and 9 play the site hero's frame sequence over their own still
+   (see the geodesic player in the script). The layer scales about the
+   mesh's own centre, which a high-pass puts at 58.75% across the frame,
+   so the dolly and the breath grow the object in place instead of sliding
+   it toward the text. Scale only ever goes up, so it only ever crops, and
+   `.bg.object`'s mask still dissolves whatever edge moves. No pointer
+   events: the canvases cover the whole slide, and the deck's click-to-
+   advance ignores clicks that land on a canvas. */
+.geo-anim { position: absolute; inset: 0; transform-origin: 58.75% 50%; will-change: transform; pointer-events: none; }
+.geo-anim canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; }
+.bg.object.geo-live { background-image: none !important; }
+
 /* The canvas backgrounds (slides 2 and 3) — a drifting node field,
    dark. Absolute + inset:0 like `.bg`, but it paints itself rather
    than loading a file, so there is no aspect ratio to fit. Each slide
@@ -605,7 +617,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
 
 <!-- ══ 01 · TITLE ═════════════════════════════════════════════════ -->
 <section class="slide pale active">
-  <div class="bg object" style="background-image:url('assets/geo-open.webp')"></div>
+  <div class="bg object" data-geo-home="20" style="background-image:url('assets/geo-open.webp')"><div class="geo-anim"><canvas aria-hidden="true"></canvas><canvas aria-hidden="true"></canvas></div></div>
   <div class="scrim pale-veil strong"></div>
   <div class="body">
     <img class="wordmark" src="assets/logo.png" alt="R²XTECH">
@@ -616,7 +628,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   <aside class="notes">
     <b>Two lines, two jobs: say both, never merge them.</b> "Architecture, computed" is what people repeat. "We automate AEC, you ship faster" is what convinces someone with a budget.<br>
     <b>Frame the deck in one sentence:</b> "Three things: what we do, what it does for you, and what you walk away with. Ten slides, and then I want your numbers."<br>
-    <b>The object behind you is ours:</b> the geodesic from our own site. If someone asks, it's a parametric study, not a stock image.
+    <b>The object behind you is ours:</b> the geodesic from our own site. If someone asks, it's a parametric study, not a stock image. It plays the same 96-frame render the site's hero scrubs on scroll, just on its own here, and it comes back on the closing slide.
   </aside>
 </section>
 
@@ -754,7 +766,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
         <div class="scale-tag accent">Your firm, same ratio</div>
         <div class="ctrl" style="margin-top:14px">
           <div class="row"><label for="revenue">Annual revenue</label><output id="revenueOut">$50M</output></div>
-          <input type="range" id="revenue" min="5000000" max="1000000000" step="5000000" value="50000000" aria-label="Annual revenue">
+          <input type="range" id="revenue" min="5000000" max="100000000" step="1000000" value="50000000" aria-label="Annual revenue">
         </div>
         <div class="figure huge" id="reworkCost" style="margin-top:clamp(14px,1.8vw,22px)">$355K<span class="unit">/yr</span></div>
         <div class="figure-label" style="margin-top:14px;max-width:28ch">What's already leaving the business on the industry ratio alone, before anyone builds anything.</div>
@@ -763,7 +775,8 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
   </div>
   <div class="source">FMI &amp; Autodesk: Harnessing the Data Advantage in Construction</div>
   <aside class="notes">
-    <b>Move the slider to their real revenue, live.</b> This used to be mental math done out loud ("$200M is roughly $1.4M a year"). Now the slide computes it, and it lands harder because they watched the number move under their own figure, not yours.<br>
+    <b>The slider runs itself when the slide opens:</b> from $5M, slowly, then faster, all the way to $100M and $710K a year. Stay quiet while it moves; the growth is the point.<br>
+    <b>Then drag it to their real revenue, live.</b> This used to be mental math done out loud ("$80M is roughly $570K a year"). Now the slide computes it, and it lands harder because they watched the number move under their own figure, not yours. Once you touch it, it stays where you put it, even if you come back to this slide.<br>
     <b>Expect "our rework isn't from data".</b> Good: ask what it <i>is</i> from. Either they know, and it's a process we can automate, or they don't, and that measurement gap is the first thing we'd fix.<br>
     <b>Backup figure if they want the macro behind the macro:</b> construction labour productivity grew 1% a year for two decades against 2.8% for the world economy and 3.6% for manufacturing (McKinsey). Kept off the slide on purpose: it's context, not their problem.<br>
     <b>This right-hand number is the seed for slide 7.</b> Here is what inaction already costs; slide 7 is what the fix costs and when it pays back. If the thread is still live, say so explicitly: "hold that number, we'll come back to it."
@@ -930,7 +943,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
 
 <!-- ══ 09 · NEXT ═════════════════════════════════════════════════ -->
 <section class="slide pale">
-  <div class="bg object" style="background-image:url('assets/geo-close.webp')"></div>
+  <div class="bg object" data-geo-home="77" data-geo-dir="back" style="background-image:url('assets/geo-close.webp')"><div class="geo-anim"><canvas aria-hidden="true"></canvas><canvas aria-hidden="true"></canvas></div></div>
   <div class="scrim pale-veil"></div>
   <div class="eyebrow">Next step</div>
   <div class="body">
@@ -1016,6 +1029,8 @@ function go(n) {
   // guarded because it isn't set yet on the very first go(1) call below.
   if (window.__syncParticles) window.__syncParticles(cur);
   if (window.__syncRecords) window.__syncRecords(cur);
+  if (window.__syncRevenue) window.__syncRevenue(cur);
+  if (window.__syncGeo) window.__syncGeo(cur);
 }
 
 document.addEventListener('keydown', e => {
@@ -1410,6 +1425,138 @@ document.addEventListener('click', e => {
   };
 })();
 
+/* ── Slides 1 and 9: the geodesic, playing ─────────────────────────
+   The site's hero scrubs a 96-frame render of this object against scroll.
+   A deck has no scroll, so here the same frames play on their own, with
+   the hero's two other motions multiplied on top: a dolly that closes in
+   as the sequence travels away from home, and an 8s breath. Each slide's
+   still is exactly one frame of the sequence (geo-open is frame 20,
+   geo-close frame 77, matched by pixel diff), so the still stays up as a
+   poster while the frames decode, and the canvas takes over on that same
+   frame at scale 1 with nothing visibly changing. Playback is a cosine
+   through the sequence, so it slows into each end and turns around rather
+   than bouncing off it. Adjacent frames cross-fade on two stacked
+   canvases, the hero's own trick: a redraw only when the pair of frames
+   changes, an opacity write otherwise. Runs only while its slide is on
+   screen, restarting from home on entry; under reduced motion nothing
+   loads and the stills stay. */
+(function () {
+  const hosts = document.querySelectorAll('[data-geo-home]');
+  if (!hosts.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const COUNT = 96, FW = 1664, FH = 1248, LAST = COUNT - 1, MID = LAST / 2;
+  const CYCLE = 32000;                        // one full 1 -> 96 -> 1 round trip
+  const BREATH = 8000, BREATH_AMP = 0.04;     // the hero's `herobreath`
+  const DOLLY = 0.05;                         // the hero's DOLLY
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const frames = [];
+  let ready = false, active = 0;
+
+  const players = Array.from(hosts, host => {
+    const home = +host.dataset.geoHome - 1;
+    const back = host.dataset.geoDir === 'back';
+    // The phase at which the cosine sits on `home`, heading the chosen way.
+    const a = Math.acos(1 - home / MID);
+    return {
+      host,
+      layer: host.querySelector('.geo-anim'),
+      slots: Array.from(host.querySelectorAll('canvas'), canvas => ({ canvas, ctx: canvas.getContext('2d'), index: -1 })),
+      home,
+      phase0: back ? 2 * Math.PI - a : a,
+      slideIndex: Array.prototype.indexOf.call(slides, host.closest('.slide')) + 1,
+      painted: -1,
+      raf: null,
+      t0: 0
+    };
+  });
+
+  function size(pl) {
+    const r = pl.host.getBoundingClientRect();
+    const w = Math.max(1, Math.round(r.width * dpr)), h = Math.max(1, Math.round(r.height * dpr));
+    pl.slots.forEach(s => {
+      if (s.canvas.width === w && s.canvas.height === h) return;
+      s.canvas.width = w;
+      s.canvas.height = h;
+      s.index = -1;
+    });
+    pl.painted = -1;
+  }
+
+  // Same geometry as `.bg.object`'s `auto 110%` at `right center`.
+  function draw(slot, index) {
+    const { canvas, ctx } = slot;
+    const dh = canvas.height * 1.1, dw = dh * FW / FH;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(frames[index], canvas.width - dw, (canvas.height - dh) / 2, dw, dh);
+    slot.index = index;
+  }
+
+  function paint(pl, p) {
+    const base = Math.floor(p), next = Math.min(LAST, base + 1);
+    if (base !== pl.painted) {
+      // Keep whichever layer already holds `base`; otherwise repaint the one
+      // not holding `next`, so a one-frame step in either direction costs a
+      // single drawImage.
+      let lower = pl.slots.find(s => s.index === base);
+      if (!lower) { lower = pl.slots.find(s => s.index !== next) || pl.slots[0]; draw(lower, base); }
+      const upper = pl.slots.find(s => s !== lower);
+      if (upper.index !== next) draw(upper, next);
+      lower.canvas.style.zIndex = '0';
+      lower.canvas.style.opacity = '1';
+      upper.canvas.style.zIndex = '1';
+      pl.upper = upper;
+      pl.painted = base;
+    }
+    pl.upper.canvas.style.opacity = next === base ? '0' : String(p - base);
+  }
+
+  function frame(pl, now) {
+    if (!pl.t0) pl.t0 = now;
+    const t = now - pl.t0;
+    const p = MID - MID * Math.cos(pl.phase0 + (t / CYCLE) * Math.PI * 2);
+    paint(pl, p);
+    const dolly = 1 + DOLLY * Math.abs(p - pl.home) / LAST;
+    const breath = 1 + BREATH_AMP * (1 - Math.cos((t / BREATH) * Math.PI * 2)) / 2;
+    pl.layer.style.transform = `scale(${dolly * breath})`;
+    pl.raf = requestAnimationFrame(n => frame(pl, n));
+  }
+
+  function start(pl) {
+    if (!ready || pl.raf) return;
+    size(pl);
+    pl.t0 = 0;
+    pl.layer.style.transform = 'scale(1)';
+    paint(pl, pl.home);
+    pl.host.classList.add('geo-live');
+    pl.raf = requestAnimationFrame(n => frame(pl, n));
+  }
+
+  function stop(pl) {
+    if (pl.raf) { cancelAnimationFrame(pl.raf); pl.raf = null; }
+  }
+
+  window.__syncGeo = function (activeIndex) {
+    active = activeIndex;
+    players.forEach(pl => (pl.slideIndex === activeIndex ? start(pl) : stop(pl)));
+  };
+
+  window.addEventListener('resize', () => players.forEach(size));
+
+  const load = i => {
+    const img = new Image();
+    img.src = 'assets/geodesic/frame-' + String(i + 1).padStart(4, '0') + '.webp';
+    // decode(), not onload: onload fires before the bitmap is paintable.
+    return img.decode().then(() => { frames[i] = img; }, () => {});
+  };
+
+  // All or nothing: a player missing a frame would show a stale one, so a
+  // single failed decode leaves both stills in place instead.
+  Promise.all(Array.from({ length: COUNT }, (_, i) => load(i))).then(() => {
+    ready = frames.filter(Boolean).length === COUNT;
+    if (ready) window.__syncGeo(active);
+  });
+})();
+
 go(1);
 
 /* ── Charts ─────────────────────────────────────────────────────── */
@@ -1532,12 +1679,65 @@ const usdCompact = n => n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + '
 
 /* ── Slide 4: industry ratio scaled to the client's own revenue ──── */
 const REWORK_RATIO = 0.0071; // $7.1M avoidable rework per $1bn revenue, from the slide's own source
-function reworkRecalc() {
-  const revenue = +el('revenue').value;
+function reworkRecalc(revenue = +el('revenue').value) {
   el('revenueOut').textContent = usdCompact(revenue);
   el('reworkCost').innerHTML = usdCompact(revenue * REWORK_RATIO) + '<span class="unit">/yr</span>';
 }
-el('revenue').addEventListener('input', reworkRecalc);
+
+/* On entry the slider sweeps itself from its minimum to $100M, so the
+   client watches the cost grow before anyone names their own revenue.
+   The range stops at $100M on purpose: the firms this deck is pitched to
+   sit under it, and a track running to $1bn put their own revenue in its
+   first few percent, where a drag can barely land on it. The left column
+   keeps the per-$1bn industry ratio; only the client's scale is capped.
+   The thumb's position follows a cubic ease-in, so it only ever speeds
+   up: it creeps off $5M, gathers pace, and reaches $100M at full speed.
+   An ease-out tail was tried
+   and cut; slowing into the limit undersold the point, which is that
+   the cost keeps accelerating as revenue grows. The display follows the raw
+   value rather than the input's 5M steps, or the small figures stutter.
+   The first touch hands the slider to the presenter for good, so a
+   revenue they have set is never swept away by returning to the slide. */
+(function () {
+  const input = el('revenue');
+  const slideIndex = Array.prototype.indexOf.call(slides, input.closest('.slide')) + 1;
+  const MIN = +input.min, MAX = +input.max, DELAY = 600, DURATION = 3400;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let touched = false, timer = null, raf = null;
+
+  const set = v => { input.value = v; reworkRecalc(v); };
+  function cancel() {
+    clearTimeout(timer);
+    timer = null;
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+  }
+
+  function sweep() {
+    let t0 = 0;
+    const frame = now => {
+      if (!t0) t0 = now;
+      const t = Math.min(1, (now - t0) / DURATION);
+      set(t < 1 ? MIN + (MAX - MIN) * t * t * t : MAX);
+      raf = t < 1 ? requestAnimationFrame(frame) : null;
+    };
+    raf = requestAnimationFrame(frame);
+  }
+
+  // A programmatic `value` write fires no `input` event, so these only
+  // ever see the presenter.
+  const takeOver = () => { touched = true; cancel(); };
+  input.addEventListener('pointerdown', takeOver);
+  input.addEventListener('keydown', takeOver);
+  input.addEventListener('input', () => { takeOver(); reworkRecalc(); });
+
+  window.__syncRevenue = function (activeIndex) {
+    cancel();
+    if (activeIndex !== slideIndex || touched) return;
+    if (reduceMotion) { set(MAX); return; }
+    set(MIN);
+    timer = setTimeout(sweep, DELAY);
+  };
+})();
 reworkRecalc();
 
 const roiChart = new Chart(el('roiChart'), {
