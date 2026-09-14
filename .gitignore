@@ -35,6 +35,7 @@ yarn-error.log*
 
 # skill-creator eval runs — large, regenerable, and not part of the site
 .claude/skills/*-workspace/
+presentation/.claude/skills/*-workspace/
 
 # Source media kept out of the repo: large, and not what the app serves.
 # `geodesic-01/frames` is the 191 MB PNG export that `scripts/frames-to-webp.mjs`

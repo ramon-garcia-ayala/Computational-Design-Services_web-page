@@ -121,7 +121,12 @@ html, body {
    Every image is the studio's own work. A deck selling computational
    design illustrated with stock photography contradicts itself.
    The scrim is not decoration: contrast is measured against the
-   composite of image + scrim, never against the token alone. */
+   composite of image + scrim, never against the token alone.
+
+   Every file is read straight from the site's own `public/` (project
+   renders, the hero's geodesic sequence, the logo), never copied into
+   `presentation/`: a second copy drifts from the one the site ships. So
+   the deck has to be served from the repo root, not from this folder. */
 .bg {
   position: absolute;
   inset: 0;
@@ -131,7 +136,7 @@ html, body {
   z-index: 0;
 }
 
-/* The plain-cover photo slides (terrace-dusk, tower-night) sit inside
+/* The plain-cover photo slides (the Chihuahua terraces, Morphing Sands) sit inside
    `.deck`'s 16:9 frame, and syncChrome() paints
    the browser's own letterbox — everything outside that frame — to
    match `--carbon` exactly. It has to: at any window ratio other than a
@@ -158,8 +163,8 @@ html, body {
 /* Two fit modes, because the two kinds of asset fail in opposite ways.
 
    Plain `.bg` is cover, and cover is right only where the asset's own
-   ratio already matches the 16:9 frame: terrace-dusk measures 1.778
-   against the frame's 1.778, so it loses nothing to it.
+   ratio already matches the 16:9 frame: the terraces render measures
+   1.781 against the frame's 1.778, so it loses nothing to it.
 
    `.bg.object` is for the three geodesic frames, which are 4:3. Covered
    into 16:9 they scale to the frame's WIDTH and lose a quarter of their
@@ -183,7 +188,8 @@ html, body {
      roughly #a7a5a3 to #c0bcb8 across their own width: a gradient, not
      a plate, so no token equals it anywhere and a contained image
      always ends on a visible rectangle. Dissolving the edge is the only
-     fix that does not depend on a colour match. */
+     fix that does not depend on a colour match.
+
      The stops are not taste. At `auto 110%` the image measures 990 wide in
      a 1200 frame, so anchored right its left edge lands at 17.5% and its
      right edge on the frame's own boundary; a high-pass puts the mesh
@@ -289,7 +295,11 @@ html, body {
 /* A gradient scrim assumes the text is on one side. The cost slide sets a
    figure left and a paragraph right, so its right-hand column was landing
    under the thinnest part of the veil — 3.78:1 measured on the composite.
-   Flat, and the asset darkened at export instead, so the image survives. */
+   Flat, and the image darkened underneath it instead, so the image survives.
+   That darkening is the rgba(20,10,0,0.56) layer in the slide's own
+   background stack, not a re-exported file: fitted against the darkened
+   copy it replaced, its worst composite under this scrim is 7.80:1 against
+   that copy's 7.52:1, so no text got harder to read. */
 .scrim.even { background: rgba(45,42,38,0.62); }
 /* Pale grounds: the geodesic frames are already greige, so the veil only
    has to flatten the object, not darken the plate. */
@@ -617,10 +627,10 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
 
 <!-- ══ 01 · TITLE ═════════════════════════════════════════════════ -->
 <section class="slide pale active">
-  <div class="bg object" data-geo-home="20" style="background-image:url('assets/geo-open.webp')"><div class="geo-anim"><canvas aria-hidden="true"></canvas><canvas aria-hidden="true"></canvas></div></div>
+  <div class="bg object" data-geo-home="20" style="background-image:url('../public/geodesic-01/webp/frame-0020.webp')"><div class="geo-anim"><canvas aria-hidden="true"></canvas><canvas aria-hidden="true"></canvas></div></div>
   <div class="scrim pale-veil strong"></div>
   <div class="body">
-    <img class="wordmark" src="assets/logo.png" alt="R²XTECH">
+    <img class="wordmark" src="../public/logo/logo-mask.png" alt="R²XTECH">
     <h1 style="margin-top:clamp(24px,3.4vw,50px)">Architecture,<br>computed.</h1>
     <div class="outcome">We automate AEC. You ship faster.</div>
     <div class="title-meta">Computational automation for AEC</div>
@@ -750,7 +760,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
      reads as one interactive language across the deck rather than a
      one-off widget. -->
 <section class="slide">
-  <div class="bg" style="background-image:url('assets/terrace-dusk.webp')"></div>
+  <div class="bg" style="background-image:linear-gradient(rgba(20,10,0,0.56),rgba(20,10,0,0.56)),url('../public/projects/projects-tabs/geomorphing-terrascape-chihuahua/12.png')"></div>
   <div class="scrim even"></div>
   <div class="eyebrow"><span class="act">02 /</span> What it costs you today</div>
   <div class="body">
@@ -922,7 +932,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
 
 <!-- ══ 08 · WHAT YOU KEEP ════════════════════════════════════════ -->
 <section class="slide">
-  <div class="bg" style="background-image:url('assets/tower-night.webp');background-position:right center"></div>
+  <div class="bg" style="background-image:url('../public/projects/projects-tabs/morphing-sands/17.png');background-position:right center"></div>
   <div class="scrim dark"></div>
   <div class="eyebrow"><span class="act">03 /</span> What you keep</div>
   <div class="body">
@@ -943,7 +953,7 @@ body.notes-on .slide.active .notes b { color: var(--accent); font-weight: 500; }
 
 <!-- ══ 09 · NEXT ═════════════════════════════════════════════════ -->
 <section class="slide pale">
-  <div class="bg object" data-geo-home="77" data-geo-dir="back" style="background-image:url('assets/geo-close.webp')"><div class="geo-anim"><canvas aria-hidden="true"></canvas><canvas aria-hidden="true"></canvas></div></div>
+  <div class="bg object" data-geo-home="77" data-geo-dir="back" style="background-image:url('../public/geodesic-01/webp/frame-0077.webp')"><div class="geo-anim"><canvas aria-hidden="true"></canvas><canvas aria-hidden="true"></canvas></div></div>
   <div class="scrim pale-veil"></div>
   <div class="eyebrow">Next step</div>
   <div class="body">
@@ -1430,8 +1440,8 @@ document.addEventListener('click', e => {
    A deck has no scroll, so here the same frames play on their own, with
    the hero's two other motions multiplied on top: a dolly that closes in
    as the sequence travels away from home, and an 8s breath. Each slide's
-   still is exactly one frame of the sequence (geo-open is frame 20,
-   geo-close frame 77, matched by pixel diff), so the still stays up as a
+   still is exactly one frame of the sequence (frame-0020 on the cover,
+   frame-0077 on the closing, the same files the player loads), so the still stays up as a
    poster while the frames decode, and the canvas takes over on that same
    frame at scale 1 with nothing visibly changing. Playback is a cosine
    through the sequence, so it slows into each end and turns around rather
@@ -1544,7 +1554,7 @@ document.addEventListener('click', e => {
 
   const load = i => {
     const img = new Image();
-    img.src = 'assets/geodesic/frame-' + String(i + 1).padStart(4, '0') + '.webp';
+    img.src = '../public/geodesic-01/webp/frame-' + String(i + 1).padStart(4, '0') + '.webp';
     // decode(), not onload: onload fires before the bitmap is paintable.
     return img.decode().then(() => { frames[i] = img; }, () => {});
   };
