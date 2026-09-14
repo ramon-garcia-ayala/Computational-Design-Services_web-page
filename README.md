@@ -162,7 +162,8 @@ three-dimensional traps worth knowing before touching the viewer.
 
 ## Deployment
 
-Vercel project `computational-design-services`, deploying `main`. **Keep
+Vercel project `r-xtech_webpage`, deploying `design-lab-to-home` (the default
+branch; there is no `main`). **Keep
 `vercel.json`** — the project's framework preset is `null`, so that one line is
 what tells Vercel to build as Next.js. Without it the build still reports READY
 and then every route 404s.

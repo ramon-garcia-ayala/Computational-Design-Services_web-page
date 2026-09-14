@@ -1061,8 +1061,11 @@ it there.
 
 ## Deployment
 
-Vercel project `computational-design-services`, deploying `main` from
-`ramon-garcia-ayala/Computational-Design-Services_web-page`. The state before
+Vercel project `r-xtech_webpage`, deploying `design-lab-to-home` from
+`ramon-garcia-ayala/Computational-Design-Services_web-page`. That is the
+repository's default branch; `main` was deleted once it held nothing
+`design-lab-to-home` did not, and feature branches open their PRs against
+`design-lab-to-home`. The state before
 this site replaced it is kept on the `archive/pre-rewrite` branch.
 
 **`vercel.json` must stay.** The project's framework preset is `null` on Vercel,
