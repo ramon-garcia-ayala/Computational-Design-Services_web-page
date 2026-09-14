@@ -125,6 +125,7 @@ proposals and the client portal don't inherit the site navigation:
 | `/labs/tool` | `src/app/(site)/labs/tool/page.tsx` (a generated mini tool) |
 | `/<proposal-slug>` | `src/app/(proposal)/[proposal]/page.tsx` (`generateStaticParams`) |
 | `/unlock` | `src/app/(proposal)/unlock/page.tsx` |
+| `/presentation` | `src/app/presentation/route.ts` (serves `presentation/value-deck.html` as-is, `force-static`, rewriting its `../public/` image paths to `/`; noindex) |
 | `/portal` | `src/app/(portal)/portal/page.tsx` (sign-in) |
 | `/portal/enter` | `src/app/(portal)/portal/enter/route.ts` (redeems the magic link) |
 | `/portal/dashboard` | `src/app/(portal)/portal/dashboard/page.tsx` (`force-dynamic`) |
